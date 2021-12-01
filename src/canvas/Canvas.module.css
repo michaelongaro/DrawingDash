@@ -1,0 +1,12 @@
+.contain {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.contain > canvas {
+  border-color: black;
+  border-width: 1px;
+  border-radius: 5px;
+  border-style: solid;
+}
