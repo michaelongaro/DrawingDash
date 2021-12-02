@@ -1,5 +1,4 @@
 import React, { useContext, useRef, useState } from "react";
-import { useAuth0 } from "@auth0/auth0-react";
 
 const CanvasContext = React.createContext();
 
@@ -55,31 +54,22 @@ export const CanvasProvider = ({ children }) => {
     context.fillRect(0, 0, canvas.width, canvas.height);
   };
 
-  const UploadCanvas = () => {
-    const { user, isAuthenticated } = useAuth0();
-    console.log("it is on");
-    const canvas = canvasRef.current;
+  // const addTitle = (title) => {
+  //   const canvas = canvasRef.current;
+  //   const context = canvas.getContext("2d");
+  //   context.font = "30px Arial";
+  //   context.textAlign = "center";
+  //   context.fillText(title, 200, 50);
+  // }
 
-    let canvasContents = canvas.toDataURL(); // a data URL of the current canvas image
-    console.log(canvasContents);
-    let data = { image: canvasContents, title: "hello", date: Date.now() };
-    let string = JSON.stringify(data);
-
-    // create a blob object representing the data as a JSON string
-    let file = new Blob([string], {
-      type: "application/json",
-    });
-
-    fetch(`https://drawing-app-18de5-default-rtdb.firebaseio.com/1234.json`, {
-      method: "POST",
-      body: JSON.stringify(file),
-      headers: {
-        "Content-Type": "application/json",
-      },
-    }).then(() => {
-      console.log("hello");
-    });
-  };
+  // const addCountdown = (seconds) => {
+  //   const canvas = canvasRef.current;
+  //   const context = canvas.getContext("2d");
+  //   context.font = "30px Arial";
+  //   context.textAlign = "center";
+  //   context.fillText(seconds, 200, 90);
+  // }
+  
 
   return (
     <CanvasContext.Provider
@@ -91,7 +81,8 @@ export const CanvasProvider = ({ children }) => {
         finishDrawing,
         clearCanvas,
         draw,
-        UploadCanvas,
+        // addTitle,
+        // addCountdown,
       }}
     >
       {children}
