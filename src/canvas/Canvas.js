@@ -16,15 +16,16 @@ export function Canvas() {
     display: "flex",
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "rgb(215, 215, 215)",
+    fontSize: "30pt",
+    backgroundColor: "rgb(255, 255, 255)",
     borderColor: "black",
     borderWidth: "1px",
     borderRadius: "5px",
     borderStyle: "solid",
   });
   const [showCanvas, setShowCanvas] = useState({
-    display: "none"
-  })
+    display: "none",
+  });
 
   const { canvasRef, prepareCanvas, startDrawing, finishDrawing, draw } =
     useCanvas();
@@ -43,10 +44,11 @@ export function Canvas() {
       });
       setShowCanvas({
         display: "block",
-      })
+      });
     }
   }, [seconds]);
 
+  // export this function as it's own thing, and 
   function UploadCanvas() {
     const canvas = canvasRef.current;
 
@@ -73,18 +75,15 @@ export function Canvas() {
 
   return (
     <div className={classes.contain}>
-      <div style={showPrompt}>
-        <RandomWords />
-        {seconds}
-      </div>
-      <canvas style={showCanvas}
+      <RandomWords />
+      <div style={showPrompt}>{seconds}</div>
+      <canvas
+        style={showCanvas}
         onMouseDown={startDrawing}
         onMouseUp={finishDrawing}
         onMouseMove={draw}
         ref={canvasRef}
       />
-
-      {/* <button onClick={UploadCanvas}>upload here!</button> */}
     </div>
   );
 }

@@ -1,39 +1,35 @@
-import { useEffect } from "react";
+import { useState } from "react";
 
 import classes from "./RandomWords.module.css";
 
 const RandomWords = () => {
   // have a scrolling animation where it looks like it is "choosing" a word
   // maybe even slow down like it does in csgo boxes
-  // const [showPhrase, setShowPhrase] = useState(false);
 
-  let adjective, word;
+  const [adjective, setAdjective] = useState("");
+  const [noun, setNoun] = useState("");
+  const [canReRender, setCanReRender] = useState(true);
 
-  // useEffect(() => {
-      
-  // }, [adjective]);
+  if (canReRender) {
+    fetch("https://random-word-form.herokuapp.com/random/adjective")
+      .then((response) => response.json())
+      .then((data) => {
+        setAdjective(data[0])
+        setCanReRender(false);
+      });
 
-  // useEffect(() => {
-
-  // }, [word]);
-  fetch("https://random-word-form.herokuapp.com/random/adjective")
-    .then((response) => response.json())
-    .then((data) => (adjective = data[0]));
-  // .then(() => console.log(adjective));
-
-  fetch("https://random-word-form.herokuapp.com/random/noun")
-    .then((response) => response.json())
-    .then((data) => (word = data[0]));
-  // .then(() => console.log(word));
-
-  if (adjective === "" || word === "") {
-    return <div>loading...</div>
+    fetch("https://random-word-form.herokuapp.com/random/noun")
+      .then((response) => response.json())
+      .then((data) => { 
+        setNoun(data[0])
+        setCanReRender(false);
+      });
   }
 
   return (
-    <span className={classes.title}>
-      {adjective} {word}
-    </span>
+    <h3 className={classes.title}>
+      {adjective} {noun}
+    </h3>
   );
 };
 
