@@ -81,8 +81,6 @@ export const CanvasProvider = ({ children }) => {
         finishDrawing,
         clearCanvas,
         draw,
-        // addTitle,
-        // addCountdown,
       }}
     >
       {children}

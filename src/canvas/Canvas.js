@@ -1,15 +1,16 @@
-import React, { useState, useEffect } from "react";
+import React, { useContext, useState, useEffect } from "react";
 import { useCanvas } from "./CanvasContext";
 import { useAuth0 } from "@auth0/auth0-react";
-import RandomWords from "../components/layout/RandomWords";
+import { WordsContext } from "./WordsContext";
 
 import classes from "./Canvas.module.css";
 
-export function Canvas() {
+export function Canvas(props) {
+  const { adjective, noun } = useContext(WordsContext);
+
   const { user, isAuthenticated } = useAuth0();
-  // maybe need a "showSetSeconds" state here to get rid of the seconds
   const [seconds, setSeconds] = useState(3);
-  // const [timer, setTimer] = useState(30);
+
   const [showPrompt, setShowPrompt] = useState({
     width: window.innerWidth * 0.75,
     height: window.innerHeight * 0.75,
@@ -26,13 +27,34 @@ export function Canvas() {
   const [showCanvas, setShowCanvas] = useState({
     display: "none",
   });
+  const [endMessage, setEndMessage] = useState({
+    display: "none",
+  });
 
   const { canvasRef, prepareCanvas, startDrawing, finishDrawing, draw } =
     useCanvas();
 
   useEffect(() => {
     prepareCanvas();
-    setTimeout(() => UploadCanvas(), 33000);
+    setTimeout(() => {
+      setShowCanvas({
+        display: "none",
+      });
+      UploadCanvas();
+      setEndMessage({
+        width: window.innerWidth * 0.75,
+        height: window.innerHeight * 0.75,
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        fontSize: "30pt",
+        backgroundColor: "rgb(255, 255, 255)",
+        borderColor: "black",
+        borderWidth: "1px",
+        borderRadius: "5px",
+        borderStyle: "solid",
+      });
+    }, 33000);
   }, []);
 
   useEffect(() => {
@@ -48,12 +70,12 @@ export function Canvas() {
     }
   }, [seconds]);
 
-  // export this function as it's own thing, and 
+  // export this function as it's own thing, and
   function UploadCanvas() {
     const canvas = canvasRef.current;
 
     let canvasContents = canvas.toDataURL(); // a data URL of the current canvas image
-    let data = { image: canvasContents, title: "hello", date: Date.now() };
+    let data = { image: canvasContents, adjective: adjective, noun: noun, date: Date.now() };
     let string = JSON.stringify(data);
 
     // create a blob object representing the data as a JSON string
@@ -75,8 +97,8 @@ export function Canvas() {
 
   return (
     <div className={classes.contain}>
-      <RandomWords />
       <div style={showPrompt}>{seconds}</div>
+      <div style={endMessage}>Time's up!</div>
       <canvas
         style={showCanvas}
         onMouseDown={startDrawing}
