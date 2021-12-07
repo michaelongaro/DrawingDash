@@ -1,20 +1,15 @@
-import { useAuth0 } from "@auth0/auth0-react";
+
+
+import Preferences from "../components/layout/Preferences";
 
 const Profile = () => {
-  const { user, isAuthenticated } = useAuth0();
+  // <img src={user.picture} alt={user.name} use this instead of "log out" in top right, include a dropdown
 
   return (
-    isAuthenticated && ( 
-     <div>
-        {/* <img src={user.picture} alt={user.name} />
-        <h2>{user.name}</h2>
-        <p>{user.email}</p>
-        <JSONPretty data={user} /> */}
-        {JSON.stringify(user, null, 2)}
-        {console.log(user.sub)}
-      </div>
-    )
-  )
-}
+    <>
+      <Preferences />
+    </>
+  );
+};
 
 export default Profile;

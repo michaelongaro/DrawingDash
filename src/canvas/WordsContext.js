@@ -1,20 +1,41 @@
 import { createContext, useState } from "react";
 
-export const WordsContext = createContext(null)
+const WordsContext = createContext(null);
 
-export function WordsProvider({ children }) {
+// look into difference between props and { children } here and below in return
+export function WordsProvider(props) {
+  const [adjective, setAdjective] = useState("default");
+  const [noun, setNoun] = useState("default");
 
-  const [adjective, setAdjective] = useState("");
-  const [noun, setNoun] = useState("");
-
-  const sharedWords = {
-    adjective: [adjective, setAdjective],
-    noun: [noun, setNoun],
+  function getAdjectiveHandler() {
+    fetch("https://random-word-form.herokuapp.com/random/adjective")
+      .then((response) => response.json())
+      .then((data) => {
+        setAdjective(data[0]);
+      });
   }
 
+  function getNounHandler() {
+    fetch("https://random-word-form.herokuapp.com/random/noun")
+      .then((response) => response.json())
+      .then((data) => {
+        setNoun(data[0]);
+      });
+  }
+
+
+  const context = {
+    adj: adjective,
+    n: noun,
+    getAdjective: getAdjectiveHandler,
+    getNoun: getNounHandler,
+  };
+
   return (
-    <WordsContext.Provider value={adjective}>
-      {children}
+    <WordsContext.Provider value={context}>
+      {props.children}
     </WordsContext.Provider>
   );
 }
+
+export default WordsContext;

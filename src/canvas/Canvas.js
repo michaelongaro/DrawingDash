@@ -1,12 +1,12 @@
 import React, { useContext, useState, useEffect } from "react";
 import { useCanvas } from "./CanvasContext";
 import { useAuth0 } from "@auth0/auth0-react";
-import { WordsContext } from "./WordsContext";
+import WordsContext from "./WordsContext";
 
 import classes from "./Canvas.module.css";
 
-export function Canvas(props) {
-  const { adjective, noun } = useContext(WordsContext);
+export function Canvas() {
+  const wordsCtx = useContext(WordsContext);
 
   const { user, isAuthenticated } = useAuth0();
   const [seconds, setSeconds] = useState(3);
@@ -35,12 +35,59 @@ export function Canvas(props) {
     useCanvas();
 
   useEffect(() => {
+    if (seconds > 0) {
+      setTimeout(() => setSeconds(seconds - 1), 1000);
+    } else {
+      setShowPrompt({
+        display: "none",
+      });
+      setShowCanvas({
+        display: "block",
+      });
+    }
+  }, [seconds]);
+
+  useEffect(() => {
     prepareCanvas();
+  }, []);
+
+  useEffect(() => {
     setTimeout(() => {
       setShowCanvas({
         display: "none",
       });
-      UploadCanvas();
+
+      const canvas = canvasRef.current;
+      const title = wordsCtx.adj + " " + wordsCtx.n;
+
+      let canvasContents = canvas.toDataURL(); // a data URL of the current canvas image
+      let data = {
+        image: canvasContents,
+        adjective: wordsCtx.adj, 
+        noun: wordsCtx.n,
+        title: title,
+        date: Date.now(),
+      };
+      let string = JSON.stringify(data);
+
+      // create a blob object representing the data as a JSON string
+      let file = new Blob([string], {
+        type: "application/json",
+      });
+
+      if (wordsCtx.adj !== "default" && wordsCtx.n !== "default") {
+        fetch(
+          `https://drawing-app-18de5-default-rtdb.firebaseio.com/${user.sub}.json`,
+          {
+            method: "POST",
+            body: file,
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }
+        );
+      }
+
       setEndMessage({
         width: window.innerWidth * 0.75,
         height: window.innerHeight * 0.75,
@@ -54,46 +101,9 @@ export function Canvas(props) {
         borderRadius: "5px",
         borderStyle: "solid",
       });
+
     }, 33000);
-  }, []);
-
-  useEffect(() => {
-    if (seconds > 0) {
-      setTimeout(() => setSeconds(seconds - 1), 1000);
-    } else {
-      setShowPrompt({
-        display: "none",
-      });
-      setShowCanvas({
-        display: "block",
-      });
-    }
-  }, [seconds]);
-
-  // export this function as it's own thing, and
-  function UploadCanvas() {
-    const canvas = canvasRef.current;
-
-    let canvasContents = canvas.toDataURL(); // a data URL of the current canvas image
-    let data = { image: canvasContents, adjective: adjective, noun: noun, date: Date.now() };
-    let string = JSON.stringify(data);
-
-    // create a blob object representing the data as a JSON string
-    let file = new Blob([string], {
-      type: "application/json",
-    });
-
-    fetch(
-      `https://drawing-app-18de5-default-rtdb.firebaseio.com/${user.sub}.json`,
-      {
-        method: "POST",
-        body: file,
-        headers: {
-          "Content-Type": "application/json",
-        },
-      }
-    );
-  }
+  }, [wordsCtx.adj, wordsCtx.n]);
 
   return (
     <div className={classes.contain}>

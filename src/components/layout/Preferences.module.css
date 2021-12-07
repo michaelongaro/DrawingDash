@@ -1,0 +1,71 @@
+.container {
+  display: grid;
+  grid-template-columns: 0.7fr 1fr 1.3fr;
+  grid-template-rows: 1fr 1fr 1fr 1fr;
+  gap: 0px 0px;
+  grid-auto-flow: row;
+  grid-template-areas:
+    "username setUsername rightSide"
+    "email setEmail rightSide"
+    "resetPassword resetPassword rightSide"
+    "status setStatus rightSide";
+  justify-content: space-evenly;
+  align-items: center;
+  justify-items: center;
+}
+
+.status {
+  grid-area: status;
+}
+
+.setStatus {
+  grid-area: setStatus;
+}
+
+.username {
+  grid-area: username;
+}
+
+.setUsername {
+  grid-area: setUsername;
+}
+
+.email {
+  grid-area: email;
+}
+
+.setEmail {
+  grid-area: setEmail;
+}
+
+.rightSide {
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-template-rows: 1.6fr 0.8fr 0.6fr;
+  gap: 0px 0px;
+  grid-auto-flow: row;
+  grid-template-areas:
+    "picture"
+    "showUsername"
+    "showStatus";
+  grid-area: rightSide;
+  justify-content: space-evenly;
+  align-items: center;
+  justify-items: center;
+}
+
+.picture {
+  grid-area: picture;
+}
+
+.showUsername {
+  grid-area: showUsername;
+}
+
+.showStatus {
+  grid-area: showStatus;
+}
+
+.resetPassword {
+  grid-area: resetPassword;
+}

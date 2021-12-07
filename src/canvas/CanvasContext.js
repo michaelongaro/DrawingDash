@@ -26,6 +26,13 @@ export const CanvasProvider = ({ children }) => {
     contextRef.current = context;
   };
 
+  const changeColor = (color) => {
+    const canvas = canvasRef.current;
+    const context = canvas.getContext("2d");
+    context.strokeStyle = color;
+    contextRef.current = context;
+  };
+
   const startDrawing = ({ nativeEvent }) => {
     const { offsetX, offsetY } = nativeEvent;
     contextRef.current.beginPath();
@@ -54,29 +61,13 @@ export const CanvasProvider = ({ children }) => {
     context.fillRect(0, 0, canvas.width, canvas.height);
   };
 
-  // const addTitle = (title) => {
-  //   const canvas = canvasRef.current;
-  //   const context = canvas.getContext("2d");
-  //   context.font = "30px Arial";
-  //   context.textAlign = "center";
-  //   context.fillText(title, 200, 50);
-  // }
-
-  // const addCountdown = (seconds) => {
-  //   const canvas = canvasRef.current;
-  //   const context = canvas.getContext("2d");
-  //   context.font = "30px Arial";
-  //   context.textAlign = "center";
-  //   context.fillText(seconds, 200, 90);
-  // }
-  
-
   return (
     <CanvasContext.Provider
       value={{
         canvasRef,
         contextRef,
         prepareCanvas,
+        changeColor,
         startDrawing,
         finishDrawing,
         clearCanvas,

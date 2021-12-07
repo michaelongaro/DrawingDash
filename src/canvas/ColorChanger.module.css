@@ -1,0 +1,11 @@
+.rounded {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  border-width: 1px;
+  border-style: none;
+}
+
+.rounded:hover {
+  opacity: 80%;
+}
