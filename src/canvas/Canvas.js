@@ -8,7 +8,8 @@ import classes from "./Canvas.module.css";
 export function Canvas() {
   const wordsCtx = useContext(WordsContext);
 
-  const { user, isAuthenticated } = useAuth0();
+  const { user } = useAuth0();
+  const [doodleIndex, setDoodleIndex] = useState(0);
   const [seconds, setSeconds] = useState(3);
 
   const [showPrompt, setShowPrompt] = useState({
@@ -34,6 +35,9 @@ export function Canvas() {
   const { canvasRef, prepareCanvas, startDrawing, finishDrawing, draw } =
     useCanvas();
 
+    
+  
+
   useEffect(() => {
     if (seconds > 0) {
       setTimeout(() => setSeconds(seconds - 1), 1000);
@@ -41,9 +45,12 @@ export function Canvas() {
       setShowPrompt({
         display: "none",
       });
+      
       setShowCanvas({
         display: "block",
       });
+
+      wordsCtx.makePostable();
     }
   }, [seconds]);
 
@@ -51,31 +58,46 @@ export function Canvas() {
     prepareCanvas();
   }, []);
 
+
   useEffect(() => {
-    setTimeout(() => {
-      setShowCanvas({
-        display: "none",
-      });
+    setDoodleIndex(JSON.parse(window.localStorage.getItem("doodleIndex")));
+  }, []);
 
-      const canvas = canvasRef.current;
-      const title = wordsCtx.adj + " " + wordsCtx.n;
+  useEffect(() => {
+    window.localStorage.setItem("doodleIndex", doodleIndex);
+  }, [doodleIndex]);
 
-      let canvasContents = canvas.toDataURL(); // a data URL of the current canvas image
-      let data = {
-        image: canvasContents,
-        adjective: wordsCtx.adj, 
-        noun: wordsCtx.n,
-        title: title,
-        date: Date.now(),
-      };
-      let string = JSON.stringify(data);
+  useEffect(() => {
+    console.log(wordsCtx.postable);
+    if (wordsCtx.postable) {
+      setTimeout(() => {
+        setShowCanvas({
+          display: "none",
+        });
 
-      // create a blob object representing the data as a JSON string
-      let file = new Blob([string], {
-        type: "application/json",
-      });
+        // console.log(
+        //   `we have pushed ${wordsCtx.prevAdj} and ${wordsCtx.adj} along with ${wordsCtx.prevN} and ${wordsCtx.n}, index is ${doodleIndex}`
+        // );
+        const canvas = canvasRef.current;
+        const title = wordsCtx.adj + " " + wordsCtx.n;
+        setDoodleIndex(doodleIndex + 1);
 
-      if (wordsCtx.adj !== "default" && wordsCtx.n !== "default") {
+        let canvasContents = canvas.toDataURL(); // a data URL of the current canvas image
+        let data = {
+          index: doodleIndex,
+          image: canvasContents,
+          adjective: wordsCtx.adj,
+          noun: wordsCtx.n,
+          title: title,
+          date: Date.now(),
+        };
+        let string = JSON.stringify(data);
+
+        // create a blob object representing the data as a JSON string
+        let file = new Blob([string], {
+          type: "application/json",
+        });
+
         fetch(
           `https://drawing-app-18de5-default-rtdb.firebaseio.com/${user.sub}.json`,
           {
@@ -86,24 +108,25 @@ export function Canvas() {
             },
           }
         );
-      }
 
-      setEndMessage({
-        width: window.innerWidth * 0.75,
-        height: window.innerHeight * 0.75,
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-        fontSize: "30pt",
-        backgroundColor: "rgb(255, 255, 255)",
-        borderColor: "black",
-        borderWidth: "1px",
-        borderRadius: "5px",
-        borderStyle: "solid",
-      });
+        wordsCtx.resetPostable();
 
-    }, 33000);
-  }, [wordsCtx.adj, wordsCtx.n]);
+        setEndMessage({
+          width: window.innerWidth * 0.75,
+          height: window.innerHeight * 0.75,
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          fontSize: "30pt",
+          backgroundColor: "rgb(255, 255, 255)",
+          borderColor: "black",
+          borderWidth: "1px",
+          borderRadius: "5px",
+          borderStyle: "solid",
+        });
+      }, 33000);
+    }
+  }, [wordsCtx.postable]);
 
   return (
     <div className={classes.contain}>

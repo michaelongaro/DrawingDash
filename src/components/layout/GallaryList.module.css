@@ -1,0 +1,5 @@
+.listContain {
+  display: flex;
+  justify-content: cneter;
+  gap: 1.25em;
+}

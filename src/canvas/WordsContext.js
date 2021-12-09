@@ -7,6 +7,8 @@ export function WordsProvider(props) {
   const [adjective, setAdjective] = useState("default");
   const [noun, setNoun] = useState("default");
 
+  const [canPost, setCanPost] = useState(false);
+ 
   function getAdjectiveHandler() {
     fetch("https://random-word-form.herokuapp.com/random/adjective")
       .then((response) => response.json())
@@ -19,16 +21,27 @@ export function WordsProvider(props) {
     fetch("https://random-word-form.herokuapp.com/random/noun")
       .then((response) => response.json())
       .then((data) => {
+        //setPrevNoun(noun);
         setNoun(data[0]);
       });
   }
 
+  function makePostable() {
+    setCanPost(true);
+  }
+
+  function resetPostable() {
+    setCanPost(false);
+  }
 
   const context = {
     adj: adjective,
     n: noun,
+    postable: canPost,
     getAdjective: getAdjectiveHandler,
     getNoun: getNounHandler,
+    makePostable: makePostable,
+    resetPostable: resetPostable,
   };
 
   return (

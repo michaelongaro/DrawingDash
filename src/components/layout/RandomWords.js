@@ -1,4 +1,4 @@
-import { useState, useContext } from "react";
+import { useState, useEffect, useContext } from "react";
 
 import WordsContext from "../../canvas/WordsContext";
 
@@ -12,10 +12,12 @@ const RandomWords = () => {
 
   const [canReRender, setCanReRender] = useState(true);
 
+  // useEffect(() => {
+  //   wordsCtx.getPrevWords();
+  // }, []);
+
   if (canReRender) {
     wordsCtx.getAdjective();
-    setCanReRender(false);
-
     wordsCtx.getNoun();
     setCanReRender(false);
   }
