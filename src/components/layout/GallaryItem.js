@@ -1,19 +1,23 @@
-import React from 'react'
+import React from "react";
 
-import Card from './Card'
+import Card from "./Card";
 
 import classes from "./GallaryItem.module.css";
 
 const GallaryItem = (props) => {
+  //console.log(props.key);
   return (
-    <div className={classes.contain}>
-      <Card>
-        <img src={props.image} alt={props.title}/>
-        <span>{props.title}</span>
+    // <div className={classes.contain}>
+    <Card>
+      <img src={props.image} alt={props.title} />
+      <div className={classes.bottomContain}>
+        <div>{props.title}</div>
+        <div>{props.date}</div>
         <button>💖</button>
-      </Card>
-    </div>
-  )
-}
+      </div>
+    </Card>
+    // </div>
+  );
+};
 
-export default GallaryItem
+export default GallaryItem;

@@ -3,7 +3,6 @@ import { useState } from "react";
 import { useAuth0 } from "@auth0/auth0-react";
 import GallaryList from "./GallaryList";
 
-
 const Gallary = () => {
   const [loadedDrawings, setLoadedDrawings] = useState([]);
 
@@ -17,16 +16,20 @@ const Gallary = () => {
     })
     .then((data) => {
       const drawings = [];
-
-      for (const drawing in data) {
+      
+      for (const key in data) {
+        const drawing = {
+          id: key,
+          ...data[key],
+        };
         drawings.push(drawing);
       }
 
       setLoadedDrawings(drawings);
-      // console.log(loadedDrawings);
+
       // why is this perma rerendering
     });
- 
+
   return (
     <div>
       <h1>My Gallary </h1>

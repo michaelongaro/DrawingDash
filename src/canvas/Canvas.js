@@ -35,9 +35,6 @@ export function Canvas() {
   const { canvasRef, prepareCanvas, startDrawing, finishDrawing, draw } =
     useCanvas();
 
-    
-  
-
   useEffect(() => {
     if (seconds > 0) {
       setTimeout(() => setSeconds(seconds - 1), 1000);
@@ -45,7 +42,7 @@ export function Canvas() {
       setShowPrompt({
         display: "none",
       });
-      
+
       setShowCanvas({
         display: "block",
       });
@@ -57,7 +54,6 @@ export function Canvas() {
   useEffect(() => {
     prepareCanvas();
   }, []);
-
 
   useEffect(() => {
     setDoodleIndex(JSON.parse(window.localStorage.getItem("doodleIndex")));
@@ -82,6 +78,11 @@ export function Canvas() {
         const title = wordsCtx.adj + " " + wordsCtx.n;
         setDoodleIndex(doodleIndex + 1);
 
+        const today = new Date();
+        const day = today.getDate();
+        const month = today.getMonth() + 1;
+        const year = today.getFullYear();
+
         let canvasContents = canvas.toDataURL(); // a data URL of the current canvas image
         let data = {
           index: doodleIndex,
@@ -89,7 +90,7 @@ export function Canvas() {
           adjective: wordsCtx.adj,
           noun: wordsCtx.n,
           title: title,
-          date: Date.now(),
+          date: `${month}-${day}-${year}`,
         };
         let string = JSON.stringify(data);
 

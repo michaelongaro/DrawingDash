@@ -21,7 +21,6 @@ export function WordsProvider(props) {
     fetch("https://random-word-form.herokuapp.com/random/noun")
       .then((response) => response.json())
       .then((data) => {
-        //setPrevNoun(noun);
         setNoun(data[0]);
       });
   }
