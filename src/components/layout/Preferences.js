@@ -2,11 +2,12 @@ import React from "react";
 import { useAuth0 } from "@auth0/auth0-react";
 
 import classes from "./Preferences.module.css";
-
+import ProfileLayout from "./ProfileLayout";
+import { Outlet } from "react-router";
 const Preferences = () => {
   const { user } = useAuth0();
   return (
-
+    <ProfileLayout>
     <div className={classes.container}>
       <div className={classes.username}>username</div>
       <input className={classes.setUsername} placeholder="Charles"></input>
@@ -25,6 +26,8 @@ const Preferences = () => {
     </div>
 
     </div>
+    <Outlet />
+    </ProfileLayout>
   );
 };
 

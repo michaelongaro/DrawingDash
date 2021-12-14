@@ -1,6 +1,20 @@
+import SearchContext, { SearchProvider } from "../components/layout/SearchContext";
+import Search from "../components/layout/Search";
+import GallaryList from "../components/layout/GallaryList";
+import { useContext } from "react";
+
 
 function Explore() {
-  return <h1>Exploring</h1>
+  const searchCtx = useContext(SearchContext)
+
+  return (
+    <div className={classes.exploreContain}>
+      <SearchProvider>
+        <Search />
+        <GallaryList drawings={searchCtx.gallary} />
+      </SearchProvider>
+    </div>
+  );
 }
 
 export default Explore;
