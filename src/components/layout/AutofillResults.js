@@ -10,7 +10,7 @@ const AutofillResults = (props) => {
   if (props.query === "") {
     return;
   } else {
-    fetch(`https://drawing-app-18de5-default-rtdb.firebaseio.com/.json`)
+    fetch(`https://drawing-dash-default-rtdb.firebaseio.com/.json`)
       .then((response) => {
         return response.json();
       })
@@ -44,7 +44,7 @@ const AutofillResults = (props) => {
   }
   
   function renderResults() {
-    if (props.type="a") {
+    if (props.type ==="a") {
         searchCtx.requestedDrawings.map((drawing) => (
         <AutofillResult
           key={drawing.id}

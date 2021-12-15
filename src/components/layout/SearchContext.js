@@ -9,11 +9,11 @@ export function SearchProvider(props) {
   const [requestedAdjectives, setRequestedAdjectives] = useState([]);
   const [requestedNouns, setRequestedNouns] = useState([]);
 
-  const [gallary, setGallary] = useState();
+  const [gallary, setGallary] = useState("test");
 
   function getGallary() {
       let fullQuery = `${requestedAdjectives} ${requestedNouns}`
-       fetch(`https://drawing-app-18de5-default-rtdb.firebaseio.com/.json`)
+       fetch(`https://drawing-dash-default-rtdb.firebaseio.com/.json`)
       .then((response) => {
         return response.json();
       })

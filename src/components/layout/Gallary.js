@@ -9,7 +9,7 @@ const Gallary = () => {
   const { user } = useAuth0();
 
   fetch(
-    `https://drawing-app-18de5-default-rtdb.firebaseio.com/${user.sub}.json`
+    `https://drawing-dash-default-rtdb.firebaseio.com/${user.sub}.json`
   )
     .then((response) => {
       return response.json();

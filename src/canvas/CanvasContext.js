@@ -33,6 +33,14 @@ export const CanvasProvider = ({ children }) => {
     contextRef.current = context;
   };
 
+  const changeBrushSize = (brushSize) => {
+    const canvas = canvasRef.current;
+    const context = canvas.getContext("2d");
+    context.lineWidth = brushSize;
+    contextRef.current = context;
+  };
+
+
   const startDrawing = ({ nativeEvent }) => {
     const { offsetX, offsetY } = nativeEvent;
     contextRef.current.beginPath();
@@ -68,6 +76,7 @@ export const CanvasProvider = ({ children }) => {
         contextRef,
         prepareCanvas,
         changeColor,
+        changeBrushSize,
         startDrawing,
         finishDrawing,
         clearCanvas,

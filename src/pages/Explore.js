@@ -3,9 +3,10 @@ import Search from "../components/layout/Search";
 import GallaryList from "../components/layout/GallaryList";
 import { useContext } from "react";
 
+import classes from "./Explore.module.css";
 
 function Explore() {
-  const searchCtx = useContext(SearchContext)
+  const searchCtx = useContext(SearchContext);
 
   return (
     <div className={classes.exploreContain}>
