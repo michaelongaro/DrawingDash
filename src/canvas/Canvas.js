@@ -100,7 +100,7 @@ export function Canvas() {
         });
 
         fetch(
-          `https://drawing-dash-default-rtdb.firebaseio.com/${user.sub}.json`,
+          `https://drawing-dash-41f14-default-rtdb.firebaseio.com//${user.sub}.json`,
           {
             method: "POST",
             body: file,

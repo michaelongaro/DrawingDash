@@ -10,7 +10,7 @@ import { Outlet } from "react-router";
 
 const Profile = () => {
   // <img src={user.picture} alt={user.name} use this instead of "log out" in top right, include a dropdown
-
+  
   return (
     // <div className={classes.horizontalContain}>
     <ProfileLayout>

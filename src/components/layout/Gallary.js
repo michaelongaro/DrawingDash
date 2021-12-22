@@ -1,34 +1,38 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useState } from "react";
 import { useAuth0 } from "@auth0/auth0-react";
 import GallaryList from "./GallaryList";
 
 const Gallary = () => {
   const [loadedDrawings, setLoadedDrawings] = useState([]);
+  //const memoDrawings = React.useMemo(() => [loadedDrawings, setLoadedDrawings], [loadedDrawings])
 
   const { user } = useAuth0();
 
-  fetch(
-    `https://drawing-dash-default-rtdb.firebaseio.com/${user.sub}.json`
-  )
-    .then((response) => {
-      return response.json();
-    })
-    .then((data) => {
-      const drawings = [];
-      
-      for (const key in data) {
-        const drawing = {
-          id: key,
-          ...data[key],
-        };
-        drawings.push(drawing);
-      }
+  //console.log("we fetched something");
+  useEffect(() => {
+    fetch(
+      `https://drawing-dash-41f14-default-rtdb.firebaseio.com/${user.sub}.json`
+    )
+      .then((response) => {
+        return response.json();
+      })
+      .then((data) => {
+        const drawings = [];
 
-      setLoadedDrawings(drawings);
+        for (const key in data) {
+          const drawing = {
+            id: key,
+            ...data[key],
+          };
+          drawings.push(drawing);
+        }
 
-      // why is this perma rerendering
-    });
+        setLoadedDrawings(drawings);
+
+        // why is this perma rerendering
+      });
+  }, []);
 
   return (
     <div>

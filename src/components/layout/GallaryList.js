@@ -5,9 +5,13 @@ import GallaryItem from "./GallaryItem";
 import classes from "./GallaryList.module.css";
 
 const GallaryList = (props) => {
-  return (
-    <div className={classes.listContain}>
-      {/* <ul> */}
+
+  if (props.drawings.length === 0) {
+    return <div>No Results</div>;
+  } else {
+    return (
+      <div className={classes.listContain}>
+      {console.log("gallary refreshed")}
         {props.drawings.map((drawing) => (
           <GallaryItem
             key={drawing.id}
@@ -16,9 +20,10 @@ const GallaryList = (props) => {
             title={drawing.title}
           />
         ))}
-      {/* </ul> */}
-    </div>
-  );
+      </div>
+    );
+  }
+
 };
 
-export default GallaryList;
+export default React.memo(GallaryList);

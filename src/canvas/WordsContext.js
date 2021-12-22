@@ -4,8 +4,8 @@ const WordsContext = createContext(null);
 
 // look into difference between props and { children } here and below in return
 export function WordsProvider(props) {
-  const [adjective, setAdjective] = useState("default");
-  const [noun, setNoun] = useState("default");
+  const [adjective, setAdjective] = useState("");
+  const [noun, setNoun] = useState("");
 
   const [canPost, setCanPost] = useState(false);
  

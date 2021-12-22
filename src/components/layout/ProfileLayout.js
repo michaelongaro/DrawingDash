@@ -2,6 +2,7 @@ import ProfileNavigation from "./ProfileNavigation";
 import classes from "./ProfileLayout.module.css";
 
 function ProfileLayout(props) {
+  console.log("profile reloaded");
   return (
     <div>
       <ProfileNavigation />

@@ -7,61 +7,57 @@ import AutofillResults from "./AutofillResults";
 
 import classes from "./Search.module.css";
 
-
 const Search = () => {
+  const searchCtx = useContext(SearchContext);
+  useEffect(() => {
+    searchCtx.setAdjSearch("");
+    searchCtx.setNounSearch("");
+  }, [])
+
+  console.log("search refreshed");
   const adjectiveInputRef = useRef();
   const nounInputRef = useRef();
 
-  const searchCtx = useContext(SearchContext);
   
-  // maybe use context here to share state of when the input changes (between this component and 
-  // the AutofillResult.js component) give that a useEffect and update 
 
   // WAYYY future here but how to reduce overall calls to server, maybe split into separate dbs
   // that are indexed(?)
 
   const refreshAdjSearch = (event) => {
-    if (
-      (event.which >= 65 && event.which <= 90) ||
-      event.code === "Backspace"
-    ) {
-      // clearAutofillResults();
-      searchCtx.setAdjSearch(event.target.value);
-    }
+
+    searchCtx.setAdjSearch(event.target.value);
+    //console.log(searchCtx.adjSearch);
   };
 
   const refreshNounSearch = (event) => {
-     if (
-      (event.which >= 65 && event.which <= 90) ||
-      event.code === "Backspace"
-    ) {
-      // update state -> automatically updates autofill
-      searchCtx.setNounSearch(event.target.value);
-    }
-  }
+    searchCtx.setNounSearch(event.target.value);
+    //console.log(searchCtx.nounSearch);
+  };
 
   useEffect(() => {
     adjectiveInputRef.current.addEventListener("input", refreshAdjSearch);
-    nounInputRef.current.addEventListener("input", refreshNounSearch)
+    nounInputRef.current.addEventListener("input", refreshNounSearch);
 
+    let cleanupAdjInpRef = adjectiveInputRef.current;
+    let cleanupNInpRef = nounInputRef.current;
     return () => {
-      adjectiveInputRef.current.removeEventListener("input", refreshAdjSearch);
-      nounInputRef.current.removeEventListener("input", refreshNounSearch);
+      cleanupAdjInpRef.removeEventListener("input", refreshAdjSearch);
+      cleanupNInpRef.removeEventListener("input", refreshNounSearch);
     };
   }, []);
 
-  function prepGallarySearch() {
-    searchCtx.setRequestedAdjectives(adjectiveInputRef.current.value);
-    searchCtx.setRequestedNouns(nounInputRef.current.value);
+  function prepGallarySearch(event) {
+    event.preventDefault();
+
+    console.log(`${searchCtx.adjSearch} ${searchCtx.nounSearch}`);
+    searchCtx.setRequestedAdjectives([adjectiveInputRef.current.value]);
+    searchCtx.setRequestedNouns([nounInputRef.current.value]);
 
     searchCtx.getGallary();
   }
 
   return (
-    // for onSubmit here, use context and throw the gallarylist in another file
     <form className={classes.formContainer} onSubmit={prepGallarySearch}>
-      {/* here is where we would add the rotating (vertically) examples + update results */}
-      {/* look at weather app for how to make responsive */}
       <div className={classes.searchContainer}>
         <input id="adj" placeholder="Adjective" ref={adjectiveInputRef}></input>
         <AutofillResults query={searchCtx.adjSearch} type="a" />
