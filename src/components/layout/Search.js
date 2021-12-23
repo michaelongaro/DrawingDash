@@ -3,28 +3,31 @@ import React from "react";
 import { useRef, useEffect, useContext } from "react";
 
 import SearchContext from "./SearchContext";
-import AutofillResults from "./AutofillResults";
+import AdjAutofillResults from "./AdjAutofillResults";
+import NounAutofillResults from "./NounAutofillResults";
 
 import classes from "./Search.module.css";
 
 const Search = () => {
   const searchCtx = useContext(SearchContext);
   useEffect(() => {
-    searchCtx.setAdjSearch("");
-    searchCtx.setNounSearch("");
-  }, [])
+    return () => {
+      searchCtx.setAdjSearch("");
+      searchCtx.setNounSearch("");
+      searchCtx.setRequestedAdjectives([]);
+      searchCtx.setRequestedNouns([]);
+      searchCtx.setGallary([]);
+    };
+  }, []);
 
   console.log("search refreshed");
   const adjectiveInputRef = useRef();
   const nounInputRef = useRef();
 
-  
-
   // WAYYY future here but how to reduce overall calls to server, maybe split into separate dbs
   // that are indexed(?)
 
   const refreshAdjSearch = (event) => {
-
     searchCtx.setAdjSearch(event.target.value);
     //console.log(searchCtx.adjSearch);
   };
@@ -50,21 +53,39 @@ const Search = () => {
     event.preventDefault();
 
     console.log(`${searchCtx.adjSearch} ${searchCtx.nounSearch}`);
-    searchCtx.setRequestedAdjectives([adjectiveInputRef.current.value]);
-    searchCtx.setRequestedNouns([nounInputRef.current.value]);
+    // searchCtx.setRequestedAdjectives([adjectiveInputRef.current.value]);
+    // searchCtx.setRequestedNouns([nounInputRef.current.value]);
 
     searchCtx.getGallary();
   }
 
+  // function onFocus(event) {
+  //   if(event.target.autocomplete)
+  //  {
+  //    event.target.autocomplete = "whatever";
+  //  }
+
+  // }
+
   return (
     <form className={classes.formContainer} onSubmit={prepGallarySearch}>
       <div className={classes.searchContainer}>
-        <input id="adj" placeholder="Adjective" ref={adjectiveInputRef}></input>
-        <AutofillResults query={searchCtx.adjSearch} type="a" />
+        <input
+          id="adj"
+          placeholder="Adjective"
+          ref={adjectiveInputRef}
+          autoComplete="off"
+        ></input>
+        <AdjAutofillResults />
       </div>
       <div className={classes.searchContainer}>
-        <input id="noun" placeholder="Noun" ref={nounInputRef}></input>
-        <AutofillResults query={searchCtx.nounSearch} type="n" />
+        <input
+          id="noun"
+          placeholder="Noun"
+          ref={nounInputRef}
+          autoComplete="off"
+        ></input>
+        <NounAutofillResults />
       </div>
       <button>Search</button>
     </form>

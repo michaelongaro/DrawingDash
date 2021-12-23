@@ -12,8 +12,11 @@ export function SearchProvider(props) {
   const [gallary, setGallary] = useState([]);
 
   function getGallary() {
-    let fullQuery = `${requestedAdjectives} ${requestedNouns}`;
-
+    // let strippedAdj = requestedAdjectives[0].adjective;
+    // let strippedNoun = requestedNouns[0].noun;
+    // let fullQuery = `${strippedAdj} ${strippedNoun}`;
+    let fullQuery = `${adjSearch} ${nounSearch}`
+    // console.log(fullQuery);
     fetch(`https://drawing-dash-41f14-default-rtdb.firebaseio.com/.json`)
       .then((response) => {
         return response.json();
@@ -44,7 +47,8 @@ export function SearchProvider(props) {
     setNounSearch: setNounSearch,
     setRequestedAdjectives: setRequestedAdjectives,
     setRequestedNouns: setRequestedNouns,
-    getGallary,
+    setGallary: setGallary,
+    getGallary: getGallary,
   };
 
   return (
