@@ -10,6 +10,7 @@ import classes from "./Search.module.css";
 
 const Search = () => {
   const searchCtx = useContext(SearchContext);
+
   useEffect(() => {
     return () => {
       searchCtx.setAdjSearch("");
@@ -20,21 +21,15 @@ const Search = () => {
     };
   }, []);
 
-  console.log("search refreshed");
   const adjectiveInputRef = useRef();
   const nounInputRef = useRef();
 
-  // WAYYY future here but how to reduce overall calls to server, maybe split into separate dbs
-  // that are indexed(?)
-
   const refreshAdjSearch = (event) => {
     searchCtx.setAdjSearch(event.target.value);
-    //console.log(searchCtx.adjSearch);
   };
 
   const refreshNounSearch = (event) => {
     searchCtx.setNounSearch(event.target.value);
-    //console.log(searchCtx.nounSearch);
   };
 
   useEffect(() => {
@@ -49,23 +44,14 @@ const Search = () => {
     };
   }, []);
 
+  useEffect(() => {
+    console.log("reacted to ref change");
+  }, [adjectiveInputRef.current, nounInputRef.current])
+
   function prepGallarySearch(event) {
     event.preventDefault();
-
-    console.log(`${searchCtx.adjSearch} ${searchCtx.nounSearch}`);
-    // searchCtx.setRequestedAdjectives([adjectiveInputRef.current.value]);
-    // searchCtx.setRequestedNouns([nounInputRef.current.value]);
-
     searchCtx.getGallary();
   }
-
-  // function onFocus(event) {
-  //   if(event.target.autocomplete)
-  //  {
-  //    event.target.autocomplete = "whatever";
-  //  }
-
-  // }
 
   return (
     <form className={classes.formContainer} onSubmit={prepGallarySearch}>
@@ -76,7 +62,7 @@ const Search = () => {
           ref={adjectiveInputRef}
           autoComplete="off"
         ></input>
-        <AdjAutofillResults />
+        <AdjAutofillResults adjRef={adjectiveInputRef} />
       </div>
       <div className={classes.searchContainer}>
         <input
@@ -85,7 +71,7 @@ const Search = () => {
           ref={nounInputRef}
           autoComplete="off"
         ></input>
-        <NounAutofillResults />
+        <NounAutofillResults nounRef={nounInputRef} />
       </div>
       <button>Search</button>
     </form>

@@ -7,20 +7,23 @@ import "./index.css";
 import App from "./App";
 import { WordsProvider } from "./canvas/WordsContext";
 import { SearchProvider } from "./components/layout/SearchContext";
+import { FavoritesProvider } from "./components/layout/FavoritesContext";
 
 ReactDOM.render(
-  <SearchProvider>
-    <WordsProvider>
-      <BrowserRouter>
-        <Auth0Provider
-          domain="dev-lshqttx0.us.auth0.com"
-          clientId="HiuFz0Yo30naHcGzk8PbPOYr0qIK6dae"
-          redirectUri={window.location.origin}
-        >
-          <App />
-        </Auth0Provider>
-      </BrowserRouter>
-    </WordsProvider>
-  </SearchProvider>,
+  <FavoritesProvider>
+    <SearchProvider>
+      <WordsProvider>
+        <BrowserRouter>
+          <Auth0Provider
+            domain="dev-lshqttx0.us.auth0.com"
+            clientId="HiuFz0Yo30naHcGzk8PbPOYr0qIK6dae"
+            redirectUri={window.location.origin}
+          >
+            <App />
+          </Auth0Provider>
+        </BrowserRouter>
+      </WordsProvider>
+    </SearchProvider>
+  </FavoritesProvider>,
   document.getElementById("root")
 );

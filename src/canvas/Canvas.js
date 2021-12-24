@@ -3,13 +3,14 @@ import { useCanvas } from "./CanvasContext";
 import { useAuth0 } from "@auth0/auth0-react";
 import WordsContext from "./WordsContext";
 
+import { v4 as uuidv4 } from 'uuid';
+
 import classes from "./Canvas.module.css";
 
 export function Canvas() {
   const wordsCtx = useContext(WordsContext);
 
   const { user } = useAuth0();
-  const [doodleIndex, setDoodleIndex] = useState(0);
   const [seconds, setSeconds] = useState(3);
 
   const [showPrompt, setShowPrompt] = useState({
@@ -56,14 +57,6 @@ export function Canvas() {
   }, []);
 
   useEffect(() => {
-    setDoodleIndex(JSON.parse(window.localStorage.getItem("doodleIndex")));
-  }, []);
-
-  useEffect(() => {
-    window.localStorage.setItem("doodleIndex", doodleIndex);
-  }, [doodleIndex]);
-
-  useEffect(() => {
     console.log(wordsCtx.postable);
     if (wordsCtx.postable) {
       setTimeout(() => {
@@ -71,31 +64,29 @@ export function Canvas() {
           display: "none",
         });
 
-        // console.log(
-        //   `we have pushed ${wordsCtx.prevAdj} and ${wordsCtx.adj} along with ${wordsCtx.prevN} and ${wordsCtx.n}, index is ${doodleIndex}`
-        // );
         const canvas = canvasRef.current;
-        const title = wordsCtx.adj + " " + wordsCtx.n;
-        setDoodleIndex(doodleIndex + 1);
+        const title = `${wordsCtx.adj} ${wordsCtx.n}`;
 
         const today = new Date();
         const day = today.getDate();
         const month = today.getMonth() + 1;
         const year = today.getFullYear();
 
-        let canvasContents = canvas.toDataURL(); // a data URL of the current canvas image
+        const uniqueID = uuidv4();
+        console.log(uniqueID);
+
+        let canvasContents = canvas.toDataURL();
         let data = {
-          index: doodleIndex,
+          index: uniqueID,
           image: canvasContents,
           adjective: wordsCtx.adj,
           noun: wordsCtx.n,
           title: title,
           date: `${month}-${day}-${year}`,
         };
-        let string = JSON.stringify(data);
+        let urlString = JSON.stringify(data);
 
-        // create a blob object representing the data as a JSON string
-        let file = new Blob([string], {
+        let file = new Blob([urlString], {
           type: "application/json",
         });
 

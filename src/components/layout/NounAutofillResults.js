@@ -3,7 +3,7 @@ import SearchContext from "./SearchContext";
 
 import AutofillResult from "./AutofillResult";
 
-const AutofillResults = () => {
+const AutofillResults = (props) => {
   const searchCtx = useContext(SearchContext);
 
   const [rerender, setRerender] = useState(false);
@@ -31,9 +31,8 @@ const AutofillResults = () => {
                 drawing.noun.substring(0, searchCtx.nounSearch.length)
               ) {
                 results.push(drawing);
-              } else {
-                // display "no matching terms" or something like that
               }
+
             }
           }
 
@@ -44,19 +43,9 @@ const AutofillResults = () => {
     }
   }, [searchCtx.nounSearch]);
 
-  // if (searchCtx.requestedNouns.length !== 0) {
-  //   // console.log(`calling result comp. of ${searchCtx.requestedNouns}`);
-  //   return (
-  //     { searchCtx.requestedNouns.map((drawing) => (
-  //       <AutofillResult key={drawing.id} word={drawing.noun} />
-  //     ))}
-  //   );
-  // } else {
-  //   return <div>"no results found"</div>;
-  // }
   return (
     searchCtx.requestedNouns.length !== 0 ? (searchCtx.requestedNouns.map((drawing) => (
-        <AutofillResult key={drawing.id} word={drawing.noun} />
+        <AutofillResult key={drawing.id} word={drawing.noun} parentRef={props.nounRef}/>
       ))) : <div>{"no results found"}</div>
   )
 };

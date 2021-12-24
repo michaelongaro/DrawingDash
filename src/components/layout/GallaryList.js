@@ -11,10 +11,11 @@ const GallaryList = (props) => {
   } else {
     return (
       <div className={classes.listContain}>
-      {console.log("gallary refreshed")}
+      {/* {console.log("gallary refreshed")} */}
         {props.drawings.map((drawing) => (
           <GallaryItem
-            key={drawing.id}
+            key={drawing.index}
+            index={drawing.index}
             image={drawing.image}
             date={drawing.date}
             title={drawing.title}
