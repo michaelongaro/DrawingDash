@@ -9,6 +9,8 @@ import GallaryList from './GallaryList';
 const Likes = () => {
   const favoritesCtx = useContext(FavoritesContext);
     // need to store this locally/on server if you want to keep vals after refresh
+    // : i'm thinking just push up/learn how to update the favorites from favoritesCtx
+    // : up to firebase for each profile
     let content;
 
     if (favoritesCtx.totalFavorites === 0) {
