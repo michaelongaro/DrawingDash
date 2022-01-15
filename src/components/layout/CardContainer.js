@@ -7,9 +7,9 @@ import Description from "./Description";
 function CardContainer() {
   return (
       <div className={classes.container}>
-        <Description title="First" description="stuff"/>
-        <Description title="Second" description="stuff"/>
-        <Description title="Third" description="stuff"/>
+        <Description title="First" description="Choose between three different drawing timers"/>
+        <Description title="Second" description="New titles every day"/>
+        <Description title="Third" description="Share your doodles with your friends"/>
       </div>
   );
 }

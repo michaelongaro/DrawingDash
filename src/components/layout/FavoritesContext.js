@@ -1,7 +1,5 @@
 import { createContext, useEffect, useState } from "react";
 
-// import { useAuth0 } from "@auth0/auth0-react";
-
 // createContext returns react component -> capital var name
 const FavoritesContext = createContext({
   favorites: [],
@@ -14,15 +12,37 @@ const FavoritesContext = createContext({
 });
 
 export function FavoritesProvider(props) {
-  // const { user } = useAuth0();
-
   const [userFavorites, setUserFavorites] = useState([]);
   const [initalizedFavorites, setInitializedFavorites] = useState(false);
   const [favoritesID, setFavoritesID] = useState("");
+  const [clientID, setClientID] = useState("");
 
   useEffect(() => {
-    // go through likes, and add child of likes to userFavorites
-  }, []);
+    console.log(clientID);
+    fetch(
+      `https://drawing-dash-41f14-default-rtdb.firebaseio.com/${clientID}/.json`
+    )
+      .then((response) => {
+        return response.json();
+      })
+      .then((data) => {
+        for (const entry of Object.keys(data)) {
+          console.log(entry);
+          if (entry === "likes") {
+            fetch(
+              `https://drawing-dash-41f14-default-rtdb.firebaseio.com/${clientID}/likes.json`
+            )
+              .then((response) => {
+                return response.json();
+              })
+              .then((data) => {
+                setFavoritesID(Object.keys(data)[0]);
+                setUserFavorites(Object.values(data)[0]);
+              });
+          }
+        }
+      });
+  }, [clientID]);
 
   function addFavoriteHandler(favoriteMeetup, userID) {
     setUserFavorites((prevUserFavorites) => {
@@ -73,9 +93,6 @@ export function FavoritesProvider(props) {
   }
 
   function removeFavoriteHandler(meetupIndex, userID) {
-    // actually going to be a PUT here
-    // should delete favorite from db here
-
     const drawingsToKeep = userFavorites.filter(
       (meetup) => meetup.index !== meetupIndex
     );
@@ -106,6 +123,7 @@ export function FavoritesProvider(props) {
     addFavorite: addFavoriteHandler,
     removeFavorite: removeFavoriteHandler,
     itemIsFavorite: itemIsFavoriteHandler,
+    setClientID: setClientID,
   };
 
   return (

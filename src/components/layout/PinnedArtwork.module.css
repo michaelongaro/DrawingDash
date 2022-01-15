@@ -1,0 +1,41 @@
+.parentContain {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 3em;
+}
+
+.pinnedContain {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 2em;
+
+  width: 80%;
+  z-index: 9000;
+}
+
+.innerModal {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 1em;
+}
+
+div.innerModal > * {
+  margin: 1em;
+}
+
+.modal {
+  position: absolute;
+  left: 0;
+  right: 0;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  margin: 3em;
+}

@@ -19,13 +19,14 @@ const Gallary = () => {
       })
       .then((data) => {
         const drawings = [];
-
         for (const key in data) {
-          const drawing = {
-            id: key,
-            ...data[key],
-          };
-          drawings.push(drawing);
+          if (Object.keys(data[key]).length > 1) {
+            const drawing = {
+              id: key,
+              ...data[key],
+            };
+            drawings.push(drawing);
+          }
         }
 
         setLoadedDrawings(drawings);

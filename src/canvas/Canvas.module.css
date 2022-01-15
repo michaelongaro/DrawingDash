@@ -5,13 +5,39 @@
   align-items: center;
 }
 
-.contain > canvas {
+.horizContain {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.horizContain > div {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.contain > div > div > canvas {
   border-color: black;
   border-width: 1px;
   border-radius: 5px;
   border-style: solid;
 }
 
-.title {
-  text-align: center;
+.timer {
+  position: absolute;
+  right: 1em;
+  top: 1em;
+
+  pointer-events: none;
+}
+
+.sidePadding {
+  margin-left: 15px;
+  margin-right: 15px;
+}
+
+.hide {
+  display: none;
 }

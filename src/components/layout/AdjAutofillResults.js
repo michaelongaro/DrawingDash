@@ -22,7 +22,9 @@ const AutofillResults = (props) => {
 
           for (const user of Object.values(data)) {
             for (const drawing of Object.values(user)) {
-              console.log(
+              // console.log(drawing);
+              if (Object.keys(drawing).includes("adjective")) {
+                console.log(
                 drawing.adjective.substring(0, searchCtx.adjSearch.length)
               );
 
@@ -32,6 +34,8 @@ const AutofillResults = (props) => {
               ) {
                 results.push(drawing);
               } 
+              }
+              
 
             }
           }

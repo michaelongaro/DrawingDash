@@ -1,20 +1,22 @@
-import React from "react";
+import React from 'react'
 
-import GallaryItem from "./GallaryItem";
+import PinnedArt from './PinnedArt';
 
 import classes from "./GallaryList.module.css";
 
-const GallaryList = (props) => {
+const PinnedArtList = (props) => {
 
   if (props.drawings.length === 0) {
     return <div>No Results</div>;
   } else {
     return (
       <div className={classes.listContain}>
-        {props.drawings.map((drawing) => (
-          <GallaryItem
+        {props.drawings.map((drawing, i) => (
+          <PinnedArt
             key={drawing.index}
             index={drawing.index}
+            counter={i}
+            seconds={drawing.seconds}
             image={drawing.image}
             date={drawing.date}
             title={drawing.title}
@@ -23,7 +25,6 @@ const GallaryList = (props) => {
       </div>
     );
   }
+}
 
-};
-
-export default React.memo(GallaryList);
+export default React.memo(PinnedArtList);
