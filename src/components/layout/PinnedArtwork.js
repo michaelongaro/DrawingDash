@@ -53,7 +53,7 @@ const PinnedArtwork = () => {
       <div className={classes.pinnedContain}>
         <div onClick={() => setShow60(showModal)}>
           <div style={show60} ref={ref60}>
-            <PinnedModal seconds={60000} />
+            <PinnedModal seconds={60} />
           </div>
           <PinnedShowcaseItem
             drawing={pinnedCtx.drawings60[pinnedCtx.index60]}
@@ -63,7 +63,7 @@ const PinnedArtwork = () => {
 
         <div onClick={() => setShow180(showModal)}>
           <div style={show180} ref={ref180}>
-            <PinnedModal seconds={180000} />
+            <PinnedModal seconds={180} />
           </div>
           <PinnedShowcaseItem
             drawing={pinnedCtx.drawings180[pinnedCtx.index180]}
@@ -73,7 +73,7 @@ const PinnedArtwork = () => {
 
         <div onClick={() => setShow300(showModal)}>
           <div style={show300} ref={ref300}>
-            <PinnedModal seconds={300000} />
+            <PinnedModal seconds={300} />
           </div>
           <PinnedShowcaseItem
             drawing={pinnedCtx.drawings300[pinnedCtx.index300]}

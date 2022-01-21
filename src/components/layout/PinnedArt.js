@@ -17,11 +17,11 @@ const PinnedArt = (props) => {
   }, []);
   
   function updateContextIndex() {
-    if (props.seconds === 60000) {
+    if (props.seconds === 60) {
       pinnedCtx.setIndex60(props.counter);
-    } else if (props.seconds === 180000) {
+    } else if (props.seconds === 180) {
       pinnedCtx.setIndex180(props.counter);
-    } else if (props.seconds === 300000) {
+    } else if (props.seconds === 300) {
       pinnedCtx.setIndex300(props.counter);
     }
   }

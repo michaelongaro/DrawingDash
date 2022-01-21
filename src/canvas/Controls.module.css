@@ -1,7 +1,118 @@
 .contain {
   display: flex;
   gap: 2em;
-  margin-top: 15px;
+  margin-top: 1em;
   justify-content: center;
   align-items: center;
+}
+
+.contain > div {
+  display: flex;
+  gap: 1em;
+  justify-content: center;
+  align-items: center;
+}
+
+.outerColor {
+  position: relative;
+  border-radius: 1em;
+  height: 3.125em;
+  width: 3.125em;
+  border-style: none;
+  vertical-align: middle;
+}
+
+.outerColor:hover,
+.innerBorder:hover {
+  opacity: 80%;
+}
+
+.innerBorder {
+  position: absolute;
+  border: 0.15em solid black;
+  border-radius: 0.75em;
+  background-color: inherit;
+  height: 2.25em;
+  width: 2.25em;
+  margin: auto;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+}
+
+.innerBorderWhite {
+  position: absolute;
+  border: 0.15em solid white;
+  border-radius: 0.75em;
+  background-color: inherit;
+  height: 2.25em;
+  width: 2.25em;
+  margin: auto;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+}
+
+.hide {
+  display: none;
+}
+
+.show {
+  display: block;
+}
+
+.rounded {
+  position: relative;
+  vertical-align: middle;
+
+  background-color: black;
+  border-radius: 50%;
+  border-style: none;
+}
+
+.innerBrushBorder {
+  position: absolute;
+  border: 0.15em solid white;
+  border-radius: 50%;
+  background-color: black;
+  margin: auto;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+}
+
+/* going to have to do conversions  */
+
+.small {
+  width: 30px;
+  height: 30px;
+}
+
+.smallFilled {
+  width: 28px;
+  height: 28px;
+}
+
+.medium {
+  width: 45px;
+  height: 45px;
+}
+.mediumFilled {
+  width: 43px;
+  height: 43px;
+}
+.large {
+  width: 60px;
+  height: 60px;
+}
+.largeFilled {
+  width: 58px;
+  height: 58px;
+}
+
+.rounded:hover {
+  opacity: 80%;
 }

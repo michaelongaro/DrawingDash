@@ -26,20 +26,21 @@ export function Canvas() {
   ];
   const [startTimer, setStartTimer] = useState(false);
   const [currentTimer, setCurrentTimer] = useState(0);
+  const [countdownKey, setCountdownKey] = useState(0);
 
   const [firstButtonAvailabilty, setFirstButtonAvailabilty] = useState(true);
   const [secondButtonAvailabilty, setSecondButtonAvailabilty] = useState(true);
   const [thirdButtonAvailabilty, setThirdButtonAvailabilty] = useState(true);
 
-  const [showPromptContainer, setShowPromptContainer] = useState({
+  const [countdownOverlay, setCountdownOverlay] = useState({
     display: "none",
   });
 
-  const [showPrompt, setShowPrompt] = useState({
+  const [canvasOutline, setCanvasOutline] = useState({
     display: "none",
   });
 
-  const [showOptionsModal, setShowOptionsModal] = useState({
+  const [startTimerSelectionsModal, setStartTimerSelectionsModal] = useState({
     display: "flex",
     justifyContent: "center",
     alignItems: "center",
@@ -53,29 +54,35 @@ export function Canvas() {
     display: "none",
   });
 
-  const [endMessage, setEndMessage] = useState({
+  const [endTimerSelectionsModal, setEndTimerSelectionsModal] = useState({
     display: "none",
   });
 
-  const { canvasRef, prepareCanvas, startDrawing, finishDrawing, draw } =
-    useCanvas();
+  const {
+    canvasRef,
+    prepareCanvas,
+    clearCanvas,
+    startDrawing,
+    finishDrawing,
+    draw,
+  } = useCanvas();
 
   useEffect(() => {
     if (drawingTime > 0) {
-      setShowOptionsModal({
+      setStartTimerSelectionsModal({
         display: "none",
       });
 
       setSeconds(3);
 
-      setShowPromptContainer({
+      setCountdownOverlay({
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
         flexDirection: "column",
       });
 
-      setShowPrompt({
+      setCanvasOutline({
         width: window.innerWidth * 0.75,
         height: window.innerHeight * 0.75,
         display: "flex",
@@ -97,18 +104,30 @@ export function Canvas() {
     } else if (seconds > 0) {
       setTimeout(() => setSeconds(seconds - 1), 1000);
     } else {
-      setShowPromptContainer({
+      setCountdownOverlay({
         display: "none",
       });
 
-      setShowPrompt({
+      setCanvasOutline({
         display: "none",
       });
 
+      setEndTimerSelectionsModal({
+        display: "none",
+      });
+
+      clearCanvas();
+      
       setShowCanvas({
-        display: "block",
+        // work on changing the gradient to the color selected (very very high opacity)
+        background: "linear-gradient(0deg, rgba(64,64,64,1) 0%, rgba(204,204,204,1) 100%)",
+        borderRadius: "25px",
+        display: "grid",
+        // justifyItems: "center",
+        placeItems: "end center",
       });
 
+      setCountdownKey((prevKey) => prevKey + 1);
       setStartTimer(true);
 
       wordsCtx.makePostable();
@@ -167,7 +186,7 @@ export function Canvas() {
 
         wordsCtx.resetPostable();
 
-        setEndMessage({
+        setEndTimerSelectionsModal({
           width: window.innerWidth * 0.75,
           height: window.innerHeight * 0.75,
           display: "flex",
@@ -209,7 +228,7 @@ export function Canvas() {
 
   return (
     <div className={classes.contain}>
-      <div style={showOptionsModal}>
+      <div style={startTimerSelectionsModal}>
         <div>Select a drawing time</div>
         <div className={classes.horizContain}>
           <div className={classes.sidePadding}>
@@ -217,50 +236,50 @@ export function Canvas() {
               disabled={!firstButtonAvailabilty}
               onClick={() => {
                 setFirstButtonAvailabilty(false);
-                // setDrawingTime(60000);
+                setDrawingTime(60);
                 setCurrentTimer(0);
               }}
             >
               1 Minute
             </button>
-            <RandomWords time={60000} />
+            <RandomWords time={60} />
           </div>
           <div className={classes.sidePadding}>
             <button
               disabled={!secondButtonAvailabilty}
               onClick={() => {
                 setSecondButtonAvailabilty(false);
-                // setDrawingTime(180000);
+                setDrawingTime(180);
                 setCurrentTimer(1);
               }}
             >
               3 Minutes
             </button>
-            <RandomWords time={180000} />
+            <RandomWords time={180} />
           </div>
           <div className={classes.sidePadding}>
             <button
               disabled={!thirdButtonAvailabilty}
               onClick={() => {
                 setThirdButtonAvailabilty(false);
-                // setDrawingTime(300000);
+                setDrawingTime(300);
                 setCurrentTimer(2);
               }}
             >
               5 Minutes
             </button>
-            <RandomWords time={300000} />
+            <RandomWords time={300} />
           </div>
         </div>
       </div>
 
-      <div style={showPromptContainer}>
+      <div style={countdownOverlay}>
         <RandomWords time={drawingTime} />
-        <div style={showPrompt}>{seconds}</div>
+        <div style={canvasOutline}>{seconds}</div>
         <Controls />
       </div>
 
-      <div style={endMessage}>
+      <div style={endTimerSelectionsModal}>
         <div>Time's up!</div>
         <div>Doodle again:</div>
         <div className={classes.sidePadding}>
@@ -268,36 +287,39 @@ export function Canvas() {
             disabled={!firstButtonAvailabilty}
             onClick={() => {
               setFirstButtonAvailabilty(false);
-              setDrawingTime(60000);
+              setDrawingTime(60);
+              setCurrentTimer(0);
             }}
           >
             1 Minute
           </button>
-          <RandomWords time={60000} />
+          <RandomWords time={60} />
         </div>
         <div className={classes.sidePadding}>
           <button
             disabled={!secondButtonAvailabilty}
             onClick={() => {
               setSecondButtonAvailabilty(false);
-              setDrawingTime(180000);
+              setDrawingTime(180);
+              setCurrentTimer(1);
             }}
           >
             3 Minutes
           </button>
-          <RandomWords time={180000} />
+          <RandomWords time={180} />
         </div>
         <div className={classes.sidePadding}>
           <button
             disabled={!thirdButtonAvailabilty}
             onClick={() => {
               setThirdButtonAvailabilty(false);
-              setDrawingTime(300000);
+              setDrawingTime(300);
+              setCurrentTimer(2);
             }}
           >
             5 Minutes
           </button>
-          <RandomWords time={300000} />
+          <RandomWords time={300} />
         </div>
       </div>
       {/* ideally have opacity to show the previous picture below */}
@@ -307,6 +329,7 @@ export function Canvas() {
         <div style={{ position: "relative" }}>
           <div className={classes.timer}>
             <CountdownCircleTimer
+              key={countdownKey}
               isPlaying={startTimer}
               duration={timerOptions[currentTimer].seconds}
               size={75}

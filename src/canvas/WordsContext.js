@@ -19,11 +19,11 @@ export function WordsProvider(props) {
     fetch("https://random-word-form.herokuapp.com/random/adjective")
       .then((response) => response.json())
       .then((data) => {
-        if (time === 60000) {
+        if (time === 60) {
           setAdjectiveOne(data[0]);
-        } else if (time === 180000) {
+        } else if (time === 180) {
           setAdjectiveTwo(data[0]);
-        } else if (time === 300000) {
+        } else if (time === 300) {
           setAdjectiveThree(data[0]);
         }
       });
@@ -33,22 +33,22 @@ export function WordsProvider(props) {
     fetch("https://random-word-form.herokuapp.com/random/noun")
       .then((response) => response.json())
       .then((data) => {
-        if (time === 60000) {
+        if (time === 60) {
           setNounOne(data[0]);
-        } else if (time === 180000) {
+        } else if (time === 180) {
           setNounTwo(data[0]);
-        } else if (time === 300000) {
+        } else if (time === 300) {
           setNounThree(data[0]);
         }
       });
   }
 
   function getPhrase(time) {
-    if (time === 60000) {
+    if (time === 60) {
           return `${adjectiveOne} ${nounOne}`;
-        } else if (time === 180000) {
+        } else if (time === 180) {
           return `${adjectiveTwo} ${nounTwo}`;
-        } else if (time === 300000) {
+        } else if (time === 300) {
           return `${adjectiveThree} ${nounThree}`;
         }
   }

@@ -14,9 +14,9 @@ const PinnedModal = (props) => {
   const { user } = useAuth0();
 
   useEffect(() => {
-    if (props.seconds === 60000) {
+    if (props.seconds === 60) {
       setSecondsIntoMinutes(`${1} Minute`);
-    } else if (props.seconds === 180000) {
+    } else if (props.seconds === 180) {
       setSecondsIntoMinutes(`${3} Minutes`);
     } else {
       setSecondsIntoMinutes(`${5} Minutes`);
@@ -36,7 +36,6 @@ const PinnedModal = (props) => {
               const drawing = {
                 id: key,
                 ...data[key],
-                seconds: props.seconds,
               };
               drawings.push(drawing);
             }
@@ -44,9 +43,9 @@ const PinnedModal = (props) => {
         }
 
         setLoadedDrawings(drawings);
-        if (props.seconds === 60000) {
+        if (props.seconds === 60) {
           pinnedCtx.setDrawings60(drawings);
-        } else if (props.seconds === 180000) {
+        } else if (props.seconds === 180) {
           pinnedCtx.setDrawings180(drawings);
         } else {
           pinnedCtx.setDrawings300(drawings);

@@ -1,5 +1,5 @@
 import { createContext, useEffect, useState } from "react";
-
+import { useAuth0 } from "@auth0/auth0-react";
 // createContext returns react component -> capital var name
 const FavoritesContext = createContext({
   favorites: [],
@@ -17,31 +17,35 @@ export function FavoritesProvider(props) {
   const [favoritesID, setFavoritesID] = useState("");
   const [clientID, setClientID] = useState("");
 
+  const { isAuthenticated } = useAuth0();
+
   useEffect(() => {
     console.log(clientID);
-    fetch(
-      `https://drawing-dash-41f14-default-rtdb.firebaseio.com/${clientID}/.json`
-    )
-      .then((response) => {
-        return response.json();
-      })
-      .then((data) => {
-        for (const entry of Object.keys(data)) {
-          console.log(entry);
-          if (entry === "likes") {
-            fetch(
-              `https://drawing-dash-41f14-default-rtdb.firebaseio.com/${clientID}/likes.json`
-            )
-              .then((response) => {
-                return response.json();
-              })
-              .then((data) => {
-                setFavoritesID(Object.keys(data)[0]);
-                setUserFavorites(Object.values(data)[0]);
-              });
+    if (isAuthenticated) {
+      fetch(
+        `https://drawing-dash-41f14-default-rtdb.firebaseio.com/${clientID}/.json`
+      )
+        .then((response) => {
+          return response.json();
+        })
+        .then((data) => {
+          for (const entry of Object.keys(data)) {
+            console.log(entry);
+            if (entry === "likes") {
+              fetch(
+                `https://drawing-dash-41f14-default-rtdb.firebaseio.com/${clientID}/likes.json`
+              )
+                .then((response) => {
+                  return response.json();
+                })
+                .then((data) => {
+                  setFavoritesID(Object.keys(data)[0]);
+                  setUserFavorites(Object.values(data)[0]);
+                });
+            }
           }
-        }
-      });
+        });
+    }
   }, [clientID]);
 
   function addFavoriteHandler(favoriteMeetup, userID) {
