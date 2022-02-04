@@ -10,7 +10,24 @@ import WordsContext from "./WordsContext";
 import RandomWords from "../components/layout/RandomWords";
 import Controls from "./Controls";
 
+// import { firebase } from "../util/init-firebase";
+import {
+  getDatabase,
+  ref,
+  set,
+  child,
+  get,
+  update,
+  remove,
+  push,
+} from "firebase/database";
+
+import { app } from "../util/init-firebase";
+
 import classes from "./Canvas.module.css";
+
+// benefits of putting it outside of function?
+// const db = firebase.database();
 
 export function Canvas() {
   const wordsCtx = useContext(WordsContext);
@@ -18,6 +35,8 @@ export function Canvas() {
   const { user } = useAuth0();
   const [seconds, setSeconds] = useState(-1);
   const [drawingTime, setDrawingTime] = useState(0);
+
+  // const db = getDatabase(fb);
 
   const timerOptions = [
     { seconds: 60, colorArray: [60, 45, 30, 15] },
@@ -117,10 +136,11 @@ export function Canvas() {
       });
 
       clearCanvas();
-      
+
       setShowCanvas({
         // work on changing the gradient to the color selected (very very high opacity)
-        background: "linear-gradient(0deg, rgba(64,64,64,1) 0%, rgba(204,204,204,1) 100%)",
+        background:
+          "linear-gradient(0deg, rgba(64,64,64,1) 0%, rgba(204,204,204,1) 100%)",
         borderRadius: "25px",
         display: "grid",
         // justifyItems: "center",
@@ -147,7 +167,7 @@ export function Canvas() {
 
         const canvas = canvasRef.current;
         const title = wordsCtx.getPhrase(drawingTime);
-        console.log(title);
+
         const [adj, noun] = title.split(" ");
 
         const today = new Date();
@@ -158,31 +178,58 @@ export function Canvas() {
         const uniqueID = uuidv4();
 
         let canvasContents = canvas.toDataURL();
-        let data = {
-          index: uniqueID,
-          image: canvasContents,
-          adjective: adj,
-          noun: noun,
-          title: title,
-          seconds: timerOptions[currentTimer].seconds,
-          date: `${month}-${day}-${year}`,
-        };
-        let urlString = JSON.stringify(data);
 
-        let file = new Blob([urlString], {
-          type: "application/json",
+        const db = getDatabase(app);
+        const dbRef = ref(getDatabase(app));
+
+        // check to see if this title has already been drawn
+        get(child(dbRef, `titles/${title}`)).then((snapshot) => {
+          if (snapshot.exists()) {
+            let prev_post = [snapshot.val()[title]["drawingID"]];
+            prev_post.push(uniqueID);
+            update(ref(db, "titles/" + title), {
+              drawingID: prev_post,
+            });
+          } else {
+            set(ref(db, "titles/" + title), {
+              drawingID: [uniqueID],
+            });
+          }
         });
 
-        fetch(
-          `https://drawing-dash-41f14-default-rtdb.firebaseio.com//${user.sub}.json`,
-          {
-            method: "POST",
-            body: file,
-            headers: {
-              "Content-Type": "application/json",
-            },
+        set(ref(db, "drawings/" + uniqueID), {
+          title: title,
+          image: canvasContents,
+          seconds: timerOptions[currentTimer].seconds,
+          date: `${month}-${day}-${year}`,
+          drawnBy: user.sub,
+        });
+
+        
+        // just for user profile
+        
+        // check to see if this title has already been drawn
+        get(child(dbRef, `users/${user.sub}/titles/${title}`)).then((snapshot) => {
+          if (snapshot.exists()) {
+            let prev_post = snapshot.val()[title]["drawingID"];
+            prev_post.push(uniqueID);
+            update(ref(db, `users/${user.sub}/titles/${title}`), {
+              drawingID: prev_post,
+            });
+          } else {
+            set(ref(db, `users/${user.sub}/titles/${title}`), {
+              drawingID: [uniqueID],
+            });
           }
-        );
+        });
+
+        set(ref(db, `users/${user.sub}/drawings/${uniqueID}`), {
+          title: title,
+          image: canvasContents,
+          seconds: timerOptions[currentTimer].seconds,
+          date: `${month}-${day}-${year}`,
+          drawnBy: user.sub,
+        });
 
         wordsCtx.resetPostable();
 

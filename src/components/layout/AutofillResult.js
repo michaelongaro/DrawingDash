@@ -1,27 +1,34 @@
 import React from "react";
-import { useEffect } from "react";
+import { useEffect, useContext, useRef } from "react";
 
 import classes from "./AutofillResult.module.css";
+import SearchContext from "./SearchContext";
 
 const AutofillResult = (props) => {
-  console.log(`${props.word} result "shown"`);
-  // will have to useEffect here and add eventlistener,
-  // will need to i guess add the inputs into the context/maybe somehow use the refs?
+  const searchCtx = useContext(SearchContext);
+  
+  const resultRef = useRef();
 
-  // useEffect(() => {
-  //   document.getElementById("result").addEventListener("click", fillText);
-  //   return () => {
-  //     document.getElementById("result").removeEventListener("click", fillText);
-  //   };
-  // }, []);
+  useEffect(() => {
+    resultRef.current.addEventListener("mousedown", fillText);
 
-  // function fillText() {
-  //   props.parentRef.current.innerText = props.word;
-  // }
+    let cleanupResultRef = resultRef.current;
+    return () => {
+      cleanupResultRef.removeEventListener("mousedown", fillText);
+    };
+  }, []);
+
+  function fillText() {
+    if (props.type === "adj") {
+      searchCtx.setAutofilledAdjectiveInput(props.word);
+    } else {
+      searchCtx.setAutofilledNounInput(props.word);
+    }
+  }
 
   return (
-    <div className={classes.autofillResult}>
-      <div id="result">{props.word}</div>
+    <div className={classes.autofillResult} ref={resultRef}>
+      <div>{props.word}</div>
     </div>
   );
 };

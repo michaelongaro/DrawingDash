@@ -2,6 +2,8 @@ import React, { useEffect } from "react";
 import { useState } from "react";
 import { useAuth0 } from "@auth0/auth0-react";
 import GallaryList from "./GallaryList";
+import Search from "./Search";
+import SearchContext from "./SearchContext";
 
 const Gallary = () => {
   const [loadedDrawings, setLoadedDrawings] = useState([]);
@@ -38,7 +40,11 @@ const Gallary = () => {
   return (
     <div>
       <h1>My Gallary </h1>
-      <GallaryList drawings={loadedDrawings} />
+      <Search forProfile={true}/>
+
+      <SearchContext.Consumer>
+        {(value) => <GallaryList drawings={value.gallary} />}
+      </SearchContext.Consumer>
     </div>
   );
 };

@@ -12,7 +12,6 @@ const GallaryItem = (props) => {
   const { user } = useAuth0();
 
   const favoritesCtx = useContext(FavoritesContext);
-  console.log(`props id: ${props.index}`);
   const itemIsFavorite = favoritesCtx.itemIsFavorite(props.index);
 
   function toggleFavoriteStatusHandler() {
@@ -27,7 +26,6 @@ const GallaryItem = (props) => {
       }, user.sub);
     }
   }
-
   return (
     // <div className={classes.contain}>
     <Card>
@@ -35,6 +33,7 @@ const GallaryItem = (props) => {
       <div className={classes.bottomContain}>
         <div>{props.title}</div>
         <div>{props.date}</div>
+        <div>{props.seconds}</div>
         <button onClick={toggleFavoriteStatusHandler}>
           {itemIsFavorite ? "💔" : "💖"}
         </button>

@@ -1,6 +1,8 @@
 .formContainer {
   display: flex;
   justify-content: center;
+  margin-left: 2em;
+  margin-right: 2em;
 }
 
 .searchContainer {
