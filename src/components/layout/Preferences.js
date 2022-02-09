@@ -2,10 +2,10 @@ import React, { useEffect, useContext } from "react";
 import { useAuth0 } from "@auth0/auth0-react";
 
 import classes from "./Preferences.module.css";
-import ProfileLayout from "./ProfileLayout";
+
 import FavoritesContext from "./FavoritesContext";
 
-import { Outlet } from "react-router";
+
 import PinnedArtwork from "./PinnedArtwork";
 const Preferences = () => {
   const { user } = useAuth0();
@@ -17,8 +17,8 @@ const Preferences = () => {
   }, []);
 
   return (
-    <ProfileLayout>
 
+    <div>
       <div className={classes.container}>
         <div className={classes.username}>username</div>
         <input className={classes.setUsername} placeholder="Charles"></input>
@@ -38,9 +38,8 @@ const Preferences = () => {
       </div>
 
       <PinnedArtwork />
+    </div>
 
-      <Outlet />
-    </ProfileLayout>
   );
 };
 

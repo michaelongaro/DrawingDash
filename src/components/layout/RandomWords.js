@@ -19,9 +19,9 @@ const RandomWords = (props) => {
   }
 
   return (
-    <h3 className={classes.title}>
+    <span className={classes.title}>
       {wordsCtx.getPhrase(props.time)}
-    </h3>
+    </span>
   );
 };
 

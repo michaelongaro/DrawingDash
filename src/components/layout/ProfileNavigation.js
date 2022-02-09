@@ -8,13 +8,13 @@ const ProfileNavigation = () => {
     <nav className={classes.sideContain}>
       <ul>
         <li>
-          <Link to="/profile">Profile</Link>
+          <Link to="/profile/preferences">Preferences</Link>
         </li>
         <li>
-          <Link to="gallary">Gallary</Link>
+          <Link to="/profile/gallary">Gallary</Link>
         </li>
         <li>
-          <Link to="likes">Likes</Link>
+          <Link to="/profile/likes">Likes</Link>
         </li>
       </ul>
     </nav>

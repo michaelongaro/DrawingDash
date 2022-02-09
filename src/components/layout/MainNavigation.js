@@ -22,7 +22,7 @@ function MainNavigation() {
             <Link to="/explore">Explore</Link>
           </li>
           <li>
-            <Link to="/profile">Profile</Link>
+            <Link to="/profile/preferences">Profile</Link>
           </li>
           <li className={classes.padLeft}>
             <LogInButton />

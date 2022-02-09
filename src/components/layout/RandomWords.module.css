@@ -1,3 +1,22 @@
-.title {
+span {
   text-align: center;
+}
+
+a:before {
+  content: "";
+  position: absolute;
+  width: 100%;
+  height: 3px;
+  bottom: 0;
+  left: 0;
+  background: #9cf5a6;
+  visibility: hidden;
+  border-radius: 5px;
+  transform: scaleX(0);
+  transition: 0.25s linear;
+}
+
+a:hover:before {
+  visibility: visible;
+  transform: scaleX(1);
 }

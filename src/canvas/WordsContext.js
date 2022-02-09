@@ -17,6 +17,8 @@ export function WordsProvider(props) {
 
   const [canPost, setCanPost] = useState(false);
 
+  const [chosenPalette, setChosenPalette] = useState();
+
   function searchRandom(count, arr) {
     let answer = [],
       counter = 0;
@@ -100,6 +102,8 @@ export function WordsProvider(props) {
 
   const context = {
     postable: canPost,
+    chosenPalette: chosenPalette,
+    setChosenPalette: setChosenPalette,
     getAdjective: getAdjectiveHandler,
     getNoun: getNounHandler,
     getPhrase: getPhrase,

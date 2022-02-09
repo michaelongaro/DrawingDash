@@ -19,8 +19,8 @@ function App() {
         <Route path="/" element={<HomePage />} />
         <Route path="daily-doodle" element={<DailyDoodle />} />
         <Route path="explore" element={<Explore />} />
-        <Route path="profile" element={<Preferences />}>
-          {/* <Route path="preferences" element={<Preferences />} /> */}
+        <Route path="profile" element={<Profile />}>
+          <Route path="preferences" element={<Preferences />} />
           <Route path="gallary" element={<Gallary />} />
           <Route path="likes" element={<Likes />} />
         </Route>
