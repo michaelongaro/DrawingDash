@@ -6,6 +6,7 @@ const WordsContext = createContext(null);
 
 // look into difference between props and { children } here and below in return
 export function WordsProvider(props) {
+  // should be in an array
   const [adjectiveOne, setAdjectiveOne] = useState("");
   const [nounOne, setNounOne] = useState("");
 
@@ -17,7 +18,8 @@ export function WordsProvider(props) {
 
   const [canPost, setCanPost] = useState(false);
 
-  const [chosenPalette, setChosenPalette] = useState();
+  // const [fetchNewWords, setFetchNewWords] = useState(true);
+
 
   function searchRandom(count, arr) {
     let answer = [],
@@ -34,6 +36,10 @@ export function WordsProvider(props) {
     return answer;
   }
 
+  function startDailyCountdown() {
+
+  }
+
   function getAdjectiveHandler(time) {
     // fetch("https://random-word-form.herokuapp.com/random/adjective")
     //   .then((response) => response.json())
@@ -46,6 +52,7 @@ export function WordsProvider(props) {
     //       setAdjectiveThree(data[0]);
     //     }
     //   });
+
     // make sure index is unique across all 3
     let randomAdjectives = searchRandom(3, adjectives);
 
@@ -102,8 +109,8 @@ export function WordsProvider(props) {
 
   const context = {
     postable: canPost,
-    chosenPalette: chosenPalette,
-    setChosenPalette: setChosenPalette,
+    // fetchNewWords: fetchNewWords,
+    // setFetchNewWords: setFetchNewWords,
     getAdjective: getAdjectiveHandler,
     getNoun: getNounHandler,
     getPhrase: getPhrase,

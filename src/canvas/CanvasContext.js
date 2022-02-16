@@ -11,7 +11,7 @@ export const CanvasProvider = ({ children }) => {
     const canvas = canvasRef.current;
     // canvas.width = window.innerWidth * 2;
     // canvas.height = window.innerHeight * 2;
-    const mod_width = window.innerWidth * 0.75;
+    const mod_width = window.innerWidth * 0.85;
     const mod_height = window.innerHeight * 0.75;
     canvas.width = mod_width;
     canvas.height = mod_height;

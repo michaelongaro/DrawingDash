@@ -1,4 +1,5 @@
-import { useState, useContext } from "react";
+import { useState, useContext, useEffect } from "react";
+import DrawingSelectionContext from "../../canvas/DrawingSelectionContext";
 
 import WordsContext from "../../canvas/WordsContext";
 
@@ -9,19 +10,22 @@ const RandomWords = (props) => {
   // maybe even slow down like it does in csgo boxes
 
   const wordsCtx = useContext(WordsContext);
+  const DSCtx = useContext(DrawingSelectionContext);
 
-  const [canReRender, setCanReRender] = useState(true);
+  // const [canReRender, setCanReRender] = useState(true);
 
-  if (canReRender) {
-    wordsCtx.getAdjective(props.time);
-    wordsCtx.getNoun(props.time);
-    setCanReRender(false);
-  }
+  useEffect(() => {
+    // change this later so it resets w/ firebase function every 24h
+    if (DSCtx.fetchNewWords) {
+      wordsCtx.getAdjective(props.time);
+      wordsCtx.getNoun(props.time);
+      DSCtx.setFetchNewWords(false);
+      // wordsCtx.startDailyCountdown();
+    }
+  }, []);
 
   return (
-    <span className={classes.title}>
-      {wordsCtx.getPhrase(props.time)}
-    </span>
+    <span className={classes.title}>{wordsCtx.getPhrase(props.time)}</span>
   );
 };
 

@@ -9,22 +9,25 @@ import { WordsProvider } from "./canvas/WordsContext";
 import { SearchProvider } from "./components/layout/SearchContext";
 import { FavoritesProvider } from "./components/layout/FavoritesContext";
 import { PinnedProvider } from "./components/layout/PinnedContext";
+import { DrawingSelectionProvider } from "./canvas/DrawingSelectionContext";
 
 ReactDOM.render(
   <PinnedProvider>
     <FavoritesProvider>
       <SearchProvider>
-        <WordsProvider>
-          <BrowserRouter>
-            <Auth0Provider
-              domain="dev-lshqttx0.us.auth0.com"
-              clientId="HiuFz0Yo30naHcGzk8PbPOYr0qIK6dae"
-              redirectUri={window.location.origin}
-            >
-              <App />
-            </Auth0Provider>
-          </BrowserRouter>
-        </WordsProvider>
+        <DrawingSelectionProvider>
+          <WordsProvider>
+            <BrowserRouter>
+              <Auth0Provider
+                domain="dev-lshqttx0.us.auth0.com"
+                clientId="HiuFz0Yo30naHcGzk8PbPOYr0qIK6dae"
+                redirectUri={window.location.origin}
+              >
+                <App />
+              </Auth0Provider>
+            </BrowserRouter>
+          </WordsProvider>
+        </DrawingSelectionProvider>
       </SearchProvider>
     </FavoritesProvider>
   </PinnedProvider>,

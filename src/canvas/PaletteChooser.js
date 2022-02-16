@@ -1,13 +1,13 @@
 import React, { useState, useEffect, useContext } from "react";
 
+import DrawingSelectionContext from "./DrawingSelectionContext";
 import WordsContext from "./WordsContext";
 
 import classes from "./PaletteChooser.module.css";
 
 const PaletteChooser = () => {
+  const DSCtx = useContext(DrawingSelectionContext);
   const wordsCtx = useContext(WordsContext);
-
-  const [showSecondScreen, setShowSecondScreen] = useState(classes.vertContain);
 
   const [paletteColors, setPaletteColors] = useState([
     "#FFFFFF",
@@ -45,8 +45,11 @@ const PaletteChooser = () => {
     }
   }, [statusOfCheckmarks]);
 
+  // useEffect(() => {
+  //   setPaletteColors(["#FFFFFF", "#FFFFFF", "#FFFFFF", "#FFFFFF", "#FFFFFF"]);
+  // }, [DSCtx.paletteColors]);
+
   function updatePaletteAndCheckmarkStates(event, idx) {
-    console.log(event.target.value);
     const shallowCopyPalettes = [...paletteColors];
     shallowCopyPalettes.splice(idx, 1, event.target.value);
     setPaletteColors(shallowCopyPalettes);
@@ -63,7 +66,12 @@ const PaletteChooser = () => {
   }
 
   return (
-    <div className={showSecondScreen}>
+    <div className={classes.vertContain}>
+      <div className={classes.textVert}>
+        <div>{`A Color Palette For`}</div>
+        <div>{wordsCtx.getPhrase(DSCtx.drawingTime)}</div>
+      </div>
+
       <div className={classes.horizContain}>
         <div
           className={classes.flexContainer}
@@ -200,11 +208,24 @@ const PaletteChooser = () => {
         </div>
       </div>
       <div className={classes.flexContainer}>
-        <button className={classes.activeButton}>Prev</button>
-        <button className={classes.activeButton} disabled={nextDisabled} onClick={() => {
-          wordsCtx.setChosenPalette(paletteColors);
-          setShowSecondScreen(classes.hide);
-        }}>
+        <button
+          className={classes.activeButton}
+          onClick={() => {
+            DSCtx.goBackToPromptSelection();
+          }}
+        >
+          Prev
+        </button>
+        <button
+          className={classes.activeButton}
+          disabled={nextDisabled}
+          onClick={() => {
+            DSCtx.setPaletteColors(paletteColors);
+            DSCtx.setSeconds(3);
+            DSCtx.setShowPaletteChooser(false);
+            DSCtx.setShowDrawingScreen(true);
+          }}
+        >
           Next
         </button>
       </div>

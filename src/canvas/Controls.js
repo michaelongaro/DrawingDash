@@ -1,15 +1,14 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { useCanvas } from "./CanvasContext";
 
-
+import DrawingSelectionContext from "./DrawingSelectionContext";
 import classes from "./Controls.module.css";
 
 const Controls = () => {
+  const DSCtx = useContext(DrawingSelectionContext);
+
   const { changeColor, changeBrushSize, clearCanvas } = useCanvas();
   const [buttonStyles, setButtonStyles] = useState([
-    classes.hide,
-    classes.hide,
-    classes.hide,
     classes.hide,
     classes.hide,
     classes.hide,
@@ -58,23 +57,26 @@ const Controls = () => {
   }
 
   return (
+    // eventually make this into a loop, is entirely possible and looks terrible as is
     <div className={classes.contain}>
       <div>
         <button
           className={classes.outerColor}
-          style={{ backgroundColor: "black" }}
+          style={{ backgroundColor: DSCtx.paletteColors[0] }}
           onClick={() => {
-            changeColor("black");
+            changeColor(DSCtx.paletteColors[0]);
             updateSelectedColor(0);
           }}
         >
-          <div className={`${classes.innerBorderWhite} ${buttonStyles[0]}`}></div>
+          <div
+            className={`${classes.innerBorderWhite} ${buttonStyles[0]}`}
+          ></div>
         </button>
         <button
           className={classes.outerColor}
-          style={{ backgroundColor: "red" }}
+          style={{ backgroundColor: DSCtx.paletteColors[1] }}
           onClick={() => {
-            changeColor("red");
+            changeColor(DSCtx.paletteColors[1]);
             updateSelectedColor(1);
           }}
         >
@@ -82,9 +84,9 @@ const Controls = () => {
         </button>
         <button
           className={classes.outerColor}
-          style={{ backgroundColor: "blue" }}
+          style={{ backgroundColor: DSCtx.paletteColors[2] }}
           onClick={() => {
-            changeColor("blue");
+            changeColor(DSCtx.paletteColors[2]);
             updateSelectedColor(2);
           }}
         >
@@ -92,9 +94,9 @@ const Controls = () => {
         </button>
         <button
           className={classes.outerColor}
-          style={{ backgroundColor: "yellow" }}
+          style={{ backgroundColor: DSCtx.paletteColors[3] }}
           onClick={() => {
-            changeColor("yellow");
+            changeColor(DSCtx.paletteColors[3]);
             updateSelectedColor(3);
           }}
         >
@@ -102,43 +104,13 @@ const Controls = () => {
         </button>
         <button
           className={classes.outerColor}
-          style={{ backgroundColor: "brown" }}
+          style={{ backgroundColor: DSCtx.paletteColors[4] }}
           onClick={() => {
-            changeColor("brown");
+            changeColor(DSCtx.paletteColors[4]);
             updateSelectedColor(4);
           }}
         >
           <div className={`${classes.innerBorder} ${buttonStyles[4]}`}></div>
-        </button>
-        <button
-          className={classes.outerColor}
-          style={{ backgroundColor: "green" }}
-          onClick={() => {
-            changeColor("green");
-            updateSelectedColor(5);
-          }}
-        >
-          <div className={`${classes.innerBorder} ${buttonStyles[5]}`}></div>
-        </button>
-        <button
-          className={classes.outerColor}
-          style={{ backgroundColor: "orange" }}
-          onClick={() => {
-            changeColor("orange");
-            updateSelectedColor(6);
-          }}
-        >
-          <div className={`${classes.innerBorder} ${buttonStyles[6]}`}></div>
-        </button>
-        <button
-          className={classes.outerColor}
-          style={{ backgroundColor: "purple" }}
-          onClick={() => {
-            changeColor("purple");
-            updateSelectedColor(7);
-          }}
-        >
-          <div className={`${classes.innerBorder} ${buttonStyles[7]}`}></div>
         </button>
       </div>
       {/* ///////////////////////////////////////////////////// */}
@@ -181,7 +153,7 @@ const Controls = () => {
       <div
         onClick={() => {
           changeColor("white");
-          updateSelectedColor(8);
+          updateSelectedColor(5);
         }}
       >
         {/* <svg viewBox="0 0 185 170" xmlns="http://www.w3.org/2000/svg">

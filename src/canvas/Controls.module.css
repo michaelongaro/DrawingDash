@@ -1,14 +1,14 @@
 .contain {
   display: flex;
-  gap: 2em;
-  margin: 1em;
+  gap: 1.5em;
+  margin: 0.5em;
   justify-content: center;
   align-items: center;
 }
 
 .contain > div {
   display: flex;
-  gap: 1em;
+  gap: 0.5em;
   justify-content: center;
   align-items: center;
 }
@@ -32,8 +32,8 @@
   border: 0.15em solid black;
   border-radius: 0.75em;
   background-color: inherit;
-  height: 2.25em;
-  width: 2.25em;
+  height: 2.55em;
+  width: 2.55em;
   margin: auto;
   top: 0;
   bottom: 0;
@@ -46,8 +46,8 @@
   border: 0.15em solid white;
   border-radius: 0.75em;
   background-color: inherit;
-  height: 2.25em;
-  width: 2.25em;
+  height: 2.55em;
+  width: 2.55em;
   margin: auto;
   top: 0;
   bottom: 0;
@@ -66,7 +66,6 @@
 .rounded {
   position: relative;
   vertical-align: middle;
-
   background-color: black;
   border-radius: 50%;
   border-style: none;
@@ -84,7 +83,9 @@
   right: 0;
 }
 
-/* going to have to do conversions  */
+/* I think just keep the .small medium and large, and just do % of those values OOO
+   do them as global variables at top and then reference $size or whatever and do * .85 for the
+   inner borders */
 
 .small {
   width: 30px;
@@ -92,8 +93,8 @@
 }
 
 .smallFilled {
-  width: 28px;
-  height: 28px;
+  width: 20px;
+  height: 20px;
 }
 
 .medium {
@@ -101,16 +102,16 @@
   height: 45px;
 }
 .mediumFilled {
-  width: 43px;
-  height: 43px;
+  width: 35px;
+  height: 35px;
 }
 .large {
   width: 60px;
   height: 60px;
 }
 .largeFilled {
-  width: 58px;
-  height: 58px;
+  width: 50px;
+  height: 50px;
 }
 
 .rounded:hover {
