@@ -14,6 +14,7 @@ const Preferences = () => {
   useEffect(() => {
     // console.log(`${user.sub} ---`);
     favoritesCtx.setClientID(user.sub);
+    console.log(user.user_metadata);
   }, []);
 
   return (

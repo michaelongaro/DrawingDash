@@ -24,8 +24,6 @@ const DrawingScreen = () => {
   const wordsCtx = useContext(WordsContext);
   const { user } = useAuth0();
 
-  const [allowResetOfDrawing, setAllowResetOfDrawing] = useState(true);
-
   const timerOptions = [
     { seconds: 60, colorArray: [60, 45, 30, 15] },
     { seconds: 180, colorArray: [180, 120, 60, 0] },
@@ -149,6 +147,8 @@ const DrawingScreen = () => {
       }
     });
 
+    // should eventually get rid of this and have 
+    // the profile gallary loop through drawing 
     set(ref(db, `users/${user.sub}/drawings/${uniqueID}`), {
       title: title,
       image: canvasContents,

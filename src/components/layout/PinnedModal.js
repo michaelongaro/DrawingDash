@@ -28,6 +28,9 @@ const PinnedModal = (props) => {
     const dbRef = ref(getDatabase(app));
     const fetchedDrawings = [];
 
+    // should fetch all user profile titles and save their vals (ids) in an array,
+    // then loop through it down here and fetch the drawings from main /drawings/id
+
     get(child(dbRef, `users/${user.sub}/drawings/`)).then((snapshot) => {
       const fullUserGallary = snapshot.val();
 
