@@ -1,10 +1,15 @@
 .listContain {
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;
-  /* grid-template-rows: repeat(auto-fill, 300px); */
+  grid-template-rows: 1fr 1fr 1fr;
   gap: 2em;
   grid-auto-flow: row;
-  justify-content: space-evenly;
-  align-items: start;
-  justify-items: center;
+  overflow-y: scroll;
+  height: 65vh;
+}
+
+.centerMiddle {
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }

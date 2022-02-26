@@ -89,7 +89,6 @@ const Search = (props) => {
     } else {
       searchCtx.getGallary();
     }
-    
 
     // clearing autofill context values
     searchCtx.setAutofilledAdjectiveInput("");

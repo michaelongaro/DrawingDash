@@ -39,9 +39,11 @@
   display: flex;
   justify-content: center;
   flex-direction: column;
+  width: 33%;
+  height: 85%;
   margin-top: 15px;
   margin-bottom: 15px;
-  border-radius: 0.25em 0.25em 0.25em 0.25em;
+  border-radius: 0.25em;
   border-color: black;
   border-style: solid;
   border-top-width: 1px;
@@ -51,20 +53,11 @@
 }
 
 .timeBorder {
-  /* border: 6px none #1c6ea4;
-  border-radius: 25px 25px 0px 0px; */
-  /* position: relative; */
-  width: 100%;
-  text-align: center;
-  overflow: hidden;
-  margin-top: 0px;
-  margin-left: 0px;
-  margin-right: 0px;
-  border-radius: 0.25em 0.25em 0px 0px;
+  margin-top: 0.5em;
 }
 
 button {
-  margin: 1.5em;
+  margin: 1em 1.5em 1.5em 1.5em;
 }
 
 .hide {
@@ -125,43 +118,86 @@ button {
   width: 100%;
 }
 
-.btn {
-  color: #edfb28;
-  cursor: pointer;
-  font-size: 16px;
-  font-weight: 400;
-  line-height: 45px;
-  /* margin: 0 0 2em; */
-  max-width: 160px;
-  position: relative;
-  text-decoration: none;
-  text-transform: uppercase;
-  width: 100%;
+.redBackground {
+  background-image: linear-gradient(
+    45deg,
+    hsl(0deg 100% 42%) 0%,
+    hsl(359deg 100% 41%) 5%,
+    hsl(359deg 100% 39%) 10%,
+    hsl(358deg 100% 38%) 15%,
+    hsl(357deg 100% 37%) 20%,
+    hsl(357deg 100% 35%) 25%,
+    hsl(356deg 100% 34%) 31%,
+    hsl(355deg 100% 32%) 36%,
+    hsl(355deg 100% 31%) 41%,
+    hsl(354deg 100% 30%) 47%,
+    hsl(354deg 100% 28%) 52%,
+    hsl(354deg 99% 27%) 57%,
+    hsl(354deg 98% 26%) 62%,
+    hsl(354deg 96% 24%) 67%,
+    hsl(354deg 95% 23%) 71%,
+    hsl(354deg 93% 22%) 76%,
+    hsl(355deg 92% 21%) 80%,
+    hsl(355deg 90% 20%) 85%,
+    hsl(356deg 89% 18%) 89%,
+    hsl(357deg 87% 17%) 93%,
+    hsl(358deg 86% 16%) 96%,
+    hsl(0deg 84% 15%) 100%
+  );
 }
 
-.btnFour {
-  border: 1px solid;
-  overflow: hidden;
-  position: relative;
-}
-.btnFour span {
-  z-index: 20;
-}
-.btnFour:after {
-  background: #fff;
-  content: "";
-  height: 155px;
-  left: -75px;
-  opacity: 0.2;
-  position: absolute;
-  top: -50px;
-  transform: rotate(35deg);
-  transition: all 550ms cubic-bezier(0.19, 1, 0.22, 1);
-  width: 50px;
-  /* z-index: -10; */
+.yellowBackground {
+  background-image: linear-gradient(
+    45deg,
+    hsl(60deg 100% 42%) 0%,
+    hsl(60deg 99% 41%) 5%,
+    hsl(60deg 98% 41%) 10%,
+    hsl(60deg 97% 40%) 15%,
+    hsl(60deg 95% 39%) 20%,
+    hsl(60deg 94% 38%) 25%,
+    hsl(60deg 94% 37%) 31%,
+    hsl(61deg 93% 36%) 36%,
+    hsl(61deg 92% 36%) 41%,
+    hsl(61deg 91% 35%) 47%,
+    hsl(61deg 90% 34%) 52%,
+    hsl(61deg 89% 33%) 57%,
+    hsl(61deg 89% 32%) 62%,
+    hsl(61deg 88% 31%) 67%,
+    hsl(61deg 87% 30%) 71%,
+    hsl(61deg 86% 29%) 76%,
+    hsl(61deg 86% 28%) 80%,
+    hsl(61deg 85% 27%) 85%,
+    hsl(62deg 85% 26%) 89%,
+    hsl(62deg 84% 25%) 93%,
+    hsl(62deg 84% 24%) 96%,
+    hsl(62deg 83% 24%) 100%
+  );
 }
 
-.btnFour:hover:after {
-  left: 120%;
-  transition: all 550ms cubic-bezier(0.19, 1, 0.22, 1);
+.greenBackground {
+  background-image: linear-gradient(
+    45deg,
+    hsl(121deg 100% 49%) 0%,
+    hsl(123deg 100% 47%) 5%,
+    hsl(125deg 100% 45%) 10%,
+    hsl(127deg 100% 44%) 15%,
+    hsl(128deg 100% 42%) 20%,
+    hsl(129deg 100% 40%) 25%,
+    hsl(130deg 100% 38%) 31%,
+    hsl(131deg 100% 37%) 36%,
+    hsl(131deg 100% 35%) 41%,
+    hsl(132deg 100% 33%) 47%,
+    hsl(133deg 100% 32%) 52%,
+    hsl(134deg 100% 30%) 57%,
+    hsl(135deg 100% 29%) 62%,
+    hsl(135deg 100% 27%) 67%,
+    hsl(136deg 100% 25%) 71%,
+    hsl(136deg 95% 24%) 76%,
+    hsl(135deg 91% 23%) 80%,
+    hsl(135deg 86% 22%) 85%,
+    hsl(134deg 81% 21%) 89%,
+    hsl(134deg 77% 20%) 93%,
+    hsl(133deg 73% 19%) 96%,
+    hsl(133deg 69% 17%) 100%
+  );
 }

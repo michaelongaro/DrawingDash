@@ -1,20 +1,20 @@
 import React from "react";
 import { Link } from "react-router-dom";
 
-import classes from "./ProfileNavigation";
+import classes from "./ProfileNavigation.module.css";
 
 const ProfileNavigation = () => {
   return (
-    <nav className={classes.sideContain}>
+    <nav className={classes.sidebar}>
       <ul>
-        <li>
-          <Link to="/profile/preferences">Preferences</Link>
+        <li className={classes.sideContain}>
+          <Link to="/profile/preferences" className={classes.navlink} style={{  textDecoration: 'none' }}>Preferences</Link>
         </li>
-        <li>
-          <Link to="/profile/gallary">Gallary</Link>
+        <li className={classes.sideContain}>
+          <Link to="/profile/gallary" className={classes.navlink} style={{ textDecoration: 'none' }}>Gallary</Link>
         </li>
-        <li>
-          <Link to="/profile/likes">Likes</Link>
+        <li className={classes.sideContain}>
+          <Link to="/profile/likes" className={classes.navlink} style={{ textDecoration: 'none' }}>Likes</Link>
         </li>
       </ul>
     </nav>

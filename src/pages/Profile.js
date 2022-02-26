@@ -1,23 +1,24 @@
-// import { Routes, Route } from "react-router-dom";
-
-
 import { Outlet } from "react-router";
+
 import ProfileNavigation from "../components/layout/ProfileNavigation";
+import classes from "../components/layout/ProfileLayout.module.css";
+import Card from "../ui/Card";
 
 const Profile = () => {
-  // <img src={user.picture} alt={user.name} use this instead of "log out" in top right, include a dropdown
+  const profileCardStyles = {
+    width: "75%",
+    display: "flex",
+    justifyContent: "center",
+  };
 
   return (
-    // <div className={classes.horizontalContain}>
-    <div>
+    <div className={classes.horizontalContain}>
       <ProfileNavigation />
-      {/* <Routes>
-        <Route path="/" element={<Preferences />} />
-        <Route path="profile/gallary" element={<Gallary />} />
-        <Route path="profile/likes" element={<Likes />} />
-      </Routes> */}
-
-      <Outlet />
+      <div style={profileCardStyles}>
+        <Card>
+          <Outlet />
+        </Card>
+      </div>
     </div>
   );
 };

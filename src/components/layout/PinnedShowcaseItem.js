@@ -9,7 +9,7 @@ const PinnedShowcaseItem = (props) => {
     return (
       <div className={classes.vertFlex}>
         <Card>
-          <div style={{ margin: "5em"}}>Select an image</div>
+          <div style={{ margin: "5em"}}>Click to select a drawing</div>
         </Card>
         <div>{props.timer}</div>
       </div>

@@ -8,5 +8,65 @@
   border-bottom-left-radius: 5px;
   border-bottom-right-radius: 5px;
 
-  background-color: rgb(197, 197, 197);
+  background-color: rgb(212, 209, 209);
+}
+
+@keyframes TransitioningBackground {
+  0% {
+    background-position: 1% 0%;
+  }
+  50% {
+    background-position: 99% 100%;
+  }
+  100% {
+    background-position: 1% 0%;
+  }
+}
+/* transition to work with any regular div */
+.subscribe-button {
+  font-size: 1rem;
+  font-weight: 600;
+  color: white;
+  text-align: center;
+  width: 200px;
+  height: 60px;
+  border-radius: 5px;
+  position: relative;
+  overflow: hidden;
+  background-image: linear-gradient(270deg, #8e9ac2, #42579a);
+  background-size: 400% 400%;
+  animation: TransitioningBackground 10s ease infinite;
+  transition: 0.6s;
+}
+.subscribe-button::before {
+  content: "";
+  display: block;
+  position: absolute;
+  background: rgba(255, 255, 255, 0.5);
+  width: 60px;
+  height: 100%;
+  top: 0;
+  filter: blur(30px);
+  transform: translateX(-100px) skewX(-15deg);
+}
+.subscribe-button::after {
+  content: "";
+  display: block;
+  position: absolute;
+  background: rgba(255, 255, 255, 0.2);
+  width: 30px;
+  height: 100%;
+  top: 0;
+  filter: blur(5px);
+  transform: translateX(-100px) skewX(-15deg);
+}
+.subscribe-button:hover {
+  background-image: linear-gradient(to left, #2d8fe5, #d155b8);
+  transform: scale(1.2);
+  cursor: pointer;
+}
+.subscribe-button:hover::before,
+.subscribe-button:hover::after {
+  transform: translateX(300px) skewX(-15deg);
+  transition: 0.7s;
 }

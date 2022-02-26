@@ -4,11 +4,11 @@ import classes from "./ProfileLayout.module.css";
 function ProfileLayout(props) {
   console.log("profile reloaded");
   return (
-    <div>
+    <div className={classes.horizontalContain}>
       <ProfileNavigation />
-      <main className={classes.main}>{props.children}</main>
+      <main>{props.children}</main>
     </div>
-  );
+  );  
 }
 
 export default ProfileLayout;

@@ -118,10 +118,10 @@ const Controls = () => {
         <button
           className={`${classes.rounded} ${classes.small}`}
           onClick={() => {
-            changeBrushSize(5);
+            changeBrushSize(3);
             updateSelectedBrushSize(0);
           }}
-        >
+        > 
           <div
             className={`${classes.innerBrushBorder} ${classes.smallFilled} ${brushSizeStyles[0]}`}
           ></div>
@@ -140,7 +140,7 @@ const Controls = () => {
         <button
           className={`${classes.rounded} ${classes.large}`}
           onClick={() => {
-            changeBrushSize(15);
+            changeBrushSize(12);
             updateSelectedBrushSize(2);
           }}
         >

@@ -93,7 +93,7 @@ const DrawingScreen = () => {
     setShowCanvas(classes.hide);
 
     const canvas = canvasRef.current;
-    const title = wordsCtx.getPhrase(drawingTime);
+    const title = wordsCtx.getPhrase(DSCtx.drawingTime);
 
     const today = new Date();
     const day = today.getDate();
@@ -108,6 +108,7 @@ const DrawingScreen = () => {
     const dbRef = ref(getDatabase(app));
 
     // check to see if this title has already been drawn
+    console.log('trying to post', title);
     get(child(dbRef, `titles/${title}`)).then((snapshot) => {
       if (snapshot.exists()) {
         let prev_post = [snapshot.val()[title]["drawingID"]];
@@ -125,9 +126,10 @@ const DrawingScreen = () => {
     set(ref(db, "drawings/" + uniqueID), {
       title: title,
       image: canvasContents,
-      seconds: timerOptions[currentTimer[drawingTime]].seconds,
+      seconds: DSCtx.drawingTime,
       date: `${month}-${day}-${year}`,
       drawnBy: user.sub,
+      index: uniqueID,
     });
 
     // just for user profile
@@ -152,9 +154,10 @@ const DrawingScreen = () => {
     set(ref(db, `users/${user.sub}/drawings/${uniqueID}`), {
       title: title,
       image: canvasContents,
-      seconds: timerOptions[currentTimer[drawingTime]].seconds,
+      seconds: DSCtx.drawingTime,
       date: `${month}-${day}-${year}`,
       drawnBy: user.sub,
+      index: uniqueID,
     });
 
     wordsCtx.resetPostable();
@@ -204,8 +207,9 @@ const DrawingScreen = () => {
     prepareCanvas();
     const id = setTimeout(
       sendToDB,
-      timerOptions[currentTimer[drawingTime]].seconds * 1000 + 3
+      (DSCtx.drawingTime * 1000) + 6
     );
+    console.log(DSCtx.drawingTime);
 
     return () => {
       clearTimeout(id);

@@ -12,24 +12,24 @@ import { PinnedProvider } from "./components/layout/PinnedContext";
 import { DrawingSelectionProvider } from "./canvas/DrawingSelectionContext";
 
 ReactDOM.render(
-  <PinnedProvider>
-    <FavoritesProvider>
-      <SearchProvider>
-        <DrawingSelectionProvider>
-          <WordsProvider>
-            <BrowserRouter>
-              <Auth0Provider
-                domain="dev-lshqttx0.us.auth0.com"
-                clientId="HiuFz0Yo30naHcGzk8PbPOYr0qIK6dae"
-                redirectUri={window.location.origin}
-              >
+  <Auth0Provider
+    domain="dev-lshqttx0.us.auth0.com"
+    clientId="HiuFz0Yo30naHcGzk8PbPOYr0qIK6dae"
+    redirectUri={window.location.origin}
+  >
+    <PinnedProvider>
+      <FavoritesProvider>
+        <SearchProvider>
+          <DrawingSelectionProvider>
+            <WordsProvider>
+              <BrowserRouter>
                 <App />
-              </Auth0Provider>
-            </BrowserRouter>
-          </WordsProvider>
-        </DrawingSelectionProvider>
-      </SearchProvider>
-    </FavoritesProvider>
-  </PinnedProvider>,
+              </BrowserRouter>
+            </WordsProvider>
+          </DrawingSelectionProvider>
+        </SearchProvider>
+      </FavoritesProvider>
+    </PinnedProvider>
+  </Auth0Provider>,
   document.getElementById("root")
 );

@@ -1,17 +1,32 @@
 .container {
   display: grid;
-  grid-template-columns: 0.7fr 1fr 1.3fr;
+  grid-template-columns: 0.5fr 1.5fr 1fr 1fr;
   grid-template-rows: 1fr 1fr 1fr 1fr;
   gap: 0px 0px;
   grid-auto-flow: row;
   grid-template-areas:
-    "username setUsername rightSide"
-    "email setEmail rightSide"
-    "resetPassword resetPassword rightSide"
-    "status setStatus rightSide";
+    "username setUsername rightSide rightSide"
+    "status setStatus rightSide rightSide"
+    "email setEmail rightSide rightSide"
+    "resetPassword resetPassword change change";
   justify-content: space-evenly;
   align-items: center;
   justify-items: center;
+}
+
+.prefCard {
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+  transition: 0.2s;
+  width: 100%;
+  border-radius: 15px;
+}
+
+.prefCard:hover {
+  box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.2);
+}
+
+.change {
+  grid-area: change;
 }
 
 .status {
@@ -54,6 +69,10 @@
   justify-items: center;
 }
 
+.horizContain {
+  width: 80%;
+}
+
 .picture {
   grid-area: picture;
 }
@@ -68,4 +87,10 @@
 
 .resetPassword {
   grid-area: resetPassword;
+}
+
+.updateButtons {
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }

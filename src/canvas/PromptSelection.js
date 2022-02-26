@@ -9,10 +9,6 @@ const PromptSelection = () => {
   const DSCtx = useContext(DrawingSelectionContext);
 
   useEffect(() => {
-    // console.log(DSCtx.allowResetOfButtonClicked, "on prompt");
-    // if (DSCtx.allowResetOfButtonClicked) {
-    //   DSCtx.resetLastClickedButton();
-    // }
     if (DSCtx.buttonAvailabilty === [false, false, false]) {
       DSCtx.setFetchNewWords(true);
     }
@@ -38,10 +34,9 @@ const PromptSelection = () => {
     <div className={classes.timerSelectionsModal}>
       <div>{DSCtx.titleForPromptSelection()}</div>
       <div className={classes.horizContain}>
-        <div className={classes.sidePadding}>
+        <div className={`${classes.sidePadding} ${classes.redBackground}`}>
           <div
             className={classes.timeBorder}
-            style={{ backgroundColor: "#C21919" }}
           >
             1 Minute
           </div>
@@ -54,10 +49,9 @@ const PromptSelection = () => {
             <RandomWords time={60} />
           </button>
         </div>
-        <div className={classes.sidePadding}>
+        <div className={`${classes.sidePadding} ${classes.yellowBackground}`}>
           <div
             className={classes.timeBorder}
-            style={{ backgroundColor: "#EDFB28" }}
           >
             3 Minutes
           </div>
@@ -71,10 +65,9 @@ const PromptSelection = () => {
             <RandomWords time={180} />
           </button>
         </div>
-        <div className={classes.sidePadding}>
+        <div className={`${classes.sidePadding} ${classes.greenBackground}`}>
           <div
             className={classes.timeBorder}
-            style={{ backgroundColor: "#25E932" }}
           >
             5 Minutes
           </div>

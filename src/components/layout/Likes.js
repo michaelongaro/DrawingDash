@@ -34,7 +34,7 @@ const Likes = () => {
   }
 
   return (
-    <section>
+    <section style={{width:"80%"}}>
       <h1>My Favorites</h1>
       {content}
     </section>

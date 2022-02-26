@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useContext } from "react";
+import Card from "../../ui/Card";
 
 import classes from "./PinnedArt.module.css";
 import PinnedContext from "./PinnedContext";
@@ -27,6 +28,7 @@ const PinnedArt = (props) => {
   }
 
   return (
+    <Card>
     <div ref={pinRef}>
       <img src={props.image} alt={props.title} />
       <div className={classes.bottomContain}>
@@ -34,6 +36,7 @@ const PinnedArt = (props) => {
         <div>{props.date}</div>
       </div>
     </div>
+    </Card>
   );
 };
 

@@ -1,36 +1,42 @@
 import React from "react";
 import { useContext } from "react";
 
-import { useAuth0 } from "@auth0/auth0-react";
-
 import FavoritesContext from "./FavoritesContext";
-import Card from "./Card";
+import Card from "../../ui/Card";
 
 import classes from "./GallaryItem.module.css";
 
 const GallaryItem = (props) => {
-  const { user } = useAuth0();
 
   const favoritesCtx = useContext(FavoritesContext);
   const itemIsFavorite = favoritesCtx.itemIsFavorite(props.index);
 
   function toggleFavoriteStatusHandler() {
     if (itemIsFavorite) {
-      favoritesCtx.removeFavorite(props.index, user.sub);
+      favoritesCtx.removeFavorite(props.index);
     } else {
-      favoritesCtx.addFavorite({
-        index: props.index,
-        title: props.title,
-        image: props.image,
-        date: props.date,
-      }, user.sub);
+      favoritesCtx.addFavorite(
+        {
+          index: props.index,
+          drawnBy: props.drawnBy,
+          title: props.title,
+          image: props.image,
+          date: props.date,
+          seconds: props.seconds,
+        }
+      );
     }
   }
+
+  function getUserProfileInformation() {}
+
   return (
-    // <div className={classes.contain}>
     <Card>
-      <img src={props.image} alt={props.title} />
+      <div className={classes.glossOver}>
+        <img src={props.image} alt={props.title} />
+      </div>
       <div className={classes.bottomContain}>
+        {/*<UserProfileContainer user={props.drawnBy} /> */}
         <div>{props.title}</div>
         <div>{props.date}</div>
         <div>{props.seconds}</div>
@@ -39,7 +45,6 @@ const GallaryItem = (props) => {
         </button>
       </div>
     </Card>
-    // </div>
   );
 };
 

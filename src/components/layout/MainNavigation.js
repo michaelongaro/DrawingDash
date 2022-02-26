@@ -23,7 +23,7 @@ function MainNavigation() {
           <li>
             <Link to="/profile/preferences">Profile</Link>
           </li>
-          <li className={classes.padLeft}>
+          <li className={classes.signinout}>
             <LogInButton />
             <LogOutButton />
           </li>

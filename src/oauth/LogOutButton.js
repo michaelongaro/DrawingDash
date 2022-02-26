@@ -6,11 +6,11 @@ const LogoutButton = () => {
   return (
     isAuthenticated && (
       // need to make this work later
-      <a href="" onClick={() => logout({
-          returnTo: "https://localhost:3000"
+      <button onClick={() => logout({
+          returnTo: window.location.origin
           })}>
         Log Out
-      </a>
+      </button>
     )
   )
 }

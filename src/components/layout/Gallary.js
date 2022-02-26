@@ -6,8 +6,9 @@ import SearchContext from "./SearchContext";
 
 const Gallary = () => {
 
+
   return (
-    <div>
+    <div style={{width: "80%"}}>
       <h1>My Gallary </h1>
       <Search forProfile={true}/>
 

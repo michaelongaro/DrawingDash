@@ -11,7 +11,6 @@
 }
 
 .bottomContain {
-  position: relative;
   bottom: 0px;
   z-index: -1;
 
@@ -20,7 +19,7 @@
   align-items: center;
   gap: 0.5em;
   width: 100%;
-  height: 50px;
+  height: 3.8em;
   border-bottom-left-radius: 5px;
   border-bottom-right-radius: 5px;
 

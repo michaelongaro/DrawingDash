@@ -4,6 +4,7 @@
   justify-content: center;
   align-items: center;
   gap: 3em;
+  margin-top: 3em;
 }
 
 .pinnedContain {
@@ -21,16 +22,17 @@
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  gap: 1em;
 }
 
 div.innerModal > * {
   margin: 1em;
+  padding: 1em;
 }
 
 .modal {
-  position: absolute;
+  position: fixed;
   left: 0;
+  top: 0;
   right: 0;
 
   display: flex;

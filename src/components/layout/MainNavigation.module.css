@@ -46,7 +46,21 @@
   margin-left: 0.5rem;
 }
 
-.padLeft {
-  position: absolute;
-  right: 40px;
+.signinout button {
+  display: inline-block;
+  padding: 0.35em 1.2em;
+  border: 0.1em solid #ffffff;
+  margin: 0 0.3em 0.3em 0;
+  border-radius: 0.12em;
+  box-sizing: border-box;
+  text-decoration: none;
+  font-family: "Roboto", sans-serif;
+  font-weight: 300;
+  color: #000000;
+  text-align: center;
+  transition: all 0.2s;
+}
+.signinout button:hover {
+  color: #000000;
+  background-color: #23c50d;
 }

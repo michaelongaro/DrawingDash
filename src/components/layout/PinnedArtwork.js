@@ -20,8 +20,9 @@ const PinnedArtwork = () => {
 
   const showModal = {
     position: "absolute",
-    left: "0",
-    right: "0",
+    left: "15em",
+    top: "7em",
+    right: "5em",
     display: "flex",
     justifyContent: "center",
     alignItems: "center",

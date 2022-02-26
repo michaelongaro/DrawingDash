@@ -1,5 +1,17 @@
 import { createContext, useEffect, useState } from "react";
 import { useAuth0 } from "@auth0/auth0-react";
+
+import {
+  getDatabase,
+  get,
+  set,
+  ref,
+  child,
+  update,
+  remove,
+} from "firebase/database";
+import { app } from "../../util/init-firebase";
+
 // createContext returns react component -> capital var name
 const FavoritesContext = createContext({
   favorites: [],
@@ -13,111 +25,45 @@ const FavoritesContext = createContext({
 
 export function FavoritesProvider(props) {
   const [userFavorites, setUserFavorites] = useState([]);
-  const [initalizedFavorites, setInitializedFavorites] = useState(false);
-  const [favoritesID, setFavoritesID] = useState("");
-  const [clientID, setClientID] = useState("");
 
-  const { isAuthenticated } = useAuth0();
+  const { user, isAuthenticated } = useAuth0();
+
+  const db = getDatabase(app);
+  const dbRef = ref(getDatabase(app));
 
   useEffect(() => {
-    console.log(clientID);
     if (isAuthenticated) {
-      fetch(
-        `https://drawing-dash-41f14-default-rtdb.firebaseio.com/${clientID}/.json`
-      )
-        .then((response) => {
-          return response.json();
-        })
-        .then((data) => {
-          for (const entry of Object.keys(data)) {
-            console.log(entry);
-            if (entry === "likes") {
-              fetch(
-                `https://drawing-dash-41f14-default-rtdb.firebaseio.com/${clientID}/likes.json`
-              )
-                .then((response) => {
-                  return response.json();
-                })
-                .then((data) => {
-                  setFavoritesID(Object.keys(data)[0]);
-                  setUserFavorites(Object.values(data)[0]);
-                });
-            }
-          }
-        });
+      get(child(dbRef, `users/${user.sub}/likes`)).then((snapshot) => {
+        if (snapshot.exists()) {
+          setUserFavorites(Object.values(snapshot.val()));
+        }
+      });
     }
-  }, [clientID]);
+  }, [isAuthenticated]);
 
-  function addFavoriteHandler(favoriteMeetup, userID) {
+  function addFavoriteHandler(favoriteMeetup) {
     setUserFavorites((prevUserFavorites) => {
       return prevUserFavorites.concat(favoriteMeetup);
     });
 
-    const updatedFavorites = userFavorites.concat(favoriteMeetup);
-
-    if (initalizedFavorites) {
-      fetch(
-        `https://drawing-dash-41f14-default-rtdb.firebaseio.com//${userID}/likes/${favoritesID}.json`,
-        {
-          method: "PUT",
-          body: JSON.stringify(updatedFavorites),
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
-    } else {
-      setInitializedFavorites(true);
-
-      const arrayFavorites = [favoriteMeetup];
-
-      fetch(
-        `https://drawing-dash-41f14-default-rtdb.firebaseio.com//${userID}/likes.json`,
-        {
-          method: "POST",
-          body: JSON.stringify(arrayFavorites),
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
-
-      setTimeout(() => {
-        fetch(
-          `https://drawing-dash-41f14-default-rtdb.firebaseio.com/${userID}/likes.json`
-        )
-          .then((response) => {
-            return response.json();
-          })
-          .then((data) => {
-            setFavoritesID(Object.keys(data)[0]);
-          });
-      }, 1000);
-    }
+    set(
+      ref(db, `users/${user.sub}/likes/${favoriteMeetup.index}`),
+      favoriteMeetup
+    );
   }
 
-  function removeFavoriteHandler(meetupIndex, userID) {
-    const drawingsToKeep = userFavorites.filter(
-      (meetup) => meetup.index !== meetupIndex
-    );
-
-    fetch(
-      `https://drawing-dash-41f14-default-rtdb.firebaseio.com//${userID}/likes/${favoritesID}.json`,
-      {
-        method: "PUT",
-        body: JSON.stringify(drawingsToKeep),
-        headers: {
-          "Content-Type": "application/json",
-        },
-      }
-    );
-
+  function removeFavoriteHandler(meetupIndex) {
     setUserFavorites((prevUserFavorites) => {
       return prevUserFavorites.filter((meetup) => meetup.index !== meetupIndex);
     });
+
+    remove(ref(db, `users/${user.sub}/likes/${meetupIndex}`));
   }
 
   function itemIsFavoriteHandler(meetupIndex) {
+    if (userFavorites.length === 0) {
+      return false;
+    }
     return userFavorites.some((meetup) => meetup.index === meetupIndex);
   }
 
@@ -127,7 +73,6 @@ export function FavoritesProvider(props) {
     addFavorite: addFavoriteHandler,
     removeFavorite: removeFavoriteHandler,
     itemIsFavorite: itemIsFavoriteHandler,
-    setClientID: setClientID,
   };
 
   return (

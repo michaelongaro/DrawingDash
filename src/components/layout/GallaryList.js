@@ -16,7 +16,9 @@ const GallaryList = (props) => {
       <div className={classes.listContain}>
         {props.drawings.map((drawing) => (
           <GallaryItem
-            key={drawing}
+            key={drawing.index}
+            drawnBy={drawing.drawnBy}
+            index={drawing.index}
             image={drawing.image}
             date={drawing.date}
             seconds={drawing.seconds}
