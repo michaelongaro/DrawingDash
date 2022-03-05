@@ -11,6 +11,11 @@
   background-color: rgb(212, 209, 209);
 }
 
+.widthContain {
+  width: 25em;
+  margin: 1em;
+}
+
 @keyframes TransitioningBackground {
   0% {
     background-position: 1% 0%;

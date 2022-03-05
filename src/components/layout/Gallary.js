@@ -1,20 +1,18 @@
 import React from "react";
 
-import GallaryList from "./GallaryList";
+import { useAuth0 } from "@auth0/auth0-react";
+
 import Search from "./Search";
-import SearchContext from "./SearchContext";
 
 const Gallary = () => {
 
+  const { user } = useAuth0();
 
   return (
     <div style={{width: "80%"}}>
-      <h1>My Gallary </h1>
-      <Search forProfile={true}/>
+      <h1>My Gallary</h1>
+      <Search userProfile={user.sub}/>
 
-      <SearchContext.Consumer>
-        {(value) => <GallaryList drawings={value.gallary} />}
-      </SearchContext.Consumer>
     </div>
   );
 };

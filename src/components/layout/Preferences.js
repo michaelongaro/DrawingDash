@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useContext } from "react";
 import { useAuth0 } from "@auth0/auth0-react";
 
-import FavoritesContext from "./FavoritesContext";
 import PinnedArtwork from "./PinnedArtwork";
 
 import {
@@ -24,7 +23,6 @@ import classes from "./Preferences.module.css";
 
 const Preferences = () => {
   const { user, isAuthenticated } = useAuth0();
-  const favoritesCtx = useContext(FavoritesContext);
 
   const db = getDatabase(app);
   const dbRef = ref_database(getDatabase(app));
@@ -41,10 +39,6 @@ const Preferences = () => {
   const [disableEdit, setDisableEdit] = useState(false);
 
   useEffect(() => {
-    // probably need to refactor this
-    // favoritesCtx.setClientID(user.sub);
-    // console.log("set favorites id to", user.sub, isAuthenticated);
-
     // fetch data from db if it is present
     get(child(dbRef, `users/${user.sub}/preferences`)).then((snapshot) => {
       if (snapshot.exists()) {
@@ -103,7 +97,6 @@ const Preferences = () => {
 
   return (
     <div className={classes.horizContain}>
-
       <div className={`${classes.container} ${classes.prefCard}`}>
         <div className={classes.username}>Username</div>
         {!disableEdit ? (
@@ -154,9 +147,11 @@ const Preferences = () => {
             Save Changes
           </button>
         </div>
-      </div>
 
-      <PinnedArtwork />
+        <div className={classes.pinned}>
+          <PinnedArtwork />
+        </div>
+      </div>
     </div>
   );
 };

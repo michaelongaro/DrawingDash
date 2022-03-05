@@ -1,16 +1,24 @@
 .formContainer {
   display: flex;
-  justify-content: center;
-  margin-left: 2em;
-  margin-right: 2em;
+  align-items: baseline;
 }
 
 .searchContainer {
-  margin-left: 25px;
-  margin-right: 25px;
+  margin-left: 1.5em;
+  margin-right: 1.5em;
 }
 
 textarea,
 input {
   outline: none;
+}
+
+.hide {
+  display: none;
+}
+
+.show {
+  background: gainsboro;
+  border: 1px grey solid;
+  border-width: 0px 1px 1px 1px;
 }

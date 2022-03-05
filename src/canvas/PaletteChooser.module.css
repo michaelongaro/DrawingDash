@@ -1,12 +1,11 @@
 .vertContain {
   display: flex;
-  justify-content: space-evenly;
   align-items: center;
   flex-direction: column;
   width: 100%;
   height: 75vh;
   margin-top: 5em;
-  gap: 4em;
+  gap: 8em;
 }
 
 .horizContain {

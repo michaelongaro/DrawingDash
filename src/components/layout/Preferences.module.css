@@ -1,14 +1,15 @@
 .container {
   display: grid;
   grid-template-columns: 0.5fr 1.5fr 1fr 1fr;
-  grid-template-rows: 1fr 1fr 1fr 1fr;
+  grid-template-rows: 1fr 1fr 1fr 1fr 7fr;
   gap: 0px 0px;
   grid-auto-flow: row;
   grid-template-areas:
     "username setUsername rightSide rightSide"
     "status setStatus rightSide rightSide"
     "email setEmail rightSide rightSide"
-    "resetPassword resetPassword change change";
+    "resetPassword resetPassword change change"
+    "pinned pinned pinned pinned";
   justify-content: space-evenly;
   align-items: center;
   justify-items: center;
@@ -23,6 +24,10 @@
 
 .prefCard:hover {
   box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.2);
+}
+
+.pinned {
+  grid-area: pinned;
 }
 
 .change {
@@ -56,7 +61,7 @@
 .rightSide {
   display: grid;
   grid-template-columns: 1fr;
-  grid-template-rows: 1.6fr 0.8fr 0.6fr;
+  grid-template-rows: 3.25fr 1.5fr 0.6fr;
   gap: 0px 0px;
   grid-auto-flow: row;
   grid-template-areas:

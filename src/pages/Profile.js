@@ -15,9 +15,9 @@ const Profile = () => {
     <div className={classes.horizontalContain}>
       <ProfileNavigation />
       <div style={profileCardStyles}>
-        <Card>
+        {/* <Card> */}
           <Outlet />
-        </Card>
+        {/* </Card> */}
       </div>
     </div>
   );

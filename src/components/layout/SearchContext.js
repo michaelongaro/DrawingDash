@@ -1,4 +1,4 @@
-import { createContext, useState } from "react";
+import { createContext, useEffect, useState } from "react";
 
 import { getDatabase, get, ref, child } from "firebase/database";
 import { app } from "../../util/init-firebase";
@@ -15,38 +15,48 @@ export function SearchProvider(props) {
   const [requestedAdjectives, setRequestedAdjectives] = useState([]);
   const [requestedNouns, setRequestedNouns] = useState([]);
 
-  const [gallary, setGallary] = useState([]);
+  const [gallary, setGallary] = useState(null);
 
-  function getGallary(profile="") {
+  function getGallary(profile = "") {
     if (adjSearch === "" && nounSearch === "") {
       return;
     }
     let fullQuery = `${adjSearch} ${nounSearch}`;
-    let drawingIDsList = [];
-    const gallaryResults = [];
-
+    let gallaryResults = { 60: [], 180: [], 300: [] };
+    const drawingIDS = [];
+    const promises = [];
     const dbRef = ref(getDatabase(app));
 
-    get(child(dbRef, `${profile}titles/${fullQuery}`))
+    get(child(dbRef, `${profile}titles`))
       .then((snapshot) => {
-        console.log(fullQuery);
-        if (snapshot.exists()) {
-          let title = snapshot.val();
-          drawingIDsList = title["drawingID"];
+        for (const index in Object.values(snapshot.val())) {
+          let durationObj = Object.values(snapshot.val());
+          for (const title of Object.keys(durationObj[index])) {
+            if (title === fullQuery) {
+              for (let drawingID of durationObj[index][title]["drawingID"]) {
+                drawingIDS.push(drawingID);
+              }
+            }
+          }
+        }
+
+        for (const id of drawingIDS) {
+          promises.push(get(child(dbRef, `drawings/${id}`)));
+        }
+
+        return Promise.all(promises);
+      })
+      .then((results) => {
+        if (results.length === 0) {
+          setGallary("none");
         } else {
-          setGallary(["none"]);
-          return;
+          for (const result of results) {
+            gallaryResults[result.val()["seconds"]].push(result.val());
+          }
+
+          setGallary(gallaryResults);
         }
-      })
-      .then(() => {
-        for (let drawingID of drawingIDsList) {
-          get(child(dbRef, `${profile}drawings/${drawingID}`)).then((snapshot) => {
-            gallaryResults.push(snapshot.val());
-            setGallary(gallaryResults);
-            console.log(gallaryResults);
-          });
-        }
-      })
+      });
   }
 
   const context = {

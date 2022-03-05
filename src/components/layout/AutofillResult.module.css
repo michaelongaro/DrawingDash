@@ -1,7 +1,8 @@
 .autofillResult {
   width: 100%;
+  cursor: pointer;
 }
 
 .autofillResult:hover {
-  background-color: rgb(156, 156, 156);
+  background-color: rgb(119, 119, 119);
 }

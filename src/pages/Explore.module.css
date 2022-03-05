@@ -1,9 +1,11 @@
 .exploreContain {
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: flex-start;
   align-items: center;
   gap: 2em;
   margin-left: 5em;
   margin-right: 5em;
+  margin-top: -3em;
+  /* height: 85vh; */
 }

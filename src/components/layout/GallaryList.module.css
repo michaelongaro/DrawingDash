@@ -8,8 +8,27 @@
   height: 65vh;
 }
 
-.centerMiddle {
+.flexListContain {
   display: flex;
+  flex-wrap: wrap;
+  overflow-y: scroll;
+  height: 65vh;
+  width: 100%;
+}
+
+.baseFlex {
+  display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
+  gap: 2em;
+  width: 100%;
+}
+
+.darken {
+  opacity: 50%;
+}
+
+.hide {
+  display: none;
 }

@@ -6,7 +6,7 @@ import SearchContext from "./SearchContext";
 
 const AutofillResult = (props) => {
   const searchCtx = useContext(SearchContext);
-  
+
   const resultRef = useRef();
 
   useEffect(() => {
@@ -28,7 +28,7 @@ const AutofillResult = (props) => {
 
   return (
     <div className={classes.autofillResult} ref={resultRef}>
-      <div>{props.word}</div>
+      <div style={{ marginLeft: "0.18em" }}>{props.word}</div>
     </div>
   );
 };

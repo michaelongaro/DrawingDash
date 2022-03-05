@@ -13,6 +13,10 @@ const PromptSelection = () => {
       DSCtx.setFetchNewWords(true);
     }
   }, []);
+
+  //add useeffect to show randomwords when they are all done loading i guess?
+
+
   // READ THIS:
   // should find way to genuinely center the options, currenlty if one word is larger than others
   // then it skews it... or just figure out another way to make it look natural

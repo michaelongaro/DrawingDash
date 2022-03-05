@@ -6,7 +6,7 @@ import AutofillResult from "./AutofillResult";
 import { getDatabase, get, ref, child } from "firebase/database";
 import { app } from "../../util/init-firebase";
 
-const AutofillResults = () => {
+const AutofillResults = (props) => {
   const searchCtx = useContext(SearchContext);
 
   const [rerender, setRerender] = useState(false);
@@ -16,18 +16,23 @@ const AutofillResults = () => {
     if (searchCtx.adjSearch === "") {
       searchCtx.setRequestedAdjectives([]);
     } else {
-      const results = [],
-        related_results = [];
-      let fetched_titles;
+      // set it to null
+      getAdjectives();
 
-      const dbRef = ref(getDatabase(app));
+      setRerender(!rerender);
+    }
+  }, [searchCtx.adjSearch]);
 
-      get(child(dbRef, `titles/`))
-        .then((snapshot) => {
-          fetched_titles = snapshot.val();
-        })
-        .then(() => {
-          for (const title of Object.keys(fetched_titles)) {
+  function getAdjectives() {
+    const results = [],
+      related_results = [],
+      totalResults = [];
+
+    const dbRef = ref(getDatabase(app));
+    get(child(dbRef, `${props.profile}titles`))
+      .then((snapshot) => {
+        for (const duration of Object.values(snapshot.val())) {
+          for (const title of Object.keys(duration)) {
             // isolating the adjective
             let adjective = title.split(" ")[0];
             if (
@@ -42,27 +47,35 @@ const AutofillResults = () => {
                 searchCtx.adjSearch &&
               adjective.includes(searchCtx.adjSearch)
             ) {
-              related_results.push(adjective);
+              if (!results.includes(adjective)) {
+                related_results.push(adjective);
+              }
             }
           }
-          searchCtx.setRequestedAdjectives(results);
-        });
-        
-      setRerender(!rerender);
-    }
-  }, [searchCtx.adjSearch]);
+        }
+      })
+      .then(() => {
+        if (results.length !== 0) {
+          if (related_results.length !== 0) {
+            totalResults.push(
+              results.concat(["---------"]).concat(related_results)
+            );
+          } else {
+            totalResults.push(results);
+          }
+          searchCtx.setRequestedAdjectives(...new Set(totalResults));
+        } else {
+          searchCtx.setRequestedAdjectives([]);
+        }
+      });
+  }
 
   return searchCtx.requestedAdjectives.length !== 0 ? (
-    
     searchCtx.requestedAdjectives.map((title) => (
-      <AutofillResult
-        key={title.id}
-        word={title}
-        type="adj"
-      />
+      <AutofillResult key={title} word={title} type="adj" />
     ))
   ) : (
-    <div>{"no results found"}</div>
+    <div style={{ textAlign: "center", pointerEvents: "none"}}>{"-No Results Found-"}</div>
   );
 };
 

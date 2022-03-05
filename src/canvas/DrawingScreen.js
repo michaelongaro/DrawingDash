@@ -19,7 +19,6 @@ import { app } from "../util/init-firebase";
 import classes from "./Canvas.module.css";
 
 const DrawingScreen = () => {
-
   const DSCtx = useContext(DrawingSelectionContext);
   const wordsCtx = useContext(WordsContext);
   const { user } = useAuth0();
@@ -63,8 +62,6 @@ const DrawingScreen = () => {
 
   useEffect(() => {
     if (!DSCtx.showPaletteChooser) {
-      // should probably throw a classes.hide for all things when user comes to this
-      // page again after it has been loaded already
       setShowCountdownOverlay(classes.overlayBreathingBackground);
       setShowCanvasOutline(classes.canvasOutline);
       setShowCanvas(classes.hide);
@@ -89,6 +86,13 @@ const DrawingScreen = () => {
     );
   };
 
+  // refactor later so that you aren't repeating same function over and over
+  // const pushToDB = (pushDrawing, seconds, pushToProfile) => {
+  //   if (pushDrawing) {
+
+  //   }
+  // }
+
   const sendToDB = () => {
     setShowCanvas(classes.hide);
 
@@ -108,21 +112,97 @@ const DrawingScreen = () => {
     const dbRef = ref(getDatabase(app));
 
     // check to see if this title has already been drawn
-    console.log('trying to post', title);
-    get(child(dbRef, `titles/${title}`)).then((snapshot) => {
-      if (snapshot.exists()) {
-        let prev_post = [snapshot.val()[title]["drawingID"]];
-        prev_post.push(uniqueID);
-        update(ref(db, "titles/" + title), {
-          drawingID: prev_post,
-        });
-      } else {
-        set(ref(db, "titles/" + title), {
-          drawingID: [uniqueID],
-        });
-      }
-    });
+    if (DSCtx.drawingTime === 60) {
+      get(child(dbRef, `titles/60/${title}`)).then((snapshot) => {
+        if (snapshot.exists()) {
+          let prev_post = snapshot.val()["drawingID"];
+          prev_post.push(uniqueID);
+          update(ref(db, "titles/60/" + title), {
+            drawingID: prev_post,
+          });
+        } else {
+          set(ref(db, "titles/60/" + title), {
+            drawingID: [uniqueID],
+          });
+        }
+      });
 
+      // get(child(dbRef, "titleCounts")).then((snapshot) => {
+      //   if (snapshot.exists()) {
+      //     let prev_counts = snapshot.val();
+      //     prev_counts["60"] += 1;
+      //     update(ref(db, "titleCounts"), prev_counts);
+      //   } else {
+      //     set(ref(db, "titleCounts"), {
+      //       60: 1,
+      //       180: 0,
+      //       300: 0,
+      //     });
+      //   }
+      // });
+    }
+
+    if (DSCtx.drawingTime === 180) {
+      get(child(dbRef, `titles/180/${title}`)).then((snapshot) => {
+        if (snapshot.exists()) {
+          let prev_post = snapshot.val()["drawingID"];
+          prev_post.push(uniqueID);
+          update(ref(db, "titles/180/" + title), {
+            drawingID: prev_post,
+          });
+        } else {
+          set(ref(db, "titles/180/" + title), {
+            drawingID: [uniqueID],
+          });
+        }
+      });
+
+      // get(child(dbRef, "titleCounts")).then((snapshot) => {
+      //   if (snapshot.exists()) {
+      //     let prev_counts = snapshot.val();
+      //     prev_counts["180"] += 1;
+      //     update(ref(db, "titleCounts"), prev_counts);
+      //   } else {
+      //     set(ref(db, "titleCounts"), {
+      //       60: 0,
+      //       180: 1,
+      //       300: 0,
+      //     });
+      //   }
+      // });
+    }
+
+    if (DSCtx.drawingTime === 300) {
+      get(child(dbRef, `titles/300/${title}`)).then((snapshot) => {
+        if (snapshot.exists()) {
+          let prev_post = snapshot.val()["drawingID"];
+          prev_post.push(uniqueID);
+          update(ref(db, "titles/300/" + title), {
+            drawingID: prev_post,
+          });
+        } else {
+          set(ref(db, "titles/300/" + title), {
+            drawingID: [uniqueID],
+          });
+        }
+      });
+
+      // get(child(dbRef, "titleCounts")).then((snapshot) => {
+      //   if (snapshot.exists()) {
+      //     let prev_counts = snapshot.val();
+      //     prev_counts["300"] += 1;
+      //     update(ref(db, "titleCounts"), prev_counts);
+      //   } else {
+      //     set(ref(db, "titleCounts"), {
+      //       60: 0,
+      //       180: 0,
+      //       300: 1,
+      //     });
+      //   }
+      // });
+    }
+
+    // posting actual drawing object
     set(ref(db, "drawings/" + uniqueID), {
       title: title,
       image: canvasContents,
@@ -132,33 +212,61 @@ const DrawingScreen = () => {
       index: uniqueID,
     });
 
-    // just for user profile
+    // post title in profile/titles object
+    if (DSCtx.drawingTime === 60) {
+      get(child(dbRef, `users/${user.sub}/titles/60/${title}`)).then(
+        (snapshot) => {
+          if (snapshot.exists()) {
+            let prev_post = snapshot.val()["drawingID"];
+            prev_post.push(uniqueID);
+            console.log(prev_post);
+            update(ref(db, `users/${user.sub}/titles/60/${title}`), {
+              drawingID: prev_post,
+            });
+          } else {
+            set(ref(db, `users/${user.sub}/titles/60/${title}`), {
+              drawingID: [uniqueID],
+            });
+          }
+        }
+      );
+    }
 
-    // check to see if this title has already been drawn
-    get(child(dbRef, `users/${user.sub}/titles/${title}`)).then((snapshot) => {
-      if (snapshot.exists()) {
-        let prev_post = snapshot.val()[title]["drawingID"];
-        prev_post.push(uniqueID);
-        update(ref(db, `users/${user.sub}/titles/${title}`), {
-          drawingID: prev_post,
-        });
-      } else {
-        set(ref(db, `users/${user.sub}/titles/${title}`), {
-          drawingID: [uniqueID],
-        });
-      }
-    });
+    if (DSCtx.drawingTime === 180) {
+      get(child(dbRef, `users/${user.sub}/titles/180/${title}`)).then(
+        (snapshot) => {
+          if (snapshot.exists()) {
+            let prev_post = snapshot.val()["drawingID"];
+            prev_post.push(uniqueID);
+            update(ref(db, `users/${user.sub}/titles/180/${title}`), {
+              drawingID: prev_post,
+            });
+          } else {
+            set(ref(db, `users/${user.sub}/titles/180/${title}`), {
+              drawingID: [uniqueID],
+            });
+          }
+        }
+      );
+    }
 
-    // should eventually get rid of this and have 
-    // the profile gallary loop through drawing 
-    set(ref(db, `users/${user.sub}/drawings/${uniqueID}`), {
-      title: title,
-      image: canvasContents,
-      seconds: DSCtx.drawingTime,
-      date: `${month}-${day}-${year}`,
-      drawnBy: user.sub,
-      index: uniqueID,
-    });
+    if (DSCtx.drawingTime === 300) {
+      get(child(dbRef, `users/${user.sub}/titles/300/${title}`)).then(
+        (snapshot) => {
+          if (snapshot.exists()) {
+            let prev_post = snapshot.val()["drawingID"];
+            prev_post.push(uniqueID);
+            update(ref(db, `users/${user.sub}/titles/300/${title}`), {
+              drawingID: prev_post,
+            });
+          } else {
+            set(ref(db, `users/${user.sub}/titles/300/${title}`), {
+              drawingID: [uniqueID],
+            });
+          }
+        }
+      );
+    }
 
     wordsCtx.resetPostable();
 
@@ -205,17 +313,13 @@ const DrawingScreen = () => {
 
   useEffect(() => {
     prepareCanvas();
-    const id = setTimeout(
-      sendToDB,
-      (DSCtx.drawingTime * 1000) + 6
-    );
+    const id = setTimeout(sendToDB, DSCtx.drawingTime * 1000 + 6);
     console.log(DSCtx.drawingTime);
 
     return () => {
       clearTimeout(id);
     };
   }, []);
-
 
   return (
     <div>
@@ -227,10 +331,7 @@ const DrawingScreen = () => {
 
       <div className={showEndOverlay}>
         <RandomWords time={drawingTime} />
-        <div
-          className={showEndOutline}
-          style={{ fontSize: "1em" }}
-        >
+        <div className={showEndOutline} style={{ fontSize: "1em" }}>
           <PromptSelection />
         </div>
         <Controls />
@@ -254,12 +355,14 @@ const DrawingScreen = () => {
               {renderTime}
             </CountdownCircleTimer>
           </div>
-          <canvas
-            onMouseDown={startDrawing}
-            onMouseUp={finishDrawing}
-            onMouseMove={draw}
-            ref={canvasRef}
-          />
+          <div className={classes.canvasBorder}>
+            <canvas
+              onMouseDown={startDrawing}
+              onMouseUp={finishDrawing}
+              onMouseMove={draw}
+              ref={canvasRef}
+            />
+          </div>
         </div>
         <Controls />
       </div>

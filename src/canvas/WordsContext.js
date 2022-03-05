@@ -41,52 +41,52 @@ export function WordsProvider(props) {
   }
 
   function getAdjectiveHandler(time) {
-    // fetch("https://random-word-form.herokuapp.com/random/adjective")
-    //   .then((response) => response.json())
-    //   .then((data) => {
-    //     if (time === 60) {
-    //       setAdjectiveOne(data[0]);
-    //     } else if (time === 180) {
-    //       setAdjectiveTwo(data[0]);
-    //     } else if (time === 300) {
-    //       setAdjectiveThree(data[0]);
-    //     }
-    //   });
+    fetch("https://random-word-form.herokuapp.com/random/adjective")
+      .then((response) => response.json())
+      .then((data) => {
+        if (time === 60) {
+          setAdjectiveOne(data[0]);
+        } else if (time === 180) {
+          setAdjectiveTwo(data[0]);
+        } else if (time === 300) {
+          setAdjectiveThree(data[0]);
+        }
+      });
 
     // make sure index is unique across all 3
-    let randomAdjectives = searchRandom(3, adjectives);
+    // let randomAdjectives = searchRandom(3, adjectives);
 
-    if (time === 60) {
-      setAdjectiveOne(randomAdjectives[0]);
-    } else if (time === 180) {
-      setAdjectiveTwo(randomAdjectives[1]);
-    } else if (time === 300) {
-      setAdjectiveThree(randomAdjectives[2]);
-    }
+    // if (time === 60) {
+    //   setAdjectiveOne(randomAdjectives[0]);
+    // } else if (time === 180) {
+    //   setAdjectiveTwo(randomAdjectives[1]);
+    // } else if (time === 300) {
+    //   setAdjectiveThree(randomAdjectives[2]);
+    // }
   }
 
   function getNounHandler(time) {
-    // fetch("https://random-word-form.herokuapp.com/random/noun")
-    //   .then((response) => response.json())
-    //   .then((data) => {
-    //     if (time === 60) {
-    //       setNounOne(data[0]);
-    //     } else if (time === 180) {
-    //       setNounTwo(data[0]);
-    //     } else if (time === 300) {
-    //       setNounThree(data[0]);
-    //     }
-    //   });
+    fetch("https://random-word-form.herokuapp.com/random/noun")
+      .then((response) => response.json())
+      .then((data) => {
+        if (time === 60) {
+          setNounOne(data[0]);
+        } else if (time === 180) {
+          setNounTwo(data[0]);
+        } else if (time === 300) {
+          setNounThree(data[0]);
+        }
+      });
 
-    let randomNouns = searchRandom(3, nouns);
+    // let randomNouns = searchRandom(3, nouns);
 
-    if (time === 60) {
-      setNounOne(randomNouns[0]);
-    } else if (time === 180) {
-      setNounTwo(randomNouns[1]);
-    } else if (time === 300) {
-      setNounThree(randomNouns[2]);
-    }
+    // if (time === 60) {
+    //   setNounOne(randomNouns[0]);
+    // } else if (time === 180) {
+    //   setNounTwo(randomNouns[1]);
+    // } else if (time === 300) {
+    //   setNounThree(randomNouns[2]);
+    // }
   }
 
   function getPhrase(time) {

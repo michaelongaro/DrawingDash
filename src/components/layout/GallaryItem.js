@@ -9,42 +9,35 @@ import classes from "./GallaryItem.module.css";
 const GallaryItem = (props) => {
 
   const favoritesCtx = useContext(FavoritesContext);
-  const itemIsFavorite = favoritesCtx.itemIsFavorite(props.index);
+  const itemIsFavorite = favoritesCtx.itemIsFavorite(props.drawing.index);
 
   function toggleFavoriteStatusHandler() {
     if (itemIsFavorite) {
-      favoritesCtx.removeFavorite(props.index);
+      favoritesCtx.removeFavorite(props.drawing.index);
     } else {
-      favoritesCtx.addFavorite(
-        {
-          index: props.index,
-          drawnBy: props.drawnBy,
-          title: props.title,
-          image: props.image,
-          date: props.date,
-          seconds: props.seconds,
-        }
-      );
+      favoritesCtx.addFavorite(props.drawing);
     }
   }
 
   function getUserProfileInformation() {}
 
   return (
+    <div className={classes.widthContain}>
     <Card>
       <div className={classes.glossOver}>
-        <img src={props.image} alt={props.title} />
+        <img src={props.drawing.image} alt={props.drawing.title} />
       </div>
       <div className={classes.bottomContain}>
-        {/*<UserProfileContainer user={props.drawnBy} /> */}
-        <div>{props.title}</div>
-        <div>{props.date}</div>
-        <div>{props.seconds}</div>
+        {/*<UserProfileContainer user={props.drawing.drawnBy} /> */}
+        <div>{props.drawing.title}</div>
+        <div>{props.drawing.date}</div>
+        <div>{props.drawing.seconds}</div>
         <button onClick={toggleFavoriteStatusHandler}>
           {itemIsFavorite ? "💔" : "💖"}
         </button>
       </div>
     </Card>
+    </div>
   );
 };
 
