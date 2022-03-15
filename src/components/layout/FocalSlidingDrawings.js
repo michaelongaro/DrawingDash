@@ -48,28 +48,34 @@ const FocalSlidingDrawings = () => {
   }
 
   function getImagesFromIDs() {
+    const tempDrawings = [];
+    const promises = [];
     for (const id of randomDrawingIDs) {
-      get(child(dbRef, `drawings/${id}`)).then((snapshot) => {
-        setFetchedImages((prevImages) => [
-          ...prevImages,
-          snapshot.val()["image"],
-        ]);
-      });
+      promises.push(get(child(dbRef, `drawings/${id}`)));
     }
+
+    Promise.all(promises).then((results) => {
+      for (const result of results) {
+        tempDrawings.push(result.val()["image"]);
+      }
+      setFetchedImages(tempDrawings);
+    });
   }
+  // 99.99% chance this is hella rerendering/fetching, figure out how to fetch the 15* images and
+  // again ideally store them in memory until a refresh, and don't refetch them
 
   return (
     <div className={classes.fullWidth}>
       {fetchedImages.length > 0 ? (
         fetchedImages.map((image, i) => (
-          <SlidingDrawing key={image} drawing={image} id={i} />
+          <SlidingDrawing key={i} drawing={image} id={i} />
         ))
       ) : (
         <div></div>
       )}
       <div className={classes.centerTextContainer}>
-        <div style={{fontSize: "3em"}}>Search</div>
-        <div style={{fontSize: "1.15em"}}>1000s of drawings</div>
+        <div style={{ fontSize: "3em" }}>Search</div>
+        <div style={{ fontSize: "1.15em" }}>1000s of drawings</div>
       </div>
     </div>
   );

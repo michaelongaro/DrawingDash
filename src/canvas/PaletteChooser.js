@@ -1,13 +1,12 @@
 import React, { useState, useEffect, useContext } from "react";
 
 import DrawingSelectionContext from "./DrawingSelectionContext";
-import WordsContext from "./WordsContext";
+// import WordsContext from "./WordsContext";
 
 import classes from "./PaletteChooser.module.css";
 
 const PaletteChooser = () => {
   const DSCtx = useContext(DrawingSelectionContext);
-  const wordsCtx = useContext(WordsContext);
 
   const [paletteColors, setPaletteColors] = useState([
     "#FFFFFF",
@@ -69,7 +68,7 @@ const PaletteChooser = () => {
     <div className={classes.vertContain}>
       <div className={classes.textVert}>
         <div>{`A Color Palette For`}</div>
-        <div>{wordsCtx.getPhrase(DSCtx.drawingTime)}</div>
+        <div>{DSCtx.chosenPrompt}</div>
       </div>
 
       <div className={classes.horizContain}>

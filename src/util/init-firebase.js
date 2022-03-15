@@ -2,7 +2,6 @@
 // import "firebase/database";
 import { initializeApp } from "firebase/app";
 
-
 const firebaseConfig = {
   apiKey: "AIzaSyBqlv-SrV2UoI-Y2wKbr4XZjExImx2S_as",
   authDomain: "drawing-dash-41f14.firebaseapp.com",

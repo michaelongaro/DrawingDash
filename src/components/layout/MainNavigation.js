@@ -15,7 +15,9 @@ function MainNavigation() {
       <nav>
         <ul>
           <li>
+            {/* <div className={classes.rainbow}> */}
             <Link to="/daily-doodle">Daily Doodle</Link>
+            {/* </div> */}
           </li>
           <li>
             <Link to="/explore">Explore</Link>

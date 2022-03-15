@@ -65,7 +65,7 @@ const UserModal = (props) => {
             src={imageURL}
             alt={props.uid}
           />
-
+      
           <div className={classes.showUsername}>{username}</div>
           <div className={classes.showStatus}>{status}</div>
         </div>

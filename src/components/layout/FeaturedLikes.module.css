@@ -1,0 +1,24 @@
+.overallContain {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 80%;
+}
+
+.leftSideContain,
+.detailsContain {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.imageDetails {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.highlighted {
+  filter: brightness(115%);
+}

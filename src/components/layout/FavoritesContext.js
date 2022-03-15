@@ -9,6 +9,7 @@ import {
   child,
   update,
   remove,
+  onValue,
 } from "firebase/database";
 import { app } from "../../util/init-firebase";
 
@@ -26,20 +27,25 @@ const FavoritesContext = createContext({
 export function FavoritesProvider(props) {
   const [userFavorites, setUserFavorites] = useState([]);
 
-  const { user, isAuthenticated } = useAuth0();
+  const { user, isLoading, isAuthenticated } = useAuth0();
 
   const db = getDatabase(app);
   const dbRef = ref(getDatabase(app));
 
   useEffect(() => {
-    if (isAuthenticated) {
-      get(child(dbRef, `users/${user.sub}/likes`)).then((snapshot) => {
+    if (!isLoading && isAuthenticated) {
+      // get(child(dbRef, `users/${user.sub}/likes`)).then((snapshot) => {
+      //   if (snapshot.exists()) {
+      //     setUserFavorites(Object.values(snapshot.val()));
+      //   }
+      // });
+      onValue(ref(db, `users/${user.sub}/likes`)).then((snapshot) => {
         if (snapshot.exists()) {
           setUserFavorites(Object.values(snapshot.val()));
         }
       });
     }
-  }, [isAuthenticated]);
+  }, [isLoading, isAuthenticated]);
 
   function addFavoriteHandler(favoriteMeetup) {
     setUserFavorites((prevUserFavorites) => {

@@ -8,8 +8,6 @@ import { CountdownCircleTimer } from "react-countdown-circle-timer";
 import { useCanvas } from "./CanvasContext";
 import DrawingSelectionContext from "./DrawingSelectionContext";
 import PromptSelection from "./PromptSelection";
-import RandomWords from "../components/layout/RandomWords";
-import WordsContext from "./WordsContext";
 import Controls from "./Controls";
 
 import { getDatabase, ref, set, child, get, update } from "firebase/database";
@@ -20,7 +18,6 @@ import classes from "./Canvas.module.css";
 
 const DrawingScreen = () => {
   const DSCtx = useContext(DrawingSelectionContext);
-  const wordsCtx = useContext(WordsContext);
   const { user } = useAuth0();
 
   const timerOptions = [
@@ -97,7 +94,7 @@ const DrawingScreen = () => {
     setShowCanvas(classes.hide);
 
     const canvas = canvasRef.current;
-    const title = wordsCtx.getPhrase(DSCtx.drawingTime);
+    const title = DSCtx.chosenPrompt;
 
     const today = new Date();
     const day = today.getDate();
@@ -268,10 +265,20 @@ const DrawingScreen = () => {
       );
     }
 
-    wordsCtx.resetPostable();
-
     DSCtx.setShowEndOverlay(true);
     DSCtx.setShowEndOutline(true);
+
+    let tempUpdatedStatuses = DSCtx.drawingStatuses;
+    if (
+      tempUpdatedStatuses["60"] &&
+      tempUpdatedStatuses["180"] &&
+      tempUpdatedStatuses["300"]
+    ) {
+      tempUpdatedStatuses["extra"] = true;
+    } else {
+      tempUpdatedStatuses[DSCtx.drawingTime] = true;
+    }
+    set(ref(db, `users/${user.sub}/completedDailyPrompts`), tempUpdatedStatuses);
 
     setStartTimer(false);
     DSCtx.setDrawingTime(0);
@@ -307,13 +314,12 @@ const DrawingScreen = () => {
       setCountdownKey((prevKey) => prevKey + 1);
       setStartTimer(true);
       console.log(DSCtx.seconds, "should be 0");
-      wordsCtx.makePostable();
     }
   }, [DSCtx.seconds]);
 
   useEffect(() => {
     prepareCanvas();
-    const id = setTimeout(sendToDB, DSCtx.drawingTime * 1000 + 6);
+    const id = setTimeout(sendToDB, DSCtx.drawingTime * 1000 + 3015);
     console.log(DSCtx.drawingTime);
 
     return () => {
@@ -324,13 +330,13 @@ const DrawingScreen = () => {
   return (
     <div>
       <div className={showCountdownOverlay}>
-        <RandomWords time={drawingTime} />
+        {DSCtx.chosenPrompt}
         <div className={showCanvasOutline}>{DSCtx.seconds}</div>
         <Controls />
       </div>
 
       <div className={showEndOverlay}>
-        <RandomWords time={drawingTime} />
+        {DSCtx.chosenPrompt}
         <div className={showEndOutline} style={{ fontSize: "1em" }}>
           <PromptSelection />
         </div>
@@ -338,7 +344,7 @@ const DrawingScreen = () => {
       </div>
 
       <div className={showCanvas}>
-        <RandomWords time={drawingTime} />
+        {DSCtx.chosenPrompt}
         <div style={{ position: "relative" }}>
           <div className={classes.timer}>
             <CountdownCircleTimer

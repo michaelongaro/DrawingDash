@@ -59,6 +59,7 @@ export function SearchProvider(props) {
       });
   }
 
+
   const context = {
     adjSearch: adjSearch,
     nounSearch: nounSearch,
