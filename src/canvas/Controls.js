@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useState, useEffect } from "react";
 import { useCanvas } from "./CanvasContext";
 
 import DrawingSelectionContext from "./DrawingSelectionContext";
@@ -16,44 +16,54 @@ const Controls = () => {
     classes.hide,
     classes.hide,
   ]);
-  const [prevClickedColor, setPrevClickedColor] = useState();
+  const [prevClickedColor, setPrevClickedColor] = useState(0);
 
   const [brushSizeStyles, setBrushSizeStyles] = useState([
     classes.hide,
-    classes.show,
+    classes.hide,
     classes.hide,
   ]);
-  const [prevBrushSize, setPrevBrushSize] = useState();
+  const [prevBrushSize, setPrevBrushSize] = useState(1);
+
+  const [tempDisable, setTempDisable] = useState(true);
+
+  useEffect(() => {
+    if (DSCtx.seconds === 0) {
+      setTempDisable(false);
+      changeColor(DSCtx.paletteColors[0]);
+      updateSelectedColor(0);
+      changeBrushSize(8);
+      updateSelectedBrushSize(1);
+    }
+  }, [DSCtx.seconds]);
 
   function updateSelectedColor(brushID) {
-    if (prevClickedColor === undefined) {
-      setPrevClickedColor(brushID);
-    } else {
-      let prevArr = buttonStyles;
-      prevArr[prevClickedColor] = classes.hide;
-      setButtonStyles(prevArr);
-      setPrevClickedColor(brushID);
-    }
-    let newArr = buttonStyles;
-    newArr[brushID] = classes.show;
-    setButtonStyles(newArr);
+    let tempArr = buttonStyles;
+    // if (prevClickedColor !== null) {
+    //   tempArr[brushID] = classes.show;
+    // } else {
+    tempArr[prevClickedColor] = classes.hide;
+    // console.log("why is this still show", tempArr[prevClickedColor], prevClickedColor, tempArr);
+    tempArr[brushID] = classes.show;
+    // }
+    // console.log("button styles being set to", tempArr, prevClickedColor);
+    setButtonStyles(tempArr);
+    setPrevClickedColor(brushID);
   }
 
   function updateSelectedBrushSize(brushID) {
-    if (prevBrushSize === undefined) {
-      setPrevBrushSize(brushID);
-      let prevArr = brushSizeStyles;
-      prevArr[1] = classes.hide;
-      setBrushSizeStyles(prevArr);
-    } else {
-      let prevArr = brushSizeStyles;
-      prevArr[prevBrushSize] = classes.hide;
-      setBrushSizeStyles(prevArr);
-      setPrevBrushSize(brushID);
-    }
-    let newArr = brushSizeStyles;
-    newArr[brushID] = classes.show;
-    setBrushSizeStyles(newArr);
+    let tempArr = brushSizeStyles;
+    // if (prevBrushSize !== null) {
+    //   tempArr[1] = classes.hide;
+    // } else {
+    tempArr[prevBrushSize] = classes.hide;
+    tempArr[brushID] = classes.show;
+    // setBrushSizeStyles(tempArr);
+    // }
+    // console.log("brush styles being set to", tempArr, prevBrushSize);
+
+    setBrushSizeStyles(tempArr);
+    setPrevBrushSize(brushID);
   }
 
   return (
@@ -63,18 +73,18 @@ const Controls = () => {
         <button
           className={classes.outerColor}
           style={{ backgroundColor: DSCtx.paletteColors[0] }}
+          disabled={tempDisable}
           onClick={() => {
             changeColor(DSCtx.paletteColors[0]);
             updateSelectedColor(0);
           }}
         >
-          <div
-            className={`${classes.innerBorderWhite} ${buttonStyles[0]}`}
-          ></div>
+          <div className={`${classes.innerBorder} ${buttonStyles[0]}`}></div>
         </button>
         <button
           className={classes.outerColor}
           style={{ backgroundColor: DSCtx.paletteColors[1] }}
+          disabled={tempDisable}
           onClick={() => {
             changeColor(DSCtx.paletteColors[1]);
             updateSelectedColor(1);
@@ -85,6 +95,7 @@ const Controls = () => {
         <button
           className={classes.outerColor}
           style={{ backgroundColor: DSCtx.paletteColors[2] }}
+          disabled={tempDisable}
           onClick={() => {
             changeColor(DSCtx.paletteColors[2]);
             updateSelectedColor(2);
@@ -95,6 +106,7 @@ const Controls = () => {
         <button
           className={classes.outerColor}
           style={{ backgroundColor: DSCtx.paletteColors[3] }}
+          disabled={tempDisable}
           onClick={() => {
             changeColor(DSCtx.paletteColors[3]);
             updateSelectedColor(3);
@@ -105,6 +117,7 @@ const Controls = () => {
         <button
           className={classes.outerColor}
           style={{ backgroundColor: DSCtx.paletteColors[4] }}
+          disabled={tempDisable}
           onClick={() => {
             changeColor(DSCtx.paletteColors[4]);
             updateSelectedColor(4);
@@ -117,19 +130,21 @@ const Controls = () => {
       <div>
         <button
           className={`${classes.rounded} ${classes.small}`}
+          disabled={tempDisable}
           onClick={() => {
             changeBrushSize(3);
             updateSelectedBrushSize(0);
           }}
-        > 
+        >
           <div
             className={`${classes.innerBrushBorder} ${classes.smallFilled} ${brushSizeStyles[0]}`}
           ></div>
         </button>
         <button
           className={`${classes.rounded} ${classes.medium}`}
+          disabled={tempDisable}
           onClick={() => {
-            changeBrushSize(10);
+            changeBrushSize(8);
             updateSelectedBrushSize(1);
           }}
         >
@@ -139,8 +154,9 @@ const Controls = () => {
         </button>
         <button
           className={`${classes.rounded} ${classes.large}`}
+          disabled={tempDisable}
           onClick={() => {
-            changeBrushSize(12);
+            changeBrushSize(15);
             updateSelectedBrushSize(2);
           }}
         >

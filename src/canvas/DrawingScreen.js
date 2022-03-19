@@ -38,6 +38,7 @@ const DrawingScreen = () => {
   const {
     canvasRef,
     prepareCanvas,
+    recordLastPos,
     clearCanvas,
     startDrawing,
     finishDrawing,
@@ -216,7 +217,6 @@ const DrawingScreen = () => {
           if (snapshot.exists()) {
             let prev_post = snapshot.val()["drawingID"];
             prev_post.push(uniqueID);
-            console.log(prev_post);
             update(ref(db, `users/${user.sub}/titles/60/${title}`), {
               drawingID: prev_post,
             });
@@ -278,7 +278,10 @@ const DrawingScreen = () => {
     } else {
       tempUpdatedStatuses[DSCtx.drawingTime] = true;
     }
-    set(ref(db, `users/${user.sub}/completedDailyPrompts`), tempUpdatedStatuses);
+    set(
+      ref(db, `users/${user.sub}/completedDailyPrompts`),
+      tempUpdatedStatuses
+    );
 
     setStartTimer(false);
     DSCtx.setDrawingTime(0);
@@ -313,14 +316,12 @@ const DrawingScreen = () => {
 
       setCountdownKey((prevKey) => prevKey + 1);
       setStartTimer(true);
-      console.log(DSCtx.seconds, "should be 0");
     }
   }, [DSCtx.seconds]);
 
   useEffect(() => {
     prepareCanvas();
     const id = setTimeout(sendToDB, DSCtx.drawingTime * 1000 + 3015);
-    console.log(DSCtx.drawingTime);
 
     return () => {
       clearTimeout(id);
@@ -344,7 +345,7 @@ const DrawingScreen = () => {
       </div>
 
       <div className={showCanvas}>
-        {DSCtx.chosenPrompt}
+        <div style={{ pointerEvents: "none" }}>{DSCtx.chosenPrompt}</div>
         <div style={{ position: "relative" }}>
           <div className={classes.timer}>
             <CountdownCircleTimer
@@ -354,9 +355,6 @@ const DrawingScreen = () => {
               size={75}
               colors={["#004777", "#F7B801", "#A30000", "#A30000"]}
               colorsTime={timerOptions[currentTimer[drawingTime]].colorArray}
-              // will have to look at how others reset -> implement maybe useEffect
-              // for when timerDuration changes?
-              // onComplete={() => ({ shouldRepeat: true, delay: 1 })}
             >
               {renderTime}
             </CountdownCircleTimer>
@@ -365,6 +363,8 @@ const DrawingScreen = () => {
             <canvas
               onMouseDown={startDrawing}
               onMouseUp={finishDrawing}
+              onMouseEnter={startDrawing}
+              onMouseOut={recordLastPos}
               onMouseMove={draw}
               ref={canvasRef}
             />

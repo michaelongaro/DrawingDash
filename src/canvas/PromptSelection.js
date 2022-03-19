@@ -11,101 +11,72 @@ import classes from "./Canvas.module.css";
 const PromptSelection = () => {
   const { isLoading, isAuthenticated } = useAuth0();
   const DSCtx = useContext(DrawingSelectionContext);
-  const [extraPrompt, setExtraPrompt] = useState("");
-  const [dailyPrompts, setDailyPrompts] = useState({
-    60: "",
-    180: "",
-    300: "",
-  });
+
   const [showExtraPrompt, setShowExtraPrompt] = useState(classes.hide);
-
-  const [completedDrawingStatuses, setCompletedDrawingStatuses] = useState({
-    60: false,
-    180: false,
-    300: false,
-    extra: false,
-  });
-
-  const [statusesAreSaved, setStatusesAreSaved] = useState(false);
-
-  console.log(completedDrawingStatuses);
+  const [formattedSeconds, setFormattedSeconds] = useState("");
+  const [adaptiveBackground, setAdaptiveBackground] = useState("");
+  const [stylingButtonClasses, setStylingButtonClasses] = useState([
+    classes.pointer,
+    classes.pointer,
+    classes.pointer,
+    classes.pointer,
+  ]);
 
   useEffect(() => {
-    if ((!isLoading, isAuthenticated)) {
-      // if (
-      //   DSCtx.drawingStatuses !== null &&
-      //   DSCtx.dailyPrompts !== null &&
-      //   DSCtx.uniquePrompt !== null
-      // ) {
-      //   DSCtx.setDrawingStatuses(null);
-      //   DSCtx.setDailyPrompts(null);
-      //   DSCtx.setUniquePrompt(null);
-      // }
-
-      DSCtx.getCompletedDrawingStatuses();
-      DSCtx.getDailyPrompts();
-      DSCtx.getUniquePrompt();
+    if (
+      DSCtx.drawingStatuses["60"] &&
+      DSCtx.drawingStatuses["180"] &&
+      DSCtx.drawingStatuses["300"] &&
+      !DSCtx.drawingStatuses["extra"]
+    ) {
+      setShowExtraPrompt("");
     }
-  }, [isLoading, isAuthenticated]);
 
-  // useEffect(() => {
-  //   return () => {
-  //     // cleanup resetting ctx values to null
-  //     DSCtx.setDrawingStatuses(null);
-  //     DSCtx.setDailyPrompts(null);
-  //     DSCtx.setUniquePrompt(null);
-  //   };
-  // }, []);
-
-  useEffect(() => {
-    if (DSCtx.drawingStatuses !== null) {
-      setCompletedDrawingStatuses(DSCtx.drawingStatuses);
-      setStatusesAreSaved(true);
-    }
+    setStylingButtonClasses([
+      DSCtx.drawingStatuses["60"] ? classes.disabled : classes.pointer,
+      DSCtx.drawingStatuses["180"] ? classes.disabled : classes.pointer,
+      DSCtx.drawingStatuses["300"] ? classes.disabled : classes.pointer,
+      DSCtx.drawingStatuses["extra"] ? classes.disabled : classes.pointer,
+    ]);
   }, [DSCtx.drawingStatuses]);
 
   useEffect(() => {
-    if (DSCtx.dailyPrompts !== null) {
-      setDailyPrompts(DSCtx.dailyPrompts);
-    }
-  }, [DSCtx.dailyPrompts]);
-
-  useEffect(() => {
-    if (statusesAreSaved && DSCtx.uniquePrompt !== null) {
-      if (
-        DSCtx.drawingStatuses["60"] &&
-        DSCtx.drawingStatuses["180"] &&
-        DSCtx.drawingStatuses["300"] &&
-        !DSCtx.drawingStatuses["extra"]
-      ) {
-        setExtraPrompt(DSCtx.uniquePrompt());
-        setShowExtraPrompt("");
+    if (
+      showExtraPrompt === "" &&
+      DSCtx.extraPrompt.title !== "" &&
+      !DSCtx.drawingStatuses["extra"]
+    ) {
+      if (DSCtx.extraPrompt.seconds === 60) {
+        setFormattedSeconds("1 Minute");
+        setAdaptiveBackground(classes.redBackground);
+      } else if (DSCtx.extraPrompt.seconds === 180) {
+        setFormattedSeconds("3 Minutes");
+        setAdaptiveBackground(classes.yellowBackground);
+      } else {
+        setFormattedSeconds("5 Minutes");
+        setAdaptiveBackground(classes.greenBackground);
       }
 
-      // if (!DSCtx.drawingStatuses["extra"]) {
-      //   setShowExtraPrompt("");
-      // }
-    }
-  }, [statusesAreSaved, DSCtx.uniquePrompt]);
-
-  useEffect(() => {
-    if (showExtraPrompt === "") {
       anime({
         targets: "#extraPrompt",
-        translateY: "3em",
+        translateY: "1.5em",
         loop: false,
+        opacity: [0, 1],
         direction: "normal",
         duration: 1500,
         easing: "linear",
       });
     }
-  }, [showExtraPrompt]);
+  }, [showExtraPrompt, DSCtx.extraPrompt]);
 
-  // READ THIS:
-  // should find way to genuinely center the options, currenlty if one word is larger than others
-  // then it skews it... or just figure out another way to make it look natural
+  function updateStatesAndShowNextComponent(seconds, prompt, isExtra = false) {
+    if (
+      (isExtra && DSCtx.drawingStatuses["extra"]) ||
+      (!isExtra && DSCtx.drawingStatuses[seconds])
+    ) {
+      return;
+    }
 
-  function updateStatesAndShowNextComponent(seconds, prompt) {
     DSCtx.setDrawingTime(seconds);
     DSCtx.setChosenPrompt(prompt);
     DSCtx.setShowPaletteChooser(true);
@@ -117,65 +88,77 @@ const PromptSelection = () => {
 
   return (
     <>
-      {isAuthenticated && (
+      {!isLoading && isAuthenticated && (
         <div className={classes.timerSelectionsModal}>
           <div>{DSCtx.titleForPromptSelection()}</div>
           <div className={classes.horizContain}>
-            <div className={`${classes.sidePadding} ${classes.redBackground}`}>
+            <div
+              className={`${classes.sidePadding} ${classes.redBackground} ${stylingButtonClasses[0]}`}
+              onClick={() => {
+                updateStatesAndShowNextComponent(60, DSCtx.dailyPrompts["60"]);
+              }}
+            >
               <div className={classes.timeBorder}>1 Minute</div>
-              <button
-                disabled={completedDrawingStatuses["60"]}
-                onClick={() => {
-                  updateStatesAndShowNextComponent(60, dailyPrompts["60"]);
-                }}
-              >
-                {dailyPrompts["60"]}
-              </button>
+
+              <div className={classes.promptTextMargin}>
+                {DSCtx.dailyPrompts["60"]}
+              </div>
             </div>
             <div
-              className={`${classes.sidePadding} ${classes.yellowBackground}`}
+              className={`${classes.sidePadding} ${classes.yellowBackground} ${stylingButtonClasses[1]}`}
+              onClick={() => {
+                updateStatesAndShowNextComponent(
+                  180,
+                  DSCtx.dailyPrompts["180"]
+                );
+              }}
             >
               <div className={classes.timeBorder}>3 Minutes</div>
 
-              <button
-                disabled={completedDrawingStatuses["180"]}
-                onClick={() => {
-                  updateStatesAndShowNextComponent(180, dailyPrompts["180"]);
-                }}
-              >
-                {dailyPrompts["180"]}
-              </button>
+              <div className={classes.promptTextMargin}>
+                {DSCtx.dailyPrompts["180"]}
+              </div>
             </div>
             <div
-              className={`${classes.sidePadding} ${classes.greenBackground}`}
+              className={`${classes.sidePadding} ${classes.greenBackground} ${stylingButtonClasses[2]}`}
+              onClick={() => {
+                updateStatesAndShowNextComponent(
+                  300,
+                  DSCtx.dailyPrompts["300"]
+                );
+              }}
             >
               <div className={classes.timeBorder}>5 Minutes</div>
 
-              <button
-                disabled={completedDrawingStatuses["300"]}
-                onClick={() => {
-                  updateStatesAndShowNextComponent(300, dailyPrompts["300"]);
-                }}
-              >
-                {dailyPrompts["300"]}
-              </button>
+              <div className={classes.promptTextMargin}>
+                {DSCtx.dailyPrompts["300"]}
+              </div>
             </div>
           </div>
 
-          <div id={"extraPrompt"} className={showExtraPrompt}>
-            <div
-              className={`${classes.sidePadding} ${classes.greenBackground}`}
-            >
-              <div className={classes.timeBorder}>{extraPrompt.seconds}</div>
-
-              <button
-                disabled={completedDrawingStatuses["extra"]}
+          <div
+            id={"extraPrompt"}
+            className={showExtraPrompt}
+            style={{ maxWidth: "30%" }}
+          >
+            <div className={classes.horizContain}>
+              <div
+                className={`${classes.sidePadding} ${adaptiveBackground} ${stylingButtonClasses[3]}`}
+                style={{ height: "100%" }}
                 onClick={() => {
-                  updateStatesAndShowNextComponent("extra", extraPrompt.title);
+                  updateStatesAndShowNextComponent(
+                    DSCtx.extraPrompt.seconds,
+                    DSCtx.extraPrompt.title,
+                    true
+                  );
                 }}
               >
-                {extraPrompt.title}
-              </button>
+                <div className={classes.timeBorder}>{formattedSeconds}</div>
+
+                <div className={classes.promptTextMargin}>
+                  {DSCtx.extraPrompt.title}
+                </div>
+              </div>
             </div>
           </div>
         </div>

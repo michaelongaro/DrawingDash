@@ -13,16 +13,7 @@ import {
 } from "firebase/database";
 import { app } from "../../util/init-firebase";
 
-// createContext returns react component -> capital var name
-const FavoritesContext = createContext({
-  favorites: [],
-  totalFavorites: 0,
-  initalizedFavorites: false,
-  // these three are just for autocompletion help in ide
-  addFavorite: (favoriteMeetup) => {},
-  removeFavorite: (meetupIndex) => {},
-  itemIsFavorite: (meetupIndex) => {},
-});
+const FavoritesContext = createContext(null);
 
 export function FavoritesProvider(props) {
   const [userFavorites, setUserFavorites] = useState([]);
@@ -39,7 +30,7 @@ export function FavoritesProvider(props) {
       //     setUserFavorites(Object.values(snapshot.val()));
       //   }
       // });
-      onValue(ref(db, `users/${user.sub}/likes`)).then((snapshot) => {
+      onValue(ref(db, `users/${user.sub}/likes`), (snapshot) => {
         if (snapshot.exists()) {
           setUserFavorites(Object.values(snapshot.val()));
         }

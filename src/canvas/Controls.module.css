@@ -29,20 +29,6 @@
 
 .innerBorder {
   position: absolute;
-  border: 0.15em solid black;
-  border-radius: 0.75em;
-  background-color: inherit;
-  height: 2.55em;
-  width: 2.55em;
-  margin: auto;
-  top: 0;
-  bottom: 0;
-  left: 0;
-  right: 0;
-}
-
-.innerBorderWhite {
-  position: absolute;
   border: 0.15em solid white;
   border-radius: 0.75em;
   background-color: inherit;

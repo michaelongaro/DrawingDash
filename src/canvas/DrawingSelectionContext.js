@@ -66,13 +66,14 @@ export function DrawingSelectionProvider(props) {
 
   useEffect(() => {
     if (!isLoading && isAuthenticated) {
-      onValue(ref(db, `dailyPrompts`)).then((snapshot) => {
+      onValue(ref(db, `dailyPrompts`), (snapshot) => {
         if (snapshot.exists()) {
           setDailyPrompts(snapshot.val());
         }
       });
 
-      onValue(ref(db, `users/${user.sub}/completedDailyPrompts`)).then(
+      onValue(
+        ref(db, `users/${user.sub}/completedDailyPrompts`),
         (snapshot) => {
           if (snapshot.exists()) {
             setDrawingStatuses(snapshot.val());
@@ -80,13 +81,11 @@ export function DrawingSelectionProvider(props) {
         }
       );
 
-      onValue(ref(db, `users/${user.sub}/extraDailyPrompt`)).then(
-        (snapshot) => {
-          if (snapshot.exists()) {
-            setExtraPrompt(snapshot.val());
-          }
+      onValue(ref(db, `users/${user.sub}/extraDailyPrompt`), (snapshot) => {
+        if (snapshot.exists()) {
+          setExtraPrompt(snapshot.val());
         }
-      );
+      });
     }
   }, [isLoading, isAuthenticated]);
 
@@ -95,11 +94,11 @@ export function DrawingSelectionProvider(props) {
     setDrawingTime(0);
     setPaletteColors(["#FFFFFF", "#FFFFFF", "#FFFFFF", "#FFFFFF", "#FFFFFF"]);
 
-    setShowPromptSelection(true);
     setShowPaletteChooser(false);
     setShowDrawingScreen(false);
     setShowEndOverlay(false);
     setShowEndOutline(false);
+    setShowPromptSelection(true);
   }
 
   function goBackToPromptSelection() {
@@ -136,63 +135,63 @@ export function DrawingSelectionProvider(props) {
     }
   }
 
-  function getCompletedDrawingStatuses() {
-    get(child(dbRef, `users/${user.sub}/completedDailyPrompts`)).then(
-      (snapshot) => {
-        if (snapshot.exists()) {
-          setDrawingStatuses(snapshot.val());
-        }
-      }
-    );
-  }
+  // function getCompletedDrawingStatuses() {
+  //   get(child(dbRef, `users/${user.sub}/completedDailyPrompts`)).then(
+  //     (snapshot) => {
+  //       if (snapshot.exists()) {
+  //         setDrawingStatuses(snapshot.val());
+  //       }
+  //     }
+  //   );
+  // }
 
-  function getDailyPrompts() {
-    get(child(dbRef, "dailyPrompts")).then((snapshot) => {
-      if (snapshot.exists()) {
-        setDailyPrompts(snapshot.val());
-      }
-    });
-  }
+  // function getDailyPrompts() {
+  //   get(child(dbRef, "dailyPrompts")).then((snapshot) => {
+  //     if (snapshot.exists()) {
+  //       setDailyPrompts(snapshot.val());
+  //     }
+  //   });
+  // }
 
-  function getUniquePrompt() {
-    get(child(dbRef, `users/${user.sub}/extraDailyPrompt`)).then((snapshot) => {
-      if (snapshot.exists()) {
-        if (!snapshot.val()["refresh"]) {
-          setExtraPrompt(snapshot.val());
-          return;
-        }
-      }
-    });
+  // function getUniquePrompt() {
+  //   get(child(dbRef, `users/${user.sub}/extraDailyPrompt`)).then((snapshot) => {
+  //     if (snapshot.exists()) {
+  //       if (!snapshot.val()["refresh"]) {
+  //         setExtraPrompt(snapshot.val());
+  //         return;
+  //       }
+  //     }
+  //   });
 
-    fetch("https://random-word-form.herokuapp.com/random/adjective")
-      .then((response) => response.json())
-      .then((data) => {
-        return data[0];
-      })
-      .then((adj) => {
-        fetch("https://random-word-form.herokuapp.com/random/noun")
-          .then((response) => response.json())
-          .then((data2) => {
-            return `${adj} ${data2[0]}`;
-          })
-          .then((fullTitle) => {
-            const seconds = [60, 180, 300];
-            const randomSeconds =
-              seconds[Math.floor(Math.random() * seconds.length)];
+  //   fetch("https://random-word-form.herokuapp.com/random/adjective")
+  //     .then((response) => response.json())
+  //     .then((data) => {
+  //       return data[0];
+  //     })
+  //     .then((adj) => {
+  //       fetch("https://random-word-form.herokuapp.com/random/noun")
+  //         .then((response) => response.json())
+  //         .then((data2) => {
+  //           return `${adj} ${data2[0]}`;
+  //         })
+  //         .then((fullTitle) => {
+  //           const seconds = [60, 180, 300];
+  //           const randomSeconds =
+  //             seconds[Math.floor(Math.random() * seconds.length)];
 
-            set(ref(db, `users/${user.sub}/extraDailyPrompt`), {
-              seconds: randomSeconds,
-              title: fullTitle,
-              refresh: false,
-            }).then(() => {
-              setExtraPrompt({
-                seconds: randomSeconds,
-                title: fullTitle,
-              });
-            });
-          });
-      });
-  }
+  //           set(ref(db, `users/${user.sub}/extraDailyPrompt`), {
+  //             seconds: randomSeconds,
+  //             title: fullTitle,
+  //             refresh: false,
+  //           }).then(() => {
+  //             setExtraPrompt({
+  //               seconds: randomSeconds,
+  //               title: fullTitle,
+  //             });
+  //           });
+  //         });
+  //     });
+  // }
 
   const context = {
     seconds: seconds,
@@ -205,11 +204,11 @@ export function DrawingSelectionProvider(props) {
     setButtonAvailability: setButtonAvailability,
 
     drawingStatuses: drawingStatuses,
-    setDrawingStatuses: setDrawingStatuses,
+    // setDrawingStatuses: setDrawingStatuses,
     dailyPrompts: dailyPrompts,
-    setDailyPrompts: setDailyPrompts,
+    // setDailyPrompts: setDailyPrompts,
     extraPrompt: extraPrompt,
-    setExtraPrompt: setExtraPrompt,
+    // setExtraPrompt: setExtraPrompt,
 
     paletteColors: paletteColors,
     setPaletteColors: setPaletteColors,
@@ -233,9 +232,9 @@ export function DrawingSelectionProvider(props) {
     pushTimeout: pushTimeout,
     setPushTimeout: setPushTimeout,
     // resetLastClickedButton: resetLastClickedButton,
-    getCompletedDrawingStatuses: getCompletedDrawingStatuses,
-    getDailyPrompts: getDailyPrompts,
-    getUniquePrompt: getUniquePrompt,
+    // getCompletedDrawingStatuses: getCompletedDrawingStatuses,
+    // getDailyPrompts: getDailyPrompts,
+    // getUniquePrompt: getUniquePrompt,
   };
 
   return (

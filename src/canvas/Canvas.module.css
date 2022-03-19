@@ -36,11 +36,8 @@
 }
 
 .sidePadding {
-  display: flex;
-  justify-content: center;
-  flex-direction: column;
-  width: 33%;
-  height: 85%;
+  min-width: 30%;
+  height: 100%;
   margin-top: 15px;
   margin-bottom: 15px;
   border-radius: 0.25em;
@@ -54,10 +51,19 @@
 
 .timeBorder {
   margin-top: 0.5em;
+  text-shadow: 5px 5px 10px black;
+  color: rgba(255, 255, 255, 0.9);
 }
 
 button {
   margin: 1em 1.5em 1.5em 1.5em;
+}
+
+.promptTextMargin {
+  margin: 1em 1.5em 1.5em 1.5em;
+  text-shadow: 5px 4px 5px black;
+  color: white;
+  text-align: center;
 }
 
 .hide {
@@ -98,6 +104,15 @@ button {
   border-left: 1px solid black;
   border-right: 1px solid black;
   border-radius: 5px;
+}
+
+.pointer {
+  cursor: pointer;
+}
+
+.disabled {
+  filter: brightness(60%);
+  pointer-events: none;
 }
 
 .overlayBreathingBackground {

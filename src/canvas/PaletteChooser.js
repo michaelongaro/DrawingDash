@@ -68,7 +68,7 @@ const PaletteChooser = () => {
     <div className={classes.vertContain}>
       <div className={classes.textVert}>
         <div>{`A Color Palette For`}</div>
-        <div>{DSCtx.chosenPrompt}</div>
+        <div>{`"${DSCtx.chosenPrompt}"`}</div>
       </div>
 
       <div className={classes.horizContain}>

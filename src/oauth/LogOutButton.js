@@ -37,17 +37,20 @@ const LogoutButton = () => {
     }
   }, [extraPrompt]);
 
+  const capitalize = (s) => s.charAt(0).toUpperCase() + s.slice(1).toLowerCase();
+
   function createExtraPrompt() {
     fetch("https://random-word-form.herokuapp.com/random/adjective")
       .then((response) => response.json())
       .then((data) => {
-        return data[0];
+        return capitalize(data[0]);
       })
-      .then((adj) => {
+      .then((capAdj) => {
         fetch("https://random-word-form.herokuapp.com/random/noun")
           .then((response) => response.json())
           .then((data2) => {
-            return `${adj} ${data2[0]}`;
+            const capNoun = capitalize(data2[0])
+            return `${capAdj} ${capNoun}`;
           })
           .then((fullTitle) => {
             const seconds = [60, 180, 300];
