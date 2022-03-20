@@ -38,9 +38,7 @@ const DrawingScreen = () => {
   const {
     canvasRef,
     prepareCanvas,
-    recordLastPos,
     clearCanvas,
-    startDrawing,
     finishDrawing,
     draw,
   } = useCanvas();
@@ -329,7 +327,7 @@ const DrawingScreen = () => {
   }, []);
 
   return (
-    <div>
+    <div onMouseEnter={draw} onMouseMove={draw} onMouseUp={finishDrawing}>
       <div className={showCountdownOverlay}>
         {DSCtx.chosenPrompt}
         <div className={showCanvasOutline}>{DSCtx.seconds}</div>
@@ -361,11 +359,8 @@ const DrawingScreen = () => {
           </div>
           <div className={classes.canvasBorder}>
             <canvas
-              onMouseDown={startDrawing}
-              onMouseUp={finishDrawing}
-              onMouseEnter={startDrawing}
-              onMouseOut={recordLastPos}
-              onMouseMove={draw}
+              onMouseDown={draw}
+              onMouseOut={finishDrawing}
               ref={canvasRef}
             />
           </div>

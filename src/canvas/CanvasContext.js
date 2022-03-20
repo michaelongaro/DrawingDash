@@ -1,20 +1,13 @@
-import React, { useContext, useRef, useEffect, useState } from "react";
+import React, { useContext, useRef } from "react";
 
 const CanvasContext = React.createContext();
 
 export const CanvasProvider = ({ children }) => {
-  const [isDrawing, setIsDrawing] = useState(false);
-  const [resetLastX, setResetLastX] = useState(false);
-  const [resetLastY, setResetLastY] = useState(false);
-  // let resetLastX;
-  // let resetLastY;
+  let isDrawing = false;
+  let lastEvent;
+
   const canvasRef = useRef(null);
   const contextRef = useRef(null);
-
-  //   useEffect(() => {
-  //   resetLastX = false;
-  //  resetLastY = false;
-  //   }, []);
 
   const prepareCanvas = () => {
     const canvas = canvasRef.current;
@@ -46,86 +39,63 @@ export const CanvasProvider = ({ children }) => {
     contextRef.current = context;
   };
 
-  const startDrawing = ({ nativeEvent }) => {
-    const { offsetX, offsetY } = nativeEvent;
-    let tempX = 0;
-    let tempY = 0;
-    if (nativeEvent.buttons === 1) {
-      contextRef.current.beginPath();
-
-      console.log(resetLastX, resetLastY);
-
-      if (!resetLastX) {
-        console.log("x should be reset to 0", tempX);
-        tempX = offsetX;
-        tempY = offsetY;
-      } else {
-        setResetLastX(false);
-        if (offsetX > 0) {
-          tempX = offsetX;
-        }
-        tempY = offsetY;  
-      }
-
-      // if (!resetLastY) {
-      //   console.log("y should be reset to 0", tempY);
-
-      //   tempY = offsetY - 104;
-      // } else {
-      //   setResetLastY(false);
-      // }
-      // tempY = offsetY
-      console.log("started drawing", tempX, tempY);
-      contextRef.current.moveTo(tempX, tempY);
-
-      setIsDrawing(true);
-    }
-  };
-
   const finishDrawing = () => {
     contextRef.current.closePath();
-    setIsDrawing(false);
+    isDrawing = false;
   };
 
-  const recordLastPos = ({ nativeEvent }) => {
-    const { offsetX, offsetY } = nativeEvent;
+  function getRelativePointFromEvent(ev, elem) {
+    const bbox = elem.getBoundingClientRect();
+    const x = ev.clientX - bbox.left;
+    const y = ev.clientY - bbox.top;
 
-    if (offsetX < 0) {
-      setResetLastX(true);
+    return { x, y };
+  }
+
+  const draw = (ev) => {
+    const previous_evt = lastEvent || {};
+    const was_offscreen = previous_evt.offscreen;
+
+    if (ev.isTrusted) {
+      const { clientX, clientY } = ev;
+      lastEvent = { clientX, clientY };
+    }
+
+    const point = getRelativePointFromEvent(ev, canvasRef.current);
+
+    if (
+      point.x < 0 ||
+      point.y < 0 ||
+      point.x > canvasRef.current.width ||
+      point.y > canvasRef.current.height
+    ) {
+      lastEvent.offscreen = true;
+      if (was_offscreen) {
+        return;
+      }
+    } else if (was_offscreen) {
+      const previous_point = getRelativePointFromEvent(
+        previous_evt,
+        canvasRef.current
+      );
+      if (ev.buttons === 1 && !isDrawing) {
+        contextRef.current.beginPath();
+        isDrawing = true;
+      }
+      contextRef.current.moveTo(previous_point.x, previous_point.y);
     } else {
-      setResetLastX(false);
-    }
-    if (offsetY < 0) {
-      setResetLastY(true);
-    } else {
-      setResetLastY(false);
-    }
+      if (ev.buttons === 1 && !isDrawing) {
+        contextRef.current.moveTo(point.x, point.y);
 
-    console.log("reset Statuses", resetLastX, offsetX, resetLastY, offsetY);
-    finishDrawing();
-  };
-
-  const draw = ({ nativeEvent }) => {
-    if (!isDrawing) {
-      return;
+        contextRef.current.beginPath();
+        isDrawing = true;
+      }
     }
 
-    const { offsetX, offsetY } = nativeEvent;
-
-    // let tempX = 0;
-    // let tempY = 0;
-
-    // if (!resetLastX) {
-    //   tempX = offsetX;
-    // }
-
-    // if (!resetLastY) {
-    //   tempY = offsetY;
-    // }
-    console.log("drawing", offsetX, offsetY);
-
-    contextRef.current.lineTo(offsetX, offsetY);
-    contextRef.current.stroke();
+    if (ev.buttons === 1 && isDrawing) {
+      contextRef.current.lineTo(point.x, point.y);
+      contextRef.current.stroke();
+    }
   };
 
   const clearCanvas = () => {
@@ -142,9 +112,7 @@ export const CanvasProvider = ({ children }) => {
         contextRef,
         prepareCanvas,
         changeColor,
-        recordLastPos,
         changeBrushSize,
-        startDrawing,
         finishDrawing,
         clearCanvas,
         draw,
