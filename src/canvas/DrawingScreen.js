@@ -35,13 +35,21 @@ const DrawingScreen = () => {
   const [countdownKey, setCountdownKey] = useState(0);
   const [drawingTime, setDrawingTime] = useState(60);
 
-  const {
-    canvasRef,
-    prepareCanvas,
-    clearCanvas,
-    finishDrawing,
-    draw,
-  } = useCanvas();
+  const { canvasRef, prepareCanvas, clearCanvas, finishDrawing, draw } =
+    useCanvas();
+
+  useEffect(() => {
+    document.addEventListener("mousemove", draw);
+    document.documentElement.addEventListener("mouseenter", draw, {
+      once: true,
+    });
+    return () => {
+      document.removeEventListener("mousemove", draw);
+      document.documentElement.removeEventListener("mouseenter", draw, {
+        once: true,
+      });
+    };
+  });
 
   const [showCanvas, setShowCanvas] = useState(classes.hide);
 
@@ -107,7 +115,7 @@ const DrawingScreen = () => {
     const db = getDatabase(app);
     const dbRef = ref(getDatabase(app));
 
-    // check to see if this title has already been drawn
+    // check to see if this title has already been drawn + add it
     if (DSCtx.drawingTime === 60) {
       get(child(dbRef, `titles/60/${title}`)).then((snapshot) => {
         if (snapshot.exists()) {
@@ -122,20 +130,6 @@ const DrawingScreen = () => {
           });
         }
       });
-
-      // get(child(dbRef, "titleCounts")).then((snapshot) => {
-      //   if (snapshot.exists()) {
-      //     let prev_counts = snapshot.val();
-      //     prev_counts["60"] += 1;
-      //     update(ref(db, "titleCounts"), prev_counts);
-      //   } else {
-      //     set(ref(db, "titleCounts"), {
-      //       60: 1,
-      //       180: 0,
-      //       300: 0,
-      //     });
-      //   }
-      // });
     }
 
     if (DSCtx.drawingTime === 180) {
@@ -152,20 +146,6 @@ const DrawingScreen = () => {
           });
         }
       });
-
-      // get(child(dbRef, "titleCounts")).then((snapshot) => {
-      //   if (snapshot.exists()) {
-      //     let prev_counts = snapshot.val();
-      //     prev_counts["180"] += 1;
-      //     update(ref(db, "titleCounts"), prev_counts);
-      //   } else {
-      //     set(ref(db, "titleCounts"), {
-      //       60: 0,
-      //       180: 1,
-      //       300: 0,
-      //     });
-      //   }
-      // });
     }
 
     if (DSCtx.drawingTime === 300) {
@@ -182,21 +162,13 @@ const DrawingScreen = () => {
           });
         }
       });
-
-      // get(child(dbRef, "titleCounts")).then((snapshot) => {
-      //   if (snapshot.exists()) {
-      //     let prev_counts = snapshot.val();
-      //     prev_counts["300"] += 1;
-      //     update(ref(db, "titleCounts"), prev_counts);
-      //   } else {
-      //     set(ref(db, "titleCounts"), {
-      //       60: 0,
-      //       180: 0,
-      //       300: 1,
-      //     });
-      //   }
-      // });
     }
+
+    get(child(dbRef, `totalDrawings`)).then((snapshot) => {
+      set(ref(db, "totalDrawings"), {
+        count: snapshot.val().count + 1,
+      });
+    });
 
     // posting actual drawing object
     set(ref(db, "drawings/" + uniqueID), {
@@ -327,7 +299,7 @@ const DrawingScreen = () => {
   }, []);
 
   return (
-    <div onMouseEnter={draw} onMouseMove={draw} onMouseUp={finishDrawing}>
+    <div>
       <div className={showCountdownOverlay}>
         {DSCtx.chosenPrompt}
         <div className={showCanvasOutline}>{DSCtx.seconds}</div>
@@ -360,7 +332,7 @@ const DrawingScreen = () => {
           <div className={classes.canvasBorder}>
             <canvas
               onMouseDown={draw}
-              onMouseOut={finishDrawing}
+              onMouseUp={finishDrawing}
               ref={canvasRef}
             />
           </div>

@@ -70,7 +70,11 @@ export const CanvasProvider = ({ children }) => {
       point.y > canvasRef.current.height
     ) {
       lastEvent.offscreen = true;
-      if (was_offscreen) {
+      
+      if (was_offscreen && ev.buttons === 1 && isDrawing) {
+        contextRef.current.lineTo(point.x, point.y);
+        contextRef.current.stroke();
+        finishDrawing();
         return;
       }
     } else if (was_offscreen) {
