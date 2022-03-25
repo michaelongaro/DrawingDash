@@ -20,6 +20,9 @@ const DrawingScreen = () => {
   const DSCtx = useContext(DrawingSelectionContext);
   const { user } = useAuth0();
 
+  const db = getDatabase(app);
+  const dbRef = ref(getDatabase(app));
+
   const timerOptions = [
     { seconds: 60, colorArray: [60, 45, 30, 15] },
     { seconds: 180, colorArray: [180, 120, 60, 0] },
@@ -97,6 +100,24 @@ const DrawingScreen = () => {
   //   }
   // }
 
+  function postTitle(seconds, id, title, profileDest = "") {
+    let destination = `${profileDest}titles/${seconds}/${title}`;
+
+    get(child(dbRef, destination)).then((snapshot) => {
+      if (snapshot.exists()) {
+        let prev_post = snapshot.val()["drawingID"];
+        prev_post.push(id);
+        update(ref(db, destination), {
+          drawingID: prev_post,
+        });
+      } else {
+        set(ref(db, destination), {
+          drawingID: [id],
+        });
+      }
+    });
+  }
+
   const sendToDB = () => {
     setShowCanvas(classes.hide);
 
@@ -112,66 +133,31 @@ const DrawingScreen = () => {
 
     let canvasContents = canvas.toDataURL();
 
-    const db = getDatabase(app);
-    const dbRef = ref(getDatabase(app));
+    // posting titles w/ drawing ref ids
+    postTitle(DSCtx.drawingTime, uniqueID, title);
+    postTitle(DSCtx.drawingTime, uniqueID, title, `users/${user.sub}/`);
 
-    // check to see if this title has already been drawn + add it
-    if (DSCtx.drawingTime === 60) {
-      get(child(dbRef, `titles/60/${title}`)).then((snapshot) => {
-        if (snapshot.exists()) {
-          let prev_post = snapshot.val()["drawingID"];
-          prev_post.push(uniqueID);
-          update(ref(db, "titles/60/" + title), {
-            drawingID: prev_post,
-          });
-        } else {
-          set(ref(db, "titles/60/" + title), {
-            drawingID: [uniqueID],
-          });
-        }
-      });
-    }
+    // adding drawing to totalDrawing count in db
+    get(child(dbRef, "totalDrawings")).then((snapshot) => {
+      if (snapshot.exists()) {
+        set(ref(db, "totalDrawings"), {
+          count: snapshot.val().count + 1,
+        });
+      } else {
+        set(ref(db, "totalDrawings"), {
+          count: 1,
+        });
+      }
+    });
 
-    if (DSCtx.drawingTime === 180) {
-      get(child(dbRef, `titles/180/${title}`)).then((snapshot) => {
-        if (snapshot.exists()) {
-          let prev_post = snapshot.val()["drawingID"];
-          prev_post.push(uniqueID);
-          update(ref(db, "titles/180/" + title), {
-            drawingID: prev_post,
-          });
-        } else {
-          set(ref(db, "titles/180/" + title), {
-            drawingID: [uniqueID],
-          });
-        }
-      });
-    }
-
-    if (DSCtx.drawingTime === 300) {
-      get(child(dbRef, `titles/300/${title}`)).then((snapshot) => {
-        if (snapshot.exists()) {
-          let prev_post = snapshot.val()["drawingID"];
-          prev_post.push(uniqueID);
-          update(ref(db, "titles/300/" + title), {
-            drawingID: prev_post,
-          });
-        } else {
-          set(ref(db, "titles/300/" + title), {
-            drawingID: [uniqueID],
-          });
-        }
-      });
-    }
-
-    get(child(dbRef, `totalDrawings`)).then((snapshot) => {
-      set(ref(db, "totalDrawings"), {
-        count: snapshot.val().count + 1,
-      });
+    // initalizing likes counters
+    set(ref(db, `drawingLikes/${DSCtx.drawingTime}/${uniqueID}`), {
+      totalLikes: 0,
+      dailyLikes: 0,
     });
 
     // posting actual drawing object
-    set(ref(db, "drawings/" + uniqueID), {
+    set(ref(db, `drawings/${uniqueID}`), {
       title: title,
       image: canvasContents,
       seconds: DSCtx.drawingTime,
@@ -179,61 +165,6 @@ const DrawingScreen = () => {
       drawnBy: user.sub,
       index: uniqueID,
     });
-
-    // post title in profile/titles object
-    if (DSCtx.drawingTime === 60) {
-      get(child(dbRef, `users/${user.sub}/titles/60/${title}`)).then(
-        (snapshot) => {
-          if (snapshot.exists()) {
-            let prev_post = snapshot.val()["drawingID"];
-            prev_post.push(uniqueID);
-            update(ref(db, `users/${user.sub}/titles/60/${title}`), {
-              drawingID: prev_post,
-            });
-          } else {
-            set(ref(db, `users/${user.sub}/titles/60/${title}`), {
-              drawingID: [uniqueID],
-            });
-          }
-        }
-      );
-    }
-
-    if (DSCtx.drawingTime === 180) {
-      get(child(dbRef, `users/${user.sub}/titles/180/${title}`)).then(
-        (snapshot) => {
-          if (snapshot.exists()) {
-            let prev_post = snapshot.val()["drawingID"];
-            prev_post.push(uniqueID);
-            update(ref(db, `users/${user.sub}/titles/180/${title}`), {
-              drawingID: prev_post,
-            });
-          } else {
-            set(ref(db, `users/${user.sub}/titles/180/${title}`), {
-              drawingID: [uniqueID],
-            });
-          }
-        }
-      );
-    }
-
-    if (DSCtx.drawingTime === 300) {
-      get(child(dbRef, `users/${user.sub}/titles/300/${title}`)).then(
-        (snapshot) => {
-          if (snapshot.exists()) {
-            let prev_post = snapshot.val()["drawingID"];
-            prev_post.push(uniqueID);
-            update(ref(db, `users/${user.sub}/titles/300/${title}`), {
-              drawingID: prev_post,
-            });
-          } else {
-            set(ref(db, `users/${user.sub}/titles/300/${title}`), {
-              drawingID: [uniqueID],
-            });
-          }
-        }
-      );
-    }
 
     DSCtx.setShowEndOverlay(true);
     DSCtx.setShowEndOutline(true);

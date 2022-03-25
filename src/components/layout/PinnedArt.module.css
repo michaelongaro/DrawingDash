@@ -30,3 +30,8 @@
   margin-right: 0.5em;
   margin-left: 0.5em;
 }
+
+.baseHoverHighlight:hover {
+  border: 0.5em solid #92df89;
+  border-radius: 1em;
+}

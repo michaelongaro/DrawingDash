@@ -15,6 +15,8 @@ const PinnedShowcaseItem = (props) => {
       </div>
     );
   }
+
+  // refactor: replace with modularized gallaryitem
   return (
     <div className={classes.vertFlex}>
       <div>

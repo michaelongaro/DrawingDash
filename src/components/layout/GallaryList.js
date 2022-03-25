@@ -118,17 +118,17 @@ const GallaryList = (props) => {
         <div className={classes.flexListContain}>
           <div className={drawingDurationContainers[0]}>
             {props.drawings["60"].map((drawing) => (
-              <GallaryItem key={drawing.index} drawing={drawing} />
+              <GallaryItem key={drawing.index} drawing={drawing} width={30} />
             ))}
           </div>
           <div className={drawingDurationContainers[1]}>
             {props.drawings["180"].map((drawing) => (
-              <GallaryItem key={drawing.index} drawing={drawing} />
+              <GallaryItem key={drawing.index} drawing={drawing} width={30} />
             ))}
           </div>
           <div className={drawingDurationContainers[2]}>
             {props.drawings["300"].map((drawing) => (
-              <GallaryItem key={drawing.index} drawing={drawing} />
+              <GallaryItem key={drawing.index} drawing={drawing} width={30} />
             ))}
           </div>
         </div>

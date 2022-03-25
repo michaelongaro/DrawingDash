@@ -57,7 +57,7 @@ const PinnedArtwork = () => {
             <PinnedModal seconds={60} />
           </div>
           <PinnedShowcaseItem
-            drawing={pinnedCtx.drawings60[pinnedCtx.index60]}
+            drawing={pinnedCtx.pinnedDrawings["60"]}
             timer={"One Minute"}
           />
         </div>
@@ -67,7 +67,7 @@ const PinnedArtwork = () => {
             <PinnedModal seconds={180} />
           </div>
           <PinnedShowcaseItem
-            drawing={pinnedCtx.drawings180[pinnedCtx.index180]}
+            drawing={pinnedCtx.pinnedDrawings["180"]}
             timer={"Three Minutes"}
           />
         </div>
@@ -77,7 +77,7 @@ const PinnedArtwork = () => {
             <PinnedModal seconds={300} />
           </div>
           <PinnedShowcaseItem
-            drawing={pinnedCtx.drawings300[pinnedCtx.index300]}
+            drawing={pinnedCtx.pinnedDrawings["300"]}
             timer={"Five Minutes"}
           />
         </div>

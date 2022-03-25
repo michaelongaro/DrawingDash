@@ -38,7 +38,7 @@ export function FavoritesProvider(props) {
     }
   }, [isLoading, isAuthenticated]);
 
-  function addFavoriteHandler(favoriteMeetup) {
+  function addFavoriteHandler(favoriteMeetup, newTotalLikesCount, newDailyLikesCount) {
     setUserFavorites((prevUserFavorites) => {
       return prevUserFavorites.concat(favoriteMeetup);
     });
@@ -47,14 +47,30 @@ export function FavoritesProvider(props) {
       ref(db, `users/${user.sub}/likes/${favoriteMeetup.index}`),
       favoriteMeetup
     );
+
+    update(
+      ref(db, `drawingLikes/${favoriteMeetup.seconds}/${favoriteMeetup.index}`),
+      {
+        totalLikes: newTotalLikesCount,
+        dailyLikes: newDailyLikesCount,
+      }
+    );
   }
 
-  function removeFavoriteHandler(meetupIndex) {
+  function removeFavoriteHandler(favoriteMeetup, newTotalLikesCount, newDailyLikesCount) {
     setUserFavorites((prevUserFavorites) => {
-      return prevUserFavorites.filter((meetup) => meetup.index !== meetupIndex);
+      return prevUserFavorites.filter((meetup) => meetup.index !== favoriteMeetup.index);
     });
 
-    remove(ref(db, `users/${user.sub}/likes/${meetupIndex}`));
+    remove(ref(db, `users/${user.sub}/likes/${favoriteMeetup.index}`));
+
+    update(
+      ref(db, `drawingLikes/${favoriteMeetup.seconds}/${favoriteMeetup.index}`),
+      {
+        totalLikes: newTotalLikesCount,
+        dailyLikes: newDailyLikesCount,
+      }
+    );
   }
 
   function itemIsFavoriteHandler(meetupIndex) {

@@ -26,7 +26,8 @@ function HomePage() {
         <AsideContent />
       </div>
       <CardContainer />
-      {/* <FeaturedLikes /> */}
+      
+      <FeaturedLikes />
     </section>
   );
 }

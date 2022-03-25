@@ -22,7 +22,7 @@ import { app } from "../../util/init-firebase";
 import classes from "./Preferences.module.css";
 
 const Preferences = () => {
-  const { user, isAuthenticated } = useAuth0();
+  const { user, isAuthenticated, isLoading } = useAuth0();
 
   const db = getDatabase(app);
   const dbRef = ref_database(getDatabase(app));
@@ -31,7 +31,11 @@ const Preferences = () => {
 
   const [username, setUsername] = useState("Username");
   const [status, setStatus] = useState("Your Status Here");
-  const [imageURL, setImageURL] = useState(user.image);
+  const [userEmail, setUserEmail] = useState("");
+  const [imageAltInfo, setImageAltInfo] = useState("username");
+  const [imageURL, setImageURL] = useState(
+    "https://www.tenforums.com/geek/gars/images/2/types/thumb_15951118880user.png"
+  );
   const [image, setImage] = useState();
   const [hasChangedPicture, setHasChangedPicture] = useState(false);
 
@@ -39,20 +43,25 @@ const Preferences = () => {
   const [disableEdit, setDisableEdit] = useState(false);
 
   useEffect(() => {
-    // fetch data from db if it is present
-    get(child(dbRef, `users/${user.sub}/preferences`)).then((snapshot) => {
-      if (snapshot.exists()) {
-        setUsername(snapshot.val()["username"]);
-        setStatus(snapshot.val()["status"]);
-      }
-    });
+    if ((!isLoading, isAuthenticated)) {
+      // fetch data from db if it is present
+      get(child(dbRef, `users/${user.sub}/preferences`)).then((snapshot) => {
+        if (snapshot.exists()) {
+          setUsername(snapshot.val()["username"]);
+          setStatus(snapshot.val()["status"]);
+        }
+      });
+      setUserEmail(user.email);
+      setImageURL(user.image);
+      setImageAltInfo(user.name);
 
-    getDownloadURL(ref_storage(storage, `${user.sub}/profile.jpg`)).then(
-      (url) => {
-        setImageURL(url);
-      }
-    );
-  }, []);
+      getDownloadURL(ref_storage(storage, `${user.sub}/profile.jpg`)).then(
+        (url) => {
+          setImageURL(url);
+        }
+      );
+    }
+  }, [isLoading, isAuthenticated]);
 
   useEffect(() => {
     if (disableEdit) {
@@ -95,6 +104,10 @@ const Preferences = () => {
     setHasChangedPicture(true);
   };
 
+  if (userEmail === "") {
+    return null;
+  }
+
   return (
     <div className={classes.horizContain}>
       <div className={`${classes.container} ${classes.prefCard}`}>
@@ -110,7 +123,7 @@ const Preferences = () => {
         )}
 
         <div className={classes.email}>Email</div>
-        <div className={classes.setEmail}>{user.email}</div>
+        <div className={classes.setEmail}>{userEmail}</div>
 
         <button className={classes.resetPassword}>Reset Password</button>
 
@@ -131,7 +144,7 @@ const Preferences = () => {
               className={classes.image}
               width={"165px"}
               src={imageURL}
-              alt={user.name}
+              alt={imageAltInfo}
             />
           ) : (
             <input type="file" name="profileImage" onChange={handleChange} />

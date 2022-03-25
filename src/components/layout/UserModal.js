@@ -1,5 +1,7 @@
 import React, { useState, useEffect, useContext } from "react";
 
+import Search from "./Search";
+
 import {
   getDatabase,
   ref as ref_database,
@@ -7,6 +9,7 @@ import {
   child,
   get,
 } from "firebase/database";
+
 import {
   getDownloadURL,
   getStorage,
@@ -17,7 +20,6 @@ import {
 import { app } from "../../util/init-firebase";
 
 import classes from "./UserModal.module.css";
-import GallaryList from "./GallaryList";
 
 const UserModal = (props) => {
   const db = getDatabase(app);
@@ -46,19 +48,14 @@ const UserModal = (props) => {
       }
     );
 
-    retrieveUserGallary();
   }, []);
 
-  function retrieveUserGallary() {
-    get(child(dbRef, `users/${props.uid}/drawings`)).then((snapshot) => {
-      setFetchedUserDrawings(Object.values(snapshot.val()));
-    });
-  }
+
 
   return (
     <div className={classes.horizContain}>
       <div className={`${classes.container} ${classes.prefCard}`}>
-        <div className={classes.rightSide}>
+        <div className={classes.leftSide}>
           <img
             className={classes.image}
             width={"165px"}
@@ -69,9 +66,13 @@ const UserModal = (props) => {
           <div className={classes.showUsername}>{username}</div>
           <div className={classes.showStatus}>{status}</div>
         </div>
+
+        <div className={classes.rightSide}>
+          
+        </div>
       </div>
 
-      <GallaryList drawings={fetchedUserDrawings} />
+      <Search userProfile={props.uid} />
     </div>
   );
 };

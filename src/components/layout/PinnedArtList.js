@@ -14,10 +14,8 @@ const PinnedArtList = (props) => {
         {props.drawings.map((drawing, i) => (
           <PinnedArt
             key={i}
-            seconds={drawing.seconds}
-            image={drawing.image}
-            date={drawing.date}
-            title={drawing.title}
+            drawing={drawing}
+            idx={i}
           />
         ))}
       </div>
