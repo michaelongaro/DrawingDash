@@ -22,6 +22,8 @@
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  background-color: rgb(167, 167, 167);
+  border-radius: 1em;
 }
 
 div.innerModal > * {
@@ -40,4 +42,94 @@ div.innerModal > * {
   align-items: center;
 
   margin: 3em;
+}
+
+.topControlsContainer {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
+  grid-template-rows: 1fr;
+  gap: 0px 0px;
+  grid-auto-flow: row;
+  grid-template-areas: "save . . . title title title title title title . . . exit";
+  background-color: rgb(167, 167, 167);
+  border-radius: 1em;
+}
+
+.title {
+  grid-area: title;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.save {
+  grid-area: save;
+}
+
+.exit {
+  grid-area: exit;
+}
+
+.activeButton {
+  background-color: initial;
+  background-image: linear-gradient(-180deg, #ff7e31, #e62c03);
+  border-radius: 6px;
+  box-shadow: rgba(0, 0, 0, 0.1) 0 2px 4px;
+  color: #ffffff;
+  cursor: pointer;
+  display: inline-block;
+  font-family: Inter, -apple-system, system-ui, Roboto, "Helvetica Neue", Arial,
+    sans-serif;
+  height: 40px;
+  line-height: 40px;
+  outline: 0;
+  overflow: hidden;
+  padding: 0 50px;
+  pointer-events: auto;
+  position: relative;
+  text-align: center;
+  touch-action: manipulation;
+  user-select: none;
+  -webkit-user-select: none;
+  vertical-align: top;
+  white-space: nowrap;
+  z-index: 9;
+  border: 0;
+  transition: box-shadow 0.2s;
+}
+
+.activeButton:disabled {
+  background-image: linear-gradient(-180deg, #d3d3d3, #3a3a3a);
+  cursor: default;
+}
+
+.activeButton:hover:enabled {
+  box-shadow: rgba(253, 76, 0, 0.5) 0 3px 8px;
+}
+
+.close {
+  position: absolute;
+  right: 32px;
+  top: 32px;
+  width: 32px;
+  height: 32px;
+  opacity: 0.3;
+}
+.close:hover {
+  opacity: 1;
+}
+.close:before,
+.close:after {
+  position: absolute;
+  left: 15px;
+  content: " ";
+  height: 33px;
+  width: 2px;
+  background-color: #333;
+}
+.close:before {
+  transform: rotate(45deg);
+}
+.close:after {
+  transform: rotate(-45deg);
 }

@@ -21,15 +21,19 @@ const PinnedArt = (props) => {
   }, []);
 
   function updateContext() {
-    // console.log("called in reg");
-    pinnedCtx.resetAllAndHighlightNew(props.drawing.seconds, props.idx);
-    pinnedCtx.setPinnedDrawing(props.drawing, props.drawing.seconds);
-    // still need to add the "save" and "exit" buttons to top right of modal, but in meantime
-    // figure out why isn't highlighting/saving
+    console.log(`"${props.drawing.seconds}"`);
+    pinnedCtx.resetAllAndHighlightNew(`${props.drawing.seconds}`, props.idx);
+    pinnedCtx.updateSelectedPinnedDrawings(props.drawing, props.drawing.seconds);
   }
 
   useEffect(() => {
+    // console.log("has been called", props.drawing.seconds);
     if (pinnedCtx.highlightedDrawings[props.drawing.seconds].length !== 0) {
+      // console.log("shiii has been changed to", pinnedCtx.highlightedDrawings);
+
+      for (const ob of Object.values(pinnedCtx.highlightedDrawings)) {
+        // console.log(typeof ob[0]);
+      }
       setShowHighlighted(
         pinnedCtx.highlightedDrawings[props.drawing.seconds][props.idx]
       );
@@ -53,4 +57,4 @@ const PinnedArt = (props) => {
   );
 };
 
-export default PinnedArt;
+export default React.memo(PinnedArt);

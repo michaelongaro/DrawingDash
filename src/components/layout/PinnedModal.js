@@ -44,15 +44,40 @@ const PinnedModal = (props) => {
         }
         setLoadedDrawings(finalFetchedDrawings);
 
-        pinnedCtx.updateDrawings(finalFetchedDrawings, props.seconds);
+        if (props.seconds === 60) {
+          pinnedCtx.setUser60Drawings(finalFetchedDrawings);
+        } else if (props.seconds === 180) {
+          pinnedCtx.setUser180Drawings(finalFetchedDrawings);
+        } else if (props.seconds === 300) {
+          pinnedCtx.setUser300Drawings(finalFetchedDrawings);
+        }
       });
-  }, [props.seconds]);
+  }, []);
 
   return (
     <Card>
       <div className={classes.innerModal}>
-        {/* add save and exit buttons here */}
-        <h3>{`${props.seconds / 60} Minute Drawings`}</h3>
+        <div className={classes.topControlsContainer}>
+          <div className={classes.title}>
+            <h3>{`${props.seconds / 60} Minute Drawings`}</h3>
+          </div>
+          <div className={classes.save}>
+            <button
+              className={classes.activeButton}
+              onClick={() => {
+                console.log("was clicked", pinnedCtx.selectedPinnedDrawings);
+                pinnedCtx.updateDatabase(pinnedCtx.selectedPinnedDrawings);
+                pinnedCtx.setPinnedDrawings(pinnedCtx.selectedPinnedDrawings);
+              }}
+            >
+              Save
+            </button>
+          </div>
+          <div className={classes.exit}>
+            <div className={classes.close}></div>
+          </div>
+        </div>
+
         <PinnedArtList drawings={loadedDrawings} />
       </div>
     </Card>

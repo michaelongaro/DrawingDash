@@ -27,10 +27,20 @@ export function PinnedProvider(props) {
   const db = getDatabase(app);
   const dbRef = ref(getDatabase(app));
 
+  const [user60Drawings, setUser60Drawings] = useState([]);
+  const [user180Drawings, setUser180Drawings] = useState([]);
+  const [user300Drawings, setUser300Drawings] = useState([]);
+
   const [userDrawings, setUserDrawings] = useState({
     60: [],
     180: [],
     300: [],
+  });
+
+  const [selectedPinnedDrawings, setSelectedPinnedDrawings] = useState({
+    60: "",
+    180: "",
+    300: "",
   });
 
   const [pinnedDrawings, setPinnedDrawings] = useState({
@@ -38,35 +48,26 @@ export function PinnedProvider(props) {
     180: "",
     300: "",
   });
+
   const [highlightedDrawings, setHighlightedDrawings] = useState({
     60: [],
     180: [],
     300: [],
   });
 
-  function setPinnedDrawing(drawing, seconds) {
-    // console.log("called in ctx");
-    let tempPinned = { ...pinnedDrawings };
+  function updateSelectedPinnedDrawings(drawing, seconds) {
+    let tempPinned = { ...selectedPinnedDrawings };
     tempPinned[seconds] = drawing;
-    // console.log("should be updated with", tempPinned);
-    setPinnedDrawings(tempPinned);
+    setSelectedPinnedDrawings(tempPinned);
   }
 
-  function updateDatabase() {
-    for (const drawingIdx of Object.keys(pinnedDrawings)) {
-      set(
-        ref(db, `users/${user.sub}/pinnedArt/${drawingIdx}`),
-        pinnedDrawings[drawingIdx]
-      );
-    }
+  function updateDatabase(updatedPinnedDrawings) {
+    set(ref(db, `users/${user.sub}/pinnedArt`), updatedPinnedDrawings);
   }
 
   function searchIndexOfPinned(drawingsArray, seconds) {
     for (const idx in drawingsArray) {
-      console.log(pinnedDrawings[seconds], drawingsArray[idx], idx);
-
       if (isEqual(pinnedDrawings[seconds], drawingsArray[idx])) {
-        console.log("found match");
         return idx;
       }
     }
@@ -75,11 +76,14 @@ export function PinnedProvider(props) {
   function updateDrawings(newDrawings, seconds) {
     let tempUserDrawings = { ...userDrawings };
     tempUserDrawings[seconds] = newDrawings;
+    console.log("updating with", tempUserDrawings);
     setUserDrawings(tempUserDrawings);
   }
 
   function resetAllAndHighlightNew(seconds, idx) {
-    console.log("entered function");
+    // alternative would be to save previous highlighted, turn that into ""
+    // and then make currently selected highlighted.
+    console.log(userDrawings, "look here");
     let tempHighlighted = Array(userDrawings[seconds].length).fill("");
     if (idx >= 0) {
       tempHighlighted[idx] = classes.highlighted;
@@ -90,7 +94,6 @@ export function PinnedProvider(props) {
 
     let tempHighlightedDrawings = { ...highlightedDrawings };
     tempHighlightedDrawings[seconds] = tempHighlighted;
-    console.log(tempHighlightedDrawings);
     setHighlightedDrawings(tempHighlightedDrawings);
   }
 
@@ -113,14 +116,27 @@ export function PinnedProvider(props) {
   }, [userDrawings, pinnedDrawings]);
 
   useEffect(() => {
-    console.log(userDrawings);
-  }, [userDrawings]);
+    if (
+      !isEmpty(user60Drawings) &&
+      !isEmpty(user180Drawings) &&
+      !isEmpty(user300Drawings)
+    ) {
+      setUserDrawings({
+        60: user60Drawings,
+        180: user180Drawings,
+        300: user300Drawings,
+      });
+    }
+  }, [user60Drawings, user180Drawings, user300Drawings]);
 
   useEffect(() => {
     if ((!isLoading, isAuthenticated)) {
       get(child(dbRef, `users/${user.sub}/pinnedArt`)).then((snapshot) => {
         if (snapshot.exists() && !isEqual(snapshot.val(), pinnedDrawings)) {
           setPinnedDrawings(snapshot.val());
+          // need to set this if not all duration's pinned drawings
+          // are changed before posting to db
+          setSelectedPinnedDrawings(snapshot.val());
         }
       });
     }
@@ -130,8 +146,13 @@ export function PinnedProvider(props) {
     userDrawings: userDrawings,
     pinnedDrawings: pinnedDrawings,
     highlightedDrawings: highlightedDrawings,
+    selectedPinnedDrawings: selectedPinnedDrawings,
+    setUser60Drawings: setUser60Drawings,
+    setUser180Drawings: setUser180Drawings,
+    setUser300Drawings: setUser300Drawings,
     setUserDrawings: setUserDrawings,
-    setPinnedDrawing: setPinnedDrawing,
+    setPinnedDrawings: setPinnedDrawings,
+    updateSelectedPinnedDrawings: updateSelectedPinnedDrawings,
     updateDatabase: updateDatabase,
     resetAllAndHighlightNew: resetAllAndHighlightNew,
     updateDrawings: updateDrawings,

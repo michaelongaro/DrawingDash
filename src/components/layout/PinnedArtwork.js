@@ -39,6 +39,10 @@ const PinnedArtwork = () => {
         setShow60({ display: "none" });
         setShow180({ display: "none" });
         setShow300({ display: "none" });
+        pinnedCtx.resetAllAndHighlightNew("60", -1);
+        pinnedCtx.resetAllAndHighlightNew("180", -1);
+        pinnedCtx.resetAllAndHighlightNew("300", -1);
+
       }
     };
 
