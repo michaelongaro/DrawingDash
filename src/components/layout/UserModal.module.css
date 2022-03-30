@@ -1,0 +1,33 @@
+.horizContain,
+.leftSide {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 1em;
+
+  background-color: rgb(235, 235, 235);
+  padding: 3em;
+  border-radius: 1em;
+}
+
+.prefCard {
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+  transition: 0.2s;
+  width: 100%;
+  border-radius: 15px;
+}
+
+.container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.eachSlide > div {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-size: cover;
+  height: 350px;
+}

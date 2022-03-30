@@ -6,45 +6,51 @@ import GallaryItem from "./GallaryItem";
 import classes from "./GallaryList.module.css";
 
 const GallaryList = (props) => {
+  const [displayedDrawings, setDisplayedDrawings] = useState(props.drawings);
   const [buttonStates, setButtonStates] = useState(["", "", ""]);
-  const [drawingDurationContainers, setDrawingDurationContainers] = useState([
-    "",
-    "",
-    "",
-  ]);
+  const [filteredDrawings, setFilteredDrawings] = useState({
+    "60": true,
+    "180": true,
+    "300": true,
+  });
 
   useEffect(() => {
     if (props.drawings !== "none") {
-      setButtonStates(false);
-      setDrawingDurationContainers(false);
-    }
-  }, [props.drawings]);
-
-  useEffect(() => {
-    if (!buttonStates && !drawingDurationContainers) {
       let initStates = ["", "", ""];
-      let initStates2 = ["", "", ""];
       if (props.drawings["60"].length === 0) {
         initStates[0] = toggleButton(0, false);
-        initStates2[0] = toggleDrawingDurationContainer(0, false);
       }
       if (props.drawings["180"].length === 0) {
         initStates[1] = toggleButton(1, false);
-        initStates2[1] = toggleDrawingDurationContainer(1, false);
       }
       if (props.drawings["300"].length === 0) {
         initStates[2] = toggleButton(2, false);
-        initStates2[2] = toggleDrawingDurationContainer(2, false);
       }
 
       setButtonStates(initStates);
-      setDrawingDurationContainers(initStates2);
+      setDisplayedDrawings(props.drawings);
     }
-  }, [buttonStates, drawingDurationContainers]);
+  }, [props.drawings]);
 
-  // update this in searchCtx
+  function updateDisplayedDrawings(duration) {
+    let updatedDurationValue = filteredDrawings[duration]
+      ? []
+      : props.drawings[duration];
+
+    let tempDisplayed = { ...displayedDrawings };
+    tempDisplayed[duration] = updatedDurationValue;
+    setDisplayedDrawings(tempDisplayed);
+
+    updateFilteredDrawings(duration);
+  }
+
+  function updateFilteredDrawings(duration) {
+    const tempFilteredDrawings = { ...filteredDrawings };
+    tempFilteredDrawings[duration] = !tempFilteredDrawings[duration];
+    setFilteredDrawings(tempFilteredDrawings);
+  }
+
   if (props.drawings === "none") {
-    // bruh wtf why does this update... ooo wtf should really use context here instead ofprops me think
     const static_title = props.title;
     return (
       <div
@@ -67,22 +73,6 @@ const GallaryList = (props) => {
     }
   }
 
-  function toggleDrawingDurationContainer(id, directUpdate) {
-    const copy = !drawingDurationContainers
-      ? ["", "", ""]
-      : [...drawingDurationContainers];
-    if (copy[id] === "") {
-      copy[id] = classes.hide;
-    } else {
-      copy[id] = "";
-    }
-    if (directUpdate) {
-      setDrawingDurationContainers(copy);
-    } else {
-      return copy[id];
-    }
-  }
-
   return (
     <div className={classes.baseFlex}>
       <div className={classes.buttonContainer}>
@@ -90,7 +80,7 @@ const GallaryList = (props) => {
           className={buttonStates[0]}
           onClick={() => {
             toggleButton(0, true);
-            toggleDrawingDurationContainer(0, true);
+            updateDisplayedDrawings("60");
           }}
         >
           1 Minute
@@ -99,7 +89,7 @@ const GallaryList = (props) => {
           className={buttonStates[1]}
           onClick={() => {
             toggleButton(1, true);
-            toggleDrawingDurationContainer(1, true);
+            updateDisplayedDrawings("180");
           }}
         >
           3 Minutes
@@ -108,29 +98,20 @@ const GallaryList = (props) => {
           className={buttonStates[2]}
           onClick={() => {
             toggleButton(2, true);
-            toggleDrawingDurationContainer(2, true);
+            updateDisplayedDrawings("300");
           }}
         >
           5 Minutes
         </button>
       </div>
+
       <Card width={100}>
         <div className={classes.flexListContain}>
-          <div className={drawingDurationContainers[0]}>
-            {props.drawings["60"].map((drawing) => (
+          {Object.values(displayedDrawings)
+            .flat()
+            .map((drawing) => (
               <GallaryItem key={drawing.index} drawing={drawing} width={30} />
             ))}
-          </div>
-          <div className={drawingDurationContainers[1]}>
-            {props.drawings["180"].map((drawing) => (
-              <GallaryItem key={drawing.index} drawing={drawing} width={30} />
-            ))}
-          </div>
-          <div className={drawingDurationContainers[2]}>
-            {props.drawings["300"].map((drawing) => (
-              <GallaryItem key={drawing.index} drawing={drawing} width={30} />
-            ))}
-          </div>
         </div>
       </Card>
     </div>

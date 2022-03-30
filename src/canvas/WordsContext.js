@@ -1,10 +1,9 @@
 import { createContext, useState } from "react";
-import { nouns } from "../util/nouns";
-import { adjectives } from "../util/adjectives";
+// import { nouns } from "../util/nouns";
+// import { adjectives } from "../util/adjectives";
 
 const WordsContext = createContext(null);
 
-// look into difference between props and { children } here and below in return
 export function WordsProvider(props) {
   // should be in an array
   const [adjectiveOne, setAdjectiveOne] = useState("");
@@ -18,27 +17,20 @@ export function WordsProvider(props) {
 
   const [canPost, setCanPost] = useState(false);
 
-  // const [fetchNewWords, setFetchNewWords] = useState(true);
+  // function searchRandom(count, arr) {
+  //   let answer = [],
+  //     counter = 0;
 
+  //   while (counter < count) {
+  //     let rand = arr[Math.floor(Math.random() * arr.length)];
+  //     if (!answer.some((an) => an === rand)) {
+  //       answer.push(rand);
+  //       counter++;
+  //     }
+  //   }
 
-  function searchRandom(count, arr) {
-    let answer = [],
-      counter = 0;
-
-    while (counter < count) {
-      let rand = arr[Math.floor(Math.random() * arr.length)];
-      if (!answer.some((an) => an === rand)) {
-        answer.push(rand);
-        counter++;
-      }
-    }
-
-    return answer;
-  }
-
-  function startDailyCountdown() {
-
-  }
+  //   return answer;
+  // }
 
   function getAdjectiveHandler(time) {
     fetch("https://random-word-form.herokuapp.com/random/adjective")
@@ -52,17 +44,6 @@ export function WordsProvider(props) {
           setAdjectiveThree(data[0]);
         }
       });
-
-    // make sure index is unique across all 3
-    // let randomAdjectives = searchRandom(3, adjectives);
-
-    // if (time === 60) {
-    //   setAdjectiveOne(randomAdjectives[0]);
-    // } else if (time === 180) {
-    //   setAdjectiveTwo(randomAdjectives[1]);
-    // } else if (time === 300) {
-    //   setAdjectiveThree(randomAdjectives[2]);
-    // }
   }
 
   function getNounHandler(time) {
@@ -77,16 +58,6 @@ export function WordsProvider(props) {
           setNounThree(data[0]);
         }
       });
-
-    // let randomNouns = searchRandom(3, nouns);
-
-    // if (time === 60) {
-    //   setNounOne(randomNouns[0]);
-    // } else if (time === 180) {
-    //   setNounTwo(randomNouns[1]);
-    // } else if (time === 300) {
-    //   setNounThree(randomNouns[2]);
-    // }
   }
 
   function getPhrase(time) {
@@ -109,8 +80,6 @@ export function WordsProvider(props) {
 
   const context = {
     postable: canPost,
-    // fetchNewWords: fetchNewWords,
-    // setFetchNewWords: setFetchNewWords,
     getAdjective: getAdjectiveHandler,
     getNoun: getNounHandler,
     getPhrase: getPhrase,

@@ -37,17 +37,11 @@ const ProfilePicture = (props) => {
     );
   }, []);
 
-
   // i guess put the profile modal stuff in here as an onclick? seems to make sense
-
 
   return (
     <div className={shimmerStyle}>
-      <img
-        className={roundedProfileStyle}
-        src={profileImage}
-        alt="Profile"
-      />
+      <img className={roundedProfileStyle} src={profileImage} alt="Profile" />
     </div>
   );
 };

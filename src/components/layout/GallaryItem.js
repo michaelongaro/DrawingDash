@@ -3,6 +3,7 @@ import { useState, useEffect, useContext } from "react";
 
 import ProfilePicture from "./ProfilePicture";
 import FavoritesContext from "./FavoritesContext";
+import UserModal from "./UserModal";
 import Card from "../../ui/Card";
 
 import { getDatabase, get, ref, child } from "firebase/database";
@@ -24,13 +25,18 @@ const GallaryItem = ({ drawing, width }) => {
   const [drawingDailyLikes, setDrawingDailyLikes] = useState(0);
   const [drawingWidth, setDrawingWidth] = useState(width);
 
+  const [showUserModal, setShowUserModal] = useState(classes.hide);
+  const [loadUserModal, setLoadUserModal] = useState(false);
+
   useEffect(() => {
-    get(child(dbRef, `drawingLikes/${drawing.seconds}/${drawing.index}`)).then((snapshot) => {
-      if (snapshot.exists()) {
-        setDrawingTotalLikes(snapshot.val()["totalLikes"]);
-        setDrawingDailyLikes(snapshot.val()["dailyLikes"]);
+    get(child(dbRef, `drawingLikes/${drawing.seconds}/${drawing.index}`)).then(
+      (snapshot) => {
+        if (snapshot.exists()) {
+          setDrawingTotalLikes(snapshot.val()["totalLikes"]);
+          setDrawingDailyLikes(snapshot.val()["dailyLikes"]);
+        }
       }
-    });
+    );
   }, [drawing]);
 
   function toggleFavoriteStatusHandler() {
@@ -53,11 +59,14 @@ const GallaryItem = ({ drawing, width }) => {
     }
   }
 
-  function getUserProfileInformation() {}
-
-  function showFullscreenModal() {
-    setDrawingContainerSize(classes.fullScreen);
-    setDrawingWidth(100);
+  function showFullscreenModal(modalType) {
+    if (modalType === "drawing") {
+      setDrawingContainerSize(classes.fullScreen);
+      setDrawingWidth(100);
+    } else {
+      setShowUserModal(classes.fullScreen);
+      setLoadUserModal(true);
+    }
   }
 
   return (
@@ -68,7 +77,7 @@ const GallaryItem = ({ drawing, width }) => {
         <div
           className={classes.glossOver}
           style={{ position: "relative" }}
-          onClick={() => showFullscreenModal()}
+          onClick={() => showFullscreenModal("drawing")}
         >
           <img
             className={classes.imgCenter}
@@ -82,9 +91,21 @@ const GallaryItem = ({ drawing, width }) => {
         </div>
 
         {/* -------- metainfo --------- */}
-        <div className={classes.bottomContain}>
+        <div
+          className={classes.bottomContain}
+          onClick={() => {
+            console.log("have been clicked");
+            showFullscreenModal();
+          }}
+        >
           <ProfilePicture user={drawing.drawnBy} size="small" />
-          {/*<UserProfileContainer user={drawing.drawnBy} /> */}
+
+          {/* ----- user modal ------- */}
+          <div style={{ width: "100%" }} className={showUserModal}>
+            {loadUserModal && <UserModal uid={drawing.drawnBy} />}
+          </div>
+
+          {/* ----- drawing data ----- */}
           <div>{drawing.title}</div>
           <div>{drawing.date}</div>
           <div>{drawing.seconds}</div>

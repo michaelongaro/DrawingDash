@@ -27,15 +27,14 @@ export function PinnedProvider(props) {
   const db = getDatabase(app);
   const dbRef = ref(getDatabase(app));
 
+  // deal with this later, turn into one obj
+  const [show60, setShow60] = useState({ display: "none" });
+  const [show180, setShow180] = useState({ display: "none" });
+  const [show300, setShow300] = useState({ display: "none" });
+
   const [user60Drawings, setUser60Drawings] = useState([]);
   const [user180Drawings, setUser180Drawings] = useState([]);
   const [user300Drawings, setUser300Drawings] = useState([]);
-
-  const [userDrawings, setUserDrawings] = useState({
-    60: [],
-    180: [],
-    300: [],
-  });
 
   const [selectedPinnedDrawings, setSelectedPinnedDrawings] = useState({
     60: "",
@@ -50,6 +49,12 @@ export function PinnedProvider(props) {
   });
 
   const [highlightedDrawings, setHighlightedDrawings] = useState({
+    60: [],
+    180: [],
+    300: [],
+  });
+
+  const [userDrawings, setUserDrawings] = useState({
     60: [],
     180: [],
     300: [],
@@ -73,44 +78,51 @@ export function PinnedProvider(props) {
     }
   }
 
-  function updateDrawings(newDrawings, seconds) {
-    let tempUserDrawings = { ...userDrawings };
-    tempUserDrawings[seconds] = newDrawings;
-    console.log("updating with", tempUserDrawings);
-    setUserDrawings(tempUserDrawings);
-  }
-
   function resetAllAndHighlightNew(seconds, idx) {
-    // alternative would be to save previous highlighted, turn that into ""
-    // and then make currently selected highlighted.
-    console.log(userDrawings, "look here");
-    let tempHighlighted = Array(userDrawings[seconds].length).fill("");
-    if (idx >= 0) {
-      tempHighlighted[idx] = classes.highlighted;
-    } else {
-      tempHighlighted[searchIndexOfPinned(userDrawings[seconds], seconds)] =
-        classes.highlighted;
-    }
+    let tempHighlighted = Array(highlightedDrawings[seconds].length).fill("");
+
+    tempHighlighted[idx] = classes.highlighted;
 
     let tempHighlightedDrawings = { ...highlightedDrawings };
     tempHighlightedDrawings[seconds] = tempHighlighted;
     setHighlightedDrawings(tempHighlightedDrawings);
   }
 
+  function resetAllAndHighlightNewInit() {
+    let tempHighlightedDrawings = { ...highlightedDrawings };
+    let seconds = [60, 180, 300];
+    for (const duration of seconds) {
+      let tempHighlighted = Array(highlightedDrawings[duration].length).fill(
+        ""
+      );
+
+      tempHighlighted[searchIndexOfPinned(userDrawings[duration], duration)] =
+        classes.highlighted;
+
+      tempHighlightedDrawings[duration] = tempHighlighted;
+    }
+    setHighlightedDrawings(tempHighlightedDrawings);
+  }
+
+  function hideAllModals() {
+    console.log("i have been clicked");
+    setShow60({ display: "none" });
+    setShow180({ display: "none" });
+    setShow300({ display: "none" });
+    resetAllAndHighlightNewInit();
+  }
+
   useEffect(() => {
     if (!isEmpty(userDrawings)) {
-      if (!isEmpty(userDrawings["60"]) && !isEmpty(pinnedDrawings["60"])) {
-        resetAllAndHighlightNew("60", -1);
-      } else if (
+      if (
+        !isEmpty(userDrawings["60"]) &&
+        !isEmpty(pinnedDrawings["60"]) &&
         !isEmpty(userDrawings["180"]) &&
-        !isEmpty(pinnedDrawings["180"])
-      ) {
-        resetAllAndHighlightNew("180", -1);
-      } else if (
+        !isEmpty(pinnedDrawings["180"]) &&
         !isEmpty(userDrawings["300"]) &&
         !isEmpty(pinnedDrawings["300"])
       ) {
-        resetAllAndHighlightNew("300", -1);
+        resetAllAndHighlightNewInit();
       }
     }
   }, [userDrawings, pinnedDrawings]);
@@ -121,6 +133,11 @@ export function PinnedProvider(props) {
       !isEmpty(user180Drawings) &&
       !isEmpty(user300Drawings)
     ) {
+      setHighlightedDrawings({
+        60: user60Drawings,
+        180: user180Drawings,
+        300: user300Drawings,
+      });
       setUserDrawings({
         60: user60Drawings,
         180: user180Drawings,
@@ -143,10 +160,16 @@ export function PinnedProvider(props) {
   }, [isLoading, isAuthenticated]);
 
   const context = {
+    show60: show60,
+    show180: show180,
+    show300: show300,
     userDrawings: userDrawings,
     pinnedDrawings: pinnedDrawings,
     highlightedDrawings: highlightedDrawings,
     selectedPinnedDrawings: selectedPinnedDrawings,
+    setShow60: setShow60,
+    setShow180: setShow180,
+    setShow300: setShow300,
     setUser60Drawings: setUser60Drawings,
     setUser180Drawings: setUser180Drawings,
     setUser300Drawings: setUser300Drawings,
@@ -155,7 +178,8 @@ export function PinnedProvider(props) {
     updateSelectedPinnedDrawings: updateSelectedPinnedDrawings,
     updateDatabase: updateDatabase,
     resetAllAndHighlightNew: resetAllAndHighlightNew,
-    updateDrawings: updateDrawings,
+    resetAllAndHighlightNewInit: resetAllAndHighlightNewInit,
+    hideAllModals: hideAllModals,
   };
 
   return (

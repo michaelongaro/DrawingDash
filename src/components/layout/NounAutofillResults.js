@@ -6,20 +6,24 @@ import AutofillResult from "./AutofillResult";
 import { getDatabase, get, ref, child } from "firebase/database";
 import { app } from "../../util/init-firebase";
 
-const AutofillResults = (props) => {
+const NounAutofillResults = (props) => {
   const searchCtx = useContext(SearchContext);
+
+  let idx = props.userProfile.length > 0 ? 1 : 0;
+  let titleLocation = props.userProfile.length > 0 ? `users/${props.userProfile}/titles` : "titles";
+
 
   const [rerender, setRerender] = useState(false);
 
   useEffect(() => {
-    if (searchCtx.nounSearch === "") {
-      searchCtx.setRequestedNouns([]);
+    if (searchCtx.searchValues["nounSearch"][idx] === "") {
+      searchCtx.updateSearchValues("requestedNouns", [], idx);
     } else {
       getNouns();
 
       setRerender(!rerender);
     }
-  }, [searchCtx.nounSearch]);
+  }, [searchCtx.searchValues["nounSearch"][idx]]);
 
   function getNouns() {
     const results = [],
@@ -27,23 +31,23 @@ const AutofillResults = (props) => {
       totalResults = [];
 
     const dbRef = ref(getDatabase(app));
-    get(child(dbRef, `${props.profile}titles`))
+    get(child(dbRef, titleLocation))
       .then((snapshot) => {
         for (const duration of Object.values(snapshot.val())) {
           for (const title of Object.keys(duration)) {
             // isolating the noun
             let noun = title.split(" ")[1];
             if (
-              noun.substring(0, searchCtx.nounSearch.length) ===
-              searchCtx.nounSearch
+              noun.substring(0,searchCtx.searchValues["nounSearch"][idx].length) ===
+              searchCtx.searchValues["nounSearch"][idx]
             ) {
               results.push(noun);
             }
 
             if (
-              noun.substring(0, searchCtx.nounSearch.length) ===
-                searchCtx.nounSearch &&
-              noun.includes(searchCtx.nounSearch)
+              noun.substring(0, searchCtx.searchValues["nounSearch"][idx].length) ===
+                searchCtx.searchValues["nounSearch"][idx] &&
+              noun.includes(searchCtx.searchValues["nounSearch"][idx])
             ) {
               if (!results.includes(noun)) {
                 related_results.push(noun);
@@ -61,22 +65,26 @@ const AutofillResults = (props) => {
           } else {
             totalResults.push(results);
           }
-          searchCtx.setRequestedNouns(...new Set(totalResults));
+          searchCtx.updateSearchValues(
+            "requestedNouns",
+            ...new Set(totalResults),
+            idx
+          );
         } else {
-          searchCtx.setRequestedNouns([]);
+          searchCtx.updateSearchValues("requestedNouns", [], idx);
         }
 
         
       });
   }
 
-  return searchCtx.requestedNouns.length !== 0 ? (
-    searchCtx.requestedNouns.map((title) => (
-      <AutofillResult key={title} word={title} type="noun" />
+  return searchCtx.searchValues["requestedNouns"][idx].length !== 0 ? (
+    searchCtx.searchValues["requestedNouns"][idx].map((title) => (
+      <AutofillResult key={title} word={title} type="noun" userProfile={props.userProfile} />
     ))
   ) : (
     <div style={{ textAlign: "center", pointerEvents: "none" }}>{"-No Results Found-"}</div>
   );
 };
 
-export default AutofillResults;
+export default NounAutofillResults;

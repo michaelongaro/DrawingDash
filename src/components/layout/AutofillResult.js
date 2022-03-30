@@ -7,6 +7,8 @@ import SearchContext from "./SearchContext";
 const AutofillResult = (props) => {
   const searchCtx = useContext(SearchContext);
 
+  let idx = props.userProfile.length > 0 ? 1 : 0;
+
   const resultRef = useRef();
 
   useEffect(() => {
@@ -20,9 +22,9 @@ const AutofillResult = (props) => {
 
   function fillText() {
     if (props.type === "adj") {
-      searchCtx.setAutofilledAdjectiveInput(props.word);
+      searchCtx.updateSearchValues("autofilledAdjectiveInput", props.word, idx);
     } else {
-      searchCtx.setAutofilledNounInput(props.word);
+      searchCtx.updateSearchValues("autofilledNounInput", props.word, idx);
     }
   }
 

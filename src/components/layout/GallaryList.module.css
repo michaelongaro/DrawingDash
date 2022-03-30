@@ -25,6 +25,12 @@
   width: 100%;
 }
 
+.inlineFlexWrap {
+  /* display: inline-flex;
+  flex-wrap: wrap; */
+  /* flex: 1 0 61%; */
+}
+
 .darken {
   opacity: 50%;
 }

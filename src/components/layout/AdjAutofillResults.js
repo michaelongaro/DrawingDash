@@ -6,22 +6,25 @@ import AutofillResult from "./AutofillResult";
 import { getDatabase, get, ref, child } from "firebase/database";
 import { app } from "../../util/init-firebase";
 
-const AutofillResults = (props) => {
+const AdjAutofillResults = (props) => {
   const searchCtx = useContext(SearchContext);
+
+  let idx = props.userProfile.length > 0 ? 1 : 0;
+  let titleLocation = props.userProfile.length > 0 ? `users/${props.userProfile}/titles` : "titles";
 
   const [rerender, setRerender] = useState(false);
 
   // can optimize later, probably just want to filter out
   useEffect(() => {
-    if (searchCtx.adjSearch === "") {
-      searchCtx.setRequestedAdjectives([]);
+    if (searchCtx.searchValues["adjSearch"][idx] === "") {
+      searchCtx.updateSearchValues("requestedAdjectives", [], idx);
     } else {
       // set it to null
       getAdjectives();
 
       setRerender(!rerender);
     }
-  }, [searchCtx.adjSearch]);
+  }, [searchCtx.searchValues["adjSearch"][idx]]);
 
   function getAdjectives() {
     const results = [],
@@ -29,23 +32,26 @@ const AutofillResults = (props) => {
       totalResults = [];
 
     const dbRef = ref(getDatabase(app));
-    get(child(dbRef, `${props.profile}titles`))
+    get(child(dbRef, titleLocation))
       .then((snapshot) => {
+        console.log(snapshot.val());
         for (const duration of Object.values(snapshot.val())) {
           for (const title of Object.keys(duration)) {
             // isolating the adjective
             let adjective = title.split(" ")[0];
             if (
-              adjective.substring(0, searchCtx.adjSearch.length) ===
-              searchCtx.adjSearch
+              adjective.substring(0, searchCtx.searchValues["adjSearch"][idx].length) ===
+              searchCtx.searchValues["adjSearch"][idx]
             ) {
               results.push(adjective);
             }
 
             if (
-              adjective.substring(0, searchCtx.adjSearch.length) ===
-                searchCtx.adjSearch &&
-              adjective.includes(searchCtx.adjSearch)
+              adjective.substring(
+                0,
+                searchCtx.searchValues["adjSearch"][idx].length
+              ) === searchCtx.searchValues["adjSearch"][idx] &&
+              adjective.includes(searchCtx.searchValues["adjSearch"][idx])
             ) {
               if (!results.includes(adjective)) {
                 related_results.push(adjective);
@@ -63,20 +69,26 @@ const AutofillResults = (props) => {
           } else {
             totalResults.push(results);
           }
-          searchCtx.setRequestedAdjectives(...new Set(totalResults));
+          searchCtx.updateSearchValues(
+            "requestedAdjectives",
+            ...new Set(totalResults),
+            idx
+          );
         } else {
-          searchCtx.setRequestedAdjectives([]);
+          searchCtx.updateSearchValues("requestedAdjectives", [], idx);
         }
       });
   }
 
-  return searchCtx.requestedAdjectives.length !== 0 ? (
-    searchCtx.requestedAdjectives.map((title) => (
-      <AutofillResult key={title} word={title} type="adj" />
+  return searchCtx.searchValues["requestedAdjectives"][idx].length !== 0 ? (
+    searchCtx.searchValues["requestedAdjectives"][idx].map((title) => (
+      <AutofillResult key={title} word={title} type="adj" userProfile={props.userProfile} />
     ))
   ) : (
-    <div style={{ textAlign: "center", pointerEvents: "none"}}>{"-No Results Found-"}</div>
+    <div style={{ textAlign: "center", pointerEvents: "none" }}>
+      {"-No Results Found-"}
+    </div>
   );
 };
 
-export default AutofillResults;
+export default AdjAutofillResults;

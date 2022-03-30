@@ -12,16 +12,15 @@ import classes from "./Search.module.css";
 const Search = (props) => {
   const searchCtx = useContext(SearchContext);
 
+  let idx = props.userProfile.length > 0 ? 1 : 0;
+
   useEffect(() => {
-    return () => {
-      searchCtx.setAdjSearch("");
-      searchCtx.setNounSearch("");
-      // do this for whenever input changes/submit is clicked?
-      searchCtx.setRequestedAdjectives([]);
-      searchCtx.setRequestedNouns([]);
-      searchCtx.setGallary(null);
-    };
-  }, []);
+    searchCtx.resetAllValues(idx);
+    if (idx === 1) {
+      searchCtx.setPersistingUserGallary([]);
+      searchCtx.getGallary(`users/${props.userProfile}/`);
+    }
+  }, [props]);
 
   const [showAdjResults, setShowAdjResults] = useState(classes.hide);
   const [showNounResults, setShowNounResults] = useState(classes.hide);
@@ -32,7 +31,7 @@ const Search = (props) => {
   const nounInputRef = useRef();
 
   const refreshAdjSearch = (event) => {
-    searchCtx.setAdjSearch(event.target.value.trim());
+    searchCtx.updateSearchValues("adjSearch", event.target.value.trim(), idx);
 
     setShowAdjResults(classes.show);
 
@@ -42,7 +41,7 @@ const Search = (props) => {
   };
 
   const refreshNounSearch = (event) => {
-    searchCtx.setNounSearch(event.target.value.trim());
+    searchCtx.updateSearchValues("nounSearch", event.target.value.trim(), idx);
 
     setShowNounResults(classes.show);
 
@@ -64,20 +63,34 @@ const Search = (props) => {
   }, []);
 
   useEffect(() => {
-    if (searchCtx.autofilledAdjectiveInput.length > 0) {
-      adjectiveInputRef.current.value = searchCtx.autofilledAdjectiveInput;
-      searchCtx.setAdjSearch(searchCtx.autofilledAdjectiveInput);
-      searchCtx.setAutofilledAdjectiveInput("");
+    if (searchCtx.searchValues["autofilledAdjectiveInput"][idx].length > 0) {
+      adjectiveInputRef.current.value =
+        searchCtx.searchValues["autofilledAdjectiveInput"][idx];
+
+      searchCtx.updateSearchValues(
+        "adjSearch",
+        searchCtx.searchValues["autofilledAdjectiveInput"][idx],
+        idx
+      );
+
+      searchCtx.updateSearchValues("autofilledAdjectiveInput", "", idx);
     }
-  }, [searchCtx.autofilledAdjectiveInput]);
+  }, [searchCtx.searchValues["autofilledAdjectiveInput"][idx]]);
 
   useEffect(() => {
-    if (searchCtx.autofilledNounInput.length > 0) {
-      nounInputRef.current.value = searchCtx.autofilledNounInput;
-      searchCtx.setNounSearch(searchCtx.autofilledNounInput);
-      searchCtx.setAutofilledNounInput("");
+    if (searchCtx.searchValues["autofilledNounInput"][idx].length > 0) {
+      nounInputRef.current.value =
+        searchCtx.searchValues["autofilledNounInput"][idx];
+
+      searchCtx.updateSearchValues(
+        "nounSearch",
+        searchCtx.searchValues["autofilledNounInput"][idx],
+        idx
+      );
+
+      searchCtx.updateSearchValues("autofilledNounInput", "", idx);
     }
-  }, [searchCtx.autofilledNounInput]);
+  }, [searchCtx.searchValues["autofilledNounInput"][idx]]);
 
   useEffect(() => {
     let handler = (event) => {
@@ -98,24 +111,30 @@ const Search = (props) => {
   function prepGallarySearch(event) {
     event.preventDefault();
 
-    if (searchCtx.adjSearch.length === 0 && searchCtx.nounSearch.length === 0) {
-      searchCtx.setGallary(null);
+    if (
+      searchCtx.searchValues["adjSearch"][idx].length === 0 &&
+      searchCtx.searchValues["nounSearch"][idx].length === 0 &&
+      idx === 0
+    ) {
+      searchCtx.updateSearchValues("gallary", null, idx);
       return;
     }
 
-    if (props.userProfile.length > 0) {
+    if (idx === 1) {
       searchCtx.getGallary(`users/${props.userProfile}/`);
     } else {
       searchCtx.getGallary();
     }
 
-    setGallaryListStaticTitle(`${searchCtx.adjSearch} ${searchCtx.nounSearch}`)
+    setGallaryListStaticTitle(
+      `${searchCtx.searchValues["adjSearch"][idx]} ${searchCtx.searchValues["nounSearch"][idx]}`
+    );
 
-    // clearing autofill context values
-    searchCtx.setAutofilledAdjectiveInput("");
-    searchCtx.setAutofilledNounInput("");
-    searchCtx.setRequestedAdjectives([]);
-    searchCtx.setRequestedNouns([]);
+    // clearing autofill + related context values
+    searchCtx.updateSearchValues("autofilledAdjectiveInput", "", idx);
+    searchCtx.updateSearchValues("autofilledNounInput", "", idx);
+    searchCtx.updateSearchValues("requestedAdjectives", [], idx);
+    searchCtx.updateSearchValues("requestedNouns", [], idx);
   }
 
   return (
@@ -129,7 +148,7 @@ const Search = (props) => {
             autoComplete="off"
           ></input>
           <div className={showAdjResults}>
-            <AdjAutofillResults profile={props.userProfile} />
+            <AdjAutofillResults userProfile={props.userProfile} />
           </div>
         </div>
         <div className={classes.searchContainer}>
@@ -140,15 +159,15 @@ const Search = (props) => {
             autoComplete="off"
           ></input>
           <div className={showNounResults}>
-            <NounAutofillResults profile={props.userProfile} />
+            <NounAutofillResults userProfile={props.userProfile} />
           </div>
         </div>
         <button>Search</button>
       </form>
 
-      {searchCtx.gallary !== null ? (
+      {searchCtx.searchValues["gallary"][idx] !== null ? (
         <GallaryList
-          drawings={searchCtx.gallary}
+          drawings={searchCtx.searchValues["gallary"][idx]}
           title={gallaryListStaticTitle}
         />
       ) : (

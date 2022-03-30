@@ -68,13 +68,27 @@ const PinnedModal = (props) => {
                 console.log("was clicked", pinnedCtx.selectedPinnedDrawings);
                 pinnedCtx.updateDatabase(pinnedCtx.selectedPinnedDrawings);
                 pinnedCtx.setPinnedDrawings(pinnedCtx.selectedPinnedDrawings);
+                pinnedCtx.setShow60({ display: "none" });
+                pinnedCtx.setShow180({ display: "none" });
+                pinnedCtx.setShow300({ display: "none" });
+                pinnedCtx.resetAllAndHighlightNewInit();
               }}
             >
               Save
             </button>
           </div>
           <div className={classes.exit}>
-            <div className={classes.close}></div>
+            <div
+              className={classes.close}
+              style={{ cursor: "pointer" }}
+              onClick={() => {
+                console.log("close wqs clicked");
+                pinnedCtx.setShow60({ display: "none" });
+                pinnedCtx.setShow180({ display: "none" });
+                pinnedCtx.setShow300({ display: "none" });
+                pinnedCtx.resetAllAndHighlightNewInit();
+              }}
+            ></div>
           </div>
         </div>
 

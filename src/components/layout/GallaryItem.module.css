@@ -33,7 +33,7 @@
 .fullScreen {
   position: absolute;
   width: 100vw;
-  height: 100vh;
+  height: 125vh;
   /* margin: 3em; */
   overflow: hidden;
   left: 0;

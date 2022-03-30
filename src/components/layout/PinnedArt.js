@@ -21,7 +21,8 @@ const PinnedArt = (props) => {
   }, []);
 
   function updateContext() {
-    console.log(`"${props.drawing.seconds}"`);
+    // console.log(`"${props.drawing.seconds}"`);
+    console.log("before it is clicked, state reads", pinnedCtx.userDrawings);
     pinnedCtx.resetAllAndHighlightNew(`${props.drawing.seconds}`, props.idx);
     pinnedCtx.updateSelectedPinnedDrawings(props.drawing, props.drawing.seconds);
   }

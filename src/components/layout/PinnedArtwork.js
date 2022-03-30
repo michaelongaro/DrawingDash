@@ -30,19 +30,33 @@ const PinnedArtwork = () => {
   };
 
   useEffect(() => {
+    console.log("IS updating local state on context change");
+    console.log(pinnedCtx.show60, pinnedCtx.show180, pinnedCtx.show300);
+    setShow60(pinnedCtx.show60);
+    setShow180(pinnedCtx.show180);
+    setShow300(pinnedCtx.show300);
+  }, [pinnedCtx.show60, pinnedCtx.show180, pinnedCtx.show300]);
+
+  useEffect(() => {
     let handler = (event) => {
       if (
-        !ref60.current.contains(event.target) &&
-        !ref180.current.contains(event.target) &&
-        !ref300.current.contains(event.target)
+        pinnedCtx.show60["display"] !== "none" ||
+        pinnedCtx.show180["display"] !== "none" ||
+        pinnedCtx.show300["display"] !== "none"
       ) {
-        setShow60({ display: "none" });
-        setShow180({ display: "none" });
-        setShow300({ display: "none" });
-        pinnedCtx.resetAllAndHighlightNew("60", -1);
-        pinnedCtx.resetAllAndHighlightNew("180", -1);
-        pinnedCtx.resetAllAndHighlightNew("300", -1);
+        if (
+          !ref60.current.contains(event.target) &&
+          !ref180.current.contains(event.target) &&
+          !ref300.current.contains(event.target)
+        ) {
+          // have NO clue why this block of code below doesn't work when called as a function
+          // stored in PinnedContext... seems like it should work
+          pinnedCtx.setShow60({ display: "none" });
+          pinnedCtx.setShow180({ display: "none" });
+          pinnedCtx.setShow300({ display: "none" });
 
+          pinnedCtx.resetAllAndHighlightNewInit();
+        }
       }
     };
 
@@ -56,7 +70,13 @@ const PinnedArtwork = () => {
     <div className={classes.parentContain}>
       <h3>Pinned Artwork</h3>
       <div className={classes.pinnedContain}>
-        <div onClick={() => setShow60(showModal)}>
+        <div
+          onClick={() => {
+            if (show60["display"] === "none") {
+              pinnedCtx.setShow60(showModal);
+            }
+          }}
+        >
           <div style={show60} ref={ref60}>
             <PinnedModal seconds={60} />
           </div>
@@ -66,7 +86,11 @@ const PinnedArtwork = () => {
           />
         </div>
 
-        <div onClick={() => setShow180(showModal)}>
+        <div onClick={() => {
+            if (show180["display"] === "none") {
+              pinnedCtx.setShow180(showModal);
+            }
+          }}>
           <div style={show180} ref={ref180}>
             <PinnedModal seconds={180} />
           </div>
@@ -76,7 +100,11 @@ const PinnedArtwork = () => {
           />
         </div>
 
-        <div onClick={() => setShow300(showModal)}>
+        <div onClick={() => {
+            if (show300["display"] === "none") {
+              pinnedCtx.setShow300(showModal);
+            }
+          }}>
           <div style={show300} ref={ref300}>
             <PinnedModal seconds={300} />
           </div>
