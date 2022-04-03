@@ -41,18 +41,35 @@ const DrawingScreen = () => {
   const { canvasRef, prepareCanvas, clearCanvas, finishDrawing, draw } =
     useCanvas();
 
+  // why does this only "work" without [] dependencies
+  // instantly acts like it is being called one sec
   useEffect(() => {
-    document.addEventListener("mousemove", draw);
-    document.documentElement.addEventListener("mouseenter", draw, {
-      once: true,
-    });
-    return () => {
-      document.removeEventListener("mousemove", draw);
-      document.documentElement.removeEventListener("mouseenter", draw, {
+    console.log("adding listeners");
+    document.addEventListener("mousemove", (e) => specialDraw(e, true));
+    document.documentElement.addEventListener(
+      "mouseenter",
+      (e) => specialDraw(e, true),
+      {
         once: true,
-      });
+      }
+    );
+    return () => {
+      console.log("removing listeners");
+      document.removeEventListener("mousemove", (e) => specialDraw(e, true));
+      document.documentElement.removeEventListener(
+        "mouseenter",
+
+        (e) => specialDraw(e, true),
+        {
+          once: true,
+        }
+      );
     };
-  });
+  }, []);
+
+  function specialDraw(e, isMoving) {
+    draw(e, isMoving);
+  }
 
   const [showCanvas, setShowCanvas] = useState(classes.hide);
 
@@ -169,6 +186,17 @@ const DrawingScreen = () => {
     DSCtx.setShowEndOverlay(true);
     DSCtx.setShowEndOutline(true);
 
+    console.log("removing listeners");
+    document.removeEventListener("mousemove", (e) => specialDraw(e, true));
+    document.documentElement.removeEventListener(
+      "mouseenter",
+
+      (e) => specialDraw(e, true),
+      {
+        once: true,
+      }
+    );
+
     let tempUpdatedStatuses = DSCtx.drawingStatuses;
     if (
       tempUpdatedStatuses["60"] &&
@@ -254,7 +282,7 @@ const DrawingScreen = () => {
               isPlaying={startTimer}
               duration={timerOptions[currentTimer[drawingTime]].seconds}
               size={75}
-              colors={["#004777", "#F7B801", "#A30000", "#A30000"]}
+              colors={["#4fe912", "#e6ee11", "#eea211", "#ee2011"]}
               colorsTime={timerOptions[currentTimer[drawingTime]].colorArray}
             >
               {renderTime}
@@ -262,7 +290,7 @@ const DrawingScreen = () => {
           </div>
           <div className={classes.canvasBorder}>
             <canvas
-              onMouseDown={draw}
+              onMouseDown={(e) => specialDraw(e, false)}
               onMouseUp={finishDrawing}
               ref={canvasRef}
             />

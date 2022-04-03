@@ -34,7 +34,6 @@ const AdjAutofillResults = (props) => {
     const dbRef = ref(getDatabase(app));
     get(child(dbRef, titleLocation))
       .then((snapshot) => {
-        console.log(snapshot.val());
         for (const duration of Object.values(snapshot.val())) {
           for (const title of Object.keys(duration)) {
             // isolating the adjective

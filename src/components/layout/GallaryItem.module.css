@@ -33,7 +33,7 @@
 .fullScreen {
   position: absolute;
   width: 100vw;
-  height: 125vh;
+  height: 135vh;
   /* margin: 3em; */
   overflow: hidden;
   left: 0;
@@ -42,7 +42,7 @@
   z-index: 9000;
   padding: 3em;
   /* padding-top: 10em; */
-  bottom: 0;
+  bottom: 5em;
   background-color: rgba(0, 0, 0, 0.4);
 }
 

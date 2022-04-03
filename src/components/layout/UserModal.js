@@ -1,8 +1,7 @@
-import React, { useState, useEffect, useContext } from "react";
+import React, { useState, useEffect } from "react";
 
 import Search from "./Search";
-
-// import { Slide } from "react-slideshow-image";
+import SlideShow from "./SlideShow";
 
 import {
   getDatabase,
@@ -24,7 +23,6 @@ import { app } from "../../util/init-firebase";
 import classes from "./UserModal.module.css";
 
 const UserModal = (props) => {
-  const db = getDatabase(app);
   const dbRef = ref_database(getDatabase(app));
 
   const storage = getStorage();
@@ -34,33 +32,6 @@ const UserModal = (props) => {
   const [pinnedDrawings, setPinnedDrawings] = useState(null);
   const [imageURL, setImageURL] = useState();
 
-  const properties = {
-    duration: 5000,
-    transitionDuration: 500,
-    infinite: true,
-    prevArrow: (
-      <div style={{ width: "30px", marginRight: "-30px" }}>
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          viewBox="0 0 512 512"
-          fill="#fff"
-        >
-          <path d="M242 180.6v-138L0 256l242 213.4V331.2h270V180.6z" />
-        </svg>
-      </div>
-    ),
-    nextArrow: (
-      <div style={{ width: "30px", marginLeft: "-30px" }}>
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          viewBox="0 0 512 512"
-          fill="#fff"
-        >
-          <path d="M512 256L270 42.6v138.2H0v150.6h270v138z" />
-        </svg>
-      </div>
-    ),
-  };
   useEffect(() => {
     // fetch data from db if it is present
     console.log("am trying to get loaded");
@@ -107,13 +78,7 @@ const UserModal = (props) => {
         </div>
 
         <div className={classes.rightSide}>
-          {/* <Slide {...properties}>
-            {pinnedDrawings.map((each, index) => (
-              <div key={index} className={classes.eachSlide}>
-                <div style={{ backgroundImage: each.image }}></div>
-              </div>
-            ))}
-          </Slide> */}
+          <SlideShow pinnedDrawings={pinnedDrawings} />
         </div>
       </div>
 

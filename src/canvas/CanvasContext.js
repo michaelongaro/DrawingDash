@@ -1,10 +1,13 @@
-import React, { useContext, useRef } from "react";
+import React, { useState, useContext, useRef } from "react";
 
 const CanvasContext = React.createContext();
 
 export const CanvasProvider = ({ children }) => {
   let isDrawing = false;
   let lastEvent;
+
+  const [floodFillStatus, setFloodFillStatus] = useState(false);
+  const [currentColor, setCurrentColor] = useState("#FFFFFF");
 
   const canvasRef = useRef(null);
   const contextRef = useRef(null);
@@ -30,6 +33,7 @@ export const CanvasProvider = ({ children }) => {
     const context = canvas.getContext("2d");
     context.strokeStyle = color;
     contextRef.current = context;
+    setCurrentColor(color);
   };
 
   const changeBrushSize = (brushSize) => {
@@ -38,6 +42,145 @@ export const CanvasProvider = ({ children }) => {
     context.lineWidth = brushSize;
     contextRef.current = context;
   };
+
+  const toggleFloodFill = () => {
+    setFloodFillStatus((prevStatus) => {
+      console.log("flood fill should be", !prevStatus);
+      return !prevStatus;
+    });
+  };
+
+  function getColorAtPixel(imageData, x, y) {
+    const { width, data } = imageData;
+
+    return {
+      r: data[4 * (width * y + x) + 0],
+      g: data[4 * (width * y + x) + 1],
+      b: data[4 * (width * y + x) + 2],
+      a: data[4 * (width * y + x) + 3],
+    };
+  }
+
+  function setColorAtPixel(imageData, color, x, y) {
+    const { width, data } = imageData;
+
+    data[4 * (width * y + x) + 0] = color.r & 0xff;
+    data[4 * (width * y + x) + 1] = color.g & 0xff;
+    data[4 * (width * y + x) + 2] = color.b & 0xff;
+    data[4 * (width * y + x) + 3] = color.a & 0xff;
+  }
+
+  function colorMatch(a, b) {
+    return a.r === b.r && a.g === b.g && a.b === b.b && a.a === b.a;
+  }
+
+  function floodFill(imageData, newColor, x, y) {
+    const { width, height, data } = imageData;
+    const stack = [];
+    const baseColor = getColorAtPixel(imageData, x, y);
+    let operator = { x, y };
+
+    // Check if base color and new color are the same
+    console.log(baseColor, newColor);
+    if (colorMatch(baseColor, newColor)) {
+      return;
+    }
+
+    // Add the clicked location to stack
+    stack.push({ x: operator.x, y: operator.y });
+
+    while (stack.length) {
+      operator = stack.pop();
+      let contiguousDown = true; // Vertical is assumed to be true
+      let contiguousUp = true; // Vertical is assumed to be true
+      let contiguousLeft = false;
+      let contiguousRight = false;
+
+      // Move to top most contiguousDown pixel
+      while (contiguousUp && operator.y >= 0) {
+        operator.y--;
+        contiguousUp = colorMatch(
+          getColorAtPixel(imageData, operator.x, operator.y),
+          baseColor
+        );
+      }
+
+      // Move downward
+      while (contiguousDown && operator.y < height) {
+        setColorAtPixel(imageData, newColor, operator.x, operator.y);
+
+        // Check left
+        if (
+          operator.x - 1 >= 0 &&
+          colorMatch(
+            getColorAtPixel(imageData, operator.x - 1, operator.y),
+            baseColor
+          )
+        ) {
+          if (!contiguousLeft) {
+            contiguousLeft = true;
+            stack.push({ x: operator.x - 1, y: operator.y });
+          }
+        } else {
+          contiguousLeft = false;
+        }
+
+        // Check right
+        if (
+          operator.x + 1 < width &&
+          colorMatch(
+            getColorAtPixel(imageData, operator.x + 1, operator.y),
+            baseColor
+          )
+        ) {
+          if (!contiguousRight) {
+            stack.push({ x: operator.x + 1, y: operator.y });
+            contiguousRight = true;
+          }
+        } else {
+          contiguousRight = false;
+        }
+
+        operator.y++;
+        contiguousDown = colorMatch(
+          getColorAtPixel(imageData, operator.x, operator.y),
+          baseColor
+        );
+      }
+    }
+  }
+
+  const hexToRGB = (hex) =>
+    hex
+      .replace(
+        /^#?([a-f\d])([a-f\d])([a-f\d])$/i,
+        (m, r, g, b) => "#" + r + r + g + g + b + b
+      )
+      .substring(1)
+      .match(/.{2}/g)
+      .map((x) => parseInt(x, 16));
+
+  function floodFillHandler(event) {
+    const canvas = canvasRef.current;
+    const ctx = canvas.getContext("2d");
+
+    let imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+
+    const col = {
+      r: hexToRGB(currentColor)[0],
+      g: hexToRGB(currentColor)[1],
+      b: hexToRGB(currentColor)[2],
+      a: 255,
+    };
+
+    const rect = canvas.getBoundingClientRect();
+    // could probably just do offsetX/Y
+    const x = Math.round(event.clientX - rect.left);
+    const y = Math.round(event.clientY - rect.top);
+    floodFill(imageData, col, x, y);
+    ctx.putImageData(imageData, 0, 0);
+    contextRef.current = ctx;
+  }
 
   const finishDrawing = () => {
     contextRef.current.closePath();
@@ -52,7 +195,13 @@ export const CanvasProvider = ({ children }) => {
     return { x, y };
   }
 
-  const draw = (ev) => {
+  const draw = (ev, isMoving) => {
+    if (floodFillStatus && !isMoving) {
+      console.log("should be able to fill now");
+      floodFillHandler(ev);
+      return;
+    }
+
     const previous_evt = lastEvent || {};
     const was_offscreen = previous_evt.offscreen;
 
@@ -70,7 +219,7 @@ export const CanvasProvider = ({ children }) => {
       point.y > canvasRef.current.height
     ) {
       lastEvent.offscreen = true;
-      
+
       if (was_offscreen && ev.buttons === 1 && isDrawing) {
         contextRef.current.lineTo(point.x, point.y);
         contextRef.current.stroke();
@@ -117,6 +266,7 @@ export const CanvasProvider = ({ children }) => {
         prepareCanvas,
         changeColor,
         changeBrushSize,
+        toggleFloodFill,
         finishDrawing,
         clearCanvas,
         draw,

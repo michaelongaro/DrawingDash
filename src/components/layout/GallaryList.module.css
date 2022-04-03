@@ -11,8 +11,8 @@
 .flexListContain {
   display: flex;
   flex-wrap: wrap;
-  overflow-y: scroll;
-  height: 65vh;
+  /* overflow-y: scroll; */
+  /* height: 65vh; */
   width: 100%;
 }
 

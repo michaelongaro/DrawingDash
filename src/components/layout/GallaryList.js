@@ -9,26 +9,37 @@ const GallaryList = (props) => {
   const [displayedDrawings, setDisplayedDrawings] = useState(props.drawings);
   const [buttonStates, setButtonStates] = useState(["", "", ""]);
   const [filteredDrawings, setFilteredDrawings] = useState({
-    "60": true,
-    "180": true,
-    "300": true,
+    60: true,
+    180: true,
+    300: true,
   });
 
   useEffect(() => {
     if (props.drawings !== "none") {
       let initStates = ["", "", ""];
+      let filterStates = {
+        60: true,
+        180: true,
+        300: true,
+      };
       if (props.drawings["60"].length === 0) {
         initStates[0] = toggleButton(0, false);
+        filterStates["60"] = false;
       }
       if (props.drawings["180"].length === 0) {
         initStates[1] = toggleButton(1, false);
+        filterStates["180"] = false;
       }
       if (props.drawings["300"].length === 0) {
         initStates[2] = toggleButton(2, false);
+        filterStates["300"] = false;
       }
 
       setButtonStates(initStates);
-      setDisplayedDrawings(props.drawings);
+      setFilteredDrawings(filterStates);
+      if (displayedDrawings !== props.drawings) {
+        setDisplayedDrawings(props.drawings);
+      }
     }
   }, [props.drawings]);
 

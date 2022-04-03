@@ -44,10 +44,6 @@ const PaletteChooser = () => {
     }
   }, [statusOfCheckmarks]);
 
-  // useEffect(() => {
-  //   setPaletteColors(["#FFFFFF", "#FFFFFF", "#FFFFFF", "#FFFFFF", "#FFFFFF"]);
-  // }, [DSCtx.paletteColors]);
-
   function updatePaletteAndCheckmarkStates(event, idx) {
     const shallowCopyPalettes = [...paletteColors];
     shallowCopyPalettes.splice(idx, 1, event.target.value);

@@ -56,10 +56,9 @@ export function SearchProvider(props) {
     const drawingIDS = [];
     const promises = [];
     const dbRef = ref(getDatabase(app));
-    console.log(`${profile}titles`);
+    
     get(child(dbRef, `${profile}titles`))
       .then((snapshot) => {
-        console.log(snapshot.val());
         for (const index in Object.values(snapshot.val())) {
           let durationObj = Object.values(snapshot.val());
           for (const title of Object.keys(durationObj[index])) {

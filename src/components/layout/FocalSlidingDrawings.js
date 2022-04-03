@@ -18,7 +18,6 @@ const FocalSlidingDrawings = () => {
 
   useEffect(() => {
     if (randomDrawingIDs !== null) {
-      console.log(randomDrawingIDs);
       getImagesFromIDs();
     }
   }, [randomDrawingIDs]);
@@ -30,7 +29,6 @@ const FocalSlidingDrawings = () => {
       const titles300 = Object.values(snapshot.val()["300"]);
 
       const allTitles = titles60.concat(titles180, titles300);
-      console.log(allTitles);
       const tempDrawingIDs = [];
 
       // find 15 random indices out of allTitles.length

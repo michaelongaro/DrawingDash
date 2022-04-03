@@ -16,14 +16,25 @@ export function Canvas() {
   }, []);
 
   function renderCurrentScreen() {
-    if (DSCtx.showPromptSelection && !DSCtx.showPaletteChooser && !DSCtx.showDrawingScreen) {
-        return <PromptSelection />
-      } else if (!DSCtx.showPromptSelection && DSCtx.showPaletteChooser && !DSCtx.showDrawingScreen) {
-        return <PaletteChooser />
-      } else if (!DSCtx.showPromptSelection && !DSCtx.showPaletteChooser && DSCtx.showDrawingScreen) {
-        return <DrawingScreen />
-      }
-
+    if (
+      DSCtx.showPromptSelection &&
+      !DSCtx.showPaletteChooser &&
+      !DSCtx.showDrawingScreen
+    ) {
+      return <PromptSelection />;
+    } else if (
+      !DSCtx.showPromptSelection &&
+      DSCtx.showPaletteChooser &&
+      !DSCtx.showDrawingScreen
+    ) {
+      return <PaletteChooser />;
+    } else if (
+      !DSCtx.showPromptSelection &&
+      !DSCtx.showPaletteChooser &&
+      DSCtx.showDrawingScreen
+    ) {
+      return <DrawingScreen />;
+    }
   }
 
   return (

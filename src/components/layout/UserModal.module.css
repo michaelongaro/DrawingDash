@@ -20,14 +20,17 @@
 
 .container {
   display: flex;
-  justify-content: center;
+  justify-content: space-evenly;
   align-items: center;
+
+  padding: 1.25em;
 }
 
-.eachSlide > div {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background-size: cover;
-  height: 350px;
+.rightSide {
+  text-align: center;
+  width: 25em;
+}
+
+.indicators {
+  margin-right: 35px;
 }
