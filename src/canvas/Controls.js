@@ -3,11 +3,13 @@ import { useCanvas } from "./CanvasContext";
 
 import DrawingSelectionContext from "./DrawingSelectionContext";
 import classes from "./Controls.module.css";
+import EraserIcon from "../svgs/EraserIcon";
 
 const Controls = () => {
   const DSCtx = useContext(DrawingSelectionContext);
 
-  const { changeColor, changeBrushSize, toggleFloodFill, clearCanvas } = useCanvas();
+  const { changeColor, changeBrushSize, toggleFloodFill, clearCanvas } =
+    useCanvas();
   const [buttonStyles, setButtonStyles] = useState([
     classes.hide,
     classes.hide,
@@ -175,7 +177,7 @@ const Controls = () => {
           <div className={`${classes.innerBorder} ${buttonStyles[1]}`}></div>
         </button>
 
-        <button
+        {/* <button
           className={classes.outerColor}
           style={{ backgroundColor: DSCtx.paletteColors[5] }}
           disabled={tempDisable}
@@ -185,7 +187,16 @@ const Controls = () => {
           }}
         >
           <div className={`${classes.innerBorder} ${buttonStyles[5]}`}></div>
-        </button>
+        </button> */}
+
+        <div
+          onClick={() => {
+            changeColor(DSCtx.paletteColors[5]);
+            updateSelectedColor(5);
+          }}
+        >
+          <EraserIcon />
+        </div>
 
         <button onClick={clearCanvas}>Clear</button>
       </div>

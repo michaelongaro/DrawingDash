@@ -54,7 +54,7 @@ export function SearchProvider(props) {
     let fullQuery = `${searchValues["adjSearch"][idx]} ${searchValues["nounSearch"][idx]}`;
     let gallaryResults = { 60: [], 180: [], 300: [] };
     const drawingIDS = [];
-    const promises = [];
+    // const promises = [];
     const dbRef = ref(getDatabase(app));
     
     get(child(dbRef, `${profile}titles`))
@@ -65,46 +65,42 @@ export function SearchProvider(props) {
             if (title === fullQuery || fetchAll) {
               for (let drawingID of durationObj[index][title]["drawingID"]) {
                 drawingIDS.push(drawingID);
+                console.log(Object.keys(snapshot.val())[index], gallaryResults, drawingID);
+                gallaryResults[Object.keys(snapshot.val())[index]].push(drawingID);
               }
             }
           }
         }
 
-        for (const id of drawingIDS) {
-          promises.push(get(child(dbRef, `drawings/${id}`)));
-        }
-
-        return Promise.all(promises);
+        // for (const id of drawingIDS) {
+        //   promises.push(get(child(dbRef, `drawings/${id}`)));
+        // }
+        // return Promise.all(promises);
       })
-      .then((results) => {
-        if (results.length === 0) {
+      .then(() => {
+        if (drawingIDS.length === 0) {
           updateSearchValues("gallary", "none", idx);
         } else {
-          for (const result of results) {
-            gallaryResults[result.val()["seconds"]].push(result.val());
-          }
-
           updateSearchValues("gallary", gallaryResults, idx);
-          setPersistingUserGallary(gallaryResults);
+          // this below is not currently being used.
+          setPersistingUserGallary(drawingIDS);
         }
       });
+      // .then((results) => {
+      //   if (results.length === 0) {
+      //     updateSearchValues("gallary", "none", idx);
+      //   } else {
+      //     for (const result of results) {
+      //       gallaryResults[result.val()["seconds"]].push(result.val());
+      //     }
+
+      //     updateSearchValues("gallary", gallaryResults, idx);
+      //     setPersistingUserGallary(gallaryResults);
+      //   }
+      // });
   }
 
   const context = {
-    // adjSearch: adjSearch,
-    // nounSearch: nounSearch,
-    // requestedAdjectives: requestedAdjectives,
-    // requestedNouns: requestedNouns,
-    // gallary: gallary,
-    // autofilledAdjectiveInput: autofilledAdjectiveInput,
-    // autofilledNounInput: autofilledNounInput,
-    // setAutofilledAdjectiveInput: setAutofilledAdjectiveInput,
-    // setAutofilledNounInput: setAutofilledNounInput,
-    // setAdjSearch: setAdjSearch,
-    // setNounSearch: setNounSearch,
-    // setRequestedAdjectives: setRequestedAdjectives,
-    // setRequestedNouns: setRequestedNouns,
-    // setGallary: setGallary,
     searchValues: searchValues,
     persistingUserGallary: persistingUserGallary,
     setPersistingUserGallary: setPersistingUserGallary,

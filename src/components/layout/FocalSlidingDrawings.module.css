@@ -2,9 +2,6 @@
   background: linear-gradient(89deg, #11ca49, #72c659, #0b8e22);
   background-size: 600% 600%;
 
-  width: 100vw;
-  height: 15em;
-
   overflow: hidden;
   z-index: 100;
 
@@ -12,13 +9,13 @@
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  gap: 0.25em;
+
   -webkit-animation: backgroundFade 6s ease infinite;
   -moz-animation: backgroundFade 6s ease infinite;
   animation: backgroundFade 6s ease infinite;
 }
 
-.centerTextContainer {
+/* .centerTextContainer {
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -29,7 +26,10 @@
   width: 15em;
 
   z-index: 200;
-}
+} */
+/* Drawing Dash 
+        Join ___ users in creating 
+            over ___ drawings! */
 
 @-webkit-keyframes backgroundFade {
   0% {

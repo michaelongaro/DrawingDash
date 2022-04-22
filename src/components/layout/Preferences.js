@@ -90,8 +90,11 @@ const Preferences = () => {
 
   async function upload(image, uid) {
     const photoRef = ref_storage(storage, `${uid}/profile.jpg`);
+    const testRef = ref_storage(storage, `${uid}/profile2.jpg`);
+
 
     const snapshot = await uploadBytes(photoRef, image);
+    // 
     const photoURL = await getDownloadURL(photoRef);
 
     setImageURL(photoURL);
@@ -129,7 +132,7 @@ const Preferences = () => {
 
         <div className={classes.status}>Status</div>
         {!disableEdit ? (
-          <div>{status}</div>
+          <div><i>{status}</i></div>
         ) : (
           <input
             className={classes.setStatus}
@@ -150,7 +153,7 @@ const Preferences = () => {
             <input type="file" name="profileImage" onChange={handleChange} />
           )}
           <div className={classes.showUsername}>{username}</div>
-          <div className={classes.showStatus}>{status}</div>
+          <div className={classes.showStatus}><i>{status}</i></div>
         </div>
         <div className={`${classes.change} ${classes.updateButtons}`}>
           <button disabled={disableEdit} onClick={() => setDisableEdit(true)}>

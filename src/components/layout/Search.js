@@ -167,7 +167,7 @@ const Search = (props) => {
 
       {searchCtx.searchValues["gallary"][idx] !== null ? (
         <GallaryList
-          drawings={searchCtx.searchValues["gallary"][idx]}
+          drawingIDs={searchCtx.searchValues["gallary"][idx]}
           title={gallaryListStaticTitle}
         />
       ) : (

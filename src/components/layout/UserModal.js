@@ -29,7 +29,12 @@ const UserModal = (props) => {
 
   const [username, setUsername] = useState("");
   const [status, setStatus] = useState("");
-  const [pinnedDrawings, setPinnedDrawings] = useState(null);
+
+  const [isFetching, setIsFetching] = useState(true);
+
+  const [pinnedIDs, setPinnedIDs] = useState();
+  const [pinnedMetadata, setPinnedMetadata] = useState();
+  const [pinnedDrawings, setPinnedDrawings] = useState();
   const [imageURL, setImageURL] = useState();
 
   useEffect(() => {
@@ -41,7 +46,11 @@ const UserModal = (props) => {
         setStatus(snapshot.val()["status"]);
         get(child(dbRef, `users/${props.uid}/pinnedArt`)).then((snapshot2) => {
           if (snapshot2.exists()) {
-            setPinnedDrawings(Object.values(snapshot2.val()));
+            setPinnedIDs(Object.values(snapshot2.val()));
+
+            // for the time being just doing this
+            fetchPinnedMetadata(Object.values(snapshot2.val()));
+            fetchPinnedDrawings(Object.values(snapshot2.val()));
           }
         });
       }
@@ -55,8 +64,54 @@ const UserModal = (props) => {
   }, []);
 
   useEffect(() => {
-    console.log(username, status, pinnedDrawings);
-  }, [username, status, pinnedDrawings]);
+    if (pinnedMetadata && pinnedDrawings) setIsFetching(false);
+  }, [pinnedMetadata, pinnedDrawings]);
+
+  function fetchPinnedMetadata(ids) {
+    const tempMetadata = [];
+    get(child(dbRef, `drawings/${ids[0]}`))
+      .then((snapshot2) => {
+        tempMetadata.push(snapshot2.val());
+      })
+      .then(() => {
+        get(child(dbRef, `drawings/${ids[1]}`)).then((snapshot2) => {
+          tempMetadata.push(snapshot2.val());
+        });
+      })
+      .then(() => {
+        get(child(dbRef, `drawings/${ids[2]}`)).then((snapshot2) => {
+          tempMetadata.push(snapshot2.val());
+        });
+      })
+      .then(() => {
+        setPinnedMetadata(tempMetadata);
+      });
+  }
+
+  function fetchPinnedDrawings(ids) {
+    const tempDrawings = [];
+    getDownloadURL(ref_storage(storage, `drawings/${ids[0]}.jpg`))
+      .then((url) => {
+        tempDrawings.push(url);
+      })
+      .then(() => {
+        getDownloadURL(ref_storage(storage, `drawings/${ids[1]}.jpg`)).then(
+          (url) => {
+            tempDrawings.push(url);
+          }
+        );
+      })
+      .then(() => {
+        getDownloadURL(ref_storage(storage, `drawings/${ids[2]}.jpg`)).then(
+          (url) => {
+            tempDrawings.push(url);
+          }
+        );
+      })
+      .then(() => {
+        setPinnedDrawings(tempDrawings);
+      });
+  }
 
   if (pinnedDrawings === null) {
     return null;
@@ -74,11 +129,23 @@ const UserModal = (props) => {
           />
 
           <div className={classes.showUsername}>{username}</div>
-          <div className={classes.showStatus}>{status}</div>
+          <div className={classes.showStatus}>
+            <i>{status}</i>
+          </div>
         </div>
 
         <div className={classes.rightSide}>
-          <SlideShow pinnedDrawings={pinnedDrawings} />
+          {isFetching ? (
+            <div
+              style={{ width: "5em", height: "50%" }}
+              className={classes.skeletonLoading}
+            ></div>
+          ) : (
+            <SlideShow
+              pinnedDrawings={pinnedDrawings}
+              metadata={pinnedMetadata}
+            />
+          )}
         </div>
       </div>
 

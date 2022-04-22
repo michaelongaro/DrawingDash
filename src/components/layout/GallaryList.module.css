@@ -6,6 +6,7 @@
   grid-auto-flow: row;
   overflow-y: scroll;
   height: 65vh;
+  background-color: rgb(185, 185, 185);
 }
 
 .flexListContain {

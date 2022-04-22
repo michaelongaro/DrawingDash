@@ -183,8 +183,10 @@ export const CanvasProvider = ({ children }) => {
   }
 
   const finishDrawing = () => {
-    contextRef.current.closePath();
-    isDrawing = false;
+    if (!floodFillStatus) {
+      contextRef.current.closePath();
+      isDrawing = false;
+    }
   };
 
   function getRelativePointFromEvent(ev, elem) {

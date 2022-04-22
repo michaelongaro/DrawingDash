@@ -12,46 +12,40 @@ import classes from "./PinnedArtwork.module.css";
 
 const PinnedModal = (props) => {
   const pinnedCtx = useContext(PinnedContext);
-  const [loadedDrawings, setLoadedDrawings] = useState([]);
+  const [loadedDrawingIDs, setLoadedDrawingIDs] = useState([]);
 
   const { user } = useAuth0();
 
   useEffect(() => {
     const dbRef = ref(getDatabase(app));
-    const fetchedDrawings = [];
-    let promises = [];
+    const fetchedDrawingIDs = [];
 
     // should fetch all user profile titles and save their vals (ids) in an array,
     // then loop through it down here and fetch the drawings from main /drawings/id
 
-    get(child(dbRef, `users/${user.sub}/titles/${props.seconds}`))
-      .then((snapshot) => {
+    get(child(dbRef, `users/${user.sub}/titles/${props.seconds}`)).then(
+      (snapshot) => {
         if (snapshot.exists()) {
+          console.log(snapshot.val());
           for (const drawingID of Object.values(snapshot.val())) {
-            fetchedDrawings.push(drawingID["drawingID"]);
+            console.log(Object.values(snapshot.val()));
+            // stores all drawingIDs for a given title in fetchedDrawingIDs
+            console.log(Object.values(drawingID["drawingID"]));
+
+            fetchedDrawingIDs.push(Object.values(drawingID["drawingID"]));
           }
-          // fetch into a promise.all scenario
-          for (const id of fetchedDrawings) {
-            promises.push(get(child(dbRef, `drawings/${id}`)));
-          }
-          return Promise.all(promises);
         }
-      })
-      .then((results) => {
-        let finalFetchedDrawings = [];
-        for (const result of results) {
-          finalFetchedDrawings.push(result.val());
-        }
-        setLoadedDrawings(finalFetchedDrawings);
+        setLoadedDrawingIDs(fetchedDrawingIDs.flat());
 
         if (props.seconds === 60) {
-          pinnedCtx.setUser60Drawings(finalFetchedDrawings);
+          pinnedCtx.setUser60Drawings(fetchedDrawingIDs.flat());
         } else if (props.seconds === 180) {
-          pinnedCtx.setUser180Drawings(finalFetchedDrawings);
+          pinnedCtx.setUser180Drawings(fetchedDrawingIDs.flat());
         } else if (props.seconds === 300) {
-          pinnedCtx.setUser300Drawings(finalFetchedDrawings);
+          pinnedCtx.setUser300Drawings(fetchedDrawingIDs.flat());
         }
-      });
+      }
+    );
   }, []);
 
   return (
@@ -82,7 +76,7 @@ const PinnedModal = (props) => {
               className={classes.close}
               style={{ cursor: "pointer" }}
               onClick={() => {
-                console.log("close wqs clicked");
+                console.log("close was clicked");
                 pinnedCtx.setShow60({ display: "none" });
                 pinnedCtx.setShow180({ display: "none" });
                 pinnedCtx.setShow300({ display: "none" });
@@ -92,7 +86,12 @@ const PinnedModal = (props) => {
           </div>
         </div>
 
-        <PinnedArtList drawings={loadedDrawings} />
+        <div className={classes.gallaryList}>
+          <PinnedArtList
+            drawingIDs={loadedDrawingIDs}
+            seconds={props.seconds}
+          />
+        </div>
       </div>
     </Card>
   );

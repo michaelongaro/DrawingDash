@@ -6,7 +6,7 @@ import GallaryItem from "./GallaryItem";
 import classes from "./GallaryList.module.css";
 
 const GallaryList = (props) => {
-  const [displayedDrawings, setDisplayedDrawings] = useState(props.drawings);
+  const [displayedDrawings, setDisplayedDrawings] = useState(props.drawingIDs);
   const [buttonStates, setButtonStates] = useState(["", "", ""]);
   const [filteredDrawings, setFilteredDrawings] = useState({
     60: true,
@@ -15,38 +15,38 @@ const GallaryList = (props) => {
   });
 
   useEffect(() => {
-    if (props.drawings !== "none") {
+    if (props.drawingIDs !== "none") {
       let initStates = ["", "", ""];
       let filterStates = {
         60: true,
         180: true,
         300: true,
       };
-      if (props.drawings["60"].length === 0) {
+      if (props.drawingIDs["60"].length === 0) {
         initStates[0] = toggleButton(0, false);
         filterStates["60"] = false;
       }
-      if (props.drawings["180"].length === 0) {
+      if (props.drawingIDs["180"].length === 0) {
         initStates[1] = toggleButton(1, false);
         filterStates["180"] = false;
       }
-      if (props.drawings["300"].length === 0) {
+      if (props.drawingIDs["300"].length === 0) {
         initStates[2] = toggleButton(2, false);
         filterStates["300"] = false;
       }
 
       setButtonStates(initStates);
       setFilteredDrawings(filterStates);
-      if (displayedDrawings !== props.drawings) {
-        setDisplayedDrawings(props.drawings);
+      if (displayedDrawings !== props.drawingIDs) {
+        setDisplayedDrawings(props.drawingIDs);
       }
     }
-  }, [props.drawings]);
+  }, [props.drawingIDs]);
 
   function updateDisplayedDrawings(duration) {
     let updatedDurationValue = filteredDrawings[duration]
       ? []
-      : props.drawings[duration];
+      : props.drawingIDs[duration];
 
     let tempDisplayed = { ...displayedDrawings };
     tempDisplayed[duration] = updatedDurationValue;
@@ -61,7 +61,7 @@ const GallaryList = (props) => {
     setFilteredDrawings(tempFilteredDrawings);
   }
 
-  if (props.drawings === "none") {
+  if (props.drawingIDs === "none") {
     const static_title = props.title;
     return (
       <div
@@ -120,8 +120,20 @@ const GallaryList = (props) => {
         <div className={classes.flexListContain}>
           {Object.values(displayedDrawings)
             .flat()
-            .map((drawing) => (
-              <GallaryItem key={drawing.index} drawing={drawing} width={30} />
+            .map((drawingID, i) => (
+              <GallaryItem
+                key={i}
+                drawingID={drawingID}
+                settings={{
+                  width: 30,
+                  forHomepage: false,
+                  forPinnedShowcase: false,
+                  forPinnedItem: false,
+                  skeleHeight: "14em",
+                  skeleDateWidth: "6em",
+                  skeleTitleWidth: "6em",
+                }}
+              />
             ))}
         </div>
       </Card>

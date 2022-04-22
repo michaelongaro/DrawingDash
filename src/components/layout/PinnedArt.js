@@ -1,7 +1,8 @@
 import React, { useState, useEffect, useRef, useContext } from "react";
-import Card from "../../ui/Card";
 
 import PinnedContext from "./PinnedContext";
+
+import GallaryItem from "./GallaryItem";
 
 import classes from "./PinnedArt.module.css";
 
@@ -21,38 +22,36 @@ const PinnedArt = (props) => {
   }, []);
 
   function updateContext() {
-    // console.log(`"${props.drawing.seconds}"`);
-    console.log("before it is clicked, state reads", pinnedCtx.userDrawings);
-    pinnedCtx.resetAllAndHighlightNew(`${props.drawing.seconds}`, props.idx);
-    pinnedCtx.updateSelectedPinnedDrawings(props.drawing, props.drawing.seconds);
+    pinnedCtx.resetAllAndHighlightNew(`${props.seconds}`, props.idx);
+    pinnedCtx.updateSelectedPinnedDrawings(
+      props.drawingID,
+      props.seconds
+    );
   }
 
   useEffect(() => {
-    // console.log("has been called", props.drawing.seconds);
-    if (pinnedCtx.highlightedDrawings[props.drawing.seconds].length !== 0) {
-      // console.log("shiii has been changed to", pinnedCtx.highlightedDrawings);
-
-      for (const ob of Object.values(pinnedCtx.highlightedDrawings)) {
-        // console.log(typeof ob[0]);
-      }
+    if (pinnedCtx.highlightedDrawings[props.seconds].length !== 0) {
       setShowHighlighted(
-        pinnedCtx.highlightedDrawings[props.drawing.seconds][props.idx]
+        pinnedCtx.highlightedDrawings[props.seconds][props.idx]
       );
     }
   }, [pinnedCtx.highlightedDrawings]);
 
-  // should probably swap this out with a modularized version of gallaryitem,
-  // with ability to not show userDrawn
   return (
     <div ref={pinRef}>
       <div className={`${classes.baseHoverHighlight} ${showHighlighted}`}>
-        <Card>
-          <img src={props.drawing.image} alt={props.drawing.title} />
-          <div className={classes.bottomContain}>
-            <div>{props.drawing.title}</div>
-            <div>{props.drawing.date}</div>
-          </div>
-        </Card>
+        <GallaryItem
+          drawingID={props.drawingID}
+          settings={{
+            width: 100,
+            forHomepage: false,
+            forPinnedShowcase: false,
+            forPinnedItem: true,
+            skeleHeight: "18em",
+            skeleDateWidth: "50%",
+            skeleTitleWidth: "50%",
+          }}
+        />
       </div>
     </div>
   );

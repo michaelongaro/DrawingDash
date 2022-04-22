@@ -1,16 +1,16 @@
 import { useAuth0 } from "@auth0/auth0-react";
 
-function LogInButton() {
+function LogInButton(props) {
   const { loginWithRedirect, isAuthenticated } = useAuth0();
 
   return (
-    !isAuthenticated && (
+    (!isAuthenticated || props.forceShow) && (
       <button
         onClick={() => {
           loginWithRedirect();
         }}
       >
-        Log In
+        {props.forceShow ? "Sign Up" : "Log In"}
       </button>
     )
   );

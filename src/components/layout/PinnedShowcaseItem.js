@@ -2,31 +2,45 @@ import React from "react";
 import Card from "../../ui/Card";
 
 import classes from "./PinnedArt.module.css";
+import GallaryItem from "./GallaryItem";
 
-const PinnedShowcaseItem = (props) => {
-  
-  if (props.drawing === undefined) {
+const PinnedShowcaseItem = ({ drawingID, timer }) => {
+  if (drawingID === undefined || drawingID === "") {
     return (
-      <div className={classes.vertFlex}>
+      <div className={classes.vertFlex} style={{ cursor: "pointer " }}>
+        <div>{timer}</div>
         <Card>
-          <div style={{ margin: "5em"}}>Click to select a drawing</div>
+          <div style={{ margin: "5em", textAlign: "center" }}>
+            Click to select a drawing
+          </div>
         </Card>
-        <div>{props.timer}</div>
       </div>
     );
   }
 
-  // refactor: replace with modularized gallaryitem
   return (
-    <div className={classes.vertFlex}>
-      <div>
-        <img src={props.drawing.image} alt={props.drawing.title} />
-        <div className={classes.bottomContain}>
-          <div>{props.drawing.title}</div>
-          <div>{props.drawing.date}</div>
-        </div>
-      </div>
-      <div>{props.timer}</div>
+    <div
+      style={{
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        flexDirection: "column",
+        gap: "1em",
+      }}
+    >
+      <div>{timer}</div>
+      <GallaryItem
+        drawingID={drawingID}
+        settings={{
+          width: 100,
+          forHomepage: false,
+          forPinnedShowcase: true,
+          forPinnedItem: false,
+          skeleHeight: "15em",
+          skeleDateWidth: "0",
+          skeleTitleWidth: "100%",
+        }}
+      />
     </div>
   );
 };

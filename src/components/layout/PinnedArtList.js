@@ -1,26 +1,26 @@
-import React from 'react'
+import React from "react";
 
-import PinnedArt from './PinnedArt';
+import PinnedArt from "./PinnedArt";
 
 import classes from "./GallaryList.module.css";
 
 const PinnedArtList = (props) => {
-
-  if (props.drawings.length === 0) {
+  if (props.drawingIDs.length === 0) {
     return <div className={classes.centerMiddle}>No Drawings Found</div>;
   } else {
     return (
       <div className={classes.listContain}>
-        {props.drawings.map((drawing, i) => (
+        {props.drawingIDs.map((drawingID, i) => (
           <PinnedArt
             key={i}
-            drawing={drawing}
+            drawingID={drawingID}
             idx={i}
+            seconds={props.seconds}
           />
         ))}
       </div>
     );
   }
-}
+};
 
 export default React.memo(PinnedArtList);

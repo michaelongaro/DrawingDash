@@ -24,6 +24,11 @@ const LogoutButton = () => {
               extra: false,
             });
             set(ref(db, `users/${user.sub}/likes`), {});
+            set(ref(db, `users/${user.sub}/pinnedArt`), {
+              60: "",
+              180: "",
+              300: "",
+            });
             createExtraPrompt();
           }
         }
@@ -37,7 +42,8 @@ const LogoutButton = () => {
     }
   }, [extraPrompt]);
 
-  const capitalize = (s) => s.charAt(0).toUpperCase() + s.slice(1).toLowerCase();
+  const capitalize = (s) =>
+    s.charAt(0).toUpperCase() + s.slice(1).toLowerCase();
 
   function createExtraPrompt() {
     fetch("https://random-word-form.herokuapp.com/random/adjective")
@@ -49,7 +55,7 @@ const LogoutButton = () => {
         fetch("https://random-word-form.herokuapp.com/random/noun")
           .then((response) => response.json())
           .then((data2) => {
-            const capNoun = capitalize(data2[0])
+            const capNoun = capitalize(data2[0]);
             return `${capAdj} ${capNoun}`;
           })
           .then((fullTitle) => {

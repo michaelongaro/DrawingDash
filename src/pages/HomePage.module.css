@@ -1,0 +1,16 @@
+.flexContain {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.flexContainColumn {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.hide {
+  display: none;
+}

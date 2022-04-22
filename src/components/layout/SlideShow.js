@@ -1,13 +1,15 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect } from "react";
 
 import { Slide } from "react-slideshow-image";
 import "react-slideshow-image/dist/styles.css";
 
-const SlideShow = (props) => {
+import classes from "./SlideShow.module.css";
 
+const SlideShow = ({ pinnedDrawings, metadata }) => {
   const [currentSlideshowTitle, setCurrentSlideshowTitle] = useState("");
+  const [currentSlideshowDuration, setCurrentSlideshowDuration] = useState("");
 
-    const properties = {
+  const properties = {
     duration: 5000,
     autoplay: true,
     transitionDuration: 500,
@@ -17,26 +19,29 @@ const SlideShow = (props) => {
     infinite: true,
     easing: "ease",
     onChange: (previous, next) => {
-      setCurrentSlideshowTitle(props.pinnedDrawings[next].title);
+      setCurrentSlideshowTitle(metadata[next].title);
+      setCurrentSlideshowDuration(metadata[next].seconds);
     },
   };
 
+  // should have the duration svg be right to the left of the title
+
   useEffect(() => {
-    setCurrentSlideshowTitle(props.pinnedDrawings[0].title)
+    setCurrentSlideshowTitle(metadata[0].title);
   }, []);
 
   return (
     <>
+      <Slide {...properties}>
+        {pinnedDrawings.map((drawing, index) => (
+          <div key={index}>
+            <img draggable="false" src={drawing} alt="Slideshow" />
+          </div>
+        ))}
+      </Slide>
       <div>{currentSlideshowTitle}</div>
-          <Slide {...properties}>
-            {props.pinnedDrawings.map((each, index) => (
-              <div key={index} >
-                <img draggable="false" src={each.image} alt="Slideshow" />
-              </div>
-            ))}
-          </Slide>
     </>
-  )
-}
+  );
+};
 
-export default SlideShow
+export default SlideShow;

@@ -14,7 +14,7 @@
   gap: 2em;
 
   width: 80%;
-  z-index: 9000;
+  /* z-index: 9000; */
 }
 
 .innerModal {
@@ -26,9 +26,10 @@
   border-radius: 1em;
 }
 
-div.innerModal > * {
+.gallaryList {
   margin: 1em;
   padding: 1em;
+  background-color: rgb(185, 185, 185);
 }
 
 .modal {
@@ -53,6 +54,7 @@ div.innerModal > * {
   grid-template-areas: "save . . . title title title title title title . . . exit";
   background-color: rgb(167, 167, 167);
   border-radius: 1em;
+  margin: 1em;
 }
 
 .title {

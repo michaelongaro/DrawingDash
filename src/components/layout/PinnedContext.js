@@ -27,6 +27,8 @@ export function PinnedProvider(props) {
   const db = getDatabase(app);
   const dbRef = ref(getDatabase(app));
 
+  // change all variable names with drawing to drawingIDs...
+
   // deal with this later, turn into one obj
   const [show60, setShow60] = useState({ display: "none" });
   const [show180, setShow180] = useState({ display: "none" });
@@ -105,7 +107,6 @@ export function PinnedProvider(props) {
   }
 
   function hideAllModals() {
-    console.log("i have been clicked");
     setShow60({ display: "none" });
     setShow180({ display: "none" });
     setShow300({ display: "none" });

@@ -26,7 +26,7 @@ function MainNavigation() {
             <Link to="/profile/preferences">Profile</Link>
           </li>
           <li className={classes.signinout}>
-            <LogInButton />
+            <LogInButton forceShow={false} />
             <LogOutButton />
           </li>
         </ul>

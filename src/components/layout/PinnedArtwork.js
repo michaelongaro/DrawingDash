@@ -14,6 +14,10 @@ const PinnedArtwork = () => {
   const [show180, setShow180] = useState({ display: "none" });
   const [show300, setShow300] = useState({ display: "none" });
 
+  const [show60Showcase, setShow60Showcase] = useState();
+  const [show180Showcase, setShow180Showcase] = useState();
+  const [show300Showcase, setShow300Showcase] = useState();
+
   const ref60 = useRef();
   const ref180 = useRef();
   const ref300 = useRef();
@@ -30,8 +34,6 @@ const PinnedArtwork = () => {
   };
 
   useEffect(() => {
-    console.log("IS updating local state on context change");
-    console.log(pinnedCtx.show60, pinnedCtx.show180, pinnedCtx.show300);
     setShow60(pinnedCtx.show60);
     setShow180(pinnedCtx.show180);
     setShow300(pinnedCtx.show300);
@@ -55,6 +57,10 @@ const PinnedArtwork = () => {
           pinnedCtx.setShow180({ display: "none" });
           pinnedCtx.setShow300({ display: "none" });
 
+          setShow60Showcase();
+          setShow180Showcase();
+          setShow300Showcase();
+
           pinnedCtx.resetAllAndHighlightNewInit();
         }
       }
@@ -66,6 +72,12 @@ const PinnedArtwork = () => {
     };
   });
 
+  function hideShowcaseDrawings() {
+    setShow60Showcase({ display: "none" });
+    setShow180Showcase({ display: "none" });
+    setShow300Showcase({ display: "none" });
+  }
+
   return (
     <div className={classes.parentContain}>
       <h3>Pinned Artwork</h3>
@@ -74,44 +86,57 @@ const PinnedArtwork = () => {
           onClick={() => {
             if (show60["display"] === "none") {
               pinnedCtx.setShow60(showModal);
+              hideShowcaseDrawings()
             }
           }}
         >
           <div style={show60} ref={ref60}>
             <PinnedModal seconds={60} />
           </div>
-          <PinnedShowcaseItem
-            drawing={pinnedCtx.pinnedDrawings["60"]}
-            timer={"One Minute"}
-          />
+          <div style={show60Showcase}>
+            <PinnedShowcaseItem
+              drawingID={pinnedCtx.pinnedDrawings["60"]}
+              timer={"One Minute"}
+            />
+          </div>
         </div>
 
-        <div onClick={() => {
+        <div
+          onClick={() => {
             if (show180["display"] === "none") {
               pinnedCtx.setShow180(showModal);
+              hideShowcaseDrawings()
             }
-          }}>
+          }}
+        >
           <div style={show180} ref={ref180}>
             <PinnedModal seconds={180} />
           </div>
-          <PinnedShowcaseItem
-            drawing={pinnedCtx.pinnedDrawings["180"]}
-            timer={"Three Minutes"}
-          />
+          <div style={show180Showcase}>
+            <PinnedShowcaseItem
+              drawingID={pinnedCtx.pinnedDrawings["180"]}
+              timer={"Three Minutes"}
+            />
+          </div>
         </div>
 
-        <div onClick={() => {
+        <div
+          onClick={() => {
             if (show300["display"] === "none") {
               pinnedCtx.setShow300(showModal);
+              hideShowcaseDrawings()
             }
-          }}>
+          }}
+        >
           <div style={show300} ref={ref300}>
             <PinnedModal seconds={300} />
           </div>
-          <PinnedShowcaseItem
-            drawing={pinnedCtx.pinnedDrawings["300"]}
-            timer={"Five Minutes"}
-          />
+          <div style={show300Showcase}>
+            <PinnedShowcaseItem
+              drawingID={pinnedCtx.pinnedDrawings["300"]}
+              timer={"Five Minutes"}
+            />
+          </div>
         </div>
       </div>
     </div>

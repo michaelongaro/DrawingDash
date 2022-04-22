@@ -3,45 +3,68 @@ import anime from "animejs/lib/anime.es.js";
 
 const SlidingDrawing = (props) => {
   const animationRef = useRef(null);
-  const [yDepth, setYDepth] = useState();
-  const [xDepth, setXDepth] = useState(0);
+
+  const [yDepth, setYDepth] = useState(randomYDepth());
+  const [xDepth, setXDepth] = useState(props.offsetX);
+  // + Math.floor(Math.random() * props.width * 0.3)
+  const [currentWidth, setCurrentWidth] = useState(props.width);
+
+  console.log(xDepth);
 
   useEffect(() => {
-    setYDepth(randomYDepth());
-    setXDepth(randomXDepth());
-  }, []);
+    function handleResize() {
+      setCurrentWidth(window.innerWidth);
+    }
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+
+    // seriously why does this below need to be there
+  }, [currentWidth]);
 
   useEffect(() => {
     if (xDepth !== 0) {
       animationRef.current = anime({
         targets: `#image${props.id}`,
-        translateX: window.innerWidth + (-1 * xDepth),
-        delay: Math.floor(Math.random() * 6000) + 250,
-        endDelay: 0,
+        translateX: currentWidth - xDepth,
+        // delay: 0,
+        delay: function (el, i, l) {
+          return i * 300;
+        },
+        // opacity: [0, 0.10, 0.25, 0.45, 0.9, 0],
+        opacity: [0, 0.9],
+        // opacity: function (el, i, l) {
+        //   return i * 100;
+        // },
+
+        // endDelay: 0,
+        endDelay: function (el, i, l) {
+          return (l - i) * 300;
+        },
         loop: true,
         direction: "normal",
-        duration: Math.floor(Math.random() * 3000) + 5000,
+        duration: Math.floor(Math.random() * 2000) + 4000,
         easing: "linear",
       });
     }
-  }, [xDepth]);
+  }, [xDepth, currentWidth]);
 
-  function randomYDepth(height) {
-    //maybe find way to get current div's height or just do it manually.
-
-    if (Math.floor(Math.random() * 2) === 0) {
-      return Math.floor(Math.random() * 35) + 80;
-    } else {
-      return Math.floor(Math.random() * 35) + 200;
-    }
+  function randomYDepth() {
+    return Math.floor(Math.random() * props.maxHeight) + props.baseHeight;
   }
 
-  function randomXDepth() {
-    return -1 * (Math.floor(Math.random() * 225) + 350);
+  function randomXDepth(defaultVal = xDepth) {
+    let a = defaultVal;
+    //  + Math.floor(Math.random() * props.width * .2);
+    // if (a > props.width *.75) {
+    //   a -= props.width *.3;
+    // }
+    console.log(defaultVal, props.width);
+    return a;
   }
 
   return (
     <div
+      // ref={drawingOffsetX}
       id={`image${props.id}`}
       style={{
         position: "absolute",
@@ -49,9 +72,8 @@ const SlidingDrawing = (props) => {
         top: `${yDepth}px`,
         width: "8em",
         zIndex: "1",
-        opacity: "80%",
+        opacity: "0%",
         pointerEvents: "none",
-        // overflow: "hidden",
       }}
     >
       <img alt={"floating drawing"} src={props.drawing}></img>

@@ -16,8 +16,6 @@ const FeaturedLikes = () => {
   const dbRef = ref(getDatabase(app));
 
   useEffect(() => {
-    // should have been dealt with in the backend, refactor eventually to
-    // just return obj with drawing obj and amount of dailyLikes
     let promises = [];
     let formattedLikes = [];
     get(child(dbRef, "dailyMostLiked"))
@@ -31,12 +29,10 @@ const FeaturedLikes = () => {
       })
       .then((results) => {
         for (const idx in results) {
-          formattedLikes.push({
-            drawing: results[idx].val(),
-            title: results[idx].val()["title"],
-          });
+          formattedLikes.push(results[idx].val());
         }
 
+        console.log(formattedLikes);
         setDailyMostLiked(formattedLikes);
       });
   }, []);
@@ -70,7 +66,7 @@ const FeaturedLikes = () => {
                 <div className={classes.gridMetadata}>
                   <div className={classes.profilePicture}>
                     <ProfilePicture
-                      user={dailyMostLiked[2].drawing.drawnBy}
+                      user={dailyMostLiked[2].drawnBy}
                       size="medium"
                     />
                   </div>
@@ -92,7 +88,7 @@ const FeaturedLikes = () => {
                 <div className={classes.gridMetadata}>
                   <div className={classes.profilePicture}>
                     <ProfilePicture
-                      user={dailyMostLiked[2].drawing.drawnBy}
+                      user={dailyMostLiked[2].drawnBy}
                       size="medium"
                     />
                   </div>
@@ -114,7 +110,7 @@ const FeaturedLikes = () => {
                 <div className={classes.gridMetadata}>
                   <div className={classes.profilePicture}>
                     <ProfilePicture
-                      user={dailyMostLiked[2].drawing.drawnBy}
+                      user={dailyMostLiked[2].drawnBy}
                       size="medium"
                     />
                   </div>
@@ -127,8 +123,16 @@ const FeaturedLikes = () => {
           {/* ----------- Shown Drawing ----------- */}
           <div className={classes.drawingContainer}>
             <GallaryItem
-              drawing={dailyMostLiked[currentDrawing].drawing}
-              width={95}
+              drawingID={dailyMostLiked[currentDrawing].index}
+              settings={{
+                width: 95,
+                forHomepage: true,
+                forPinnedShowcase: false,
+                forPinnedItem: false,
+                skeleHeight: "30em",
+                skeleDateWidth: "6em",
+                skeleTitleWidth: "6em",
+              }}
             />
           </div>
         </div>

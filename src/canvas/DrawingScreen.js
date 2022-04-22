@@ -12,6 +12,13 @@ import Controls from "./Controls";
 
 import { getDatabase, ref, set, child, get, update } from "firebase/database";
 
+import {
+  getDownloadURL,
+  getStorage,
+  ref as ref_storage,
+  uploadBytes,
+} from "firebase/storage";
+
 import { app } from "../util/init-firebase";
 
 import classes from "./Canvas.module.css";
@@ -22,6 +29,7 @@ const DrawingScreen = () => {
 
   const db = getDatabase(app);
   const dbRef = ref(getDatabase(app));
+  const storage = getStorage();
 
   const timerOptions = [
     { seconds: 60, colorArray: [60, 45, 30, 15] },
@@ -136,11 +144,14 @@ const DrawingScreen = () => {
   }
 
   const sendToDB = () => {
+    if (DSCtx.drawingTime === 0 || DSCtx.drawingTime === undefined) return;
+
     setShowCanvas(classes.hide);
 
     const canvas = canvasRef.current;
     const title = DSCtx.chosenPrompt;
 
+    // eventually have this turn into full words when in fullscreen modal
     const today = new Date();
     const day = today.getDate();
     const month = today.getMonth() + 1;
@@ -148,13 +159,22 @@ const DrawingScreen = () => {
 
     const uniqueID = uuidv4();
 
-    let canvasContents = canvas.toDataURL();
+    // ${title.split(" ")[0]}${title.split(" ")[1]}
+
+    canvas.toBlob(function (blob) {
+      var image = new Image();
+      image.src = blob;
+      var uploadTask = ref_storage(storage, `drawings/${uniqueID}.jpg`);
+      uploadBytes(uploadTask, blob, {
+        contentType: "image/jpeg",
+      });
+    });
 
     // posting titles w/ drawing ref ids
     postTitle(DSCtx.drawingTime, uniqueID, title);
     postTitle(DSCtx.drawingTime, uniqueID, title, `users/${user.sub}/`);
 
-    // adding drawing to totalDrawing count in db
+    // adding drawing to totalDrawings count in db
     get(child(dbRef, "totalDrawings")).then((snapshot) => {
       if (snapshot.exists()) {
         set(ref(db, "totalDrawings"), {
@@ -167,18 +187,31 @@ const DrawingScreen = () => {
       }
     });
 
+    // adding user to totalUsers count in db
+    // fix this idk wtf i was doing
+    // get(child(dbRef, "totalUsers")).then((snapshot) => {
+    //   if (snapshot.exists()) {
+    //     set(ref(db, "totalUsers"), {
+    //       count: snapshot.val().count + 1,
+    //     });
+    //   } else {
+    //     set(ref(db, "totalUsers"), {
+    //       count: 1,
+    //     });
+    //   }
+    // });
+
     // initalizing likes counters
     set(ref(db, `drawingLikes/${DSCtx.drawingTime}/${uniqueID}`), {
       totalLikes: 0,
       dailyLikes: 0,
     });
 
-    // posting actual drawing object
+    // posting drawing misc data object
     set(ref(db, `drawings/${uniqueID}`), {
       title: title,
-      image: canvasContents,
       seconds: DSCtx.drawingTime,
-      date: `${month}-${day}-${year}`,
+      date: `${month}/${day}/${year}`,
       drawnBy: user.sub,
       index: uniqueID,
     });

@@ -1,14 +1,36 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 
 import { getDatabase, get, ref, child } from "firebase/database";
 import { app } from "../../util/init-firebase";
 
 import classes from "./FocalSlidingDrawings.module.css";
 import SlidingDrawing from "./SlidingDrawing";
+import FocalBannerMessage from "./FocalBannerMessage";
 
-const FocalSlidingDrawings = () => {
+const FocalSlidingDrawings = (props) => {
   const [randomDrawingIDs, setRandomDrawingIDs] = useState(null);
   const [fetchedImages, setFetchedImages] = useState([]);
+  const [offsetX, setOffsetX] = useState(0);
+
+  const testRef = useRef(null);
+
+  const miscSettings = props.forHomepage
+    ? {
+        maxHeight: 295,
+        baseHeight: 115,
+        fullHeight: "20em",
+        fullWidth: "66%",
+        slidingWidth: window.innerWidth * 0.66,
+        radius: "1em",
+      }
+    : {
+        maxHeight: 170,
+        baseHeight: 75,
+        fullHeight: "15em",
+        fullWidth: "100vw",
+        slidingWidth: window.innerWidth,
+        radius: 0,
+      };
 
   const dbRef = ref(getDatabase(app));
 
@@ -17,8 +39,17 @@ const FocalSlidingDrawings = () => {
   }, []);
 
   useEffect(() => {
+    function handleResize() {
+      setOffsetX(testRef.current.getBoundingClientRect().left);
+    }
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
+  useEffect(() => {
     if (randomDrawingIDs !== null) {
       getImagesFromIDs();
+      setOffsetX(testRef.current.getBoundingClientRect().left);
     }
   }, [randomDrawingIDs]);
 
@@ -31,8 +62,8 @@ const FocalSlidingDrawings = () => {
       const allTitles = titles60.concat(titles180, titles300);
       const tempDrawingIDs = [];
 
-      // find 15 random indices out of allTitles.length
-      for (let i = 0; i < 15; i++) {
+      // find 25 random indices out of allTitles.length
+      for (let i = 0; i < 25; i++) {
         const actualID =
           allTitles[Math.floor(Math.random() * allTitles.length)][
             "drawingID"
@@ -59,22 +90,34 @@ const FocalSlidingDrawings = () => {
       setFetchedImages(tempDrawings);
     });
   }
-  // 99.99% chance this is hella rerendering/fetching, figure out how to fetch the 15* images and
-  // again ideally store them in memory until a refresh, and don't refetch them
 
   return (
-    <div className={classes.fullWidth}>
+    <div
+      ref={testRef}
+      style={{
+        height: miscSettings.fullHeight,
+        width: miscSettings.fullWidth,
+        borderRadius: miscSettings.radius,
+      }}
+      className={classes.fullWidth}
+    >
       {fetchedImages.length > 0 ? (
         fetchedImages.map((image, i) => (
-          <SlidingDrawing key={i} drawing={image} id={i} />
+          <SlidingDrawing
+            key={i}
+            drawing={image}
+            baseHeight={miscSettings.baseHeight}
+            maxHeight={miscSettings.maxHeight}
+            offsetX={offsetX}
+            width={miscSettings.slidingWidth}
+            id={i}
+          />
         ))
       ) : (
         <div></div>
       )}
-      <div className={classes.centerTextContainer}>
-        <div style={{ fontSize: "3em" }}>Search</div>
-        <div style={{ fontSize: "1.15em" }}>1000s of drawings</div>
-      </div>
+
+      <FocalBannerMessage forHomepage={props.forHomepage} />
     </div>
   );
 };

@@ -15,6 +15,14 @@
   margin: 1em;
 }
 
+.vertFlex {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  gap: 1em;
+}
+
 .hide {
   display: none;
 }
@@ -46,6 +54,26 @@
   background-color: rgba(0, 0, 0, 0.4);
 }
 
+.download {
+  border-radius: 1em;
+  background-color: rgb(239, 239, 239);
+  padding: 0.75em;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.75em;
+}
+
+/* eventually move skeleton animation to own component */
+.skeletonLoading {
+  background: #eee;
+  background: linear-gradient(110deg, #ececec 8%, #f5f5f5 18%, #ececec 33%);
+  border-radius: 5px;
+  background-size: 200% 100%;
+  animation: 1.5s shine linear infinite;
+}
+
 @keyframes TransitioningBackground {
   0% {
     background-position: 1% 0%;
@@ -55,5 +83,11 @@
   }
   100% {
     background-position: 1% 0%;
+  }
+}
+
+@keyframes shine {
+  to {
+    background-position-x: -200%;
   }
 }
