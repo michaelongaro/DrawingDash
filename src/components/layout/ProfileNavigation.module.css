@@ -1,49 +1,180 @@
-/* .sidebar {
-} */
-
 .sideContain {
   margin-top: 1em;
   margin-bottom: 1em;
   list-style: none;
-  background-color: #e3e3e3;
-  border-radius: 2em;
-  text-align: center;
 }
 
-li > a {
-  display: inline-block;
-  color: rgb(0, 0, 0);
-  padding: 1em 1.5em 1em 1.5em;
-  border-radius: 2em;
+.baseFlex {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.25em;
 }
 
-.navlink::before {
+li > div > a {
+  display: flex;
+  align-items: center;
+  gap: 0.5em;
+
+  text-decoration: none;
+  color: rgb(212, 212, 212);
+
+  width: 100%;
+  height: 100%;
+  padding: 0.75rem 1.25rem;
+
+  transition: all 0.3s;
+}
+
+li > div > a:hover {
+  color: rgb(250, 250, 250);
+}
+
+/* make these dynamic by creating DOM element <style> inside component(?) */
+
+.vertContain {
+  display: block;
+}
+
+.greenNavlink {
+  border-radius: 10rem;
+  color: #fff;
+  font-size: 1rem;
+  transition: all 0.3s;
+  position: relative;
+  overflow: hidden;
+  z-index: 1;
+  width: 10em;
+}
+
+.greenNavlink:hover:before {
+  width: 100%;
+}
+
+.greenNavlink:after {
   content: "";
   position: absolute;
-  top: 0;
-  left: 0;
   bottom: 0;
-  right: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: hsl(136deg 95% 24%);
+  border-radius: 10rem;
+  z-index: -2;
+}
+.greenNavlink:before {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 0%;
+  height: 100%;
+  background-color: hsl(128deg 100% 42%);
+  transition: all 0.3s;
+  border-radius: 10rem;
   z-index: -1;
-  background-color: #0af;
-
-  transition: transform 300ms ease-in-out;
-  transform: scaleX(0);
-  transform-origin: left;
 }
 
-.navlink:hover::before,
-.navlink:focus::before {
-  transform: scaleX(1);
+.greenActive {
+  background-color: hsl(128deg 100% 42%);
 }
 
-.navlink {
-  transition: color 300ms ease-in-out;
+.greenActive div {
+  color: rgb(250, 250, 250);
+}
+/* /////////////////////////////////////////////////////// */
+
+.yellowNavlink {
+  border-radius: 10rem;
+  color: #fff;
+  font-size: 1rem;
+  transition: all 0.3s;
+  position: relative;
+  overflow: hidden;
   z-index: 1;
-  border-radius: 2em;
+  width: 10em;
 }
 
-.navlink:hover,
-.navlink:focus {
+.yellowNavlink:hover:before {
+  width: 100%;
+}
+
+.yellowNavlink:after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
   color: white;
+  background-color: hsl(61deg 85% 27%);
+  border-radius: 10rem;
+  z-index: -2;
+}
+.yellowNavlink:before {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 0%;
+  height: 100%;
+  background-color: hsl(60deg 95% 39%);
+  transition: all 0.3s;
+  border-radius: 10rem;
+  z-index: -1;
+}
+
+.yellowActive {
+  background-color: hsl(60deg 95% 39%);
+}
+
+.yellowActive div {
+  color: rgb(250, 250, 250);
+}
+/* /////////////////////////////////////////////////////// */
+
+.redNavlink {
+  border-radius: 10rem;
+  color: #fff;
+  font-size: 1rem;
+  transition: all 0.3s;
+  position: relative;
+  overflow: hidden;
+  z-index: 1;
+  width: 10em;
+}
+
+.redNavlink:hover:before {
+  width: 100%;
+}
+
+.redNavlink:after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: hsl(356deg 89% 18%);
+  border-radius: 10rem;
+  z-index: -2;
+}
+.redNavlink:before {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 0%;
+  height: 100%;
+  background-color: hsl(357deg 100% 37%);
+  transition: all 0.3s;
+  border-radius: 10rem;
+  z-index: -1;
+}
+.redActive {
+  background-color: hsl(357deg 100% 37%);
+}
+
+.redActive div {
+  color: rgb(250, 250, 250);
 }

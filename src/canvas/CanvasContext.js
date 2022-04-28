@@ -81,7 +81,6 @@ export const CanvasProvider = ({ children }) => {
     let operator = { x, y };
 
     // Check if base color and new color are the same
-    console.log(baseColor, newColor);
     if (colorMatch(baseColor, newColor)) {
       return;
     }
@@ -180,11 +179,13 @@ export const CanvasProvider = ({ children }) => {
     floodFill(imageData, col, x, y);
     ctx.putImageData(imageData, 0, 0);
     contextRef.current = ctx;
+    contextRef.current.beginPath();
   }
 
   const finishDrawing = () => {
-    if (!floodFillStatus) {
+    if (!floodFillStatus && isDrawing) {
       contextRef.current.closePath();
+      contextRef.current.beginPath();
       isDrawing = false;
     }
   };
@@ -197,9 +198,13 @@ export const CanvasProvider = ({ children }) => {
     return { x, y };
   }
 
-  const draw = (ev, isMoving) => {
-    if (floodFillStatus && !isMoving) {
-      console.log("should be able to fill now");
+  function isValid(prevx, prevy, x, y) {
+    return Math.abs(x - prevx) <= 5 && Math.abs(y - prevy) <= 5;
+  }
+
+  const draw = (ev) => {
+    // not sure how you are able to draw while in paintbucket when this is a condition below
+    if (floodFillStatus) {
       floodFillHandler(ev);
       return;
     }
@@ -222,27 +227,33 @@ export const CanvasProvider = ({ children }) => {
     ) {
       lastEvent.offscreen = true;
 
+      const previous_point = getRelativePointFromEvent(
+        previous_evt,
+        canvasRef.current
+      );
+
       if (was_offscreen && ev.buttons === 1 && isDrawing) {
-        contextRef.current.lineTo(point.x, point.y);
-        contextRef.current.stroke();
-        finishDrawing();
-        return;
+        if (isValid(previous_point.x, previous_point.y, point.x, point.y)) {
+          contextRef.current.lineTo(point.x, point.y);
+          contextRef.current.stroke();
+          finishDrawing();
+          return;
+        }
       }
     } else if (was_offscreen) {
       const previous_point = getRelativePointFromEvent(
         previous_evt,
         canvasRef.current
       );
+
       if (ev.buttons === 1 && !isDrawing) {
-        contextRef.current.beginPath();
+        contextRef.current.moveTo(previous_point.x, previous_point.y);
+
         isDrawing = true;
       }
-      contextRef.current.moveTo(previous_point.x, previous_point.y);
     } else {
       if (ev.buttons === 1 && !isDrawing) {
         contextRef.current.moveTo(point.x, point.y);
-
-        contextRef.current.beginPath();
         isDrawing = true;
       }
     }
@@ -272,6 +283,7 @@ export const CanvasProvider = ({ children }) => {
         finishDrawing,
         clearCanvas,
         draw,
+        floodFillStatus,
       }}
     >
       {children}

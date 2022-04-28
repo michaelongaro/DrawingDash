@@ -36,8 +36,9 @@ export function DrawingSelectionProvider(props) {
     "#FFFFFF",
     "#FFFFFF",
   ]);
+  const [currentCursorSize, setCurrentCursorSize] = useState(5);
+  const [currentColor, setCurrentColor] = useState("white");
 
-  const [pushTimeout, setPushTimeout] = useState();
   const [fetchNewWords, setFetchNewWords] = useState(true);
 
   const [showPromptSelection, setShowPromptSelection] = useState(true);
@@ -135,64 +136,6 @@ export function DrawingSelectionProvider(props) {
     }
   }
 
-  // function getCompletedDrawingStatuses() {
-  //   get(child(dbRef, `users/${user.sub}/completedDailyPrompts`)).then(
-  //     (snapshot) => {
-  //       if (snapshot.exists()) {
-  //         setDrawingStatuses(snapshot.val());
-  //       }
-  //     }
-  //   );
-  // }
-
-  // function getDailyPrompts() {
-  //   get(child(dbRef, "dailyPrompts")).then((snapshot) => {
-  //     if (snapshot.exists()) {
-  //       setDailyPrompts(snapshot.val());
-  //     }
-  //   });
-  // }
-
-  // function getUniquePrompt() {
-  //   get(child(dbRef, `users/${user.sub}/extraDailyPrompt`)).then((snapshot) => {
-  //     if (snapshot.exists()) {
-  //       if (!snapshot.val()["refresh"]) {
-  //         setExtraPrompt(snapshot.val());
-  //         return;
-  //       }
-  //     }
-  //   });
-
-  //   fetch("https://random-word-form.herokuapp.com/random/adjective")
-  //     .then((response) => response.json())
-  //     .then((data) => {
-  //       return data[0];
-  //     })
-  //     .then((adj) => {
-  //       fetch("https://random-word-form.herokuapp.com/random/noun")
-  //         .then((response) => response.json())
-  //         .then((data2) => {
-  //           return `${adj} ${data2[0]}`;
-  //         })
-  //         .then((fullTitle) => {
-  //           const seconds = [60, 180, 300];
-  //           const randomSeconds =
-  //             seconds[Math.floor(Math.random() * seconds.length)];
-
-  //           set(ref(db, `users/${user.sub}/extraDailyPrompt`), {
-  //             seconds: randomSeconds,
-  //             title: fullTitle,
-  //             refresh: false,
-  //           }).then(() => {
-  //             setExtraPrompt({
-  //               seconds: randomSeconds,
-  //               title: fullTitle,
-  //             });
-  //           });
-  //         });
-  //     });
-  // }
-
   const context = {
     seconds: seconds,
     setSeconds: setSeconds,
@@ -204,14 +147,14 @@ export function DrawingSelectionProvider(props) {
     setButtonAvailability: setButtonAvailability,
 
     drawingStatuses: drawingStatuses,
-    // setDrawingStatuses: setDrawingStatuses,
     dailyPrompts: dailyPrompts,
-    // setDailyPrompts: setDailyPrompts,
     extraPrompt: extraPrompt,
-    // setExtraPrompt: setExtraPrompt,
-
     paletteColors: paletteColors,
     setPaletteColors: setPaletteColors,
+    currentCursorSize: currentCursorSize,
+    setCurrentCursorSize: setCurrentCursorSize,
+    currentColor: currentColor,
+    setCurrentColor: setCurrentColor,
     fetchNewWords: fetchNewWords,
     setFetchNewWords: setFetchNewWords,
     showPromptSelection: showPromptSelection,
@@ -223,18 +166,10 @@ export function DrawingSelectionProvider(props) {
     showEndOverlay: showEndOverlay,
     setShowEndOverlay: setShowEndOverlay,
     showEndOutline: showEndOutline,
-    // finishedFetchingStatuses: finishedFetchingStatuses,
-    // setFinishedFetchingStatuses: setFinishedFetchingStatuses,
     setShowEndOutline: setShowEndOutline,
     goBackToPromptSelection: goBackToPromptSelection,
     resetSelections: resetSelections,
     titleForPromptSelection: titleForPromptSelection,
-    pushTimeout: pushTimeout,
-    setPushTimeout: setPushTimeout,
-    // resetLastClickedButton: resetLastClickedButton,
-    // getCompletedDrawingStatuses: getCompletedDrawingStatuses,
-    // getDailyPrompts: getDailyPrompts,
-    // getUniquePrompt: getUniquePrompt,
   };
 
   return (

@@ -116,7 +116,11 @@ const GallaryList = (props) => {
         </button>
       </div>
 
-      <Card width={100}>
+      {/* no clue why I made it into one monolithic thing like this
+    would love for it to be split up into 3 divs, but I just realized 
+    that way the alignment/spacing was messed up... idk find a way to refactor later */}
+
+      <Card margin={props.margin}>
         <div className={classes.flexListContain}>
           {Object.values(displayedDrawings)
             .flat()
@@ -129,7 +133,7 @@ const GallaryList = (props) => {
                   forHomepage: false,
                   forPinnedShowcase: false,
                   forPinnedItem: false,
-                  skeleHeight: "14em",
+                  skeleHeight: "10em",
                   skeleDateWidth: "6em",
                   skeleTitleWidth: "6em",
                 }}

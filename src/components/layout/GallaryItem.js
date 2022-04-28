@@ -37,9 +37,9 @@ const GallaryItem = ({ drawingID, settings }) => {
   const [drawingDailyLikes, setDrawingDailyLikes] = useState(0);
   const [drawingWidth, setDrawingWidth] = useState(settings.width);
 
-  const [showDrawingModal, setShowDrawingModal] = useState(
-    classes.marginContain
-  );
+  // this below was set to classes.marginContain (don't think we need now because we
+  // added a gap to the flex list)
+  const [showDrawingModal, setShowDrawingModal] = useState("");
 
   const [showUserModal, setShowUserModal] = useState(classes.hide);
   const [loadUserModal, setLoadUserModal] = useState(false);
@@ -176,12 +176,17 @@ const GallaryItem = ({ drawingID, settings }) => {
 
   return (
     <div
+      // okay so how do you freeze it while it is loading to see what is happening
+      // it is bigger then it should be here, but then smaller than it should be in explore
+      // has to do with the 80% width?
       className={showDrawingModal}
       style={{
         width: `${drawingWidth}%`,
-        margin: `${
-         showDrawingModal === classes.fullScreen ? 0 : "1em"
-        }`,
+        // margin: `${
+        //   showDrawingModal === classes.fullScreen || settings.forPinnedItem
+        //     ? 0
+        //     : "1em"
+        // }`,
       }}
     >
       <div className={classes.vertFlex} ref={drawingModalRef}>
@@ -268,7 +273,9 @@ const GallaryItem = ({ drawingID, settings }) => {
                   className={classes.skeletonLoading}
                 ></div>
               ) : (
-                <div>{drawingDetails.title}</div>
+                <div style={{ textAlign: "center" }}>
+                  {drawingDetails.title}
+                </div>
               )}
 
               {/* date */}

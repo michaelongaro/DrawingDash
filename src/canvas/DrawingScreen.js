@@ -46,38 +46,46 @@ const DrawingScreen = () => {
   const [countdownKey, setCountdownKey] = useState(0);
   const [drawingTime, setDrawingTime] = useState(60);
 
-  const { canvasRef, prepareCanvas, clearCanvas, finishDrawing, draw } =
-    useCanvas();
+  const {
+    canvasRef,
+    prepareCanvas,
+    clearCanvas,
+    finishDrawing,
+    draw,
+    floodFillStatus,
+  } = useCanvas();
+
+  function preventScrolling(e) {
+    e.preventDefault();
+  }
 
   // why does this only "work" without [] dependencies
   // instantly acts like it is being called one sec
   useEffect(() => {
     console.log("adding listeners");
-    document.addEventListener("mousemove", (e) => specialDraw(e, true));
-    document.documentElement.addEventListener(
-      "mouseenter",
-      (e) => specialDraw(e, true),
-      {
-        once: true,
-      }
-    );
+    document.addEventListener("mousemove", draw);
+    document.documentElement.addEventListener("mouseenter", draw, {
+      once: true,
+    });
+
+    canvasRef.current.addEventListener("wheel", preventScrolling);
+    let currentCanvasRef = canvasRef.current;
+
     return () => {
       console.log("removing listeners");
-      document.removeEventListener("mousemove", (e) => specialDraw(e, true));
+      document.removeEventListener("mousemove", draw);
       document.documentElement.removeEventListener(
         "mouseenter",
 
-        (e) => specialDraw(e, true),
+        draw,
         {
           once: true,
         }
       );
+
+      currentCanvasRef.removeEventListener("wheel", preventScrolling);
     };
   }, []);
-
-  function specialDraw(e, isMoving) {
-    draw(e, isMoving);
-  }
 
   const [showCanvas, setShowCanvas] = useState(classes.hide);
 
@@ -220,11 +228,11 @@ const DrawingScreen = () => {
     DSCtx.setShowEndOutline(true);
 
     console.log("removing listeners");
-    document.removeEventListener("mousemove", (e) => specialDraw(e, true));
+    document.removeEventListener("mousemove", draw);
     document.documentElement.removeEventListener(
       "mouseenter",
 
-      (e) => specialDraw(e, true),
+      draw,
       {
         once: true,
       }
@@ -323,7 +331,26 @@ const DrawingScreen = () => {
           </div>
           <div className={classes.canvasBorder}>
             <canvas
-              onMouseDown={(e) => specialDraw(e, false)}
+              // for this, have conditional for floodFillStatus, if it is true
+              // set cursor to be the paintbucket, either replace whole string here or
+              // break on the <svg and replace with paint bucket svg
+              style={{
+                cursor: `url('data:image/svg+xml;utf8,<svg id="svg" xmlns="http://www.w3.org/2000/svg" version="1.1" width="40" height="40"><circle cx="${
+                  DSCtx.currentCursorSize
+                }" cy="${DSCtx.currentCursorSize}" r="${
+                  DSCtx.currentCursorSize
+                }" style="fill: %23${DSCtx.currentColor.replace(
+                  "#",
+                  ""
+                )};stroke: ${
+                  DSCtx.currentColor === "#FFFFFF" ? "%23c4c4c4" : "none"
+                }; strokeWidth:${
+                  DSCtx.currentColor === "#FFFFFF" ? "1px" : "none"
+                }; "/></svg>') ${DSCtx.currentCursorSize} ${
+                  DSCtx.currentCursorSize
+                }, pointer`,
+              }}
+              onMouseDown={draw}
               onMouseUp={finishDrawing}
               ref={canvasRef}
             />

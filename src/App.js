@@ -21,7 +21,7 @@ function App() {
         <Route path="explore" element={<Explore />} />
         <Route path="profile" element={<Profile />}>
           <Route path="preferences" element={<Preferences />} />
-          <Route path="gallary" element={<Gallary />} />
+          <Route path="gallery" element={<Gallary />} />
           <Route path="likes" element={<Likes />} />
         </Route>
       </Routes>

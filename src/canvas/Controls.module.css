@@ -1,16 +1,19 @@
 .contain {
   display: flex;
-  gap: 1.5em;
-  margin: 0.5em;
+  gap: 3.5em;
   justify-content: center;
   align-items: center;
 }
 
 .contain > div {
   display: flex;
-  gap: 0.5em;
   justify-content: center;
   align-items: center;
+}
+
+.contain > div > button {
+  cursor: pointer;
+  margin: 1em 1em 1.5em 1em;
 }
 
 .outerColor {
@@ -22,9 +25,8 @@
   vertical-align: middle;
 }
 
-.outerColor:hover,
-.innerBorder:hover {
-  opacity: 80%;
+.outerColor:hover {
+  filter: brightness(1.15);
 }
 
 .innerBorder {
@@ -69,6 +71,18 @@
   right: 0;
 }
 
+.tools {
+  gap: 2em;
+}
+
+.tools > div {
+  cursor: pointer;
+}
+
+.tools > div:hover {
+  filter: brightness(1.25);
+}
+
 /* I think just keep the .small medium and large, and just do % of those values OOO
    do them as global variables at top and then reference $size or whatever and do * .85 for the
    inner borders */
@@ -100,6 +114,7 @@
   height: 50px;
 }
 
-.rounded:hover {
-  opacity: 80%;
+.rounded:hover,
+.innerBrushBorder:hover {
+  background-color: rgb(49, 49, 49);
 }

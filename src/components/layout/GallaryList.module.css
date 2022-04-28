@@ -7,14 +7,19 @@
   overflow-y: scroll;
   height: 65vh;
   background-color: rgb(185, 185, 185);
+  padding: 1em;
 }
 
 .flexListContain {
   display: flex;
+  justify-content: center;
   flex-wrap: wrap;
   /* overflow-y: scroll; */
   /* height: 65vh; */
   width: 100%;
+  gap: 2em;
+  margin-top: 1em;
+  margin-bottom: 1em;
 }
 
 .baseFlex {

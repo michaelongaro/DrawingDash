@@ -3,16 +3,17 @@ import React from "react";
 import { useAuth0 } from "@auth0/auth0-react";
 
 import Search from "./Search";
+import ProfileHeader from "./ProfileHeader";
+
+import classes from "./Preferences.module.css";
 
 const Gallary = () => {
-
   const { user } = useAuth0();
 
   return (
-    <div style={{width: "80%"}}>
-      <h1>My Gallary</h1>
-      <Search userProfile={user.sub}/>
-
+    <div className={`${classes.baseFlex} ${classes.prefCard}`}>
+      <ProfileHeader title={"Gallery"} />
+      <Search userProfile={user.sub} margin={"1em"} />
     </div>
   );
 };

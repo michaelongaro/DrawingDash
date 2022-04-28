@@ -20,6 +20,8 @@ import {
 import { app } from "../../util/init-firebase";
 
 import classes from "./Preferences.module.css";
+import PreferencesIcon from "../../svgs/PreferencesIcon";
+import ProfileHeader from "./ProfileHeader";
 
 const Preferences = () => {
   const { user, isAuthenticated, isLoading } = useAuth0();
@@ -92,9 +94,8 @@ const Preferences = () => {
     const photoRef = ref_storage(storage, `${uid}/profile.jpg`);
     const testRef = ref_storage(storage, `${uid}/profile2.jpg`);
 
-
     const snapshot = await uploadBytes(photoRef, image);
-    // 
+    //
     const photoURL = await getDownloadURL(photoRef);
 
     setImageURL(photoURL);
@@ -112,62 +113,68 @@ const Preferences = () => {
   }
 
   return (
-    <div className={classes.horizContain}>
-      <div className={`${classes.container} ${classes.prefCard}`}>
-        <div className={classes.username}>Username</div>
-        {!disableEdit ? (
-          <div>{username}</div>
-        ) : (
-          <input
-            className={classes.setUsername}
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-          ></input>
-        )}
+    <div className={`${classes.baseFlex} ${classes.prefCard}`}>
+    <ProfileHeader title={"Preferences"} />
 
-        <div className={classes.email}>Email</div>
-        <div className={classes.setEmail}>{userEmail}</div>
+    <div className={classes.container}>
+      <div className={classes.username}>Username</div>
+      {!disableEdit ? (
+        <div>{username}</div>
+      ) : (
+        <input
+          className={classes.setUsername}
+          value={username}
+          onChange={(e) => setUsername(e.target.value)}
+        ></input>
+      )}
 
-        <button className={classes.resetPassword}>Reset Password</button>
+      <div className={classes.email}>Email</div>
+      <div className={classes.setEmail}>{userEmail}</div>
 
-        <div className={classes.status}>Status</div>
-        {!disableEdit ? (
-          <div><i>{status}</i></div>
-        ) : (
-          <input
-            className={classes.setStatus}
-            value={status}
-            onChange={(e) => setStatus(e.target.value)}
-          ></input>
-        )}
+      <button className={classes.resetPassword}>Reset Password</button>
 
-        <div className={classes.rightSide}>
-          {!disableEdit ? (
-            <img
-              className={classes.image}
-              width={"165px"}
-              src={imageURL}
-              alt={imageAltInfo}
-            />
-          ) : (
-            <input type="file" name="profileImage" onChange={handleChange} />
-          )}
-          <div className={classes.showUsername}>{username}</div>
-          <div className={classes.showStatus}><i>{status}</i></div>
+      <div className={classes.status}>Status</div>
+      {!disableEdit ? (
+        <div>
+          <i>{status}</i>
         </div>
-        <div className={`${classes.change} ${classes.updateButtons}`}>
-          <button disabled={disableEdit} onClick={() => setDisableEdit(true)}>
-            Edit
-          </button>
-          <button disabled={disableSave} onClick={handleSubmit}>
-            Save Changes
-          </button>
-        </div>
+      ) : (
+        <input
+          className={classes.setStatus}
+          value={status}
+          onChange={(e) => setStatus(e.target.value)}
+        ></input>
+      )}
 
-        <div className={classes.pinned}>
-          <PinnedArtwork />
+      <div className={classes.rightSide}>
+        {!disableEdit ? (
+          <img
+            className={classes.image}
+            width={"165px"}
+            src={imageURL}
+            alt={imageAltInfo}
+          />
+        ) : (
+          <input type="file" name="profileImage" onChange={handleChange} />
+        )}
+        <div className={classes.showUsername}>{username}</div>
+        <div className={classes.showStatus}>
+          <i>{status}</i>
         </div>
       </div>
+      <div className={`${classes.change} ${classes.updateButtons}`}>
+        <button disabled={disableEdit} onClick={() => setDisableEdit(true)}>
+          Edit
+        </button>
+        <button disabled={disableSave} onClick={handleSubmit}>
+          Save Changes
+        </button>
+      </div>
+
+      <div className={classes.pinned}>
+        <PinnedArtwork />
+      </div>
+    </div>
     </div>
   );
 };

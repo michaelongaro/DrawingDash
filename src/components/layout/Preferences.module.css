@@ -1,3 +1,11 @@
+.baseFlex {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  gap: 1em;
+}
+
 .container {
   display: grid;
   grid-template-columns: 0.5fr 1.5fr 1fr 1fr;
@@ -13,6 +21,28 @@
   justify-content: space-evenly;
   align-items: center;
   justify-items: center;
+}
+
+.rightSide {
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-template-rows: 3.25fr 1.5fr 0.6fr;
+  gap: 0px 0px;
+  grid-auto-flow: row;
+  grid-template-areas:
+    "picture"
+    "showUsername"
+    "showStatus";
+  grid-area: rightSide;
+  justify-content: space-evenly;
+  align-items: center;
+  justify-items: center;
+}
+
+.updateButtons {
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .prefCard {
@@ -58,26 +88,6 @@
   grid-area: setEmail;
 }
 
-.rightSide {
-  display: grid;
-  grid-template-columns: 1fr;
-  grid-template-rows: 3.25fr 1.5fr 0.6fr;
-  gap: 0px 0px;
-  grid-auto-flow: row;
-  grid-template-areas:
-    "picture"
-    "showUsername"
-    "showStatus";
-  grid-area: rightSide;
-  justify-content: space-evenly;
-  align-items: center;
-  justify-items: center;
-}
-
-.horizContain {
-  width: 80%;
-}
-
 .picture {
   grid-area: picture;
 }
@@ -92,10 +102,4 @@
 
 .resetPassword {
   grid-area: resetPassword;
-}
-
-.updateButtons {
-  display: flex;
-  justify-content: center;
-  align-items: center;
 }

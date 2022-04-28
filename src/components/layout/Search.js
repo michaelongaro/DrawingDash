@@ -169,6 +169,7 @@ const Search = (props) => {
         <GallaryList
           drawingIDs={searchCtx.searchValues["gallary"][idx]}
           title={gallaryListStaticTitle}
+          margin={props.margin}
         />
       ) : (
         <div></div>
