@@ -4,7 +4,7 @@ const GarbageIcon = () => {
   return (
     <svg
       id="Capa_1"
-      enable-background="new 0 0 497 497"
+      enableBackground="new 0 0 497 497"
       height="3em"
       viewBox="0 0 497 497"
       width="3em"

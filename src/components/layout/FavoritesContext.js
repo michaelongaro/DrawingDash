@@ -8,7 +8,6 @@ import {
   ref,
   child,
   update,
-  remove,
   onValue,
 } from "firebase/database";
 import { app } from "../../util/init-firebase";
@@ -16,7 +15,11 @@ import { app } from "../../util/init-firebase";
 const FavoritesContext = createContext(null);
 
 export function FavoritesProvider(props) {
-  const [userFavorites, setUserFavorites] = useState([]);
+  const [userFavorites, setUserFavorites] = useState({
+    60: [],
+    180: [],
+    300: [],
+  });
 
   const { user, isLoading, isAuthenticated } = useAuth0();
 
@@ -25,67 +28,124 @@ export function FavoritesProvider(props) {
 
   useEffect(() => {
     if (!isLoading && isAuthenticated) {
-      // get(child(dbRef, `users/${user.sub}/likes`)).then((snapshot) => {
-      //   if (snapshot.exists()) {
-      //     setUserFavorites(Object.values(snapshot.val()));
-      //   }
-      // });
       onValue(ref(db, `users/${user.sub}/likes`), (snapshot) => {
         if (snapshot.exists()) {
-          setUserFavorites(Object.values(snapshot.val()));
+          let tempUserFavorites = snapshot.val();
+          if (snapshot.val()["60"][0] === "temp") {
+            tempUserFavorites["60"] = [];
+          }
+          if (snapshot.val()["180"][0] === "temp") {
+            tempUserFavorites["180"] = [];
+          }
+          if (snapshot.val()["300"][0] === "temp") {
+            tempUserFavorites["300"] = [];
+          }
+          setUserFavorites(tempUserFavorites);
         }
       });
     }
   }, [isLoading, isAuthenticated]);
 
-  function addFavoriteHandler(favoriteMeetup, newTotalLikesCount, newDailyLikesCount) {
+  useEffect(() => {
+    console.log(userFavorites);
+  }, [userFavorites]);
+
+  function addFavorite(
+    currDrawingID,
+    drawingSeconds,
+    newTotalLikesCount,
+    newDailyLikesCount
+  ) {
+    // updating locally, could potentially just have it tied to onValue like above
     setUserFavorites((prevUserFavorites) => {
-      return prevUserFavorites.concat(favoriteMeetup);
+      console.log(
+        prevUserFavorites,
+        drawingSeconds,
+        prevUserFavorites[drawingSeconds],
+        currDrawingID
+      );
+      prevUserFavorites[drawingSeconds].push(currDrawingID);
+      console.log(prevUserFavorites);
+      return prevUserFavorites;
     });
 
-    set(
-      ref(db, `users/${user.sub}/likes/${favoriteMeetup.index}`),
-      favoriteMeetup
-    );
-
-    update(
-      ref(db, `drawingLikes/${favoriteMeetup.seconds}/${favoriteMeetup.index}`),
-      {
-        totalLikes: newTotalLikesCount,
-        dailyLikes: newDailyLikesCount,
+    // updating user likes object in db
+    get(child(dbRef, `users/${user.sub}/likes`)).then((snapshot) => {
+      if (snapshot.exists()) {
+        let tempLikes = snapshot.val();
+        if (tempLikes[drawingSeconds][0] === "temp") {
+          tempLikes[drawingSeconds][0] = currDrawingID;
+        } else {
+          tempLikes[drawingSeconds].push(currDrawingID);
+        }
+        set(ref(db, `users/${user.sub}/likes/`), tempLikes);
       }
-    );
-  }
-
-  function removeFavoriteHandler(favoriteMeetup, newTotalLikesCount, newDailyLikesCount) {
-    setUserFavorites((prevUserFavorites) => {
-      return prevUserFavorites.filter((meetup) => meetup.index !== favoriteMeetup.index);
     });
 
-    remove(ref(db, `users/${user.sub}/likes/${favoriteMeetup.index}`));
-
-    update(
-      ref(db, `drawingLikes/${favoriteMeetup.seconds}/${favoriteMeetup.index}`),
-      {
-        totalLikes: newTotalLikesCount,
-        dailyLikes: newDailyLikesCount,
-      }
-    );
+    // updating drawingLikes values
+    update(ref(db, `drawingLikes/${drawingSeconds}/${currDrawingID}`), {
+      totalLikes: newTotalLikesCount,
+      dailyLikes: newDailyLikesCount,
+    });
   }
 
-  function itemIsFavoriteHandler(meetupIndex) {
-    if (userFavorites.length === 0) {
+  function removeFavorite(
+    currDrawingID,
+    drawingSeconds,
+    newTotalLikesCount,
+    newDailyLikesCount
+  ) {
+    // updating locally, could potentially just have it tied to onValue like above
+    setUserFavorites((prevUserFavorites) => {
+      let updatedUserFavorites = prevUserFavorites[drawingSeconds].filter(
+        (drawingID) => drawingID !== currDrawingID
+      );
+      prevUserFavorites[drawingSeconds] = updatedUserFavorites;
+      return prevUserFavorites;
+    });
+
+    // updating user likes object in db
+    get(child(dbRef, `users/${user.sub}/likes`)).then((snapshot) => {
+      if (snapshot.exists()) {
+        let tempLikes = snapshot.val();
+        tempLikes[drawingSeconds].filter(
+          (drawingID) => drawingID !== currDrawingID
+        );
+
+        set(ref(db, `users/${user.sub}/likes/`), tempLikes);
+      }
+    });
+
+    // updating drawingLikes values
+    update(ref(db, `drawingLikes/${drawingSeconds}/${currDrawingID}`), {
+      totalLikes: newTotalLikesCount,
+      dailyLikes: newDailyLikesCount,
+    });
+  }
+
+  function itemIsFavorite(currDrawingID, drawingSeconds) {
+    console.log(userFavorites);
+    if (
+      userFavorites["60"].length === 0 &&
+      userFavorites["180"].length === 0 &&
+      userFavorites["300"].length === 0
+    ) {
       return false;
     }
-    return userFavorites.some((meetup) => meetup.index === meetupIndex);
+
+    console.log(userFavorites, currDrawingID, drawingSeconds);
+
+    return userFavorites[drawingSeconds].some(
+      (drawingID) => drawingID === currDrawingID
+    );
   }
 
   const context = {
     favorites: userFavorites,
     totalFavorites: userFavorites.length,
-    addFavorite: addFavoriteHandler,
-    removeFavorite: removeFavoriteHandler,
-    itemIsFavorite: itemIsFavoriteHandler,
+    addFavorite: addFavorite,
+    removeFavorite: removeFavorite,
+    itemIsFavorite: itemIsFavorite,
   };
 
   return (

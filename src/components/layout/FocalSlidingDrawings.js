@@ -1,6 +1,14 @@
 import React, { useEffect, useState, useRef } from "react";
 
 import { getDatabase, get, ref, child } from "firebase/database";
+
+import {
+  getDownloadURL,
+  getStorage,
+  ref as ref_storage,
+  uploadBytes,
+} from "firebase/storage";
+
 import { app } from "../../util/init-firebase";
 
 import classes from "./FocalSlidingDrawings.module.css";
@@ -33,6 +41,7 @@ const FocalSlidingDrawings = (props) => {
       };
 
   const dbRef = ref(getDatabase(app));
+  const storage = getStorage();
 
   useEffect(() => {
     getRandomDrawingIDs();
@@ -79,14 +88,17 @@ const FocalSlidingDrawings = (props) => {
   function getImagesFromIDs() {
     const tempDrawings = [];
     const promises = [];
-    for (const id of randomDrawingIDs) {
-      promises.push(get(child(dbRef, `drawings/${id}`)));
+    for (const drawingID of randomDrawingIDs) {
+      promises.push(
+        getDownloadURL(ref_storage(storage, `drawings/${drawingID}.jpg`))
+      );
     }
 
     Promise.all(promises).then((results) => {
       for (const result of results) {
-        tempDrawings.push(result.val()["image"]);
+        tempDrawings.push(result);
       }
+      console.log(tempDrawings);
       setFetchedImages(tempDrawings);
     });
   }

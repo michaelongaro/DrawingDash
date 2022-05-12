@@ -13,6 +13,11 @@ export function Canvas() {
 
   useEffect(() => {
     DSCtx.resetSelections();
+
+    return () => {
+      DSCtx.setStartFromLeft(true);
+      DSCtx.resetProgressBar();
+    }
   }, []);
 
   function renderCurrentScreen() {

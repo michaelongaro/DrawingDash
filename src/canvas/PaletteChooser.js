@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useContext } from "react";
 
+import anime from "animejs/lib/anime.es.js";
 import DrawingSelectionContext from "./DrawingSelectionContext";
-// import WordsContext from "./WordsContext";
 
 import classes from "./PaletteChooser.module.css";
 
@@ -44,6 +44,24 @@ const PaletteChooser = () => {
     }
   }, [statusOfCheckmarks]);
 
+  useEffect(() => {
+    anime({
+      targets: "#paletteChooser",
+      loop: false,
+      translateX: window.innerWidth,
+      opacity: [0, 1],
+      direction: "normal",
+      duration: 250,
+      easing: "easeInSine",
+    });
+
+    return () => {
+      // ahh idk have to move this maybe into start of other components,
+      // don't want it to override the slideinfromleft(false) below
+      // DSCtx.setStartFromLeft(true);
+    };
+  }, []);
+
   function updatePaletteAndCheckmarkStates(event, idx) {
     const shallowCopyPalettes = [...paletteColors];
     shallowCopyPalettes.splice(idx, 1, event.target.value);
@@ -60,8 +78,36 @@ const PaletteChooser = () => {
     setVisibilityOfOverlays(shallowCopyOverlays);
   }
 
+  function moveOntoDrawScreen() {
+    anime({
+      targets: "#paletteChooser",
+      loop: false,
+      translateX: window.innerWidth * 2,
+      opacity: [1, 0],
+      direction: "normal",
+      duration: 450,
+      easing: "easeInSine",
+      complete: function () {
+        DSCtx.setPaletteColors(paletteColors);
+        DSCtx.setSeconds(3);
+        DSCtx.setShowPaletteChooser(false);
+        DSCtx.setShowDrawingScreen(true);
+        DSCtx.setStartFromLeft(true);
+      },
+    });
+  }
+
   return (
-    <div className={classes.vertContain}>
+    <div
+      id={"paletteChooser"}
+      style={{
+        position: "absolute",
+        left: `${-1 * window.innerWidth}px`,
+        top: "185px",
+        width: "100vw",
+      }}
+      className={classes.vertContain}
+    >
       <div className={classes.textVert}>
         <div>{`A Color Palette For`}</div>
         <div>{`"${DSCtx.chosenPrompt}"`}</div>
@@ -206,6 +252,8 @@ const PaletteChooser = () => {
         <button
           className={classes.activeButton}
           onClick={() => {
+            DSCtx.setStartFromLeft(false);
+            DSCtx.updatePBStates("selectToChooseBar", false);
             DSCtx.goBackToPromptSelection();
           }}
         >
@@ -215,10 +263,8 @@ const PaletteChooser = () => {
           className={classes.activeButton}
           disabled={nextDisabled}
           onClick={() => {
-            DSCtx.setPaletteColors(paletteColors);
-            DSCtx.setSeconds(3);
-            DSCtx.setShowPaletteChooser(false);
-            DSCtx.setShowDrawingScreen(true);
+            DSCtx.updatePBStates("chooseToDrawBar", true);
+            moveOntoDrawScreen();
           }}
         >
           Next

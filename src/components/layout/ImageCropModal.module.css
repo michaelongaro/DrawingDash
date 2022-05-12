@@ -1,0 +1,80 @@
+.baseFlex {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 0.25em;
+}
+
+.backdrop {
+  /* do later */
+}
+
+.cropContainer {
+  position: relative;
+  width: 60vw;
+  height: 61vh;
+  background-color: grey;
+}
+
+.controls {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1em;
+  /* padding: 1em; */
+}
+
+.zoomContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1em;
+}
+
+.slider {
+}
+
+.buttonContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.25em;
+}
+
+.editButton {
+  background-color: initial;
+  background-image: linear-gradient(-180deg, #ff7e31, #e62c03);
+  border-radius: 6px;
+  box-shadow: rgba(0, 0, 0, 0.1) 0 2px 4px;
+  color: #ffffff;
+  cursor: pointer;
+  display: inline-block;
+  font-family: Inter, -apple-system, system-ui, Roboto, "Helvetica Neue", Arial,
+    sans-serif;
+  height: 40px;
+  line-height: 40px;
+  outline: 0;
+  overflow: hidden;
+  padding: 0 20px;
+  pointer-events: auto;
+  position: relative;
+  text-align: center;
+  touch-action: manipulation;
+  user-select: none;
+  -webkit-user-select: none;
+  vertical-align: top;
+  white-space: nowrap;
+  z-index: 9;
+  border: 0;
+  transition: box-shadow 0.2s;
+}
+
+.editButton:disabled {
+  background-image: linear-gradient(-180deg, #d3d3d3, #3a3a3a);
+  cursor: default;
+}
+
+.editButton:hover:enabled {
+  box-shadow: rgba(253, 76, 0, 0.5) 0 3px 8px;
+}

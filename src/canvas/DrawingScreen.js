@@ -52,7 +52,7 @@ const DrawingScreen = () => {
     clearCanvas,
     finishDrawing,
     draw,
-    floodFillStatus,
+    getFloodFillStatus,
   } = useCanvas();
 
   function preventScrolling(e) {
@@ -86,6 +86,8 @@ const DrawingScreen = () => {
       currentCanvasRef.removeEventListener("wheel", preventScrolling);
     };
   }, []);
+
+  console.log(getFloodFillStatus());
 
   const [showCanvas, setShowCanvas] = useState(classes.hide);
 
@@ -331,9 +333,6 @@ const DrawingScreen = () => {
           </div>
           <div className={classes.canvasBorder}>
             <canvas
-              // for this, have conditional for floodFillStatus, if it is true
-              // set cursor to be the paintbucket, either replace whole string here or
-              // break on the <svg and replace with paint bucket svg
               style={{
                 cursor: `url('data:image/svg+xml;utf8,<svg id="svg" xmlns="http://www.w3.org/2000/svg" version="1.1" width="40" height="40"><circle cx="${
                   DSCtx.currentCursorSize

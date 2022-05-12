@@ -1,4 +1,7 @@
 import React, { useContext, useState, useEffect } from "react";
+
+import anime from "animejs/lib/anime.es.js";
+
 import DrawingSelectionContext from "./DrawingSelectionContext";
 
 import classes from "./ProgressBar.module.css";
@@ -6,38 +9,280 @@ import classes from "./ProgressBar.module.css";
 const ProgressBar = () => {
   const DSCtx = useContext(DrawingSelectionContext);
 
-  const [firstCheckpointStyles, setFirstCheckpointStyles] = useState(classes.active);
-  const [secondCheckpointStyles, setSecondCheckpointStyles] = useState(classes.inactive);
-  const [thirdCheckpointStyles, setThirdCheckpointStyles] = useState(classes.inactive);
+  const [firstCheckpointStyles, setFirstCheckpointStyles] = useState(
+    classes.active
+  );
+  const [secondCheckpointStyles, setSecondCheckpointStyles] = useState(
+    classes.inactive
+  );
+  const [thirdCheckpointStyles, setThirdCheckpointStyles] = useState(
+    classes.inactive
+  );
+
+  const [localPBStates, setLocalPBStates] = useState({
+    selectCircle: false,
+    chooseCircle: false,
+    drawCircle: false,
+    selectToChooseBar: false,
+    chooseToDrawBar: false,
+  });
 
   useEffect(() => {
-    if (DSCtx.showPromptSelection) {
-      setFirstCheckpointStyles(classes.active);
-    } else {
-      setFirstCheckpointStyles(classes.inactive);
+    // starting off with showing select prompt screen
+    if (DSCtx.PBStates["selectCircle"] && !localPBStates["selectCircle"]) {
+      anime({
+        targets: "#select",
+        loop: false,
+        width: [0, "28px"],
+        minHeight: [0, "28px"],
+        direction: "normal",
+        duration: 300,
+        easing: "easeInSine",
+      });
+
+      anime({
+        targets: "#selectText",
+        loop: false,
+        direction: "normal",
+        delay: 150,
+        duration: 500,
+        translateX: [0, "265px"],
+        translateY: [0, "205px"],
+        fontSize: ["1.25em", "1.5em"],
+        fontWeight: [400, 600],
+        color: ["rgb(100, 100, 100)", "rgb(0, 0, 0)"],
+        easing: "easeInSine",
+      });
     }
-    if (DSCtx.showPaletteChooser) {
-      setSecondCheckpointStyles(classes.active);
-    } else {
-      setSecondCheckpointStyles(classes.inactive);
+
+    // moving to choose screen
+    if (
+      DSCtx.PBStates["selectToChooseBar"] &&
+      !localPBStates["selectToChooseBar"]
+    ) {
+      anime({
+        targets: "#selectText",
+        loop: false,
+        direction: "normal",
+        duration: 500,
+        translateX: ["265px", 0],
+        translateY: ["205px", 0],
+        fontSize: ["1.5em", "1.25em"],
+        fontWeight: [600, 400],
+        color: ["rgb(0, 0, 0)", "rgb(100, 100, 100)"],
+        easing: "easeInSine",
+        complete: function () {
+          anime({
+            targets: "#chooseText",
+            loop: false,
+            direction: "normal",
+            duration: 500,
+            translateY: [0, "70px"],
+            fontSize: ["1.25em", "1.5em"],
+            fontWeight: [400, 600],
+            color: ["rgb(100, 100, 100)", "rgb(0, 0, 0)"],
+            easing: "easeInSine",
+          });
+        },
+      });
+
+      anime({
+        targets: "#animatedGreenPB",
+        loop: false,
+        width: [0, "265px"],
+        direction: "normal",
+        duration: 350,
+        easing: "easeInSine",
+        complete: function () {
+          anime({
+            targets: "#choose",
+            loop: false,
+            width: [0, "28px"],
+            minHeight: [0, "28px"],
+            direction: "normal",
+            duration: 300,
+            easing: "easeInSine",
+          });
+        },
+      });
     }
-    if (DSCtx.showDrawingScreen) {
-      setThirdCheckpointStyles(classes.active);
-    } else {
-      setThirdCheckpointStyles(classes.inactive);
+
+    // going back to select prompt screen
+    if (
+      !DSCtx.PBStates["selectToChooseBar"] &&
+      localPBStates["selectToChooseBar"]
+    ) {
+      anime({
+        targets: "#choose",
+        loop: false,
+        width: ["28px", 0],
+        minHeight: ["28px", 0],
+        direction: "normal",
+        duration: 300,
+        easing: "easeInSine",
+        complete: function () {
+          anime({
+            targets: "#animatedGreenPB",
+            loop: false,
+            width: ["265px", 0],
+            direction: "normal",
+            duration: 350,
+            easing: "easeInSine",
+          });
+        },
+      });
+
+      // do this right after
+      anime({
+        targets: "#chooseText",
+        loop: false,
+        direction: "normal",
+        duration: 500,
+        translateY: ["70px", 0],
+        fontSize: ["1.5em", "1.25em"],
+        fontWeight: [600, 400],
+        color: ["rgb(0, 0, 0)", "rgb(100, 100, 100)"],
+        easing: "easeInSine",
+        complete: function () {
+          anime({
+            targets: "#selectText",
+            loop: false,
+            direction: "normal",
+            duration: 500,
+            translateX: [0, "265px"],
+            translateY: [0, "205px"],
+            fontSize: ["1.25em", "1.5em"],
+            fontWeight: [400, 600],
+            color: ["rgb(100, 100, 100)", "rgb(0, 0, 0)"],
+            easing: "easeInSine",
+          });
+        },
+      });
     }
-  }, [DSCtx.showPromptSelection, DSCtx.showPaletteChooser, DSCtx.showDrawingScreen]);
+
+    // moving to draw screen
+    if (
+      DSCtx.PBStates["chooseToDrawBar"] &&
+      !localPBStates["chooseToDrawBar"]
+    ) {
+      anime({
+        targets: "#animatedGreenPB",
+        loop: false,
+        width: ["265px", "520px"],
+        direction: "normal",
+        duration: 350,
+        easing: "easeInSine",
+        complete: function () {
+          anime({
+            targets: "#draw",
+            loop: false,
+            width: [0, "28px"],
+            minHeight: [0, "28px"],
+            direction: "normal",
+            duration: 300,
+            easing: "easeInSine",
+          });
+        },
+      });
+
+      anime({
+        targets: "#chooseText",
+        loop: false,
+        direction: "normal",
+        duration: 500,
+        translateY: ["70px", 0],
+        fontSize: ["1.5em", "1.25em"],
+        fontWeight: [600, 400],
+        color: ["rgb(0, 0, 0)", "rgb(100, 100, 100)"],
+        easing: "easeInSine",
+        complete: function () {
+          anime({
+            targets: "#drawText",
+            loop: false,
+            direction: "normal",
+            duration: 500,
+            fontSize: ["1.25em", "1.5em"],
+            fontWeight: [400, 600],
+            color: ["rgb(100, 100, 100)", "rgb(0, 0, 0)"],
+            easing: "easeInSine",
+          });
+        },
+      });
+
+    }
+
+    setLocalPBStates(DSCtx.PBStates);
+  }, [DSCtx.PBStates]);
+
+  // useEffect(() => {
+  //   if (DSCtx.showPromptSelection) {
+  //     setFirstCheckpointStyles(classes.active);
+  //   } else {
+  //     setFirstCheckpointStyles(classes.inactive);
+  //   }
+  //   if (DSCtx.showPaletteChooser) {
+  //     setSecondCheckpointStyles(classes.active);
+  //   } else {
+  //     setSecondCheckpointStyles(classes.inactive);
+  //   }
+  //   if (DSCtx.showDrawingScreen) {
+  //     setThirdCheckpointStyles(classes.active);
+  //   } else {
+  //     setThirdCheckpointStyles(classes.inactive);
+  //   }
+  // }, [
+  //   DSCtx.showPromptSelection,
+  //   DSCtx.showPaletteChooser,
+  //   DSCtx.showDrawingScreen,
+  // ]);
 
   return (
     <div className={classes.rectangle}>
+      {/* select circle */}
       <div className={classes.circle}>
-        <div className={firstCheckpointStyles}>Select</div>
+        <div
+          style={{ width: "28px", minHeight: "28px" }}
+          className={classes.baseFlex}
+        >
+          <div id="select" className={classes.completedCircleSkeleton}></div>
+        </div>
+
+        <div
+          id="animatedGreenPB"
+          className={classes.completedProgressSkeleton}
+          style={{ position: "absolute", top: 130, left: 700 }}
+        ></div>
+
+        <div id="selectText" className={classes.inactive}>
+          Select
+        </div>
       </div>
+
+      {/* choose circle */}
       <div className={classes.circle}>
-        <div className={secondCheckpointStyles}>Choose</div>
+        <div
+          style={{ width: "28px", minHeight: "28px" }}
+          className={classes.baseFlex}
+        >
+          <div id="choose" className={classes.completedCircleSkeleton}></div>
+        </div>
+
+        <div id="chooseText" className={classes.inactive}>
+          Choose
+        </div>
       </div>
+
+      {/* draw circle */}
       <div className={classes.circle}>
-        <div className={thirdCheckpointStyles}>Draw</div>
+        <div
+          style={{ width: "28px", minHeight: "28px" }}
+          className={classes.baseFlex}
+        >
+          <div id="draw" className={classes.completedCircleSkeleton}></div>
+        </div>
+        <div id="drawText" className={classes.inactive}>
+          Draw
+        </div>
       </div>
     </div>
   );

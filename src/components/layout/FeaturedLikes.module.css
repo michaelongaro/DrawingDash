@@ -46,8 +46,10 @@
 
 .marginFlex {
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
+  gap: 1em;
   padding-top: 5em;
   padding-bottom: 5em;
 }

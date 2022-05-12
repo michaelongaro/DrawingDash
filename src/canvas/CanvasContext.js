@@ -271,6 +271,10 @@ export const CanvasProvider = ({ children }) => {
     context.fillRect(0, 0, canvas.width, canvas.height);
   };
 
+  const getFloodFillStatus = () => {
+    return floodFillStatus;
+  }
+
   return (
     <CanvasContext.Provider
       value={{
@@ -283,7 +287,7 @@ export const CanvasProvider = ({ children }) => {
         finishDrawing,
         clearCanvas,
         draw,
-        floodFillStatus,
+        getFloodFillStatus,
       }}
     >
       {children}

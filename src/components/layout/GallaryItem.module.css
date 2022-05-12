@@ -36,6 +36,9 @@
   position: absolute;
   top: 0.5em;
   right: 0.5em;
+  border-radius: 1em;
+  background: rgba(255, 255, 255, 0.25);
+  padding: 0.25em 0.5em 0.25em 0.5em;
 }
 
 .fullScreen {

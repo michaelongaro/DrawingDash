@@ -8,6 +8,9 @@ import Card from "../../ui/Card";
 
 import CopyToClipboard from "./CopyToClipboard";
 import DownloadIcon from "../../svgs/DownloadIcon";
+import HeartOutlineIcon from "../../svgs/HeartOutlineIcon";
+import HeartFilledIcon from "../../svgs/HeartFilledIcon";
+import HeartBrokenIcon from "../../svgs/HeartBrokenIcon";
 
 import { getDatabase, get, ref, child } from "firebase/database";
 
@@ -24,8 +27,6 @@ import classes from "./GallaryItem.module.css";
 
 const GallaryItem = ({ drawingID, settings }) => {
   const favoritesCtx = useContext(FavoritesContext);
-  const itemIsFavorite = favoritesCtx.itemIsFavorite(drawingID);
-  // console.log("rerendered", drawingID);
 
   const dbRef = ref(getDatabase(app));
   const storage = getStorage();
@@ -48,6 +49,8 @@ const GallaryItem = ({ drawingID, settings }) => {
   const [isFetching, setIsFetching] = useState(true);
   const [drawingDetails, setDrawingDetails] = useState();
   const [fetchedDrawing, setFetchedDrawing] = useState();
+
+  const [hoveringOnHeart, setHoveringOnHeart] = useState(false);
 
   useEffect(() => {
     get(child(dbRef, `drawings/${drawingID}`)).then((snapshot) => {
@@ -121,17 +124,21 @@ const GallaryItem = ({ drawingID, settings }) => {
   });
 
   function toggleFavoriteStatusHandler() {
-    if (itemIsFavorite) {
+    if (favoritesCtx.itemIsFavorite(drawingID, drawingDetails.seconds)) {
       favoritesCtx.removeFavorite(
         drawingID,
+        drawingDetails.seconds,
         drawingTotalLikes - 1,
         drawingDailyLikes - 1
       );
+      // i guess this and the one below are just because the state doesn't update in time?
+      // should be able to fix
       setDrawingTotalLikes(drawingTotalLikes - 1);
       setDrawingDailyLikes(drawingDailyLikes - 1);
     } else {
       favoritesCtx.addFavorite(
         drawingID,
+        drawingDetails.seconds,
         drawingTotalLikes + 1,
         drawingDailyLikes + 1
       );
@@ -219,7 +226,7 @@ const GallaryItem = ({ drawingID, settings }) => {
                 alt={drawingDetails.title}
               />
               {/* probably make this a hover? seems a bit intrusive/covering to have on all the time */}
-              <div className={classes.likes}>
+              <div className={`${drawingTotalLikes > 0 ? classes.likes : ""}`}>
                 {drawingTotalLikes > 0 ? `❤️ ${drawingTotalLikes}` : ""}
               </div>
             </div>
@@ -306,12 +313,34 @@ const GallaryItem = ({ drawingID, settings }) => {
                   className={classes.skeletonLoading}
                 ></div>
               ) : (
-                <button
-                  style={{ margin: "0" }}
+                <div
+                  style={{ width: "1.5em", height: "1.5em" }}
                   onClick={toggleFavoriteStatusHandler}
+                  onMouseEnter={() => {
+                    setHoveringOnHeart(true);
+                  }}
+                  onMouseLeave={() => {
+                    setHoveringOnHeart(false);
+                  }}
                 >
-                  {itemIsFavorite ? "💔" : "💖"}
-                </button>
+                  {hoveringOnHeart ? (
+                    favoritesCtx.itemIsFavorite(
+                      drawingID,
+                      drawingDetails.seconds
+                    ) ? (
+                      <HeartBrokenIcon />
+                    ) : (
+                      <HeartFilledIcon />
+                    )
+                  ) : favoritesCtx.itemIsFavorite(
+                      drawingID,
+                      drawingDetails.seconds
+                    ) ? (
+                    <HeartFilledIcon />
+                  ) : (
+                    <HeartOutlineIcon />
+                  )}
+                </div>
               )}
               {/* move to % widths */}
 

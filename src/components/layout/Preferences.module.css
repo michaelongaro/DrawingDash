@@ -6,18 +6,29 @@
   gap: 1em;
 }
 
+.baseHorizFlex {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.75em;
+}
+
+/* add more padding on both sides of vertLine, want the labels and inputs closer together
+    also look at getting reset password to be centered */
 .container {
   display: grid;
-  grid-template-columns: 0.5fr 1.5fr 1fr 1fr;
-  grid-template-rows: 1fr 1fr 1fr 1fr 7fr;
+  grid-template-columns: 0.5fr 0.5fr 2.25fr 0.25fr 1fr 1fr 0.5fr;
+  grid-template-rows: 1fr 1fr 1fr 1fr 1.25fr 3fr 0.75fr;
   gap: 0px 0px;
   grid-auto-flow: row;
   grid-template-areas:
-    "username setUsername rightSide rightSide"
-    "status setStatus rightSide rightSide"
-    "email setEmail rightSide rightSide"
-    "resetPassword resetPassword change change"
-    "pinned pinned pinned pinned";
+    "extraPadding username setUsername vertLine rightSide rightSide extraPadding2"
+    "extraPadding status setStatus vertLine rightSide rightSide extraPadding2"
+    "extraPadding email setEmail vertLine rightSide rightSide extraPadding2"
+    "extraPadding resetPassword resetPassword vertLine extraPadding3 change extraPadding2"
+    "pinnedTitle pinnedTitle pinnedTitle pinnedTitle pinnedTitle pinnedTitle pinnedTitle"
+    "pinned pinned pinned pinned pinned pinned pinned"
+    "extraPadding4 extraPadding4 extraPadding4 extraPadding4 extraPadding4 extraPadding4 extraPadding4";
   justify-content: space-evenly;
   align-items: center;
   justify-items: center;
@@ -39,6 +50,24 @@
   justify-items: center;
 }
 
+.profilePicture {
+  border-radius: 50%;
+  object-fit: cover;
+  width: 165px;
+  height: 165px;
+}
+
+.vertTrailing {
+  height: 16em;
+  width: 1px;
+  background-image: linear-gradient(
+    to bottom,
+    rgba(255, 255, 255, 0),
+    rgba(0, 0, 0, 1),
+    rgba(255, 255, 255, 0)
+  );
+}
+
 .updateButtons {
   display: flex;
   justify-content: center;
@@ -54,6 +83,192 @@
 
 .prefCard:hover {
   box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.2);
+}
+
+.extraPadding {
+  grid-area: extraPadding;
+}
+
+.extraPadding2 {
+  grid-area: extraPadding2;
+}
+
+.extraPadding3 {
+  grid-area: extraPadding3;
+}
+
+.extraPadding4 {
+  grid-area: extraPadding4;
+}
+
+.pinnedTitle {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  grid-area: pinnedTitle;
+}
+
+.leadingLine {
+  height: 1px;
+  width: 6em;
+  margin-right: 0.5em;
+  background-image: linear-gradient(
+    to right,
+    rgba(255, 255, 255, 0),
+    rgba(0, 0, 0, 1)
+  );
+}
+
+.trailingLine {
+  height: 1px;
+  width: 6em;
+  margin-left: 0.5em;
+  background-image: linear-gradient(
+    to right,
+    rgba(0, 0, 0, 1),
+    rgba(255, 255, 255, 0)
+  );
+}
+
+.editButton {
+  background-color: initial;
+  background-image: linear-gradient(-180deg, #ff7e31, #e62c03);
+  border-radius: 6px;
+  box-shadow: rgba(0, 0, 0, 0.1) 0 2px 4px;
+  color: #ffffff;
+  cursor: pointer;
+  display: inline-block;
+  font-family: Inter, -apple-system, system-ui, Roboto, "Helvetica Neue", Arial,
+    sans-serif;
+  height: 40px;
+  line-height: 40px;
+  outline: 0;
+  overflow: hidden;
+  padding: 0 20px;
+  pointer-events: auto;
+  position: relative;
+  text-align: center;
+  touch-action: manipulation;
+  user-select: none;
+  -webkit-user-select: none;
+  vertical-align: top;
+  white-space: nowrap;
+  z-index: 9;
+  border: 0;
+  transition: box-shadow 0.2s;
+}
+
+.editButton:disabled {
+  background-image: linear-gradient(-180deg, #d3d3d3, #3a3a3a);
+  cursor: default;
+}
+
+.editButton:hover:enabled {
+  box-shadow: rgba(253, 76, 0, 0.5) 0 3px 8px;
+}
+
+.closeButton {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  cursor: pointer;
+  border: 0;
+
+  background-image: linear-gradient(-180deg, #ebebeb, #c4c4c4);
+  border-radius: 6px;
+  box-shadow: rgba(0, 0, 0, 0.1) 0 2px 4px;
+  transition: box-shadow 0.2s;
+  padding: 0.75em 1em;
+  margin-right: 0.5em;
+}
+
+.closeButton:hover:enabled {
+  box-shadow: rgba(117, 117, 117, 0.5) 0 3px 5px;
+}
+
+.resizeButton {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  cursor: pointer;
+  border: 0;
+
+  background-image: linear-gradient(-180deg, #ebebeb, #c4c4c4);
+  border-radius: 6px;
+  box-shadow: rgba(0, 0, 0, 0.1) 0 2px 4px;
+  transition: box-shadow 0.2s;
+  padding: 0.35em 0.6em;
+  margin: 0;
+}
+
+.cropImageModal {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+
+  width: 60vw;
+  height: 75vh;
+
+  border-radius: 1em;
+  background: linear-gradient(
+    350deg,
+    rgba(27, 138, 56, 1) 0%,
+    rgba(0, 230, 31, 1) 100%
+  );
+  padding: 1em;
+
+  z-index: 350;
+}
+
+.uploadOverlay {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 100%;
+  height: 100%;
+  transform: translate(-50%, -50%);
+
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 0.5em;
+
+  border-radius: 50%;
+
+  background-color: rgba(0, 0, 0, 0.3);
+  z-index: 150;
+  transition: background-color 0.3s;
+}
+
+.uploadOverlay:hover {
+  background-color: rgba(0, 0, 0, 0.75);
+}
+
+.buttonOperationContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.85em;
+
+  cursor: pointer;
+}
+
+/* should tie click on image to open up input */
+input[type="file"] {
+  opacity: 0;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+}
+
+.vertLine {
+  grid-area: vertLine;
 }
 
 .pinned {
@@ -102,4 +317,18 @@
 
 .resetPassword {
   grid-area: resetPassword;
+}
+
+.skeletonLoading {
+  background: #eee;
+  background: linear-gradient(110deg, #ececec 8%, #f5f5f5 18%, #ececec 33%);
+  border-radius: 50%;
+  background-size: 200% 100%;
+  animation: 1.5s shine linear infinite;
+}
+
+@keyframes shine {
+  to {
+    background-position-x: -200%;
+  }
 }

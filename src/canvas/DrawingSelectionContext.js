@@ -48,6 +48,17 @@ export function DrawingSelectionProvider(props) {
   const [showEndOverlay, setShowEndOverlay] = useState(false);
   const [showEndOutline, setShowEndOutline] = useState(false);
 
+  // used to determine whether PromptSelection slides in from left/right
+  const [startFromLeft, setStartFromLeft] = useState(true);
+
+  const [PBStates, setPBStates] = useState({
+    selectCircle: false,
+    chooseCircle: false,
+    drawCircle: false,
+    selectToChooseBar: false,
+    chooseToDrawBar: false,
+  });
+
   // i hate doing this below
   const [drawingStatuses, setDrawingStatuses] = useState({
     60: false,
@@ -89,6 +100,27 @@ export function DrawingSelectionProvider(props) {
       });
     }
   }, [isLoading, isAuthenticated]);
+
+  useEffect(() => {
+    console.log("PBStates changed to", PBStates);
+  }, [PBStates]);
+
+  function updatePBStates(field, value) {
+    let tempPBStatuses = {...PBStates};
+    tempPBStatuses[field] = value;
+    console.log("setting context to", tempPBStatuses);
+    setPBStates(tempPBStatuses);
+  }
+
+  function resetProgressBar() {
+    setPBStates({
+      selectCircle: false,
+      chooseCircle: false,
+      drawCircle: false,
+      selectToChooseBar: false,
+      chooseToDrawBar: false,
+    });
+  }
 
   function resetSelections() {
     setSeconds(0);
@@ -145,6 +177,12 @@ export function DrawingSelectionProvider(props) {
     setDrawingTime: setDrawingTime,
     buttonAvailability: buttonAvailability,
     setButtonAvailability: setButtonAvailability,
+    startFromLeft: startFromLeft,
+    setStartFromLeft: setStartFromLeft,
+    PBStates: PBStates,
+    setPBStates: setPBStates,
+    updatePBStates: updatePBStates,
+    resetProgressBar: resetProgressBar,
 
     drawingStatuses: drawingStatuses,
     dailyPrompts: dailyPrompts,

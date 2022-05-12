@@ -22,16 +22,14 @@ const SlidingDrawing = (props) => {
   }, [currentWidth]);
 
   useEffect(() => {
-    if (xDepth !== 0) {
+    // if (xDepth !== 0) {
       animationRef.current = anime({
         targets: `#image${props.id}`,
         translateX: currentWidth - xDepth,
         // delay: 0,
-        delay: function (el, i, l) {
-          return i * 300;
-        },
+        delay:  Math.floor(Math.random() * 5000),
         // opacity: [0, 0.10, 0.25, 0.45, 0.9, 0],
-        opacity: [0, 0.9],
+        opacity: [0, 1, 0],
         // opacity: function (el, i, l) {
         //   return i * 100;
         // },
@@ -45,7 +43,7 @@ const SlidingDrawing = (props) => {
         duration: Math.floor(Math.random() * 2000) + 4000,
         easing: "linear",
       });
-    }
+    // }
   }, [xDepth, currentWidth]);
 
   function randomYDepth() {

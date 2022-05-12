@@ -1,4 +1,10 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, {
+  useContext,
+  useEffect,
+  useLayoutEffect,
+  useState,
+  useRef,
+} from "react";
 import anime from "animejs/lib/anime.es.js";
 import { useAuth0 } from "@auth0/auth0-react";
 
@@ -69,6 +75,22 @@ const PromptSelection = () => {
     }
   }, [showExtraPrompt, DSCtx.extraPrompt]);
 
+  useEffect(() => {
+    anime({
+      targets: "#promptSelection",
+      loop: false,
+      translateX: DSCtx.startFromLeft
+        ? window.innerWidth
+        : -1 * window.innerWidth,
+      opacity: [0, 1],
+      direction: "normal",
+      duration: 250,
+      easing: "easeInSine",
+    });
+
+    DSCtx.updatePBStates("selectCircle", true);
+  }, []);
+
   function updateStatesAndShowNextComponent(seconds, prompt, isExtra = false) {
     if (
       (isExtra && DSCtx.drawingStatuses["extra"]) ||
@@ -77,17 +99,40 @@ const PromptSelection = () => {
       return;
     }
 
-    DSCtx.setDrawingTime(seconds);
-    DSCtx.setChosenPrompt(prompt);
-    DSCtx.setShowPaletteChooser(true);
-    DSCtx.setShowDrawingScreen(false);
-    DSCtx.setShowEndOverlay(false);
-    DSCtx.setShowEndOutline(false);
-    DSCtx.setShowPromptSelection(false);
+    DSCtx.updatePBStates("selectToChooseBar", true);
+
+    anime({
+      targets: "#promptSelection",
+      loop: false,
+      translateX: window.innerWidth * 2,
+      opacity: [1, 0],
+      direction: "normal",
+      duration: 450,
+      easing: "easeInSine",
+      complete: function () {
+        DSCtx.setDrawingTime(seconds);
+        DSCtx.setChosenPrompt(prompt);
+        DSCtx.setShowPaletteChooser(true);
+        DSCtx.setShowDrawingScreen(false);
+        DSCtx.setShowEndOverlay(false);
+        DSCtx.setShowEndOutline(false);
+        DSCtx.setShowPromptSelection(false);
+      },
+    });
   }
 
   return (
-    <>
+    <div
+      id={"promptSelection"}
+      style={{
+        position: "absolute",
+        left: `${
+          DSCtx.startFromLeft ? -1 * window.innerWidth : window.innerWidth
+        }px`,
+        top: "185px",
+        width: "100vw",
+      }}
+    >
       {!isLoading && isAuthenticated && (
         <div className={classes.timerSelectionsModal}>
           <div>{DSCtx.titleForPromptSelection()}</div>
@@ -163,7 +208,7 @@ const PromptSelection = () => {
           </div>
         </div>
       )}
-    </>
+    </div>
   );
 };
 

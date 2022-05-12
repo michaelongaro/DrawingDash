@@ -1,24 +1,31 @@
 import React, { useContext } from "react";
 
+import { useAuth0 } from "@auth0/auth0-react";
+
 import FavoritesContext from "./FavoritesContext";
 
+import ProfileHeader from "./ProfileHeader";
+import Search from "./Search";
 import GallaryList from "./GallaryList";
+
+import classes from "./Preferences.module.css";
 
 const Likes = () => {
   const favoritesCtx = useContext(FavoritesContext);
-
-  // looks like we will need to fetch actual drawings from favoritesCtx.favorites
-  // also need to copy paste 60/180/300 functionality from regular titles db schema
+  const { user } = useAuth0();
 
   return (
-    <section style={{ width: "80%" }}>
-      <h1>My Favorites</h1>
+    <div className={`${classes.baseFlex} ${classes.prefCard}`}>
+      <ProfileHeader title={"Likes"} />
       {favoritesCtx.totalFavorites === 0 ? (
         "You haven't selected any favorites yet. Add some and view them here!"
       ) : (
-        <GallaryList drawings={favoritesCtx.favorites} />
+        // looks like will need to refactor Search to be able to search through just user likes
+        // tedious, but should be EXACT same logic soooo
+        <Search userProfile={user.sub} margin={"1em"} />
+        // <GallaryList drawingIDs={favoritesCtx.favorites} />
       )}
-    </section>
+    </div>
   );
 };
 

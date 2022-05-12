@@ -31,6 +31,7 @@ const PinnedArtwork = () => {
     justifyContent: "center",
     alignItems: "center",
     margin: "3em",
+    zIndex: "500",
   };
 
   useEffect(() => {
@@ -80,7 +81,7 @@ const PinnedArtwork = () => {
 
   return (
     <div className={classes.parentContain}>
-      <h3>Pinned Artwork</h3>
+      {/* <h3>Pinned Artwork</h3> */}
       <div className={classes.pinnedContain}>
         <div
           onClick={() => {
