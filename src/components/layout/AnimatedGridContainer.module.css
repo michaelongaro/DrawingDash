@@ -1,0 +1,71 @@
+.gridContainer {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+  grid-template-rows: 1fr 1fr 1fr;
+  gap: 0px 0px;
+  grid-auto-flow: row;
+  grid-template-areas:
+    "drawing0 drawing1 drawing2 drawing3 drawing4"
+    "drawing5 drawing6 drawing7 drawing8 drawing9"
+    "drawing10 drawing11 drawing12 drawing13 drawing14";
+}
+
+.drawing0 {
+  grid-area: drawing0;
+}
+
+.drawing1 {
+  grid-area: drawing1;
+}
+
+.drawing2 {
+  grid-area: drawing2;
+}
+
+.drawing3 {
+  grid-area: drawing1;
+}
+
+.drawing4 {
+  grid-area: drawing2;
+}
+
+.drawing5 {
+  grid-area: drawing1;
+}
+
+.drawing6 {
+  grid-area: drawing2;
+}
+
+.drawing7 {
+  grid-area: drawing1;
+}
+
+.drawing8 {
+  grid-area: drawing2;
+}
+
+.drawing9 {
+  grid-area: drawing1;
+}
+
+.drawing10 {
+  grid-area: drawing2;
+}
+
+.drawing11 {
+  grid-area: drawing1;
+}
+
+.drawing12 {
+  grid-area: drawing2;
+}
+
+.drawing13 {
+  grid-area: drawing1;
+}
+
+.drawing14 {
+  grid-area: drawing2;
+}

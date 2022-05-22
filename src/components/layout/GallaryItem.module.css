@@ -42,18 +42,14 @@
 }
 
 .fullScreen {
-  position: absolute;
+  position: fixed;
   width: 100vw;
-  height: 135vh;
-  /* margin: 3em; */
+  height: 100vh;
   overflow: hidden;
-  left: 0;
-  right: 0;
-  top: 5em;
+
+  top: 0;
   z-index: 9000;
-  padding: 3em;
-  /* padding-top: 10em; */
-  bottom: 5em;
+  padding: 6em;
   background-color: rgba(0, 0, 0, 0.4);
 }
 

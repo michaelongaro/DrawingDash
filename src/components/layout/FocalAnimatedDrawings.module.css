@@ -1,0 +1,130 @@
+.fullWidth {
+  background: linear-gradient(89deg, #11ca49, #72c659, #0b8e22);
+  background-size: 600% 600%;
+
+  overflow: hidden;
+  z-index: 100;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+
+  -webkit-animation: backgroundFade 6s ease infinite;
+  -moz-animation: backgroundFade 6s ease infinite;
+  animation: backgroundFade 6s ease infinite;
+}
+
+.animatedContainer {
+  position: absolute;
+  left: 0;
+  top: 0;
+
+  transition: "display .5s";
+}
+
+.gridContainer {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+  grid-template-rows: 1fr 1fr 1fr;
+  gap: 0px 0px;
+  grid-auto-flow: row;
+  grid-template-areas:
+    "drawing0 drawing1 drawing2 drawing3 drawing4"
+    "drawing5 drawing6 drawing7 drawing8 drawing9"
+    "drawing10 drawing11 drawing12 drawing13 drawing14";
+}
+
+.drawing0 {
+  grid-area: drawing0;
+}
+
+.drawing1 {
+  grid-area: drawing1;
+}
+
+.drawing2 {
+  grid-area: drawing2;
+}
+
+.drawing3 {
+  grid-area: drawing1;
+}
+
+.drawing4 {
+  grid-area: drawing2;
+}
+
+.drawing5 {
+  grid-area: drawing1;
+}
+
+.drawing6 {
+  grid-area: drawing2;
+}
+
+.drawing7 {
+  grid-area: drawing1;
+}
+
+.drawing8 {
+  grid-area: drawing2;
+}
+
+.drawing9 {
+  grid-area: drawing1;
+}
+
+.drawing10 {
+  grid-area: drawing2;
+}
+
+.drawing11 {
+  grid-area: drawing1;
+}
+
+.drawing12 {
+  grid-area: drawing2;
+}
+
+.drawing13 {
+  grid-area: drawing1;
+}
+
+.drawing14 {
+  grid-area: drawing2;
+}
+
+@-webkit-keyframes backgroundFade {
+  0% {
+    background-position: 0% 51%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 51%;
+  }
+}
+@-moz-keyframes backgroundFade {
+  0% {
+    background-position: 0% 51%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 51%;
+  }
+}
+@keyframes backgroundFade {
+  0% {
+    background-position: 0% 51%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 51%;
+  }
+}

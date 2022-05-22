@@ -27,14 +27,21 @@
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  gap: 2em;
+  /* gap: 2em; */
   width: 100%;
 }
 
-.inlineFlexWrap {
-  /* display: inline-flex;
-  flex-wrap: wrap; */
-  /* flex: 1 0 61%; */
+.buttonContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 2em;
+}
+
+.durationIconContainer {
+  border-top-left-radius: 1em;
+  border-top-right-radius: 1em;
+  padding: 1em 1em 0.5em 1em;
 }
 
 .darken {

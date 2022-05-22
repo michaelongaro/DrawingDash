@@ -7,138 +7,174 @@ import classes from "./GallaryList.module.css";
 
 const GallaryList = (props) => {
   const [displayedDrawings, setDisplayedDrawings] = useState(props.drawingIDs);
-  const [buttonStates, setButtonStates] = useState(["", "", ""]);
-  const [filteredDrawings, setFilteredDrawings] = useState({
-    60: true,
-    180: true,
-    300: true,
-  });
+  // can do right here
+  const [buttonDisabledStates, setButtonDisabledStates] = useState([
+    [
+      props.drawingIDs["60"].length === 0 ? true : false,
+      props.drawingIDs["180"].length === 0 ? true : false,
+      props.drawingIDs["300"].length === 0 ? true : false,
+    ],
+  ]);
+  const [durationStates, setDurationStates] = useState([false, false, false]);
 
   useEffect(() => {
-    if (props.drawingIDs !== "none") {
-      let initStates = ["", "", ""];
-      let filterStates = {
-        60: true,
-        180: true,
-        300: true,
-      };
-      if (props.drawingIDs["60"].length === 0) {
-        initStates[0] = toggleButton(0, false);
-        filterStates["60"] = false;
-      }
-      if (props.drawingIDs["180"].length === 0) {
-        initStates[1] = toggleButton(1, false);
-        filterStates["180"] = false;
-      }
-      if (props.drawingIDs["300"].length === 0) {
-        initStates[2] = toggleButton(2, false);
-        filterStates["300"] = false;
-      }
-
-      setButtonStates(initStates);
-      setFilteredDrawings(filterStates);
-      if (displayedDrawings !== props.drawingIDs) {
-        setDisplayedDrawings(props.drawingIDs);
-      }
+    if (props.drawingIDs["60"].length !== 0) {
+      setDurationStates([true, false, false]);
+      return;
+    }
+    if (props.drawingIDs["180"].length !== 0) {
+      setDurationStates([false, true, false]);
+      return;
+    }
+    if (props.drawingIDs["300"].length !== 0) {
+      setDurationStates([false, false, true]);
+      return;
     }
   }, [props.drawingIDs]);
 
-  function updateDisplayedDrawings(duration) {
-    let updatedDurationValue = filteredDrawings[duration]
-      ? []
-      : props.drawingIDs[duration];
-
-    let tempDisplayed = { ...displayedDrawings };
-    tempDisplayed[duration] = updatedDurationValue;
-    setDisplayedDrawings(tempDisplayed);
-
-    updateFilteredDrawings(duration);
-  }
-
-  function updateFilteredDrawings(duration) {
-    const tempFilteredDrawings = { ...filteredDrawings };
-    tempFilteredDrawings[duration] = !tempFilteredDrawings[duration];
-    setFilteredDrawings(tempFilteredDrawings);
-  }
-
-  if (props.drawingIDs === "none") {
-    const static_title = props.title;
-    return (
-      <div
-        className={classes.baseFlex}
-      >{`No Results for ${static_title}... yet!`}</div>
-    );
-  }
-
-  function toggleButton(id, directUpdate) {
-    const copy = !buttonStates ? ["", "", ""] : [...buttonStates];
-    if (copy[id] === "") {
-      copy[id] = classes.darken;
+  function getButtonBackground(index) {
+    if (buttonDisabledStates[index]) {
+      return "gray";
     } else {
-      copy[id] = "";
-    }
-    if (directUpdate) {
-      setButtonStates(copy);
-    } else {
-      return copy[id];
+      if (!durationStates[index]) {
+        // ughhhh THINK before you type dude, could go two ways
+        // have color always, just how much opacity there is on it
+        // or have a grayish thing and then color on the available ones to switch to
+        // either way probably have a gradient no matter what
+        return "grey";
+      }
+      if (index === 0) {
+        return "red";
+      }
+      if (index === 1) {
+        return "yellow";
+      }
+      if (index === 2) {
+        return "green";
+      }
     }
   }
 
   return (
     <div className={classes.baseFlex}>
       <div className={classes.buttonContainer}>
-        <button
-          className={buttonStates[0]}
+        <div
+          className={`${durationStates[0] ? "" : classes.darken} ${
+            classes.durationIconContainer
+          }`}
+          style={{
+            backgroundColor: durationStates[0] ? "red" : "grey",
+            cursor: durationStates[0] ? "pointer" : "default",
+          }}
           onClick={() => {
-            toggleButton(0, true);
-            updateDisplayedDrawings("60");
+            if (durationStates[0]) setDurationStates([true, false, false]);
           }}
         >
           1 Minute
-        </button>
-        <button
-          className={buttonStates[1]}
+        </div>
+        <div
+          className={`${durationStates[1] ? "" : classes.darken} ${
+            classes.durationIconContainer
+          }`}
+          style={{
+            backgroundColor: durationStates[1] ? "yellow" : "grey",
+            cursor: durationStates[1] ? "pointer" : "default",
+          }}
           onClick={() => {
-            toggleButton(1, true);
-            updateDisplayedDrawings("180");
+            if (durationStates[1]) setDurationStates([false, true, false]);
           }}
         >
           3 Minutes
-        </button>
-        <button
-          className={buttonStates[2]}
+        </div>
+        <div
+          className={`${durationStates[2] ? "" : classes.darken} ${
+            classes.durationIconContainer
+          }`}
+          style={{
+            backgroundColor: durationStates[2] ? "green" : "grey",
+            cursor: durationStates[2] ? "pointer" : "default",
+          }}
           onClick={() => {
-            toggleButton(2, true);
-            updateDisplayedDrawings("300");
+            if (durationStates[2]) setDurationStates([false, false, true]);
           }}
         >
           5 Minutes
-        </button>
+        </div>
       </div>
-
-      {/* no clue why I made it into one monolithic thing like this
-    would love for it to be split up into 3 divs, but I just realized 
-    that way the alignment/spacing was messed up... idk find a way to refactor later */}
 
       <Card margin={props.margin}>
         <div className={classes.flexListContain}>
-          {Object.values(displayedDrawings)
-            .flat()
-            .map((drawingID, i) => (
-              <GallaryItem
-                key={i}
-                drawingID={drawingID}
-                settings={{
-                  width: 30,
-                  forHomepage: false,
-                  forPinnedShowcase: false,
-                  forPinnedItem: false,
-                  skeleHeight: "10em",
-                  skeleDateWidth: "6em",
-                  skeleTitleWidth: "6em",
-                }}
-              />
-            ))}
+          <div
+            className={`${durationStates[0] ? "" : classes.hide} ${
+              classes.flexListContain
+            }`}
+          >
+            {Object.values(displayedDrawings["60"])
+              .flat()
+              .map((drawingID, i) => (
+                <GallaryItem
+                  key={i}
+                  drawingID={drawingID}
+                  settings={{
+                    width: 30,
+                    forHomepage: false,
+                    forPinnedShowcase: false,
+                    forPinnedItem: false,
+                    skeleHeight: "10em",
+                    skeleDateWidth: "6em",
+                    skeleTitleWidth: "6em",
+                  }}
+                />
+              ))}
+          </div>
+
+          <div
+            className={`${durationStates[1] ? "" : classes.hide} ${
+              classes.flexListContain
+            }`}
+          >
+            {Object.values(displayedDrawings["180"])
+              .flat()
+              .map((drawingID, i) => (
+                <GallaryItem
+                  key={i}
+                  drawingID={drawingID}
+                  settings={{
+                    width: 30,
+                    forHomepage: false,
+                    forPinnedShowcase: false,
+                    forPinnedItem: false,
+                    skeleHeight: "10em",
+                    skeleDateWidth: "6em",
+                    skeleTitleWidth: "6em",
+                  }}
+                />
+              ))}
+          </div>
+
+          <div
+            className={`${durationStates[2] ? "" : classes.hide} ${
+              classes.flexListContain
+            }`}
+          >
+            {Object.values(displayedDrawings["300"])
+              .flat()
+              .map((drawingID, i) => (
+                <GallaryItem
+                  key={i}
+                  drawingID={drawingID}
+                  settings={{
+                    width: 30,
+                    forHomepage: false,
+                    forPinnedShowcase: false,
+                    forPinnedItem: false,
+                    skeleHeight: "10em",
+                    skeleDateWidth: "6em",
+                    skeleTitleWidth: "6em",
+                  }}
+                />
+              ))}
+          </div>
         </div>
       </Card>
     </div>

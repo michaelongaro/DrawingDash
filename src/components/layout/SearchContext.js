@@ -78,13 +78,13 @@ export function SearchProvider(props) {
         // return Promise.all(promises);
       })
       .then(() => {
-        if (drawingIDS.length === 0) {
-          updateSearchValues("gallary", "none", idx);
-        } else {
+        // if (drawingIDS.length === 0) {
+        //   updateSearchValues("gallary", "none", idx);
+        // } else {
           updateSearchValues("gallary", gallaryResults, idx);
           // this below is not currently being used.
           setPersistingUserGallary(drawingIDS);
-        }
+        // }
       });
       // .then((results) => {
       //   if (results.length === 0) {

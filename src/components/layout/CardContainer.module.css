@@ -1,5 +1,40 @@
 .container {
   display: flex;
   justify-content: space-evenly;
-  margin: 50px;
+  margin: 5em;
+}
+
+.card {
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  align-items: center;
+
+  width: 22em;
+  /* height: 12em; */
+  background: #eeeeee;
+  border-radius: 1em;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.card > div {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  font-size: 1.15em;
+  color: hsl(0deg 0% 42%);
+}
+
+.iconContain {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-top-left-radius: 1em;
+  border-top-right-radius: 1em;
+
+  width: 100%;
+
+  padding-top: 0.75em;
+  padding-bottom: 0.75em;
 }

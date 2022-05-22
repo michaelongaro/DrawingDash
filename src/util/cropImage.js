@@ -17,14 +17,14 @@ function getRadianAngle(degreeValue) {
  * @param {Object} pixelCrop - pixelCrop Object provided by react-easy-crop
  * @param {number} rotation - optional rotation parameter
  */
-export default async function getCroppedImg(imageSrc, pixelCrop, rotation = 0) {
+export default async function getCroppedImg(imageSrc, pixelCrop, fileType) {
+  console.log(imageSrc);
   const image = await createImage(imageSrc);
   const canvas = document.createElement("canvas");
   const ctx = canvas.getContext("2d");
 
   const maxSize = Math.max(image.width, image.height);
   const safeArea = 2 * ((maxSize / 2) * Math.sqrt(2));
-
   // set each dimensions to double largest dimension to allow for a safe area for the
   // image to rotate in without being clipped by canvas context
   canvas.width = safeArea;
@@ -32,8 +32,8 @@ export default async function getCroppedImg(imageSrc, pixelCrop, rotation = 0) {
 
   // translate canvas context to a central location on image to allow rotating around the center.
   ctx.translate(safeArea / 2, safeArea / 2);
-  ctx.rotate(getRadianAngle(rotation));
   ctx.translate(-safeArea / 2, -safeArea / 2);
+  console.log(image);
 
   // draw rotated image and store data.
   ctx.drawImage(
@@ -55,13 +55,14 @@ export default async function getCroppedImg(imageSrc, pixelCrop, rotation = 0) {
   );
 
   // As Base64 string
-  // return canvas.toDataURL('image/jpeg');
+  // console.log(fileType);
+  // return canvas.toDataURL(fileType);
 
   // As a blob
   return new Promise((resolve) => {
     canvas.toBlob((file) => {
       console.log(file);
       resolve(URL.createObjectURL(file));
-    }, "image/jpeg");
+    }, fileType);
   });
 }

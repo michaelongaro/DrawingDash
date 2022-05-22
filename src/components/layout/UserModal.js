@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from "react";
 
+import getCroppedImg from "../../util/cropImage";
+
 import Search from "./Search";
 import SlideShow from "./SlideShow";
 
@@ -14,6 +16,7 @@ import {
 import {
   getDownloadURL,
   getStorage,
+  getMetadata,
   ref as ref_storage,
   uploadBytes,
 } from "firebase/storage";
@@ -35,7 +38,24 @@ const UserModal = (props) => {
   const [pinnedIDs, setPinnedIDs] = useState();
   const [pinnedMetadata, setPinnedMetadata] = useState();
   const [pinnedDrawings, setPinnedDrawings] = useState();
-  const [imageURL, setImageURL] = useState();
+  const [imageFileType, setImageFileType] = useState(null);
+  const [croppedImage, setCroppedImage] = useState(null);
+  const [DBCropData, setDBCropData] = useState(null);
+  const [profileImage, setProfileImage] = useState(null);
+
+  const showCroppedImage = async () => {
+    try {
+      const croppedImg = await getCroppedImg(
+        profileImage,
+        DBCropData,
+        imageFileType
+      );
+
+      setCroppedImage(croppedImg);
+    } catch (e) {
+      console.log(e);
+    }
+  };
 
   useEffect(() => {
     // fetch data from db if it is present
@@ -44,6 +64,7 @@ const UserModal = (props) => {
       if (snapshot.exists()) {
         setUsername(snapshot.val()["username"]);
         setStatus(snapshot.val()["status"]);
+        setDBCropData(snapshot.val()["profileCropMetadata"]);
         get(child(dbRef, `users/${props.uid}/pinnedArt`)).then((snapshot2) => {
           if (snapshot2.exists()) {
             setPinnedIDs(Object.values(snapshot2.val()));
@@ -56,12 +77,32 @@ const UserModal = (props) => {
       }
     });
 
-    getDownloadURL(ref_storage(storage, `${props.uid}/profile.jpg`)).then(
-      (url) => {
-        setImageURL(url);
-      }
-    );
+    getDownloadURL(ref_storage(storage, `${props.uid}/profile`))
+      .then((url) => {
+        getMetadata(ref_storage(storage, `${props.uid}/profile`))
+          .then((metadata) => {
+            setImageFileType(metadata.contentType);
+            setProfileImage(url);
+          })
+          .catch((e) => {
+            console.error(e);
+          });
+      })
+      .catch((error) => {
+        if (
+          error.code === "storage/object-not-found" ||
+          error.code === "storage/unknown"
+        ) {
+          console.log("user profile image not found"); //don't need to log this
+        }
+      });
   }, []);
+
+  useEffect(() => {
+    if (imageFileType && profileImage && DBCropData) {
+      showCroppedImage();
+    }
+  }, [imageFileType, profileImage, DBCropData]);
 
   useEffect(() => {
     if (pinnedMetadata && pinnedDrawings) setIsFetching(false);
@@ -124,8 +165,8 @@ const UserModal = (props) => {
           <img
             className={classes.image}
             width={"165px"}
-            src={imageURL}
-            alt={props.uid}
+            src={croppedImage ?? profileImage}
+            alt={"Profile"}
           />
 
           <div className={classes.showUsername}>{username}</div>

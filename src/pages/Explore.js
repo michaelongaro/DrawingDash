@@ -1,12 +1,12 @@
 import Search from "../components/layout/Search";
 
 import classes from "./Explore.module.css";
-import FocalSlidingDrawings from "../components/layout/FocalSlidingDrawings";
+import FocalAnimatedDrawings from "../components/layout/FocalAnimatedDrawings";
 
 function Explore() {
   return (
     <div className={classes.exploreContain}>
-      {/* <FocalSlidingDrawings baseHeight={75} maxHeight={170} title={"Search"} forHomepage={false} /> */}
+      <FocalAnimatedDrawings forHomepage={false} />
       <Search userProfile={""} />
     </div>
   );

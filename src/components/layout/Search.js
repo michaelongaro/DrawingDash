@@ -142,27 +142,31 @@ const Search = (props) => {
       <form className={classes.formContainer} onSubmit={prepGallarySearch}>
         <div className={classes.searchContainer}>
           <input
+            className={classes.searchInput}
             id="adj"
-            placeholder="Adjective"
             ref={adjectiveInputRef}
             autoComplete="off"
+            required
           ></input>
+          <label>Adjective</label>
           <div className={showAdjResults}>
             <AdjAutofillResults userProfile={props.userProfile} />
           </div>
         </div>
         <div className={classes.searchContainer}>
           <input
+            className={classes.searchInput}
             id="noun"
-            placeholder="Noun"
             ref={nounInputRef}
             autoComplete="off"
+            required
           ></input>
+          <label>Noun</label>
           <div className={showNounResults}>
             <NounAutofillResults userProfile={props.userProfile} />
           </div>
         </div>
-        <button>Search</button>
+        <button className={classes.searchButton}>Search</button>
       </form>
 
       {searchCtx.searchValues["gallary"][idx] !== null ? (

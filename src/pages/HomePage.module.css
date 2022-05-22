@@ -14,3 +14,35 @@
 .hide {
   display: none;
 }
+
+.fadingOrContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.25em;
+}
+
+.leadingLine {
+  height: 1px;
+  width: 4em;
+  background-image: linear-gradient(
+    to right,
+    rgba(255, 255, 255, 0),
+    rgba(41, 41, 41, 1)
+  );
+}
+
+.or {
+  font-size: 0.75em;
+  color: rgb(41, 41, 41);
+}
+
+.trailingLine {
+  height: 1px;
+  width: 4em;
+  background-image: linear-gradient(
+    to right,
+    rgb(41, 41, 41),
+    rgba(255, 255, 255, 0)
+  );
+}

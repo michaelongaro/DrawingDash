@@ -15,6 +15,8 @@ import ProfileHeader from "./ProfileHeader";
 import ExitPreferencesIcon from "../../svgs/ExitPreferencesIcon";
 import EditPreferencesIcon from "../../svgs/EditPreferencesIcon";
 import ResizeIcon from "../../svgs/ResizeIcon";
+import UploadIcon from "../../svgs/UploadIcon";
+import DefaultUserIcon from "../../svgs/DefaultUserIcon";
 
 import {
   getDatabase,
@@ -26,6 +28,9 @@ import {
 import {
   getDownloadURL,
   getStorage,
+  getMetadata,
+  updateMetadata,
+  put,
   ref as ref_storage,
   uploadBytes,
 } from "firebase/storage";
@@ -33,8 +38,6 @@ import {
 import { app } from "../../util/init-firebase";
 
 import classes from "./Preferences.module.css";
-import UploadIcon from "../../svgs/UploadIcon";
-import DefaultUserIcon from "../../svgs/DefaultUserIcon";
 
 const Preferences = () => {
   const { user, isAuthenticated, isLoading } = useAuth0();
@@ -49,6 +52,9 @@ const Preferences = () => {
   const [userEmail, setUserEmail] = useState("");
   const [imageAltInfo, setImageAltInfo] = useState("username");
   const [image, setImage] = useState(null);
+  const [imageFileType, setImageFileType] = useState(null);
+  const [userUploadedImage, setUserUploadedImage] = useState(null);
+  const [cropReadyImage, setCropReadyImage] = useState(null);
   const [hasChangedPicture, setHasChangedPicture] = useState(false);
   const [imageCroppedAndLoaded, setImageCroppedAndLoaded] = useState(false);
 
@@ -74,39 +80,33 @@ const Preferences = () => {
     setCroppedAreaPixels(croppedAreaPixels);
   }, []);
 
-  const showCroppedImage =
-    // useCallback(
-    async (disableSkeleton = false) => {
-      console.log("showCroppedImage was called");
-      try {
-        console.log(
-          "tried to be opened with",
-          image,
-          croppedAreaPixels,
-          DBCropData
-        );
-        let currentCropAreaPixels = croppedAreaPixels ?? DBCropData;
+  const showCroppedImage = async (disableSkeleton = false) => {
+    try {
+      let currentCropAreaPixels = croppedAreaPixels ?? DBCropData;
 
-        const croppedImg = await getCroppedImg(image, currentCropAreaPixels);
-        console.log("donee", croppedImg);
-        // let blob = await fetch(croppedImage).then(r => r.blob());
-        setCroppedImage(croppedImg);
-        setShowCropModal(false);
+      const croppedImg = await getCroppedImg(
+        cropReadyImage ?? image,
+        currentCropAreaPixels,
+        imageFileType
+      );
 
-        if (disableSkeleton) {
-          setImageCroppedAndLoaded(true);
-        }
-      } catch (e) {
-        console.log(e);
-        setShowCropModal(false);
+      setCroppedImage(croppedImg);
+      setShowCropModal(false);
+
+      if (disableSkeleton) {
+        setImageCroppedAndLoaded(true);
       }
-    };
-  //   ,
-  //   [image, croppedAreaPixels]
-  // );
+    } catch (e) {
+      console.log(e);
+      setShowCropModal(false);
+    }
+  };
 
   const onClose = useCallback(() => {
+    console.log("close called");
     setShowCropModal(false);
+    setUserUploadedImage(null);
+    setCropReadyImage(null);
   }, []);
 
   useEffect(() => {
@@ -122,9 +122,17 @@ const Preferences = () => {
       setUserEmail(user.email);
       setImageAltInfo(user.name);
 
-      getDownloadURL(ref_storage(storage, `${user.sub}/profile.jpg`))
+      getDownloadURL(ref_storage(storage, `${user.sub}/profile`))
         .then((url) => {
-          setImage(url);
+          console.log("downloaded image url:", url);
+          getMetadata(ref_storage(storage, `${user.sub}/profile`))
+            .then((metadata) => {
+              setImageFileType(metadata.contentType);
+              setImage(url);
+            })
+            .catch((e) => {
+              console.error(e);
+            });
         })
         .catch((error) => {
           if (
@@ -171,10 +179,14 @@ const Preferences = () => {
   }
 
   async function upload() {
-    const photoRef = ref_storage(storage, `${user.sub}/profile.jpg`);
+    const photoRef = ref_storage(storage, `${user.sub}/profile`);
+
+    console.log(userUploadedImage, image);
 
     // probably add a reset button to the crop modal, just show normal image and make profileCropMetadata = false
-    const snapshot = await uploadBytes(photoRef, image);
+    const snapshot = await uploadBytes(photoRef, userUploadedImage ?? image, {
+      contentType: imageFileType,
+    });
 
     const photoURL = await getDownloadURL(photoRef);
 
@@ -182,14 +194,28 @@ const Preferences = () => {
   }
 
   const handleChange = (e) => {
+    // will eventually have to error handle if something other than jpeg/jpg/png is uploaded
+    // but this is okay for now
     if (e.target.files[0]) {
+      if (e.target.files[0].type === "image/jpeg") {
+        setImageFileType("image/jpeg");
+      }
+      if (e.target.files[0].type === "image/png") {
+        setImageFileType("image/png");
+      }
+
+      console.log(e.target.files[0]);
+      setUserUploadedImage(e.target.files[0]);
       let reader = new FileReader();
       reader.onload = function (e) {
-        setImage(e.target.result);
+        console.log(e.target.result);
+        // setImage(e.target.result);
+        setCropReadyImage(e.target.result);
       };
       reader.readAsDataURL(e.target.files[0]);
       // can delete this below if doesn't work
       setCroppedImage(null);
+      setCroppedAreaPixels(null);
       setHasChangedPicture(true);
     }
   };
@@ -281,6 +307,7 @@ const Preferences = () => {
                   ref={inputRef}
                   type="file"
                   name="profileImage"
+                  accept=".jpg,.jpeg,.png"
                   onChange={handleChange}
                 />
               </div>
@@ -296,7 +323,7 @@ const Preferences = () => {
             <div className={classes.cropImageModal}>
               <ImageCropModal
                 id={1}
-                imageUrl={image}
+                imageUrl={cropReadyImage ?? image}
                 cropInit={crop}
                 zoomInit={zoom}
                 onCropChange={setCrop}

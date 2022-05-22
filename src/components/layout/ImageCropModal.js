@@ -1,6 +1,8 @@
 import React from "react";
 import Cropper from "react-easy-crop";
 
+import ExitPreferencesIcon from "../../svgs/ExitPreferencesIcon";
+
 import classes from "./ImageCropModal.module.css";
 
 const ImageCropModal = ({
@@ -59,7 +61,12 @@ const ImageCropModal = ({
           ></input>
         </div>
         <div className={classes.buttonContainer}>
-          <button onClick={discardChanges}>Discard</button>
+          <button
+                className={classes.closeButton}
+                onClick={discardChanges}
+              >
+                <ExitPreferencesIcon />
+              </button>
           <button className={classes.editButton} onClick={applyChanges}>
             Apply
           </button>

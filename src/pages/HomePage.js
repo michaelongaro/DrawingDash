@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 
 import CardContainer from "../components/layout/CardContainer";
 import FeaturedLikes from "../components/layout/FeaturedLikes";
-import FocalSlidingDrawings from "../components/layout/FocalSlidingDrawings";
+import FocalAnimatedDrawings from "../components/layout/FocalAnimatedDrawings";
 import Card from "../ui/Card";
 import LogInButton from "../oauth/LogInButton";
 
@@ -30,7 +30,7 @@ function HomePage() {
         }}
         className={classes.flexContain}
       >
-        <FocalSlidingDrawings
+        <FocalAnimatedDrawings
           forHomepage={showToUnregisteredUser === "" ? true : false}
         />
 
@@ -42,11 +42,15 @@ function HomePage() {
               }}
               className={classes.flexContainColumn}
             >
-              <div>
+              <div className={classes.flexContainColumn}>
                 <LogInButton forceShow={true} />
+                <LogInButton />
               </div>
 
-              <div>--- Or ---</div>
+              <div className={classes.fadingOrContainer}>
+                <div className={classes.leadingLine}></div>
+                <div className={classes.or}>OR</div>
+                <div className={classes.trailingLine}></div></div>
               <button>Start Your First Drawing!</button>
             </div>
           </Card>

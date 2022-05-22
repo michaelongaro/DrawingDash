@@ -1,11 +1,60 @@
 .formContainer {
   display: flex;
-  align-items: baseline;
+  justify-content: center;
+  /* align-items: center; */
+  gap: 2.5em;
+
+  margin-top: 1em;
 }
 
 .searchContainer {
-  margin-left: 1.5em;
-  margin-right: 1.5em;
+  position: relative;
+}
+
+.searchContainer label {
+  position: absolute;
+  color: hsl(240deg 6% 49%);
+  font-size: 16px;
+  font-weight: normal;
+  pointer-events: none;
+  left: 10px;
+  top: 10px;
+  padding-left: 10px;
+  transition: 300ms ease all;
+}
+
+.searchInput:focus {
+  box-shadow: rgb(0 139 4) 0px 0px 4px 1px;
+  transition: 300ms ease all;
+}
+
+.searchContainer input:focus ~ label,
+.searchContainer input:valid ~ label {
+  top: -24px;
+  left: -1px;
+  font-size: 0.95em;
+  color: rgb(64, 175, 64);
+}
+
+.searchInput {
+  display: block;
+
+  height: 2.75em;
+  border-radius: 1em;
+  border-width: 1px;
+  border-style: none;
+
+  padding: 1em;
+
+  box-shadow: rgba(0, 0, 0, 0.1) 0 2px 4px;
+
+  /* color: rgb(48, 214, 48);
+  caret-color: rgb(48, 214, 48); */
+  background-color: #eeeeeefb;
+}
+
+input[type="text"]::placeholder {
+  padding: 10px 5px;
 }
 
 textarea,
@@ -18,7 +67,58 @@ input {
 }
 
 .show {
+  margin-top: 0.5em;
+  min-height: 3em;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
   background: gainsboro;
   border: 1px grey solid;
-  border-width: 0px 1px 1px 1px;
+
+  align-items: center;
+  border-width: 0;
+  border-radius: 1em;
+  background: gainsboro;
+}
+
+/* 100% CAN use css here to target the first child and last child
+    to make them fill out the div properly... but idk how it would actually
+  look, i just feel so weird doing full rounded. try both out and see what looks best */
+
+.searchButton {
+  background-color: initial;
+  background-image: linear-gradient(-180deg, #ff7e31, #e62c03);
+  border-radius: 6px;
+  box-shadow: rgba(0, 0, 0, 0.1) 0 2px 4px;
+  color: #ffffff;
+  cursor: pointer;
+  display: inline-block;
+  font-family: Inter, -apple-system, system-ui, Roboto, "Helvetica Neue", Arial,
+    sans-serif;
+  height: 40px;
+  line-height: 40px;
+  outline: 0;
+  overflow: hidden;
+  padding: 0 20px;
+  pointer-events: auto;
+  position: relative;
+  text-align: center;
+  touch-action: manipulation;
+  user-select: none;
+  -webkit-user-select: none;
+  vertical-align: top;
+  white-space: nowrap;
+  z-index: 9;
+  border: 0;
+  margin: 0;
+  transition: box-shadow 0.2s;
+}
+
+.searchButton:disabled {
+  background-image: linear-gradient(-180deg, #d3d3d3, #3a3a3a);
+  cursor: default;
+}
+
+.searchButton:hover:enabled {
+  box-shadow: rgba(253, 76, 0, 0.5) 0 3px 8px;
 }

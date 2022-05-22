@@ -57,8 +57,6 @@ const FocalBannerMessage = (props) => {
 
   useEffect(() => {
     if (numUsers !== 0) {
-      console.log("trying to animate users");
-
       usersAnimationRef.current = anime({
         targets: `#users`,
         innerText: [0, numUsers],
@@ -71,7 +69,6 @@ const FocalBannerMessage = (props) => {
 
   useEffect(() => {
     if (numDrawings !== 0) {
-      console.log("trying to animate drawings");
       drawingsAnimationRef.current = anime({
         targets: `#drawings`,
         innerText: [0, numDrawings],

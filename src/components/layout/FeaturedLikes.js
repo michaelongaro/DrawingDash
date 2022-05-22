@@ -57,6 +57,7 @@ const FeaturedLikes = () => {
             {/* --------------- 60 ------------------- */}
             <Card width={"90"}>
               <div
+                style={{ cursor: "pointer" }}
                 className={`${classes.detailsContain} ${selected[0]} ${classes.greenBackground}`}
                 onClick={() => {
                   selectTimer(0);
@@ -79,6 +80,7 @@ const FeaturedLikes = () => {
             {/* --------------- 180 ------------------- */}
             <Card width={"90"}>
               <div
+                style={{ cursor: "pointer" }}
                 className={`${classes.detailsContain} ${selected[1]} ${classes.yellowBackground}`}
                 onClick={() => {
                   selectTimer(1);
@@ -101,6 +103,7 @@ const FeaturedLikes = () => {
             {/* --------------- 300 ------------------- */}
             <Card width={"90"}>
               <div
+                style={{ cursor: "pointer" }}
                 className={`${classes.detailsContain} ${selected[2]} ${classes.redBackground}`}
                 onClick={() => {
                   selectTimer(2);
