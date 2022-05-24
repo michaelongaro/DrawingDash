@@ -4,10 +4,13 @@ import anime from "animejs/lib/anime.es.js";
 const AnimatedDrawing = (props) => {
   const animationRef = useRef(null);
 
-  const [offsetDelay, setOffsetDelay] = useState(false);
-  let loopCompleted = 0;
-
-  // const [currentWidth, setCurrentWidth] = useState(props.width);
+  const styles = props.forSearch ? {
+    borderRadius: "1em",
+    width: "10em"
+  } : {
+    borderRadius: "1em",
+    
+  }
 
   // useEffect(() => {
   //   function handleResize() {
@@ -21,33 +24,21 @@ const AnimatedDrawing = (props) => {
 
   // come back to later
   useEffect(() => {
-    console.log(offsetDelay);
-    // have boolean that tells whether
     animationRef.current = anime({
       targets: `#drawing${props.id}`,
 
-      scale: props.id % 2 === 0 ? [0, 0.95] : [0.95, 0],
+      scale: props.id % 2 === 0 ? [0, 0.97] : [0.97, 0],
+      opacity: props.id % 2 === 0 ? [0, 1] : [1, 0],
 
-      // delay: props.id % 2 === 0 ? 1000 : 0,
-      delay: props.id % 2 !== 0 ? (offsetDelay ? 0 : 3000) : 0,
-      // endDelay: props.id % 2 === 0 ? 1000 : 2000,
-      // endDelay: props.id % 2 !== 0 && offsetDelay ? 0 : 1000,
-      // endDelay: 1000,
+      delay: props.id % 2 === 0 ? 0 : 500,
 
-      duration: 1000,
+
+      duration: 2000,
       loop: true,
       direction: "alternate",
-      // easing: "linear",
-      easing: props.id % 2 === 0 ? "easeInCubic" : "easeOutCubic",
-      loopComplete: function () {
-        loopCompleted++;
-        console.log("complete called", loopCompleted);
-        if (loopCompleted === 1) {
-          setOffsetDelay(true);
-        }
-      },
+      easing: props.id % 2 === 0 ? "easeOutCirc" : "easeInCirc",
     });
-  }, [offsetDelay]);
+  }, []);
 
   return (
     <div
@@ -56,10 +47,10 @@ const AnimatedDrawing = (props) => {
         zIndex: "1",
         pointerEvents: "none",
         scale: props.id % 2 === 0 ? 0 : 0.95,
-        // opacity: props.id % 2 === 0 ? 0 : 1,
+        opacity: props.id % 2 === 0 ? 0 : 1,
       }}
     >
-      <img alt={"floating focal drawing"} src={props.drawing}></img>
+      <img style={styles} alt={"floating focal drawing"} src={props.drawing}></img>
     </div>
   );
 };

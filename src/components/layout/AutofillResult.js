@@ -12,11 +12,15 @@ const AutofillResult = (props) => {
   const resultRef = useRef();
 
   useEffect(() => {
-    resultRef.current.addEventListener("mousedown", fillText);
+    if (props.word !== "related") {
+      resultRef.current.addEventListener("mousedown", fillText);
+    }
 
     let cleanupResultRef = resultRef.current;
     return () => {
-      cleanupResultRef.removeEventListener("mousedown", fillText);
+      if (props.word !== "related") {
+        cleanupResultRef.removeEventListener("mousedown", fillText);
+      }
     };
   }, []);
 
@@ -29,9 +33,19 @@ const AutofillResult = (props) => {
   }
 
   return (
-    <div className={classes.autofillResult} ref={resultRef}>
-      <div style={{ marginLeft: "0.18em" }}>{props.word}</div>
-    </div>
+    <>
+      {props.word === "related" ? (
+        <div className={classes.autofillRelatedDivider}>
+          <div className={classes.leadingLine}></div>
+          <div>Related</div>
+          <div className={classes.trailingLine}></div>
+        </div>
+      ) : (
+        <div className={classes.autofillResult} ref={resultRef}>
+          <div style={{ marginLeft: "1em", paddingTop: ".25em", paddingBottom: ".25em" }}>{props.word}</div>
+        </div>
+      )}
+    </>
   );
 };
 

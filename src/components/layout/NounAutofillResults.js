@@ -1,89 +1,222 @@
-import { useEffect, useState, useContext } from "react";
+import { useEffect, useContext } from "react";
 import SearchContext from "./SearchContext";
 
 import AutofillResult from "./AutofillResult";
 
-import { getDatabase, get, ref, child } from "firebase/database";
-import { app } from "../../util/init-firebase";
+import classes from "./SharedAutofillResults.module.css";
 
 const NounAutofillResults = (props) => {
   const searchCtx = useContext(SearchContext);
 
   let idx = props.userProfile.length > 0 ? 1 : 0;
-  let titleLocation = props.userProfile.length > 0 ? `users/${props.userProfile}/titles` : "titles";
 
-
-  const [rerender, setRerender] = useState(false);
+  // eventually refactor this + nounautofillresults to be one component that
+  // has all relevant adj/noun fields assigned properly to neutral-named vars
 
   useEffect(() => {
-    if (searchCtx.searchValues["nounSearch"][idx] === "") {
+    if (searchCtx.searchValues["adjSearch"][idx] !== "") {
+      getPairedAdjectives();
+    } else if (searchCtx.searchValues["nounSearch"][idx] === "") {
       searchCtx.updateSearchValues("requestedNouns", [], idx);
     } else {
       getNouns();
-
-      setRerender(!rerender);
     }
-  }, [searchCtx.searchValues["nounSearch"][idx]]);
+  }, [searchCtx.searchValues["nounSearch"][idx], props.checkForPair]);
 
-  function getNouns() {
-    const results = [],
+  function getPairedAdjectives() {
+    let results = [],
       related_results = [],
       totalResults = [];
 
-    const dbRef = ref(getDatabase(app));
-    get(child(dbRef, titleLocation))
-      .then((snapshot) => {
-        for (const duration of Object.values(snapshot.val())) {
-          for (const title of Object.keys(duration)) {
-            // isolating the noun
-            let noun = title.split(" ")[1];
-            if (
-              noun.substring(0,searchCtx.searchValues["nounSearch"][idx].length) ===
-              searchCtx.searchValues["nounSearch"][idx]
-            ) {
+    if (props.titles === null) return;
+
+    for (const duration of Object.values(props.titles)) {
+      console.log(duration);
+      // sorting titles for each 60/180/300 duration by one's with the most entries first
+      let descendingEntries = [];
+      let highestEntries = 0;
+
+      // fullTitle["drawingID"].length
+      for (const title of Object.keys(duration)) {
+        console.log(title);
+        if (duration[title]["drawingID"].length > highestEntries) {
+          descendingEntries.unshift(title);
+        } else {
+          descendingEntries.push(title);
+        }
+      }
+
+      console.log(descendingEntries);
+
+      // finding the titles that match or at least contain the user input
+      for (const title of descendingEntries) {
+        // isolating the adjective
+        let adjective = title.split(" ")[0].toLowerCase();
+        let noun = title.split(" ")[1].toLowerCase();
+
+        // checking for direct matches
+        if (
+          adjective === searchCtx.searchValues["adjSearch"][idx].toLowerCase()
+        ) {
+          if (searchCtx.searchValues["nounSearch"][idx].length === 0) {
+            if (!results.includes(noun)) {
               results.push(noun);
             }
-
-            if (
-              noun.substring(0, searchCtx.searchValues["nounSearch"][idx].length) ===
-                searchCtx.searchValues["nounSearch"][idx] &&
-              noun.includes(searchCtx.searchValues["nounSearch"][idx])
-            ) {
-              if (!results.includes(noun)) {
-                related_results.push(noun);
-              }
+          } else if (
+            noun.substring(
+              0,
+              searchCtx.searchValues["nounSearch"][idx].length
+            ) === searchCtx.searchValues["nounSearch"][idx].toLowerCase()
+          ) {
+            if (!results.includes(noun)) {
+              results.push(noun);
             }
           }
         }
-      })
-      .then(() => {
-        if (results.length !== 0) {
-          if (related_results.length !== 0) {
-            totalResults.push(
-              results.concat(["---------"]).concat(related_results)
-            );
-          } else {
-            totalResults.push(results);
-          }
-          searchCtx.updateSearchValues(
-            "requestedNouns",
-            ...new Set(totalResults),
-            idx
-          );
-        } else {
-          searchCtx.updateSearchValues("requestedNouns", [], idx);
-        }
 
-        
-      });
+        // checking for related words (only applicable if there is text in noun input)
+        if (
+          noun.includes(searchCtx.searchValues["nounSearch"][idx].toLowerCase())
+        ) {
+          if (!results.includes(noun)) {
+            related_results.push(noun);
+          }
+        }
+      }
+    }
+
+    // finding (up to) first 5 alphabetical direct results (that are sorted roughly descending from
+    // # of entries) and then first 3 alphabetical related results
+    results.sort().splice(5);
+    // properly capitalizing word
+    results = results.map((elem) => {
+      return elem.charAt(0).toUpperCase() + elem.substring(1).toLowerCase();
+    });
+
+    related_results.sort().splice(3);
+    // properly capitalizing word
+    related_results = related_results.map((elem) => {
+      return elem.charAt(0).toUpperCase() + elem.substring(1).toLowerCase();
+    });
+
+    if (results.length !== 0) {
+      totalResults.push(results);
+
+      // updating context
+      searchCtx.updateSearchValues(
+        "requestedNouns",
+        ...new Set(totalResults),
+        idx
+      );
+    } else {
+      searchCtx.updateSearchValues("requestedNouns", [], idx);
+    }
   }
 
-  return searchCtx.searchValues["requestedNouns"][idx].length !== 0 ? (
-    searchCtx.searchValues["requestedNouns"][idx].map((title) => (
-      <AutofillResult key={title} word={title} type="noun" userProfile={props.userProfile} />
-    ))
-  ) : (
-    <div style={{ textAlign: "center", pointerEvents: "none" }}>{"-No Results Found-"}</div>
+  function getNouns() {
+    let results = [],
+      related_results = [],
+      totalResults = [];
+
+    if (props.titles === null) return;
+
+    for (const duration of Object.values(props.titles)) {
+      console.log(duration);
+      // sorting titles for each 60/180/300 duration by one's with the most entries first
+      let descendingEntries = [];
+      let highestEntries = 0;
+
+      // fullTitle["drawingID"].length
+      for (const title of Object.keys(duration)) {
+        console.log(title);
+        if (duration[title]["drawingID"].length > highestEntries) {
+          descendingEntries.unshift(title);
+        } else {
+          descendingEntries.push(title);
+        }
+      }
+
+      console.log(descendingEntries);
+
+      // finding the titles that match or at least contain the user input
+      for (const title of descendingEntries) {
+        // isolating the adjective
+        let noun = title.split(" ")[1].toLowerCase();
+
+        // checking for direct matches
+        if (
+          noun.substring(
+            0,
+            searchCtx.searchValues["nounSearch"][idx].length
+          ) === searchCtx.searchValues["nounSearch"][idx].toLowerCase()
+        ) {
+          if (!results.includes(noun)) {
+            results.push(noun);
+          }
+        }
+
+        // checking for related words
+        if (
+          noun.includes(searchCtx.searchValues["nounSearch"][idx].toLowerCase())
+        ) {
+          if (!results.includes(noun)) {
+            related_results.push(noun);
+          }
+        }
+      }
+    }
+
+    // finding (up to) first 5 alphabetical direct results (that are sorted roughly descending from
+    // # of entries) and then first 3 alphabetical related results
+    results.sort().splice(5);
+    // properly capitalizing word
+    results = results.map((elem) => {
+      return elem.charAt(0).toUpperCase() + elem.substring(1).toLowerCase();
+    });
+
+    related_results.sort().splice(3);
+    // properly capitalizing word
+    related_results = related_results.map((elem) => {
+      return elem.charAt(0).toUpperCase() + elem.substring(1).toLowerCase();
+    });
+
+    if (results.length !== 0) {
+      if (related_results.length !== 0) {
+        totalResults.push(results.concat(["related"]).concat(related_results));
+      } else {
+        totalResults.push(results);
+      }
+
+      // updating context
+      searchCtx.updateSearchValues(
+        "requestedNouns",
+        ...new Set(totalResults),
+        idx
+      );
+    } else {
+      searchCtx.updateSearchValues("requestedNouns", [], idx);
+    }
+  }
+
+  return (
+    <div className={classes.listContain}>
+      {searchCtx.searchValues["requestedNouns"][idx].length !== 0 ? (
+        searchCtx.searchValues["requestedNouns"][idx].map((title) => (
+          <AutofillResult
+            key={title}
+            word={title}
+            type="noun"
+            userProfile={props.userProfile}
+          />
+        ))
+      ) : (
+        <div className={classes.autofillRelatedDivider}>
+          <div className={classes.leadingLine}></div>
+          <div>No Results Found</div>
+          <div className={classes.trailingLine}></div>
+        </div>
+      )}
+    </div>
   );
 };
 

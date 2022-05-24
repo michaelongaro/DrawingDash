@@ -92,11 +92,11 @@ const FocalBannerMessage = (props) => {
 
         backgroundColor: "rgba(255, 255, 255, 1)",
         borderRadius: "0.25em",
-        width: "15em",
+        width: "25em",
         zIndex: 200,
       }}
     >
-      <div style={{ fontSize: "3em", textAlign: "center" }}>{miscSettings.title}</div>
+      <div style={{ marginBottom: ".25em", fontSize: "3em", textAlign: "center" }}>{miscSettings.title}</div>
 
       <div
         style={{

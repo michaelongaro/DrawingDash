@@ -35,19 +35,29 @@ const AnimatedGridContainer = ({ drawings, offset, miscSettings }) => {
         position: "absolute",
         left: 0,
         top: 0,
+        // height: "2em",
       }}
     >
-      <div className={classes.gridContainer}>
+      <div className={`${miscSettings.forHomepage ? classes.gridContainer : classes.searchGridContainer}`}>
         {drawings.map((image, i) => (
           <div className={`classes.drawing${i}`}>
             <AnimatedDrawing
               key={i + offset}
               drawing={image}
-              baseHeight={miscSettings.baseHeight}
-              maxHeight={miscSettings.maxHeight}
+              forHomepage={miscSettings.forHomepage}
               offsetX={0}
-              width={miscSettings.slidingWidth}
-              id={i + offset}
+              id={i}
+            />
+          </div>
+        ))}
+        {drawings.map((image, i) => (
+          <div className={`classes.drawing${i + 15}`}>
+            <AnimatedDrawing
+              key={i + 15}
+              drawing={image}
+              forHomepage={miscSettings.forHomepage}
+              offsetX={0}
+              id={i + 15}
             />
           </div>
         ))}

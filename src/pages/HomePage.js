@@ -30,21 +30,23 @@ function HomePage() {
         }}
         className={classes.flexContain}
       >
-        <FocalAnimatedDrawings
+        {/* <FocalAnimatedDrawings
           forHomepage={showToUnregisteredUser === "" ? true : false}
-        />
+          forSearch={false}
+        /> */}
 
         <div className={showToUnregisteredUser}>
           <Card>
             <div
               style={{
                 gap: ".5em",
+                height: "20em"
               }}
               className={classes.flexContainColumn}
             >
               <div className={classes.flexContainColumn}>
                 <LogInButton forceShow={true} />
-                <LogInButton />
+                <LogInButton forceShow={false} />
               </div>
 
               <div className={classes.fadingOrContainer}>

@@ -4,6 +4,7 @@ import anime from "animejs/lib/anime.es.js";
 import DrawingSelectionContext from "./DrawingSelectionContext";
 
 import classes from "./PaletteChooser.module.css";
+import PaletteIcon from "../svgs/PaletteIcon";
 
 const PaletteChooser = () => {
   const DSCtx = useContext(DrawingSelectionContext);
@@ -113,6 +114,12 @@ const PaletteChooser = () => {
         <div>{`"${DSCtx.chosenPrompt}"`}</div>
       </div>
 
+      <div className={classes.paletteIconContainer}>
+        {/* stop smoking CRACK before doing shit, make the svg like you */}
+        <div style={{ position: "absolute", width: "25em", height: "15em", left: "2.75em", top: "3em", borderRadius: "35%", backgroundColor: "#905532"}}></div>
+        <PaletteIcon />
+      </div>
+
       <div className={classes.horizContain}>
         <div
           className={classes.flexContainer}
@@ -127,18 +134,27 @@ const PaletteChooser = () => {
               updatePaletteAndCheckmarkStates(event, 0);
             }}
           />
-          <div className={visibilityOfOverlays[0]}></div>
-
+          <div className={visibilityOfOverlays[0]}>?</div>
+          {/* {statusOfCheckmarks[0] && ( */}
           <div
             className={classes.circle}
             style={{
-              background: `${statusOfCheckmarks[0] ? "green" : "grey"}`,
+              background: `${statusOfCheckmarks[0] ? "green" : "#905532"}`,
             }}
           >
             <div
+              style={{
+                borderBottom: `2px solid ${
+                  statusOfCheckmarks[0] ? "white" : "#905532"
+                }`,
+                borderRight: `2px solid ${
+                  statusOfCheckmarks[0] ? "white" : "#905532"
+                }`,
+              }}
               className={`${statusOfCheckmarks[0]} ${classes.checkmark}`}
             ></div>
           </div>
+          {/* )} */}
         </div>
 
         <div
@@ -154,17 +170,27 @@ const PaletteChooser = () => {
               updatePaletteAndCheckmarkStates(event, 1);
             }}
           />
-          <div className={visibilityOfOverlays[1]}></div>
+          <div className={visibilityOfOverlays[1]}>?</div>
+          {/* {statusOfCheckmarks[1] && ( */}
           <div
             className={classes.circle}
             style={{
-              background: `${statusOfCheckmarks[1] ? "green" : "grey"}`,
+              background: `${statusOfCheckmarks[1] ? "green" : "#905532"}`,
             }}
           >
             <div
+              style={{
+                borderBottom: `2px solid ${
+                  statusOfCheckmarks[1] ? "white" : "#905532"
+                }`,
+                borderRight: `2px solid ${
+                  statusOfCheckmarks[1] ? "white" : "#905532"
+                }`,
+              }}
               className={`${statusOfCheckmarks[1]} ${classes.checkmark}`}
             ></div>
           </div>
+          {/* )} */}
         </div>
 
         <div
@@ -180,17 +206,27 @@ const PaletteChooser = () => {
               updatePaletteAndCheckmarkStates(event, 2);
             }}
           />
-          <div className={visibilityOfOverlays[2]}></div>
+          <div className={visibilityOfOverlays[2]}>?</div>
+          {/* {statusOfCheckmarks[2] && ( */}
           <div
             className={classes.circle}
             style={{
-              background: `${statusOfCheckmarks[2] ? "green" : "grey"}`,
+              background: `${statusOfCheckmarks[2] ? "green" : "#905532"}`,
             }}
           >
             <div
+              style={{
+                borderBottom: `2px solid ${
+                  statusOfCheckmarks[2] ? "white" : "#905532"
+                }`,
+                borderRight: `2px solid ${
+                  statusOfCheckmarks[2] ? "white" : "#905532"
+                }`,
+              }}
               className={`${statusOfCheckmarks[2]} ${classes.checkmark}`}
             ></div>
           </div>
+          {/* )} */}
         </div>
       </div>
       <div className={classes.horizContain}>
@@ -208,18 +244,28 @@ const PaletteChooser = () => {
             }}
           />
 
-          <div className={visibilityOfOverlays[3]}></div>
+          <div className={visibilityOfOverlays[3]}>?</div>
 
+          {/* {statusOfCheckmarks[3] && ( */}
           <div
             className={classes.circle}
             style={{
-              background: `${statusOfCheckmarks[3] ? "green" : "grey"}`,
+              background: `${statusOfCheckmarks[3] ? "green" : "#905532"}`,
             }}
           >
             <div
+              style={{
+                borderBottom: `2px solid ${
+                  statusOfCheckmarks[3] ? "white" : "#905532"
+                }`,
+                borderRight: `2px solid ${
+                  statusOfCheckmarks[3] ? "white" : "#905532"
+                }`,
+              }}
               className={`${statusOfCheckmarks[3]} ${classes.checkmark}`}
             ></div>
           </div>
+          {/* )} */}
         </div>
 
         <div
@@ -235,17 +281,27 @@ const PaletteChooser = () => {
               updatePaletteAndCheckmarkStates(event, 4);
             }}
           />
-          <div className={visibilityOfOverlays[4]}></div>
+          <div className={visibilityOfOverlays[4]}>?</div>
+          {/* {statusOfCheckmarks[4] && ( */}
           <div
             className={classes.circle}
             style={{
-              background: `${statusOfCheckmarks[4] ? "green" : "grey"}`,
+              background: `${statusOfCheckmarks[4] ? "green" : "#905532"}`,
             }}
           >
             <div
+              style={{
+                borderBottom: `2px solid ${
+                  statusOfCheckmarks[4] ? "white" : "#905532"
+                }`,
+                borderRight: `2px solid ${
+                  statusOfCheckmarks[4] ? "white" : "#905532"
+                }`,
+              }}
               className={`${statusOfCheckmarks[4]} ${classes.checkmark}`}
             ></div>
           </div>
+          {/* )} */}
         </div>
       </div>
       <div className={classes.flexContainer}>

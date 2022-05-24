@@ -36,26 +36,35 @@ const FocalAnimatedDrawings = (props) => {
 
   const testRef = useRef(null);
 
-  const miscSettings = props.forHomepage
-    ? {
-        maxHeight: 295,
-        baseHeight: 115,
-        fullHeight: "20em",
-        fullWidth: "66%",
-        slidingWidth: window.innerWidth * 0.66,
-        radius: "1em",
-      }
-    : {
-        maxHeight: 170,
-        baseHeight: 75,
-        fullHeight: "15em",
-        fullWidth: "100vw",
-        slidingWidth: window.innerWidth,
-        radius: 0,
-      };
+  let miscSettings = useRef(null);
 
   const dbRef = ref(getDatabase(app));
   const storage = getStorage();
+
+  if (!props.forSearch) {
+      if (props.forHomepage) {
+        miscSettings.current = {
+          fullHeight: "23em",
+          fullWidth: "66%",
+          radius: "1em",
+          forHomepage: props.forHomepage,
+        };
+      } else {
+        miscSettings.current = {
+          fullHeight: "23em",
+          fullWidth: "100vw",
+          // radius: "1em",
+          forHomepage: props.forHomepage,
+        };
+      }
+    } else {
+      miscSettings.current = {
+        fullHeight: "15em",
+        fullWidth: "100vw",
+        radius: 0,
+        forHomepage: props.forHomepage,
+      };
+    }
 
   //  useEffect(() => {
   //   function handleResize() {
@@ -67,48 +76,23 @@ const FocalAnimatedDrawings = (props) => {
 
   useEffect(() => {
     getRandomDrawingIDs();
-    // intervalID.current = setInterval(switchPrompt, 10000);
+    console.log("loaded and started fetch of words");
 
-    // return () => {
-    //   clearInterval(intervalID.current);
-    // };
+    
   }, []);
 
   useEffect(() => {
     if (randomDrawingIDs60 && randomDrawingIDs180 && randomDrawingIDs300) {
-      console.log(randomDrawingIDs60, randomDrawingIDs180, randomDrawingIDs300);
+      console.log("collected all ids & fetching images from ids");
       getImagesFromIDs();
-      setOffsetX(testRef.current.getBoundingClientRect().left);
+      // setOffsetX(testRef.current.getBoundingClientRect().left);
     }
   }, [randomDrawingIDs60, randomDrawingIDs180, randomDrawingIDs300]);
 
-  // useEffect(() => {
-  //   if (
-  //     fetchedDrawings60 &&
-  //     fetchedDrawings180 &&
-  //     fetchedDrawings300 &&
-  //     !intervalStarted
-  //   ) {
-  //     setIntervalStarted(true);
-
-  //     function switchPrompt() {
-  //       let tempPrompt = [false, false, false];
-  //       if (showPrompt[0]) {
-  //         tempPrompt = [false, true, false];
-  //       } else if (showPrompt[1]) {
-  //         tempPrompt = [false, false, true];
-  //       } else {
-  //         tempPrompt = [true, false, false];
-  //       }
-  //       setShowPrompt(tempPrompt);
-  //     }
-  //     intervalID.current = setInterval(switchPrompt, 10000);
-  //   }
-  // }, [fetchedDrawings60, fetchedDrawings180, fetchedDrawings300, showPrompt]);
-
   useEffect(() => {
-    console.log("found 60 and starting interval");
     if (fetchedDrawings60.length > 0) {
+      console.log("found 60 and starting interval");
+      setShowPrompt([true, false, false]);
       setStartIntervalTimer(true);
     }
   }, [fetchedDrawings60]);
@@ -183,27 +167,10 @@ const FocalAnimatedDrawings = (props) => {
 
       tempArr.push(actualID);
     }
+    console.log("finished finding ids");
   }
 
-  // function switchPrompt() {
-  //   console.log("current starting vals are", showPrompt);
-  //   let tempPrompt;
-  //   if (
-  //     isEqual(showPrompt, [false, false, false]) ||
-  //     isEqual(showPrompt, [false, false, true])
-  //   ) {
-  //     tempPrompt = [true, false, false];
-  //   } else if (isEqual(showPrompt, [true, false, false])) {
-  //     tempPrompt = [false, true, false];
-  //   } else if (isEqual(showPrompt, [false, true, false])) {
-  //     tempPrompt = [false, false, true];
-  //   }
-  //   console.log("setting showprompt to", tempPrompt);
-  //   setShowPrompt(tempPrompt);
-  // }
-
   function getImagesFromIDs() {
-    console.log("fetching drawings from ids");
     getImagesFromDuration(randomDrawingIDs60, 60);
     getImagesFromDuration(randomDrawingIDs180, 180);
     getImagesFromDuration(randomDrawingIDs300, 300);
@@ -237,10 +204,10 @@ const FocalAnimatedDrawings = (props) => {
     <div
       ref={testRef}
       style={{
-        height: miscSettings.fullHeight,
-        width: miscSettings.fullWidth,
-        borderRadius: miscSettings.radius,
         position: "relative",
+        height: miscSettings.current.fullHeight,
+        width: miscSettings.current.fullWidth,
+        borderRadius: miscSettings.current.radius,
       }}
       className={classes.fullWidth}
     >
@@ -248,111 +215,27 @@ const FocalAnimatedDrawings = (props) => {
         <AnimatedGridContainer
           drawings={fetchedDrawings60}
           offset={0}
-          miscSettings={miscSettings}
+          miscSettings={miscSettings.current}
         />
       )}
 
       {showPrompt[1] && fetchedDrawings180.length > 0 && (
         <AnimatedGridContainer
           drawings={fetchedDrawings180}
-          offset={15}
-          miscSettings={miscSettings}
+          offset={16}
+          miscSettings={miscSettings.current}
         />
       )}
 
       {showPrompt[2] && fetchedDrawings300.length > 0 && (
         <AnimatedGridContainer
           drawings={fetchedDrawings300}
-          offset={30}
-          miscSettings={miscSettings}
+          offset={32}
+          miscSettings={miscSettings.current}
         />
       )}
 
-      {/* 60s drawings */}
-      {/* <div
-        style={{
-          position: "absolute",
-          left: 0,
-          top: 0,
-          opacity: `${showPrompt[0] ? 1 : 0}`,
-          transition: "opacity .5s",
-        }}
-      >
-        <div className={classes.gridContainer}>
-          {fetchedDrawings60.length > 0 &&
-            fetchedDrawings60.map((image, i) => (
-              <div className={`classes.drawing${i}`}>
-                <AnimatedDrawing
-                  key={i}
-                  drawing={image}
-                  baseHeight={miscSettings.baseHeight}
-                  maxHeight={miscSettings.maxHeight}
-                  offsetX={offsetX}
-                  width={miscSettings.slidingWidth}
-                  id={i}
-                />
-              </div>
-            ))}
-        </div>
-      </div> */}
-
-      {/* 180s drawings */}
-      {/* <div
-        style={{
-          position: "absolute",
-          left: 0,
-          top: 0,
-          opacity: `${showPrompt[1] ? 1 : 0}`,
-          transition: "opacity .5s",
-        }}
-      >
-        <div className={classes.gridContainer}>
-          {fetchedDrawings180.length > 0 &&
-            fetchedDrawings180.map((image, i) => (
-              <div className={`classes.drawing${i + 15}`}>
-                <AnimatedDrawing
-                  key={i}
-                  drawing={image}
-                  baseHeight={miscSettings.baseHeight}
-                  maxHeight={miscSettings.maxHeight}
-                  offsetX={offsetX}
-                  width={miscSettings.slidingWidth}
-                  id={i + 15}
-                />
-              </div>
-            ))}
-        </div>
-      </div> */}
-
-      {/* 300s drawings */}
-      {/* <div
-        style={{
-          position: "absolute",
-          left: 0,
-          top: 0,
-          opacity: `${showPrompt[2] ? 1 : 0}`,
-          transition: "opacity .5s",
-        }}
-      >
-        <div className={classes.gridContainer}>
-          {fetchedDrawings300.length > 0 &&
-            fetchedDrawings300.map((image, i) => (
-              <div className={`classes.drawing${i + 30}`}>
-                <AnimatedDrawing
-                  key={i}
-                  drawing={image}
-                  baseHeight={miscSettings.baseHeight}
-                  maxHeight={miscSettings.maxHeight}
-                  offsetX={offsetX}
-                  width={miscSettings.slidingWidth}
-                  id={i + 30}
-                />
-              </div>
-            ))}
-        </div>
-      </div> */}
-
-      <FocalBannerMessage forHomepage={props.forHomepage} />
+      <FocalBannerMessage forHomepage={props.forHomepage} forSearch={props.forSearch} />
     </div>
   );
 };

@@ -1,16 +1,29 @@
-import React from "react";
-
-import { useRef, useEffect, useState, useContext } from "react";
+import React, { useRef, useEffect, useState, useContext } from "react";
 
 import SearchContext from "./SearchContext";
 import GallaryList from "./GallaryList";
 import AdjAutofillResults from "./AdjAutofillResults";
 import NounAutofillResults from "./NounAutofillResults";
 
+import {
+  getDatabase,
+  ref,
+  set,
+  child,
+  get,
+  onValue,
+  update,
+} from "firebase/database";
+
+import { app } from "../../util/init-firebase";
+
 import classes from "./Search.module.css";
 
 const Search = (props) => {
   const searchCtx = useContext(SearchContext);
+  const db = getDatabase(app);
+
+  const [dbTitles, setDBTitles] = useState(null);
 
   let idx = props.userProfile.length > 0 ? 1 : 0;
 
@@ -24,6 +37,9 @@ const Search = (props) => {
 
   const [showAdjResults, setShowAdjResults] = useState(classes.hide);
   const [showNounResults, setShowNounResults] = useState(classes.hide);
+
+  const [checkAdjPair, setCheckAdjPair] = useState(false);
+  const [checkNounPair, setCheckNounPair] = useState(false);
 
   const [gallaryListStaticTitle, setGallaryListStaticTitle] = useState();
 
@@ -51,6 +67,22 @@ const Search = (props) => {
   };
 
   useEffect(() => {
+    onValue(
+      ref(
+        db,
+        `${
+          props.userProfile.length > 0
+            ? `users/${props.userProfile}/titles`
+            : "titles"
+        }`
+      ),
+      (snapshot) => {
+        if (snapshot.exists()) {
+          setDBTitles(snapshot.val());
+        }
+      }
+    );
+
     adjectiveInputRef.current.addEventListener("input", refreshAdjSearch);
     nounInputRef.current.addEventListener("input", refreshNounSearch);
 
@@ -96,9 +128,30 @@ const Search = (props) => {
     let handler = (event) => {
       if (!adjectiveInputRef.current.contains(event.target)) {
         setShowAdjResults(classes.hide);
+        setCheckAdjPair(false);
+
+      } else if (
+        adjectiveInputRef.current.contains(event.target) &&
+        nounInputRef.current.value.trim().length !== 0
+      ) {
+        console.log("showing suggested adjs");
+        setCheckAdjPair(true);
+        setShowAdjResults(classes.show);
+
       }
+
       if (!nounInputRef.current.contains(event.target)) {
         setShowNounResults(classes.hide);
+        setCheckNounPair(false);
+      } else if (
+        nounInputRef.current.contains(event.target) &&
+        adjectiveInputRef.current.value.trim().length !== 0
+      ) {
+        console.log("showing suggested nouns");
+
+        setCheckNounPair(true);
+        setShowNounResults(classes.show);
+
       }
     };
 
@@ -150,7 +203,11 @@ const Search = (props) => {
           ></input>
           <label>Adjective</label>
           <div className={showAdjResults}>
-            <AdjAutofillResults userProfile={props.userProfile} />
+            <AdjAutofillResults
+              titles={dbTitles}
+              checkForPair={checkAdjPair}
+              userProfile={props.userProfile}
+            />
           </div>
         </div>
         <div className={classes.searchContainer}>
@@ -163,7 +220,11 @@ const Search = (props) => {
           ></input>
           <label>Noun</label>
           <div className={showNounResults}>
-            <NounAutofillResults userProfile={props.userProfile} />
+            <NounAutofillResults
+              titles={dbTitles}
+              checkForPair={checkNounPair}
+              userProfile={props.userProfile}
+            />
           </div>
         </div>
         <button className={classes.searchButton}>Search</button>
