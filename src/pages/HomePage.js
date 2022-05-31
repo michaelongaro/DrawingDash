@@ -30,10 +30,10 @@ function HomePage() {
         }}
         className={classes.flexContain}
       >
-        {/* <FocalAnimatedDrawings
+        <FocalAnimatedDrawings
           forHomepage={showToUnregisteredUser === "" ? true : false}
           forSearch={false}
-        /> */}
+        />
 
         <div className={showToUnregisteredUser}>
           <Card>

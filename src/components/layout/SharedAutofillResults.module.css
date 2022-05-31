@@ -2,6 +2,13 @@
   width: 100%;
 }
 
+.columnFlex {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+
 .autofillRelatedDivider {
   display: flex;
   justify-content: center;

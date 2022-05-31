@@ -2,9 +2,9 @@ import React, { useState, useEffect, useContext } from "react";
 
 import anime from "animejs/lib/anime.es.js";
 import DrawingSelectionContext from "./DrawingSelectionContext";
+import BackupPaletteIcon from "../svgs/BackupPaletteIcon";
 
 import classes from "./PaletteChooser.module.css";
-import PaletteIcon from "../svgs/PaletteIcon";
 
 const PaletteChooser = () => {
   const DSCtx = useContext(DrawingSelectionContext);
@@ -116,8 +116,9 @@ const PaletteChooser = () => {
 
       <div className={classes.paletteIconContainer}>
         {/* stop smoking CRACK before doing shit, make the svg like you */}
-        <div style={{ position: "absolute", width: "25em", height: "15em", left: "2.75em", top: "3em", borderRadius: "35%", backgroundColor: "#905532"}}></div>
-        <PaletteIcon />
+        {/* <div style={{ position: "absolute", width: "25em", height: "15em", left: "2.75em", top: "3em", borderRadius: "35%", backgroundColor: "#905532"}}></div>
+        <PaletteIcon /> */}
+        <BackupPaletteIcon />
       </div>
 
       <div className={classes.horizContain}>
@@ -140,6 +141,7 @@ const PaletteChooser = () => {
             className={classes.circle}
             style={{
               background: `${statusOfCheckmarks[0] ? "green" : "#905532"}`,
+              opacity:  `${statusOfCheckmarks[0] ? "1" : "0"}`,
             }}
           >
             <div
@@ -176,6 +178,7 @@ const PaletteChooser = () => {
             className={classes.circle}
             style={{
               background: `${statusOfCheckmarks[1] ? "green" : "#905532"}`,
+              opacity:  `${statusOfCheckmarks[1] ? "1" : "0"}`,
             }}
           >
             <div
@@ -212,6 +215,7 @@ const PaletteChooser = () => {
             className={classes.circle}
             style={{
               background: `${statusOfCheckmarks[2] ? "green" : "#905532"}`,
+              opacity:  `${statusOfCheckmarks[2] ? "1" : "0"}`,
             }}
           >
             <div
@@ -251,6 +255,7 @@ const PaletteChooser = () => {
             className={classes.circle}
             style={{
               background: `${statusOfCheckmarks[3] ? "green" : "#905532"}`,
+              opacity:  `${statusOfCheckmarks[3] ? "1" : "0"}`,
             }}
           >
             <div
@@ -287,6 +292,7 @@ const PaletteChooser = () => {
             className={classes.circle}
             style={{
               background: `${statusOfCheckmarks[4] ? "green" : "#905532"}`,
+              opacity:  `${statusOfCheckmarks[4] ? "1" : "0"}`,
             }}
           >
             <div

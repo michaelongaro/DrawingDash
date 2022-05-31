@@ -12,7 +12,7 @@ const AnimatedGridContainer = ({ drawings, offset, miscSettings }) => {
       opacity: [0, 1],
       loop: false,
       direction: "normal",
-      duration: 500,
+      duration: 1000,
       easing: "linear",
     });
 
@@ -22,7 +22,7 @@ const AnimatedGridContainer = ({ drawings, offset, miscSettings }) => {
         opacity: [1, 0],
         loop: false,
         direction: "normal",
-        duration: 500,
+        duration: 1000,
         easing: "linear",
       });
     };

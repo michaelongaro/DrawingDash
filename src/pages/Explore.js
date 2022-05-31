@@ -6,7 +6,7 @@ import FocalAnimatedDrawings from "../components/layout/FocalAnimatedDrawings";
 function Explore() {
   return (
     <div className={classes.exploreContain}>
-      <FocalAnimatedDrawings forHomepage={false} />
+      <FocalAnimatedDrawings forHomepage={false} forSearch={true}/>
       <Search userProfile={""} />
     </div>
   );

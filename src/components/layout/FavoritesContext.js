@@ -46,10 +46,6 @@ export function FavoritesProvider(props) {
     }
   }, [isLoading, isAuthenticated]);
 
-  useEffect(() => {
-    console.log(userFavorites);
-  }, [userFavorites]);
-
   function addFavorite(
     currDrawingID,
     drawingSeconds,
@@ -58,14 +54,7 @@ export function FavoritesProvider(props) {
   ) {
     // updating locally, could potentially just have it tied to onValue like above
     setUserFavorites((prevUserFavorites) => {
-      console.log(
-        prevUserFavorites,
-        drawingSeconds,
-        prevUserFavorites[drawingSeconds],
-        currDrawingID
-      );
       prevUserFavorites[drawingSeconds].push(currDrawingID);
-      console.log(prevUserFavorites);
       return prevUserFavorites;
     });
 
@@ -124,7 +113,6 @@ export function FavoritesProvider(props) {
   }
 
   function itemIsFavorite(currDrawingID, drawingSeconds) {
-    console.log(userFavorites);
     if (
       userFavorites["60"].length === 0 &&
       userFavorites["180"].length === 0 &&
@@ -132,8 +120,6 @@ export function FavoritesProvider(props) {
     ) {
       return false;
     }
-
-    console.log(userFavorites, currDrawingID, drawingSeconds);
 
     return userFavorites[drawingSeconds].some(
       (drawingID) => drawingID === currDrawingID

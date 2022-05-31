@@ -24,6 +24,9 @@ import {
 import { app } from "../../util/init-firebase";
 
 import classes from "./GallaryItem.module.css";
+import FiveMinuteIcon from "../../svgs/FiveMinuteIcon";
+import OneMinuteIcon from "../../svgs/OneMinuteIcon";
+import ThreeMinuteIcon from "../../svgs/ThreeMinuteIcon";
 
 const GallaryItem = ({ drawingID, settings }) => {
   const favoritesCtx = useContext(FavoritesContext);
@@ -299,11 +302,21 @@ const GallaryItem = ({ drawingID, settings }) => {
 
               {settings.forPinnedItem ? null : isFetching ? (
                 <div
-                  style={{ width: "2em", height: "40%" }}
+                  style={{ width: "3em", height: "3em" }}
                   className={classes.skeletonLoading}
                 ></div>
               ) : (
-                <div>{drawingDetails.seconds}</div>
+                <div style={{ width: "3em", height: "3em" }}>
+                  {drawingDetails.seconds === 60 && (
+                    <OneMinuteIcon dimensions={"3em"} />
+                  )}
+                  {drawingDetails.seconds === 180 && (
+                    <ThreeMinuteIcon dimensions={"3em"} />
+                  )}
+                  {drawingDetails.seconds === 300 && (
+                    <FiveMinuteIcon dimensions={"3em"} />
+                  )}
+                </div>
               )}
 
               {/* like toggle */}

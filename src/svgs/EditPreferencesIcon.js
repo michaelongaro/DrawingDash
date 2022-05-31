@@ -4,7 +4,7 @@ const EditPreferencesIcon = () => {
   return (
     <svg
       id="Capa_1"
-      enable-background="new 0 0 511.984 511.984"
+      enableBackground="new 0 0 511.984 511.984"
       height="1.25em"
       viewBox="0 0 511.984 511.984"
       width="1.25em"

@@ -76,7 +76,6 @@ const Preferences = () => {
   const [croppedImage, setCroppedImage] = useState(null);
 
   const onCropComplete = useCallback((croppedArea, croppedAreaPixels) => {
-    console.log(croppedAreaPixels);
     setCroppedAreaPixels(croppedAreaPixels);
   }, []);
 
@@ -103,7 +102,6 @@ const Preferences = () => {
   };
 
   const onClose = useCallback(() => {
-    console.log("close called");
     setShowCropModal(false);
     setUserUploadedImage(null);
     setCropReadyImage(null);
@@ -124,7 +122,6 @@ const Preferences = () => {
 
       getDownloadURL(ref_storage(storage, `${user.sub}/profile`))
         .then((url) => {
-          console.log("downloaded image url:", url);
           getMetadata(ref_storage(storage, `${user.sub}/profile`))
             .then((metadata) => {
               setImageFileType(metadata.contentType);
@@ -162,7 +159,6 @@ const Preferences = () => {
   function handleSubmit(event) {
     event.preventDefault();
 
-    console.log(username, status);
     set(ref_database(db, `users/${user.sub}/preferences`), {
       username: username,
       status: status,
@@ -180,8 +176,6 @@ const Preferences = () => {
 
   async function upload() {
     const photoRef = ref_storage(storage, `${user.sub}/profile`);
-
-    console.log(userUploadedImage, image);
 
     // probably add a reset button to the crop modal, just show normal image and make profileCropMetadata = false
     const snapshot = await uploadBytes(photoRef, userUploadedImage ?? image, {
@@ -204,11 +198,9 @@ const Preferences = () => {
         setImageFileType("image/png");
       }
 
-      console.log(e.target.files[0]);
       setUserUploadedImage(e.target.files[0]);
       let reader = new FileReader();
       reader.onload = function (e) {
-        console.log(e.target.result);
         // setImage(e.target.result);
         setCropReadyImage(e.target.result);
       };

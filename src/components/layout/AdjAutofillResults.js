@@ -1,4 +1,4 @@
-import React, { useEffect, useContext } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import SearchContext from "./SearchContext";
 
 import AutofillResult from "./AutofillResult";
@@ -7,6 +7,7 @@ import classes from "./SharedAutofillResults.module.css";
 
 const AdjAutofillResults = (props) => {
   const searchCtx = useContext(SearchContext);
+  const [showPairedResults, setShowPairedResults] = useState(false);
 
   // eventually refactor this + nounautofillresults to be one component that
   // has all relevant adj/noun fields assigned properly to neutral-named vars
@@ -18,10 +19,13 @@ const AdjAutofillResults = (props) => {
   useEffect(() => {
     if (searchCtx.searchValues["nounSearch"][idx] !== "") {
       getPairedNouns();
+      setShowPairedResults(true);
     } else if (searchCtx.searchValues["adjSearch"][idx] === "") {
       searchCtx.updateSearchValues("requestedAdjectives", [], idx);
+      setShowPairedResults(false);
     } else {
       getAdjectives();
+      setShowPairedResults(false);
     }
   }, [searchCtx.searchValues["adjSearch"][idx], props.checkForPair]);
 
@@ -33,14 +37,14 @@ const AdjAutofillResults = (props) => {
     if (props.titles === null) return;
 
     for (const duration of Object.values(props.titles)) {
-      console.log(duration);
+      // console.log(duration);
       // sorting titles for each 60/180/300 duration by one's with the most entries first
       let descendingEntries = [];
       let highestEntries = 0;
 
       // fullTitle["drawingID"].length
       for (const title of Object.keys(duration)) {
-        console.log(title);
+        // console.log(title);
         if (duration[title]["drawingID"].length > highestEntries) {
           descendingEntries.unshift(title);
         } else {
@@ -48,7 +52,7 @@ const AdjAutofillResults = (props) => {
         }
       }
 
-      console.log(descendingEntries);
+      // console.log(descendingEntries);
 
       // finding the titles that match or at least contain the user input
       for (const title of descendingEntries) {
@@ -123,14 +127,14 @@ const AdjAutofillResults = (props) => {
     if (props.titles === null) return;
 
     for (const duration of Object.values(props.titles)) {
-      console.log(duration);
+      // console.log(duration);
       // sorting titles for each 60/180/300 duration by one's with the most entries first
       let descendingEntries = [];
       let highestEntries = 0;
 
       // fullTitle["drawingID"].length
       for (const title of Object.keys(duration)) {
-        console.log(title);
+        // console.log(title);
         if (duration[title]["drawingID"].length > highestEntries) {
           descendingEntries.unshift(title);
         } else {
@@ -138,7 +142,7 @@ const AdjAutofillResults = (props) => {
         }
       }
 
-      console.log(descendingEntries);
+      // console.log(descendingEntries);
 
       // finding the titles that match or at least contain the user input
       for (const title of descendingEntries) {
@@ -213,6 +217,19 @@ const AdjAutofillResults = (props) => {
             userProfile={props.userProfile}
           />
         ))
+      ) :
+      showPairedResults ? (
+        <div className={classes.autofillRelatedDivider}>
+          <div className={classes.leadingLine}></div>
+          <div className={classes.columnFlex}>
+            <div>No results found for</div>
+            <div>
+              "{`${searchCtx.searchValues["adjSearch"][idx]} `}
+              {searchCtx.searchValues["nounSearch"][idx]}"
+            </div>
+          </div>
+          <div className={classes.trailingLine}></div>
+        </div>
       ) : (
         <div className={classes.autofillRelatedDivider}>
           <div className={classes.leadingLine}></div>

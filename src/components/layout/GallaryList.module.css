@@ -12,12 +12,13 @@
 
 .flexListContain {
   display: flex;
-  justify-content: center;
+  justify-content: flex-start;
   flex-wrap: wrap;
   /* overflow-y: scroll; */
   /* height: 65vh; */
   width: 100%;
   gap: 2em;
+  margin-left: 2em;
   margin-top: 1em;
   margin-bottom: 1em;
 }
@@ -28,6 +29,7 @@
   justify-content: center;
   align-items: center;
   /* gap: 2em; */
+  margin-top: 3em;
   width: 100%;
 }
 
@@ -39,9 +41,36 @@
 }
 
 .durationIconContainer {
+  position: absolute;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
   border-top-left-radius: 1em;
   border-top-right-radius: 1em;
-  padding: 1em 1em 0.5em 1em;
+  border-width: 2px 2px 0 2px;
+  padding: 0.5em 4em 0 4em;
+  transition: all 200ms;
+}
+
+.baseButtonFlex {
+  position: absolute;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.hoverRed {
+  background: linear-gradient(to bottom, #ffffff, rgb(255 0 0 / 40%));
+}
+
+.hoverYellow {
+  background: linear-gradient(to bottom, #ffffff, rgb(255 255 0 / 40%));
+}
+
+.hoverGreen {
+  background: linear-gradient(to bottom, #ffffff, rgb(0 255 0 / 40%));
 }
 
 .darken {

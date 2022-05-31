@@ -37,6 +37,7 @@ const AnimatedDrawing = (props) => {
       loop: true,
       direction: "alternate",
       easing: props.id % 2 === 0 ? "easeOutCirc" : "easeInCirc",
+      // on the fifth one
     });
   }, []);
 

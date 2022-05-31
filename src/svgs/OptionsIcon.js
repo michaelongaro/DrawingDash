@@ -4,7 +4,7 @@ const OptionsIcon = () => {
   return (
     <svg
       id="Layer_1"
-      enable-background="new 0 0 512.132 512.132"
+      enableBackground="new 0 0 512.132 512.132"
       height="4em"
       viewBox="0 0 512.132 512.132"
       width="4em"

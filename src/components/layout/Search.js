@@ -126,32 +126,60 @@ const Search = (props) => {
 
   useEffect(() => {
     let handler = (event) => {
+      // adjective handling
       if (!adjectiveInputRef.current.contains(event.target)) {
         setShowAdjResults(classes.hide);
         setCheckAdjPair(false);
-
       } else if (
         adjectiveInputRef.current.contains(event.target) &&
+        adjectiveInputRef.current.value.trim().length === 0 &&
         nounInputRef.current.value.trim().length !== 0
       ) {
-        console.log("showing suggested adjs");
         setCheckAdjPair(true);
-        setShowAdjResults(classes.show);
 
+        setShowAdjResults(classes.show);
+      } else if (
+        adjectiveInputRef.current.contains(event.target) &&
+        adjectiveInputRef.current.value.trim().length !== 0 &&
+        nounInputRef.current.value.trim().length === 0
+      ) {
+        // checking to see if currently input value is equal to the one that is going to be suggested,
+        // if it is, do not show suggestion
+        if (
+          searchCtx.searchValues["requestedAdjectives"][
+            idx
+          ][0].toLowerCase() !==
+          adjectiveInputRef.current.value.trim().toLowerCase()
+        ) {
+          setShowAdjResults(classes.show);
+        }
       }
 
+      // noun handling
       if (!nounInputRef.current.contains(event.target)) {
         setShowNounResults(classes.hide);
         setCheckNounPair(false);
       } else if (
         nounInputRef.current.contains(event.target) &&
+        nounInputRef.current.value.trim().length === 0 &&
         adjectiveInputRef.current.value.trim().length !== 0
       ) {
-        console.log("showing suggested nouns");
-
         setCheckNounPair(true);
-        setShowNounResults(classes.show);
 
+        setShowNounResults(classes.show);
+      } else if (
+        nounInputRef.current.contains(event.target) &&
+        nounInputRef.current.value.trim().length !== 0 &&
+        adjectiveInputRef.current.value.trim().length === 0
+      ) {
+        // checking to see if currently input value is equal to the one that is going to be suggested,
+        // if it is, do not show suggestion
+        if (
+          searchCtx.searchValues["requestedNouns"][idx][0].toLowerCase() !==
+          nounInputRef.current.value.trim().toLowerCase()
+        ) {
+          setShowNounResults(classes.show);
+        }
       }
     };
 
@@ -159,7 +187,10 @@ const Search = (props) => {
     return () => {
       document.removeEventListener("mousedown", handler);
     };
-  });
+  }, [
+    searchCtx.searchValues["requestedAdjectives"][idx],
+    searchCtx.searchValues["requestedNouns"][idx],
+  ]);
 
   function prepGallarySearch(event) {
     event.preventDefault();
@@ -230,15 +261,13 @@ const Search = (props) => {
         <button className={classes.searchButton}>Search</button>
       </form>
 
-      {searchCtx.searchValues["gallary"][idx] !== null ? (
+      {/* {searchCtx.searchValues["gallary"][idx] !== null && ( */}
         <GallaryList
           drawingIDs={searchCtx.searchValues["gallary"][idx]}
           title={gallaryListStaticTitle}
           margin={props.margin}
         />
-      ) : (
-        <div></div>
-      )}
+      {/* )} */}
     </>
   );
 };

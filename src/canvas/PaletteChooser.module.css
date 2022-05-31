@@ -60,6 +60,7 @@
   width: 4em;
   height: 4em;
   border-radius: 50%;
+  padding: 0;
   border: none;
   outline: none;
   cursor: pointer;
@@ -90,6 +91,7 @@
   width: 25px;
   height: 25px;
   z-index: 5;
+  opacity: 0;
 }
 
 .checkmark {

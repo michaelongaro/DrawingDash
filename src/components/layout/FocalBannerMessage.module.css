@@ -1,0 +1,27 @@
+.rainbowText {
+  font-size: 1.75em;
+  background: linear-gradient(to bottom, #8aff7a, #ff3030);
+  /* text-shadow: 0 0 1px black; */
+  background-clip: text;
+  color: transparent;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.bannerFlex {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.25em;
+
+  font-size: 1.15em;
+}
+
+.bannerTitleFlex {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  margin-bottom: 0.25em;
+  font-size: 3em;
+}
