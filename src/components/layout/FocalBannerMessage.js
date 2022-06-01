@@ -17,6 +17,7 @@ import {
 import { app } from "../../util/init-firebase";
 
 import classes from "./FocalBannerMessage.module.css";
+import MagnifyingGlassIcon from "../../svgs/MagnifyingGlassIcon";
 
 const FocalBannerMessage = (props) => {
   const { user, isAuthenticated, isLoading } = useAuth0();
@@ -156,7 +157,13 @@ const FocalBannerMessage = (props) => {
       }}
     >
       <div className={classes.bannerTitleFlex}>
-        {miscSettings.current.title}
+        
+        <div>{miscSettings.current.title}</div>
+        {miscSettings.current.title === "Search" && (
+          <div>
+            <MagnifyingGlassIcon dimensions={".75em"} />
+          </div>
+        )}
       </div>
 
       {/* For when user isn't signed in */}
@@ -195,12 +202,15 @@ const FocalBannerMessage = (props) => {
         <div>Welcome Back!</div>
       </div>
 
-      <div style={{
+      <div
+        style={{
           display: `${
             !props.forHomepage && !props.forSearch ? "flex" : "none"
           }`,
-          gap: "0.5em"
-        }} className={classes.bannerFlex}>
+          gap: "0.5em",
+        }}
+        className={classes.bannerFlex}
+      >
         <div>remaining daily prompts:</div>
         {/* have the number have a rainbow background (rainbow font), and replace with '1 (Extra Prompt)'
             if they have completed all and then a 'thanks for completing all of your daily prompts! */}

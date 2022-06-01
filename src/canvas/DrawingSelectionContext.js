@@ -57,6 +57,7 @@ export function DrawingSelectionProvider(props) {
     drawCircle: false,
     selectToChooseBar: false,
     chooseToDrawBar: false,
+    resetToSelectBar: false,
   });
 
   // i hate doing this below
@@ -101,10 +102,6 @@ export function DrawingSelectionProvider(props) {
     }
   }, [isLoading, isAuthenticated]);
 
-  useEffect(() => {
-    console.log("PBStates changed to", PBStates);
-  }, [PBStates]);
-
   function updatePBStates(field, value) {
     let tempPBStatuses = {...PBStates};
     tempPBStatuses[field] = value;
@@ -119,6 +116,7 @@ export function DrawingSelectionProvider(props) {
       drawCircle: false,
       selectToChooseBar: false,
       chooseToDrawBar: false,
+      resetToSelectBar: false,
     });
   }
 

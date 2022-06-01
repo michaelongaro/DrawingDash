@@ -1,4 +1,4 @@
-import React, { useContext, useState, useEffect } from "react";
+import React, { useContext, useState, useRef, useEffect } from "react";
 
 import anime from "animejs/lib/anime.es.js";
 
@@ -19,15 +19,19 @@ const ProgressBar = () => {
     classes.inactive
   );
 
+  const progressBarRef = useRef(null);
+
   const [localPBStates, setLocalPBStates] = useState({
     selectCircle: false,
     chooseCircle: false,
     drawCircle: false,
     selectToChooseBar: false,
     chooseToDrawBar: false,
+    resetToSelectBar: false,
   });
 
   useEffect(() => {
+    console.log(DSCtx.PBStates);
     // starting off with showing select prompt screen
     if (DSCtx.PBStates["selectCircle"] && !localPBStates["selectCircle"]) {
       anime({
@@ -77,7 +81,7 @@ const ProgressBar = () => {
             loop: false,
             direction: "normal",
             duration: 500,
-            translateY: [0, "70px"],
+            translateY: [0, "50px"],
             fontSize: ["1.25em", "1.5em"],
             fontWeight: [400, 600],
             color: ["rgb(100, 100, 100)", "rgb(0, 0, 0)"],
@@ -138,7 +142,7 @@ const ProgressBar = () => {
         loop: false,
         direction: "normal",
         duration: 500,
-        translateY: ["70px", 0],
+        translateY: ["50px", 0],
         fontSize: ["1.5em", "1.25em"],
         fontWeight: [600, 400],
         color: ["rgb(0, 0, 0)", "rgb(100, 100, 100)"],
@@ -208,7 +212,67 @@ const ProgressBar = () => {
           });
         },
       });
+    }
 
+    // moving everything back to default positions
+    if (
+      DSCtx.PBStates["resetToSelectBar"] &&
+      !localPBStates["resetToSelectBar"]
+    ) {
+      // scroll progressBar into view when reset button is clicked
+      progressBarRef.current.scrollIntoView({ behavior: "smooth" });
+
+      anime({
+        targets: "#draw",
+        loop: false,
+        width: ["28px", 0],
+        minHeight: ["28px", 0],
+        direction: "normal",
+        duration: 50,
+        easing: "easeInSine",
+        complete: () => {
+          anime({
+            targets: "#animatedGreenPB",
+            loop: false,
+            width: ["520px", "265px"],
+            direction: "normal",
+            duration: 100,
+            easing: "easeInSine",
+            complete: () => {
+              anime({
+                targets: "#choose",
+                loop: false,
+                width: ["28px", 0],
+                minHeight: ["28px", 0],
+                direction: "normal",
+                duration: 50,
+                easing: "easeInSine",
+                complete: () => {
+                  anime({
+                    targets: "#animatedGreenPB",
+                    loop: false,
+                    width: ["265px", 0],
+                    direction: "normal",
+                    duration: 100,
+                    easing: "easeInSine",
+                    complete: () => {
+                      DSCtx.resetProgressBar();
+                      setLocalPBStates({
+                        selectCircle: false,
+                        chooseCircle: false,
+                        drawCircle: false,
+                        selectToChooseBar: false,
+                        chooseToDrawBar: false,
+                        resetToSelectBar: false,
+                      });
+                    },
+                  });
+                },
+              });
+            },
+          });
+        },
+      });
     }
 
     setLocalPBStates(DSCtx.PBStates);
@@ -237,7 +301,7 @@ const ProgressBar = () => {
   // ]);
 
   return (
-    <div className={classes.rectangle}>
+    <div ref={progressBarRef} className={classes.rectangle}>
       {/* select circle */}
       <div className={classes.circle}>
         <div

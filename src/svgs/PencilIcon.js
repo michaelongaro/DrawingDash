@@ -11,7 +11,6 @@ const PencilIcon = () => {
       y="0"
       viewBox="0 0 512.001 512.001"
       style={{enableBackground:"new 0 0 512 512"}}
-      class=""
     >
       <g>
         <link type="text/css" rel="stylesheet" id="dark-mode-custom-link" />

@@ -4,13 +4,14 @@ import anime from "animejs/lib/anime.es.js";
 const AnimatedDrawing = (props) => {
   const animationRef = useRef(null);
 
-  const styles = props.forSearch ? {
-    borderRadius: "1em",
-    width: "10em"
-  } : {
-    borderRadius: "1em",
-    
-  }
+  const styles = props.forSearch
+    ? {
+        borderRadius: "1em",
+        width: "10em",
+      }
+    : {
+        borderRadius: "1em",
+      };
 
   // useEffect(() => {
   //   function handleResize() {
@@ -32,7 +33,6 @@ const AnimatedDrawing = (props) => {
 
       delay: props.id % 2 === 0 ? 0 : 500,
 
-
       duration: 2000,
       loop: true,
       direction: "alternate",
@@ -51,7 +51,11 @@ const AnimatedDrawing = (props) => {
         opacity: props.id % 2 === 0 ? 0 : 1,
       }}
     >
-      <img style={styles} alt={"floating focal drawing"} src={props.drawing}></img>
+      <img
+        style={styles}
+        alt={"floating focal drawing"}
+        src={props.drawing}
+      ></img>
     </div>
   );
 };

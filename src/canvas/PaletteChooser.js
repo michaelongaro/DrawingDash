@@ -115,9 +115,6 @@ const PaletteChooser = () => {
       </div>
 
       <div className={classes.paletteIconContainer}>
-        {/* stop smoking CRACK before doing shit, make the svg like you */}
-        {/* <div style={{ position: "absolute", width: "25em", height: "15em", left: "2.75em", top: "3em", borderRadius: "35%", backgroundColor: "#905532"}}></div>
-        <PaletteIcon /> */}
         <BackupPaletteIcon />
       </div>
 

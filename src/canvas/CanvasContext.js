@@ -16,11 +16,12 @@ export const CanvasProvider = ({ children }) => {
     const canvas = canvasRef.current;
     const mod_width = window.innerWidth * 0.75;
     const mod_height = window.innerHeight * 0.75;
+
     canvas.width = mod_width;
     canvas.height = mod_height;
     canvas.style.width = `${mod_width}px`;
     canvas.style.height = `${mod_height}px`;
-
+    console.log(mod_width, mod_height);
     const context = canvas.getContext("2d");
     context.lineCap = "round";
     context.lineJoin = "round";

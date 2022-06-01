@@ -5,6 +5,13 @@
   align-items: center;
 }
 
+.baseFlex {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1em;
+}
+
 .horizContain {
   display: flex;
   justify-content: center;
@@ -56,9 +63,9 @@
   color: rgba(255, 255, 255, 0.9);
 }
 
-button {
+/* button {
   margin: 1em 1.5em 1.5em 1.5em;
-}
+} */
 
 .promptTextMargin {
   margin: 1em 1.5em 1.5em 1.5em;
@@ -82,8 +89,8 @@ button {
 }
 
 .canvasOutline {
-  width: 100%;
-  height: 70vh;
+  width: 97.27%;
+  height: 75vh;
   display: flex;
   justify-content: center;
   flex-direction: column;
@@ -92,18 +99,16 @@ button {
   background-color: white;
   border-top-width: 0px;
   border-bottom-width: 0px;
-  border-left: 1px solid black;
-  border-right: 1px solid black;
+  /* border-left: 1px solid black;
+  border-right: 1px solid black; */
   border-radius: 5px;
 }
 
 .canvasBorder {
   width: 100%;
-  /*height: 70vh; */
+  height: 100%;
   border-top-width: 0px;
   border-bottom-width: 0px;
-  border-left: 1px solid black;
-  border-right: 1px solid black;
   border-radius: 5px;
 }
 
@@ -116,6 +121,39 @@ button {
   pointer-events: none;
 }
 
+.leadingLine {
+  height: 1px;
+  width: 3em;
+  margin-right: 0.5em;
+  background-image: linear-gradient(
+    to right,
+    rgba(255, 255, 255, 0),
+    rgba(0, 0, 0, 1)
+  );
+}
+
+.trailingLine {
+  height: 1px;
+  width: 3em;
+  margin-left: 0.5em;
+  background-image: linear-gradient(
+    to right,
+    rgba(0, 0, 0, 1),
+    rgba(255, 255, 255, 0)
+  );
+}
+
+.download {
+  border-radius: 1em;
+  background-color: rgb(239, 239, 239);
+  padding: 0.75em;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.75em;
+}
+
 .overlayBreathingBackground {
   background: linear-gradient(
     0deg,
@@ -126,8 +164,40 @@ button {
   display: grid;
   place-items: end center;
   margin-bottom: 1em;
-  margin-top: 4em;
+  margin-top: 3em;
+  width: 77%;
+}
+
+.infoModal {
   width: 100%;
+  height: 100%;
+  position: relative;
+  background: #c2c2c2;
+  width: 125px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  top: 8px;
+  height: 50px;
+  opacity: 0;
+  padding: 1.75em;
+  border-radius: 5px;
+  transition: all 250ms;
+}
+
+.infoModal:after {
+  bottom: 100%;
+  left: 50%;
+  border: solid transparent;
+  content: "";
+  height: 0;
+  width: 0;
+  position: absolute;
+  pointer-events: none;
+  border-color: rgba(194, 194, 194, 0);
+  border-bottom-color: #c2c2c2;
+  border-width: 10px;
+  margin-left: -10px;
 }
 
 .canvasBreathingBackground {
@@ -137,11 +207,109 @@ button {
     rgba(204, 204, 204, 1) 100%
   );
   border-radius: 25px;
-  display: grid;
-  place-items: end center;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
   margin-bottom: 1em;
-  margin-top: 4em;
+  margin-top: 3em;
+  width: 78vw;
+  height: 90vh;
+}
+
+.sharedContain {
+  position: relative;
+  width: 75vw;
+  height: 75vh;
+}
+
+.rounded {
+  border-radius: 5px;
+}
+
+.canvasStyles {
+  position: absolute;
+  left: 0px;
+  top: 0px;
   width: 100%;
+  height: 100%;
+  z-index: 200;
+  border-radius: 5px;
+  overflow: hidden;
+}
+
+.startScreen {
+  position: absolute;
+  left: 0px;
+  top: 0px;
+  width: 100%;
+  height: 100%;
+  z-index: 300;
+}
+
+.endScreen {
+  position: absolute;
+  left: 0px;
+  top: 0px;
+  width: 100%;
+  height: 100%;
+  z-index: 400;
+  font-size: 1em;
+  background-color: rgb(255, 255, 255, 0.2);
+}
+
+.endButtonContainer {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 3em 3em 1em 3em;
+  background-color: rgba(255, 255, 255, 0.95);
+  border-radius: 1em;
+}
+
+.drawAgainButton {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.5em;
+  margin: 1em 3em 1em 3em;
+  padding: 1em 3em 1em 3em;
+
+  background-image: linear-gradient(-180deg, #ff7e31, #e62c03);
+  border-radius: 6px;
+  box-shadow: rgba(0, 0, 0, 0.1) 0 2px 4px;
+  color: #ffffff;
+  cursor: pointer;
+  border: 0;
+  /* white-space: nowrap; */
+  transition: box-shadow 0.2s;
+}
+
+.orSeparator {
+  display: flex;
+
+  justify-content: center;
+  align-items: center;
+
+  font-size: 0.85em;
+  margin-top: 2.5em;
+  margin-bottom: 2.5em;
+}
+
+.drawAgainButton:hover {
+  box-shadow: rgba(253, 76, 0, 0.5) 0 3px 8px;
+}
+
+.fadingVerticalLine {
+  height: 2.5em;
+  width: 1px;
+  background-image: linear-gradient(
+    to bottom,
+    rgba(255, 255, 255, 0),
+    rgba(0, 0, 0, 1),
+    rgba(255, 255, 255, 0)
+  );
 }
 
 .redBackground {

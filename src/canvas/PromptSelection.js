@@ -76,6 +76,7 @@ const PromptSelection = () => {
   }, [showExtraPrompt, DSCtx.extraPrompt]);
 
   useEffect(() => {
+
     anime({
       targets: "#promptSelection",
       loop: false,
