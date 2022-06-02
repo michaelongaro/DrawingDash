@@ -237,7 +237,24 @@ const GallaryItem = ({ drawingID, settings }) => {
 
           {/* -------- metainfo --------- */}
           {settings.forPinnedShowcase ? null : (
-            <div className={classes.bottomContain}>
+            <div
+              style={{
+                background:
+                  !isFetching && drawingDetails.hasOwnProperty("averageColor")
+                    ? `linear-gradient(
+                                        \n
+                                        145deg,
+                                        \n
+                                        rgb(255, 255, 255) 0%,
+                                        \n
+                                        rgb(${drawingDetails["averageColor"]["r"]}, 
+                                            ${drawingDetails["averageColor"]["g"]}, 
+                                            ${drawingDetails["averageColor"]["b"]}) 125%
+                                      )`
+                    : "linear-gradient(\n    145deg,\n    rgb(255, 255, 255) 0%,\n    #c2c2c2 125%\n  )",
+              }}
+              className={classes.bottomContain}
+            >
               {/* profile image */}
               {!settings.forPinnedItem ? (
                 isFetching ? (

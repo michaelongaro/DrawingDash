@@ -28,7 +28,7 @@
 
 .header a {
   text-decoration: none;
-  font-size: 1.5rem;
+  /* font-size: 1.5rem; */
   color: black;
 }
 
@@ -63,6 +63,62 @@
 .signinout button:hover {
   color: #000000;
   background-color: #23c50d;
+}
+
+.dailyDrawButton {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 250px;
+  height: 60px;
+  margin: 10px;
+  border-radius: 6px;
+  background-color: #f6f6f6;
+  background-image: repeating-linear-gradient(
+    -45deg,
+    #cf2525,
+    #e0c71b 1rem,
+    #0caa0d 2rem,
+    #234ac1 3rem,
+    #7e1cc2 4rem,
+    #cf2525 5rem
+  );
+  transition: all 200ms;
+  background-position: 0% 0%;
+  background-size: 2000%;
+  background-repeat: repeat;
+  animation-name: colors;
+  animation-duration: 5s;
+  animation-iteration-count: infinite;
+  animation-direction: normal;
+  animation-play-state: paused;
+  animation-timing-function: linear;
+}
+
+.dailyDrawButton:hover {
+  animation-play-state: running;
+}
+
+@keyframes colors {
+  0% {
+    background-position: 0% 0%;
+  }
+  100% {
+    background-position: 18.9% 18.9%;
+  }
+}
+
+.drawButtonBackground {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 85%;
+  border-radius: 3px;
+  background-color: black;
+  color: white;
+  text-align: center;
+  padding: 0.6em;
+  transition: all 200ms;
 }
 
 .rainbow {
