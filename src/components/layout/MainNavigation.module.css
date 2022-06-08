@@ -1,3 +1,12 @@
+.baseFlex {
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  gap: 1em;
+
+  margin-left: 2em;
+}
+
 .header {
   width: 100%;
   height: 5rem;
@@ -19,12 +28,13 @@
   margin: 0;
   padding: 0;
   display: flex;
-  align-items: baseline;
+  align-items: center;
+  gap: 1em;
 }
 
-.header li {
+/* .header li {
   margin-left: 3rem;
-}
+} */
 
 .header a {
   text-decoration: none;
@@ -73,52 +83,64 @@
   height: 60px;
   margin: 10px;
   border-radius: 6px;
-  background-color: #f6f6f6;
-  background-image: repeating-linear-gradient(
-    -45deg,
-    #cf2525,
-    #e0c71b 1rem,
-    #0caa0d 2rem,
-    #234ac1 3rem,
-    #7e1cc2 4rem,
-    #cf2525 5rem
-  );
+  border-color: #e2e2e2;
+  border-width: 0.25em;
+  border-style: solid;
   transition: all 200ms;
-  background-position: 0% 0%;
-  background-size: 2000%;
-  background-repeat: repeat;
-  animation-name: colors;
-  animation-duration: 5s;
-  animation-iteration-count: infinite;
-  animation-direction: normal;
-  animation-play-state: paused;
-  animation-timing-function: linear;
 }
 
 .dailyDrawButton:hover {
-  animation-play-state: running;
+  border-color: hsl(348deg 100% 44%);
+  background-color: hsl(348deg 100% 44%);
 }
 
-@keyframes colors {
-  0% {
-    background-position: 0% 0%;
-  }
-  100% {
-    background-position: 18.9% 18.9%;
-  }
+/* hoping that classes defined later take higher precendence */
+.activeDailyDraw {
+  border-color: hsl(348deg 100% 44%);
+  background-color: hsl(348deg 100% 44%);
 }
 
 .drawButtonBackground {
   display: flex;
   justify-content: center;
   align-items: center;
+  gap: 1em;
+
   width: 85%;
-  border-radius: 3px;
-  background-color: black;
-  color: white;
-  text-align: center;
-  padding: 0.6em;
+  height: 85%;
+  background-color: tranparent;
   transition: all 200ms;
+}
+
+.exploreButton {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 170px;
+  height: 60px;
+  margin: 10px;
+  border-radius: 6px;
+  border-color: #e2e2e2;
+  border-width: 0.25em;
+  border-style: solid;
+  transition: all 200ms;
+}
+
+.exploreButton:hover {
+  border-color: hsl(67deg 100% 45%);
+  background-color: hsl(67deg 100% 45%);
+}
+
+.activeExplore {
+  border-color: hsl(67deg 100% 45%);
+  background-color: hsl(67deg 100% 45%);
+}
+
+.profilePicture {
+  border-radius: 50%;
+  object-fit: cover;
+  width: 3em;
+  height: 3em;
 }
 
 .rainbow {

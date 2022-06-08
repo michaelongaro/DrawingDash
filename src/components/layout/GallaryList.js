@@ -204,10 +204,10 @@ const GallaryList = (props) => {
           </div>
 
           <Card margin={props.margin}>
-            <div className={classes.flexListContain}>
+            {/* <div className={classes.flexListContain}> */}
               <div
                 className={`${durationStates[0] ? "" : classes.hide} ${
-                  classes.flexListContain
+                  classes.gridListContain
                 }`}
               >
                 {Object.values(displayedDrawings["60"])
@@ -217,7 +217,7 @@ const GallaryList = (props) => {
                       key={i}
                       drawingID={drawingID}
                       settings={{
-                        width: 30,
+                        width: 100,
                         forHomepage: false,
                         forPinnedShowcase: false,
                         forPinnedItem: false,
@@ -231,7 +231,7 @@ const GallaryList = (props) => {
 
               <div
                 className={`${durationStates[1] ? "" : classes.hide} ${
-                  classes.flexListContain
+                  classes.gridListContain
                 }`}
               >
                 {Object.values(displayedDrawings["180"])
@@ -241,7 +241,7 @@ const GallaryList = (props) => {
                       key={i}
                       drawingID={drawingID}
                       settings={{
-                        width: 30,
+                        width: 100,
                         forHomepage: false,
                         forPinnedShowcase: false,
                         forPinnedItem: false,
@@ -255,7 +255,7 @@ const GallaryList = (props) => {
 
               <div
                 className={`${durationStates[2] ? "" : classes.hide} ${
-                  classes.flexListContain
+                  classes.gridListContain
                 }`}
               >
                 {/* {console.log(displayedDrawings)} */}
@@ -266,7 +266,7 @@ const GallaryList = (props) => {
                       key={i}
                       drawingID={drawingID}
                       settings={{
-                        width: 30,
+                        width: 100,
                         forHomepage: false,
                         forPinnedShowcase: false,
                         forPinnedItem: false,
@@ -277,7 +277,7 @@ const GallaryList = (props) => {
                     />
                   ))}
               </div>
-            </div>
+            {/* </div> */}
           </Card>
         </div>
       )}

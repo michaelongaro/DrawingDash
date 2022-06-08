@@ -1,3 +1,10 @@
+.baseFlex {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.5em;
+}
+
 .bottomContain {
   display: flex;
   justify-content: space-evenly;
@@ -11,25 +18,117 @@
   /* background-color: rgb(212, 209, 209); */
 }
 
-.marginContain {
+/* commented out because I don't think we need it anymore */
+/* .marginContain {
   margin: 1em;
-}
-
+} */
+/* 
 .vertFlex {
   display: flex;
   justify-content: center;
   align-items: center;
   flex-direction: column;
   gap: 1em;
-}
+} */
 
 .hide {
   display: none;
 }
 
-.imgCenter {
-  margin-left: auto;
-  margin-right: auto;
+.deleteButton {
+  position: absolute;
+
+  top: 0.5em;
+  left: 0.5em;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  border-radius: 1em;
+  border-width: 1px;
+  border-color: rgba(0, 0, 0, 0.5);
+
+  opacity: 0;
+  cursor: pointer;
+
+  padding: 0.35em 0.75em 0.35em 0.75em;
+  /* z-index: 500; */
+  transition: all 200ms;
+}
+
+.confirmDeleteText {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 0.5em;
+
+  background-color: #f6f6f6;
+
+  border-radius: 1em;
+  padding: 3em 3em 2em 3em;
+}
+
+.deleteModalControls {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1.5em;
+  margin-top: 1.5em;
+}
+
+.editButton {
+  background-color: initial;
+  background-image: linear-gradient(-180deg, #ff7e31, #e62c03);
+  border-radius: 6px;
+  box-shadow: rgba(0, 0, 0, 0.1) 0 2px 4px;
+  color: #ffffff;
+  cursor: pointer;
+  display: inline-block;
+  font-family: Inter, -apple-system, system-ui, Roboto, "Helvetica Neue", Arial,
+    sans-serif;
+  height: 40px;
+  line-height: 40px;
+  outline: 0;
+  overflow: hidden;
+  padding: 0 20px;
+  pointer-events: auto;
+  position: relative;
+  text-align: center;
+  touch-action: manipulation;
+  user-select: none;
+  -webkit-user-select: none;
+  vertical-align: top;
+  white-space: nowrap;
+  z-index: 9;
+  border: 0;
+  transition: box-shadow 0.2s;
+}
+
+/* idk why this won't show up, last sweeping change you made was html { overflow: hidden } */
+.editButton:hover:enabled {
+  box-shadow: rgba(253, 76, 0, 1) 0 3px 8px;
+}
+
+.closeButton {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  cursor: pointer;
+  border: 0;
+
+  background-image: linear-gradient(-180deg, #ebebeb, #c4c4c4);
+  border-radius: 6px;
+  box-shadow: rgba(0, 0, 0, 0.1) 0 2px 4px;
+  transition: box-shadow 0.2s;
+  padding: 0.75em 1em;
+  margin-right: 0.5em;
+}
+
+.closeButton:hover {
+  box-shadow: rgba(117, 117, 117, 0.5) 0 3px 5px;
 }
 
 .likes {
@@ -41,16 +140,23 @@
   padding: 0.25em 0.5em 0.25em 0.5em;
 }
 
-.fullScreen {
-  position: fixed;
+.modal {
+  position: absolute;
+  left: 0;
+  top: 0;
+
   width: 100vw;
   height: 100vh;
-  overflow: hidden;
 
-  top: 0;
-  z-index: 9000;
-  padding: 6em;
-  background-color: rgba(0, 0, 0, 0.4);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 500;
+
+  transition: all 200ms;
 }
 
 .download {

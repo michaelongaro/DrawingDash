@@ -12,7 +12,7 @@ import getCroppedImg from "../../util/cropImage";
 
 import PinnedArtwork from "./PinnedArtwork";
 import ProfileHeader from "./ProfileHeader";
-import ExitPreferencesIcon from "../../svgs/ExitPreferencesIcon";
+import ExitIcon from "../../svgs/ExitIcon";
 import EditPreferencesIcon from "../../svgs/EditPreferencesIcon";
 import ResizeIcon from "../../svgs/ResizeIcon";
 import UploadIcon from "../../svgs/UploadIcon";
@@ -350,7 +350,7 @@ const Preferences = () => {
                 className={classes.closeButton}
                 onClick={() => setEditAvailable(true)}
               >
-                <ExitPreferencesIcon />
+                <ExitIcon />
               </button>
               {/* eventually will look at checking whether inputs were actually changed
                   and disable this button until then, but for now is always on */}

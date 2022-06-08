@@ -344,7 +344,7 @@ const Controls = () => {
         </div>
 
         <div onClick={clearCanvas} style={{ marginLeft: "2em" }}>
-          <GarbageIcon />
+          <GarbageIcon dimensions={"3em"} />
         </div>
       </div>
     </div>

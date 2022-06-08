@@ -1,13 +1,13 @@
 import React from "react";
 
-const GarbageIcon = () => {
+const GarbageIcon = ({ dimensions }) => {
   return (
     <svg
       id="Capa_1"
       enableBackground="new 0 0 497 497"
-      height="3em"
+      height={dimensions}
       viewBox="0 0 497 497"
-      width="3em"
+      width={dimensions}
       xmlns="http://www.w3.org/2000/svg"
     >
       <g>

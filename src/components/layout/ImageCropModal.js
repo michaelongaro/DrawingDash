@@ -1,7 +1,7 @@
 import React from "react";
 import Cropper from "react-easy-crop";
 
-import ExitPreferencesIcon from "../../svgs/ExitPreferencesIcon";
+import ExitIcon from "../../svgs/ExitIcon";
 
 import classes from "./ImageCropModal.module.css";
 
@@ -29,10 +29,10 @@ const ImageCropModal = ({
 
   return (
     <div className={classes.baseFlex}>
-      <div style={{ textAlign: "center", margin: ".25em 0 .25em 0" }}>
+      <div style={{ textAlign: "center", marginTop: ".5em" }}>
         Resize Your Image
       </div>
-      <div className="backdrop"></div>
+      <div className={classes.backdrop}></div>
       <div className={classes.cropContainer}>
         <Cropper
           image={imageUrl}
@@ -65,7 +65,7 @@ const ImageCropModal = ({
                 className={classes.closeButton}
                 onClick={discardChanges}
               >
-                <ExitPreferencesIcon />
+                <ExitIcon />
               </button>
           <button className={classes.editButton} onClick={applyChanges}>
             Apply

@@ -18,7 +18,7 @@
   background: rgba(255, 255, 255, 0.6);
   transform: skew(45deg);
   /* transition: 0.1s; */
-  animation: shineSmall 1s ease;
+  animation: shineSmall 0.8s ease;
 }
 
 @keyframes shineSmall {
@@ -57,7 +57,7 @@
   background: rgba(255, 255, 255, 0.6);
   transform: skew(45deg);
   /* transition: 0.1s; */
-  animation: shineMedium 1s ease;
+  animation: shineMedium 0.8s ease;
 }
 
 @keyframes shineMedium {
