@@ -9,6 +9,7 @@ import {
   getDatabase,
   ref as ref_database,
   set,
+  onValue,
   child,
   get,
 } from "firebase/database";
@@ -24,8 +25,10 @@ import {
 import { app } from "../../util/init-firebase";
 
 import classes from "./UserModal.module.css";
+import baseClasses from "../../index.module.css";
 
 const UserModal = (props) => {
+  const db = getDatabase(app);
   const dbRef = ref_database(getDatabase(app));
 
   const storage = getStorage();
@@ -34,24 +37,24 @@ const UserModal = (props) => {
   const [status, setStatus] = useState("");
 
   const [isFetching, setIsFetching] = useState(true);
-
+  const [image, setImage] = useState(null);
   const [pinnedIDs, setPinnedIDs] = useState();
   const [pinnedMetadata, setPinnedMetadata] = useState();
   const [pinnedDrawings, setPinnedDrawings] = useState();
   const [imageFileType, setImageFileType] = useState(null);
   const [croppedImage, setCroppedImage] = useState(null);
   const [DBCropData, setDBCropData] = useState(null);
-  const [profileImage, setProfileImage] = useState(null);
 
   const showCroppedImage = async () => {
     try {
       const croppedImg = await getCroppedImg(
-        profileImage,
+        image,
         DBCropData,
         imageFileType
       );
 
       setCroppedImage(croppedImg);
+      setIsFetching(false);
     } catch (e) {
       console.log(e);
     }
@@ -77,12 +80,12 @@ const UserModal = (props) => {
       }
     });
 
-    getDownloadURL(ref_storage(storage, `${props.uid}/profile`))
+    getDownloadURL(ref_storage(storage, `users/${props.user}/profile`))
       .then((url) => {
-        getMetadata(ref_storage(storage, `${props.uid}/profile`))
+        getMetadata(ref_storage(storage, `users/${props.user}/profile`))
           .then((metadata) => {
             setImageFileType(metadata.contentType);
-            setProfileImage(url);
+            setImage(url);
           })
           .catch((e) => {
             console.error(e);
@@ -93,16 +96,25 @@ const UserModal = (props) => {
           error.code === "storage/object-not-found" ||
           error.code === "storage/unknown"
         ) {
-          console.log("user profile image not found"); //don't need to log this
+          // defaulting to auth0 image
+          onValue(
+            ref_database(db, `users/${props.user}/preferences`),
+            (snapshot) => {
+              if (snapshot.exists()) {
+                setImage(snapshot.val()["defaultProfilePicture"]);
+                setIsFetching(false);
+              }
+            }
+          );
         }
       });
   }, []);
 
   useEffect(() => {
-    if (imageFileType && profileImage && DBCropData) {
+    if (imageFileType && image && DBCropData) {
       showCroppedImage();
     }
-  }, [imageFileType, profileImage, DBCropData]);
+  }, [imageFileType, image, DBCropData]);
 
   useEffect(() => {
     if (pinnedMetadata && pinnedDrawings) setIsFetching(false);
@@ -162,12 +174,35 @@ const UserModal = (props) => {
     <div className={classes.horizContain}>
       <div className={`${classes.container} ${classes.prefCard}`}>
         <div className={classes.leftSide}>
-          <img
+          {/* <img
             className={classes.image}
             width={"165px"}
             src={croppedImage ?? profileImage}
             alt={"Profile"}
-          />
+          /> */}
+
+          {isFetching ? (
+            <div
+              style={{
+                width: "165px",
+                height: "165px",
+                borderRadius: "50%",
+              }}
+              className={baseClasses.skeletonLoading}
+            ></div>
+          ) : (
+            
+              <img
+                style={{
+                width: "165px",
+                height: "165px",
+                borderRadius: "50%",
+              }}
+                src={croppedImage ?? image}
+                alt="Profile"
+              />
+            
+          )}
 
           <div className={classes.showUsername}>{username}</div>
           <div className={classes.showStatus}>

@@ -3,18 +3,21 @@ import React, { useEffect, useState } from "react";
 import { Link, NavLink } from "react-router-dom";
 import { useAuth0 } from "@auth0/auth0-react";
 import getCroppedImg from "../../util/cropImage";
-
+import anime from "animejs/lib/anime.es";
+import isEqual from "lodash/isEqual";
 
 import LogInButton from "../../oauth/LogInButton";
 import LogOutButton from "../../oauth/LogOutButton";
 
 import EaselIcon from "../../svgs/EaselIcon";
 import MagnifyingGlassIcon from "../../svgs/MagnifyingGlassIcon";
+import DefaultUserIcon from "../../svgs/DefaultUserIcon";
 
 import {
   getDatabase,
   ref as ref_database,
   set,
+  onValue,
   child,
   get,
 } from "firebase/database";
@@ -32,18 +35,20 @@ import {
 import { app } from "../../util/init-firebase";
 
 import classes from "./MainNavigation.module.css";
-import DefaultUserIcon from "../../svgs/DefaultUserIcon";
 
 function MainNavigation() {
   // auth0 states
   const { user, isLoading, isAuthenticated } = useAuth0();
 
   // firebase references
+  const db = getDatabase(app);
   const dbRef = ref_database(getDatabase(app));
   const storage = getStorage();
 
   // user profile info states
   const [username, setUsername] = useState();
+  const [firstTimeVisiting, setFirstTimeVisiting] = useState();
+
   const [profilePicture, setProfilePicture] = useState();
   const [image, setImage] = useState(null);
   const [imageFileType, setImageFileType] = useState(null);
@@ -54,12 +59,10 @@ function MainNavigation() {
 
   const [croppedImage, setCroppedImage] = useState(null);
 
-  const [onDailyDraw, setOnDailyDraw] = useState(false);
-  const [onExplore, setOnExplore] = useState(false);
-
-  // for hover styles
-  const [dailyDrawActive, setDailyDrawActive] = useState(false);
-  const [exploreActive, setExploreActive] = useState(false);
+  // to see if user is hovering on profile picture to show dropdown menu
+  const [hoveringOnProfilePicture, setHoveringOnProfilePicture] =
+    useState(false);
+  const [hoveringOnProfileButton, setHoveringOnProfileButton] = useState(false);
 
   // all of this should really be encapsulated into a hook
   const showCroppedImage = async (disableSkeleton = false) => {
@@ -83,17 +86,87 @@ function MainNavigation() {
   };
 
   useEffect(() => {
+    if (!isLoading && !isAuthenticated) {
+      console.log("not authenticated or trying to");
+      let currentPrompts;
+
+      let currentUserInfo = JSON.parse(
+        localStorage.getItem("unregisteredUserInfo")
+      );
+
+      get(child(dbRef, "dailyPrompts"))
+        .then((snapshot) => {
+          if (snapshot.exists()) {
+            currentPrompts = snapshot.val();
+          }
+        })
+        .then(() => {
+          if (currentUserInfo) {
+            // do check here if words are different
+            if (!isEqual(currentUserInfo["lastSeenPrompts"], currentPrompts)) {
+              // allowing user to draw if the day's drawings have reset
+              // and updating lastSeenPrompts value
+              currentUserInfo.dailyCompletedPrompts = {
+                60: false,
+                180: false,
+                300: false,
+              };
+
+              currentUserInfo["lastSeenPrompts"] = currentPrompts;
+
+              localStorage.setItem(
+                "unregisteredUserInfo",
+                JSON.stringify(currentUserInfo)
+              );
+            }
+          } else {
+            // initializing new user localstorage data
+            const userInfo = {
+              drawingMetadata: {},
+              drawings: {},
+              dailyCompletedPrompts: {
+                60: false,
+                180: false,
+                300: false,
+              },
+              lastSeenPrompts: currentPrompts,
+            };
+            localStorage.setItem(
+              "unregisteredUserInfo",
+              JSON.stringify(userInfo)
+            );
+          }
+        });
+    }
+
     if (!isLoading && isAuthenticated) {
-      get(child(dbRef, `users/${user.sub}/preferences`)).then((snapshot) => {
+      console.log("authenticated");
+
+      // image manipulation -> should ideally be in its own hook
+      onValue(ref_database(db, `users/${user.sub}/preferences`), (snapshot) => {
         if (snapshot.exists()) {
           setUsername(snapshot.val()["username"]);
           setDBCropData(snapshot.val()["profileCropMetadata"]);
         }
       });
 
-      getDownloadURL(ref_storage(storage, `${user.sub}/profile`))
+      get(child(dbRef, `users/${user.sub}/firstTimeVisting`)).then(
+        (snapshot) => {
+          if (snapshot.exists()) {
+            if (snapshot.val()) {
+              setFirstTimeVisiting(true);
+              set(
+                ref_database(db, `users/${user.sub}/firstTimeVisiting`),
+                false
+              );
+            }
+          }
+        }
+      );
+
+      getDownloadURL(ref_storage(storage, `users/${user.sub}/profile`))
         .then((url) => {
-          getMetadata(ref_storage(storage, `${user.sub}/profile`))
+          getMetadata(ref_storage(storage, `users/${user.sub}/profile`))
             .then((metadata) => {
               setImageFileType(metadata.contentType);
               setImage(url);
@@ -107,18 +180,42 @@ function MainNavigation() {
             error.code === "storage/object-not-found" ||
             error.code === "storage/unknown"
           ) {
-            setImageCroppedAndLoaded(true);
-            console.log("user profile image not found"); //don't need to log this
+            // defaulting to auth0 image
+            onValue(
+              ref_database(db, `users/${user.sub}/preferences`),
+              (snapshot) => {
+                if (snapshot.exists()) {
+                  setImage(snapshot.val()["defaultProfilePicture"]);
+                  setImageCroppedAndLoaded(true);
+                }
+              }
+            );
           }
         });
     }
   }, [isLoading, isAuthenticated]);
 
-    useEffect(() => {
+  useEffect(() => {
     if (DBCropData && image) {
       showCroppedImage(true);
     }
   }, [image, DBCropData]);
+
+  useEffect(() => {
+    if (username) {
+      anime({
+        targets: "#welcometext",
+        loop: false,
+        // width: [0, "100%"],
+        // height: [0, "100%"],
+        opacity: [0, 1],
+        minHeight: [0, "auto"],
+        direction: "normal",
+        duration: 250,
+        easing: "easeInSine",
+      });
+    }
+  }, [username]);
 
   return (
     <header className={classes.header}>
@@ -168,12 +265,70 @@ function MainNavigation() {
             </div>
           ) : (
             <div className={classes.baseFlex}>
-              <div>{`Welcome back${username ? ` ${username}!` : "!"}`}</div>
-              <img
-                className={classes.profilePicture}
-                src={croppedImage ? croppedImage : image ?? <DefaultUserIcon />}
-                alt={"cropped profile"}
-              />
+              {username ? (
+                <div
+                  id={"welcometext"}
+                  style={{ overflow: "hidden", display: "inline-block" }}
+                >{`Welcome ${firstTimeVisiting ? "" : "back"},${
+                  username ? ` ${username}!` : "!"
+                }`}</div>
+              ) : null}
+              <div
+                className={classes.profileDropdownContainer}
+                onMouseEnter={() => {
+                  setHoveringOnProfilePicture(true);
+                }}
+                onMouseLeave={() => {
+                  setHoveringOnProfilePicture(false);
+                }}
+              >
+                <div style={{ position: "absolute" }}>
+                  <img
+                    className={classes.profilePicture}
+                    src={
+                      croppedImage
+                        ? croppedImage
+                        : image
+                    }
+                    alt={"cropped profile"}
+                  />
+                </div>
+                <div
+                  className={classes.dropdownContainer}
+                  onMouseEnter={() => {
+                    setHoveringOnProfilePicture(true);
+                  }}
+                  onMouseLeave={() => {
+                    setHoveringOnProfilePicture(false);
+                  }}
+                >
+                  <div
+                    style={{
+                      opacity: hoveringOnProfilePicture ? 1 : 0,
+                      pointerEvents: hoveringOnProfilePicture ? "auto" : "none",
+                    }}
+                    className={classes.profileDropdown}
+                  >
+                    <Link
+                      className={classes.profileButton}
+                      onMouseEnter={() => {
+                        setHoveringOnProfileButton(true);
+                      }}
+                      onMouseLeave={() => {
+                        setHoveringOnProfileButton(false);
+                      }}
+                      to="/profile/preferences"
+                    >
+                      <DefaultUserIcon
+                        dimensions={"1.5em"}
+                        color={hoveringOnProfileButton ? "white" : "black"}
+                      />
+                      <div>Profile</div>
+                    </Link>
+                    <LogOutButton />
+                  </div>
+                </div>
+              </div>
             </div>
           )}
         </ul>

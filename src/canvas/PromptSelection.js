@@ -6,45 +6,229 @@ import React, {
   useRef,
 } from "react";
 import anime from "animejs/lib/anime.es.js";
+import Select from "react-select";
+import Countdown from "react-countdown";
 import { useAuth0 } from "@auth0/auth0-react";
 
+import LogInButton from "../oauth/LogInButton";
 import DrawingSelectionContext from "./DrawingSelectionContext";
 
-// import { useAuth0 } from "@auth0/auth0-react";
+import OneMinuteIcon from "../svgs/OneMinuteIcon";
+import ThreeMinuteIcon from "../svgs/ThreeMinuteIcon";
+import FiveMinuteIcon from "../svgs/FiveMinuteIcon";
+
+import {
+  getDatabase,
+  ref as ref_database,
+  set,
+  onValue,
+  child,
+  get,
+} from "firebase/database";
+
+import { app } from "../util/init-firebase";
 
 import classes from "./Canvas.module.css";
+import baseClasses from "../index.module.css";
 
 const PromptSelection = () => {
   const { isLoading, isAuthenticated } = useAuth0();
+
   const DSCtx = useContext(DrawingSelectionContext);
+
+  const db = getDatabase(app);
+  const dbRef = ref_database(getDatabase(app));
 
   const [showExtraPrompt, setShowExtraPrompt] = useState(classes.hide);
   const [formattedSeconds, setFormattedSeconds] = useState("");
   const [adaptiveBackground, setAdaptiveBackground] = useState("");
+  const [customAdaptiveBackground, setCustomAdaptiveBackground] = useState(
+    classes.yellowBackground
+  ); // temporary
+  const [extraDurationIcon, setExtraDurationIcon] = useState();
   const [stylingButtonClasses, setStylingButtonClasses] = useState([
-    classes.pointer,
     classes.pointer,
     classes.pointer,
     classes.pointer,
   ]);
 
+  const [durationOptions, setDurationOptions] = useState();
+  const [adjectiveOptions, setAdjectiveOptions] = useState();
+  const [nounOptions, setNounOptions] = useState();
+
+  const [selectedDurationOption, setSelectedDurationOption] = useState();
+  const [selectedAdjectiveOption, setSelectedAdjectiveOption] = useState();
+  const [selectedNounOption, setSelectedNounOption] = useState();
+
+  // don't like doing this below but will keep for now
+  const [defaultDurationOption, setDefaultDurationOption] = useState(null);
+  const [defaultAdjectiveOption, setDefaultAdjectiveOption] = useState(null);
+  const [defaultNounOption, setDefaultNounOption] = useState(null);
+
+  const [nextDisabled, setNextDisabled] = useState(true);
+  const [selectedExtraPrompt, setSelectedExtraPrompt] = useState("");
+  const [blurState, setBlurState] = useState("");
+  const [showCountdownTimer, setShowCountdownTimer] = useState(false);
+  const [resetAtDate, setResetAtDate] = useState(
+    "January 01, 2030 00:00:00 GMT+03:00"
+  );
+
+  useEffect(() => {
+    if (!isLoading && isAuthenticated) {
+      // for logged in users
+
+      if (
+        DSCtx.drawingStatuses["60"] &&
+        DSCtx.drawingStatuses["180"] &&
+        DSCtx.drawingStatuses["300"] &&
+        DSCtx.drawingStatuses["extra"]
+      ) {
+        setShowCountdownTimer(true);
+        // ideally have all progressbar logic inside that component, have it look for these exact
+        // conditions (drop the extra if user isn't logged in)
+      }
+
+      if (
+        DSCtx.drawingStatuses["60"] &&
+        DSCtx.drawingStatuses["180"] &&
+        DSCtx.drawingStatuses["300"] &&
+        !DSCtx.drawingStatuses["extra"]
+      ) {
+        setShowExtraPrompt("");
+      }
+
+      setStylingButtonClasses([
+        DSCtx.drawingStatuses["60"] ? classes.disabled : classes.pointer,
+        DSCtx.drawingStatuses["180"] ? classes.disabled : classes.pointer,
+        DSCtx.drawingStatuses["300"] ? classes.disabled : classes.pointer,
+      ]);
+
+      setDurationOptions([
+        {
+          value: 60,
+          label: "One Minute",
+          disabled: false,
+        },
+        {
+          value: 180,
+          label: "Three Minutes",
+          disabled: false,
+        },
+        {
+          value: 300,
+          label: "Five Minutes",
+          disabled: false,
+        },
+      ]);
+
+      setAdjectiveOptions([
+        {
+          value: 60,
+          label: DSCtx.dailyPrompts["60"].split(" ")[0],
+          disabled: false,
+        },
+        {
+          value: 180,
+          label: DSCtx.dailyPrompts["180"].split(" ")[0],
+          disabled: false,
+        },
+        {
+          value: 300,
+          label: DSCtx.dailyPrompts["300"].split(" ")[0],
+          disabled: false,
+        },
+      ]);
+
+      setNounOptions([
+        {
+          value: 60,
+          label: DSCtx.dailyPrompts["60"].split(" ")[1],
+          disabled: false,
+        },
+        {
+          value: 180,
+          label: DSCtx.dailyPrompts["180"].split(" ")[1],
+          disabled: false,
+        },
+        {
+          value: 300,
+          label: DSCtx.dailyPrompts["300"].split(" ")[1],
+          disabled: false,
+        },
+      ]);
+
+      setDefaultDurationOption({
+        value: 60,
+        label: "One Minute",
+      });
+
+      setDefaultAdjectiveOption({
+        value: 180,
+        label: DSCtx.dailyPrompts["180"].split(" ")[0],
+      });
+
+      setDefaultNounOption({
+        value: 300,
+        label: DSCtx.dailyPrompts["300"].split(" ")[1],
+      });
+
+      setSelectedDurationOption({
+        value: 60,
+        label: "One Minute",
+      });
+
+      setSelectedAdjectiveOption({
+        value: 180,
+        label: DSCtx.dailyPrompts["180"].split(" ")[0],
+      });
+
+      setSelectedNounOption({
+        value: 300,
+        label: DSCtx.dailyPrompts["300"].split(" ")[1],
+      });
+    } else if (!isLoading && !isAuthenticated) {
+      // for unregistered users
+
+      if (
+        DSCtx.drawingStatuses["60"] &&
+        DSCtx.drawingStatuses["180"] &&
+        DSCtx.drawingStatuses["300"]
+      ) {
+        setShowCountdownTimer(true);
+        // ideally have all progressbar logic inside that component, have it look for these exact
+        // conditions (drop the extra if user isn't logged in)
+      }
+
+      setStylingButtonClasses([
+        DSCtx.drawingStatuses["60"] ? classes.disabled : classes.pointer,
+        DSCtx.drawingStatuses["180"] ? classes.disabled : classes.pointer,
+        DSCtx.drawingStatuses["300"] ? classes.disabled : classes.pointer,
+      ]);
+    }
+  }, [isLoading, isAuthenticated, DSCtx.drawingStatuses]);
+
   useEffect(() => {
     if (
-      DSCtx.drawingStatuses["60"] &&
-      DSCtx.drawingStatuses["180"] &&
-      DSCtx.drawingStatuses["300"] &&
-      !DSCtx.drawingStatuses["extra"]
+      selectedDurationOption &&
+      selectedAdjectiveOption &&
+      selectedNounOption
     ) {
-      setShowExtraPrompt("");
+      updateDisabledOptions(
+        selectedDurationOption.value,
+        selectedAdjectiveOption.value,
+        selectedNounOption.value
+      );
     }
-
-    setStylingButtonClasses([
-      DSCtx.drawingStatuses["60"] ? classes.disabled : classes.pointer,
-      DSCtx.drawingStatuses["180"] ? classes.disabled : classes.pointer,
-      DSCtx.drawingStatuses["300"] ? classes.disabled : classes.pointer,
-      DSCtx.drawingStatuses["extra"] ? classes.disabled : classes.pointer,
-    ]);
-  }, [DSCtx.drawingStatuses]);
+    if (selectedDurationOption) {
+      console.log(selectedDurationOption);
+      if (selectedDurationOption.value === 60)
+        setCustomAdaptiveBackground(classes.redBackground);
+      else if (selectedDurationOption.value === 180)
+        setCustomAdaptiveBackground(classes.yellowBackground);
+      else if (selectedDurationOption.value === 300)
+        setCustomAdaptiveBackground(classes.greenBackground);
+    }
+  }, [selectedDurationOption, selectedAdjectiveOption, selectedNounOption]);
 
   useEffect(() => {
     if (
@@ -52,31 +236,118 @@ const PromptSelection = () => {
       DSCtx.extraPrompt.title !== "" &&
       !DSCtx.drawingStatuses["extra"]
     ) {
+      console.log(showExtraPrompt, DSCtx.drawingStatuses);
       if (DSCtx.extraPrompt.seconds === 60) {
         setFormattedSeconds("1 Minute");
         setAdaptiveBackground(classes.redBackground);
+        setExtraDurationIcon(<OneMinuteIcon dimensions={"3.5em"} />);
       } else if (DSCtx.extraPrompt.seconds === 180) {
         setFormattedSeconds("3 Minutes");
         setAdaptiveBackground(classes.yellowBackground);
+        setExtraDurationIcon(<ThreeMinuteIcon dimensions={"3.5em"} />);
       } else {
         setFormattedSeconds("5 Minutes");
         setAdaptiveBackground(classes.greenBackground);
+        setExtraDurationIcon(<FiveMinuteIcon dimensions={"3.5em"} />);
       }
 
+      // animate "A Drawing Prompt" down out of view
       anime({
-        targets: "#extraPrompt",
-        translateY: "1.5em",
+        targets: "#regularPromptText",
+        translateY: [0, "25px"],
+        opacity: [1, 0],
+        scale: [1, 0],
+        pointerEvents: ["auto", "none"],
+        direction: "normal",
+        duration: 500,
         loop: false,
+        easing: "linear",
+      });
+      // animate "An Extra Drawing Prompt" down into view
+      anime({
+        targets: "#extraPromptText",
+        translateY: [0, "25px"],
+        opacity: [0, 1],
+        scale: [0, 1],
+        pointerEvents: ["auto", "none"],
+        direction: "normal",
+        // delay: 800,
+        loop: false,
+        duration: 500,
+        easing: "linear",
+      });
+
+      // animate normal drawing prompts container down out of view
+      anime({
+        targets: "#normalPromptContainer",
+        translateY: [0, "225px"],
+        scale: [1, 0],
+        opacity: [1, 0],
+        pointerEvents: ["auto", "none"],
+        direction: "normal",
+        duration: 1500,
+        loop: false,
+
+        easing: "linear",
+      });
+
+      // animate extra drawing prompts container down into view
+      anime({
+        targets: "#extraPromptContainer",
+        translateY: [0, "225px"],
+        delay: 200,
+        opacity: [0, 1],
+        scale: [0, 1],
+        pointerEvents: ["none", "auto"],
+        direction: "normal",
+        loop: false,
+
+        duration: 1500,
+        easing: "linear",
+      });
+
+      anime({
+        targets: "#nextButton",
+        // translateY: "1276px",
+        // height: [0, "100%"],
+
+        loop: false,
+        delay: 800,
         opacity: [0, 1],
         direction: "normal",
         duration: 1500,
         easing: "linear",
       });
+    } else {
+      if (
+        DSCtx.drawingStatuses["60"] &&
+        DSCtx.drawingStatuses["180"] &&
+        DSCtx.drawingStatuses["300"] &&
+        DSCtx.drawingStatuses.length === 3
+      ) {
+        // blurring out the regular prompts
+        setBlurState("blur");
+
+        // animate signup/login container down into view
+        anime({
+          targets: "#registerContainer",
+          opacity: [0, 1],
+          // maybe scale this [0, 1] ?
+          pointerEvents: ["none", "auto"],
+          direction: "normal",
+          duration: 1500,
+          easing: "linear",
+        });
+      }
     }
-  }, [showExtraPrompt, DSCtx.extraPrompt]);
+  }, [showExtraPrompt, DSCtx.extraPrompt, DSCtx.drawingStatuses]);
 
   useEffect(() => {
-
+    onValue(ref_database(db, "masterDateToResetPromptsAt"), (snapshot) => {
+      if (snapshot.exists()) {
+        setResetAtDate(snapshot.val());
+      }
+    });
     anime({
       targets: "#promptSelection",
       loop: false,
@@ -91,6 +362,62 @@ const PromptSelection = () => {
 
     DSCtx.updatePBStates("selectCircle", true);
   }, []);
+
+  function updateDisabledOptions(duration, adj, noun) {
+    setDurationOptions([
+      {
+        value: 60,
+        label: "One Minute",
+        disabled: adj === 60 && noun === 60,
+      },
+      {
+        value: 180,
+        label: "Three Minutes",
+        disabled: adj === 180 && noun === 180,
+      },
+      {
+        value: 300,
+        label: "Five Minutes",
+        disabled: adj === 300 && noun === 300,
+      },
+    ]);
+
+    setAdjectiveOptions([
+      {
+        value: 60,
+        label: DSCtx.dailyPrompts["60"].split(" ")[0],
+        disabled: duration === 60 && noun === 60,
+      },
+      {
+        value: 180,
+        label: DSCtx.dailyPrompts["180"].split(" ")[0],
+        disabled: duration === 180 && noun === 180,
+      },
+      {
+        value: 300,
+        label: DSCtx.dailyPrompts["300"].split(" ")[0],
+        disabled: duration === 300 && noun === 300,
+      },
+    ]);
+
+    setNounOptions([
+      {
+        value: 60,
+        label: DSCtx.dailyPrompts["60"].split(" ")[1],
+        disabled: duration === 60 && adj === 60,
+      },
+      {
+        value: 180,
+        label: DSCtx.dailyPrompts["180"].split(" ")[1],
+        disabled: duration === 180 && adj === 180,
+      },
+      {
+        value: 300,
+        label: DSCtx.dailyPrompts["300"].split(" ")[1],
+        disabled: duration === 300 && adj === 300,
+      },
+    ]);
+  }
 
   function updateStatesAndShowNextComponent(seconds, prompt, isExtra = false) {
     if (
@@ -134,81 +461,266 @@ const PromptSelection = () => {
         width: "100vw",
       }}
     >
-      {!isLoading && isAuthenticated && (
-        <div className={classes.timerSelectionsModal}>
-          <div>{DSCtx.titleForPromptSelection()}</div>
-          <div className={classes.horizContain}>
-            <div
-              className={`${classes.sidePadding} ${classes.redBackground} ${stylingButtonClasses[0]}`}
-              onClick={() => {
-                updateStatesAndShowNextComponent(60, DSCtx.dailyPrompts["60"]);
-              }}
-            >
-              <div className={classes.timeBorder}>1 Minute</div>
+      <div className={classes.timerSelectionsModal}>
+        <div
+          style={{
+            position: "relative",
+            width: "300px",
+            height: "25px",
+          }}
+        >
+          <div
+            id={"regularPromptText"}
+            style={{
+              position: "absolute",
+              width: "300px",
+              height: "25px",
+              top: 0,
+              textAlign: "center",
+              opacity: !showCountdownTimer ? 1 : 0,
+            }}
+          >
+            A Drawing Prompt
+          </div>
+          <div
+            id={"extraPromptText"}
+            style={{
+              position: "absolute",
+              width: "300px",
+              height: "25px",
+              top: "-25px",
+              textAlign: "center",
+              opacity: !showCountdownTimer && showExtraPrompt === "" ? 1 : 0,
+            }}
+          >
+            An Extra Prompt
+          </div>
+        </div>
 
-              <div className={classes.promptTextMargin}>
-                {DSCtx.dailyPrompts["60"]}
+        <div
+          style={{
+            position: "relative",
+            width: "675px",
+            height: "276px",
+          }}
+        >
+          <div
+            id={"normalPromptContainer"}
+            style={{
+              position: "absolute",
+              top: 0,
+              width: "675px",
+              height: "276px",
+            }}
+          >
+            <div id={blurState} className={classes.horizContain}>
+              <div
+                className={`${classes.durationButton} ${classes.redBackground} ${stylingButtonClasses[0]}`}
+                onClick={() => {
+                  updateStatesAndShowNextComponent(
+                    60,
+                    DSCtx.dailyPrompts["60"]
+                  );
+                }}
+              >
+                <OneMinuteIcon dimensions={"3.5em"} />
+
+                <div className={classes.timeBorder}>1 Minute</div>
+
+                <div className={classes.promptTextMargin}>
+                  {DSCtx.dailyPrompts["60"]}
+                </div>
               </div>
-            </div>
-            <div
-              className={`${classes.sidePadding} ${classes.yellowBackground} ${stylingButtonClasses[1]}`}
-              onClick={() => {
-                updateStatesAndShowNextComponent(
-                  180,
-                  DSCtx.dailyPrompts["180"]
-                );
-              }}
-            >
-              <div className={classes.timeBorder}>3 Minutes</div>
+              <div
+                className={`${classes.durationButton} ${classes.yellowBackground} ${stylingButtonClasses[1]}`}
+                onClick={() => {
+                  updateStatesAndShowNextComponent(
+                    180,
+                    DSCtx.dailyPrompts["180"]
+                  );
+                }}
+              >
+                <ThreeMinuteIcon dimensions={"3.5em"} />
 
-              <div className={classes.promptTextMargin}>
-                {DSCtx.dailyPrompts["180"]}
+                <div className={classes.timeBorder}>3 Minutes</div>
+
+                <div className={classes.promptTextMargin}>
+                  {DSCtx.dailyPrompts["180"]}
+                </div>
               </div>
-            </div>
-            <div
-              className={`${classes.sidePadding} ${classes.greenBackground} ${stylingButtonClasses[2]}`}
-              onClick={() => {
-                updateStatesAndShowNextComponent(
-                  300,
-                  DSCtx.dailyPrompts["300"]
-                );
-              }}
-            >
-              <div className={classes.timeBorder}>5 Minutes</div>
+              <div
+                className={`${classes.durationButton} ${classes.greenBackground} ${stylingButtonClasses[2]}`}
+                onClick={() => {
+                  updateStatesAndShowNextComponent(
+                    300,
+                    DSCtx.dailyPrompts["300"]
+                  );
+                }}
+              >
+                <FiveMinuteIcon dimensions={"3.5em"} />
 
-              <div className={classes.promptTextMargin}>
-                {DSCtx.dailyPrompts["300"]}
+                <div className={classes.timeBorder}>5 Minutes</div>
+
+                <div className={classes.promptTextMargin}>
+                  {DSCtx.dailyPrompts["300"]}
+                </div>
               </div>
             </div>
           </div>
 
           <div
-            id={"extraPrompt"}
+            id={"extraPromptContainer"}
             className={showExtraPrompt}
-            style={{ maxWidth: "30%" }}
+            style={{
+              position: "absolute",
+              top: "-225px",
+              width: "675px",
+              height: "276px",
+              opacity: 0,
+              pointerEvents: "none",
+            }}
           >
             <div className={classes.horizContain}>
+              {/* daily extra prompt */}
               <div
-                className={`${classes.sidePadding} ${adaptiveBackground} ${stylingButtonClasses[3]}`}
-                style={{ height: "100%" }}
+                className={`${classes.durationButton} ${adaptiveBackground}`}
+                style={{ height: "100%", cursor: "pointer" }}
                 onClick={() => {
-                  updateStatesAndShowNextComponent(
-                    DSCtx.extraPrompt.seconds,
-                    DSCtx.extraPrompt.title,
-                    true
-                  );
+                  setSelectedExtraPrompt("regular");
+                  setNextDisabled(false);
                 }}
               >
+                {extraDurationIcon}
+
                 <div className={classes.timeBorder}>{formattedSeconds}</div>
 
                 <div className={classes.promptTextMargin}>
                   {DSCtx.extraPrompt.title}
                 </div>
               </div>
+
+              {/* custom prompt */}
+              <div
+                className={`${classes.durationButton} ${customAdaptiveBackground}`}
+                style={{ height: "276px", padding: "1.5em", cursor: "pointer" }}
+                onClick={() => {
+                  setSelectedExtraPrompt("custom");
+                  setNextDisabled(false);
+                }}
+              >
+                <Select
+                  defaultValue={defaultDurationOption}
+                  options={durationOptions}
+                  placeholder="Duration"
+                  isOptionDisabled={(option) => option.disabled}
+                  onChange={setSelectedDurationOption}
+                  formatOptionLabel={(option) => (
+                    <>
+                      {option.value === 60 && (
+                        <OneMinuteIcon dimensions={"1.5em"} />
+                      )}
+                      {option.value === 180 && (
+                        <ThreeMinuteIcon dimensions={"1.5em"} />
+                      )}
+
+                      {option.value === 300 && (
+                        <FiveMinuteIcon dimensions={"1.5em"} />
+                      )}
+                    </>
+                  )}
+                />
+
+                <Select
+                  defaultValue={defaultAdjectiveOption}
+                  options={adjectiveOptions}
+                  placeholder="Adjective"
+                  isOptionDisabled={(option) => option.disabled}
+                  onChange={setSelectedAdjectiveOption}
+                />
+
+                <Select
+                  defaultValue={defaultNounOption}
+                  options={nounOptions}
+                  placeholder="Noun"
+                  isOptionDisabled={(option) => option.disabled}
+                  onChange={setSelectedNounOption}
+                />
+              </div>
+            </div>
+          </div>
+
+          <div
+            id={"nextButton"}
+            style={{
+              position: "absolute",
+              top: "375px",
+              left: "43%",
+              width: "75px",
+              height: "40px",
+              opacity: 0,
+            }}
+          >
+            <button
+              className={baseClasses.nextButton}
+              disabled={nextDisabled}
+              onClick={() => {
+                const seconds =
+                  selectedExtraPrompt === "normal"
+                    ? DSCtx.extraPrompt.seconds
+                    : selectedDurationOption.value;
+                const title =
+                  selectedExtraPrompt === "normal"
+                    ? DSCtx.extraPrompt.title
+                    : `${selectedAdjectiveOption.label}  ${selectedNounOption.label}`;
+                updateStatesAndShowNextComponent(seconds, title, true);
+              }}
+            >
+              Next
+            </button>
+          </div>
+
+          <div
+            id={"registerContainer"}
+            style={{
+              position: "absolute",
+              top: 0,
+              left: 0,
+              // width: "475px",
+              height: "275px",
+              opacity: 0,
+              pointerEvents: "none",
+            }}
+          >
+            <div
+              style={{ height: "10em", marginTop: "1em" }}
+              className={classes.registerPromoContainer}
+            >
+              <div className={classes.baseFlex}>
+                <LogInButton forceShow={true} />
+                <div>or</div>
+                <LogInButton forceShow={false} />
+              </div>
+
+              <div style={{ width: "60%", textAlign: "center" }}>
+                to choose your daily extra prompt and gain full access to all
+                features!
+              </div>
             </div>
           </div>
         </div>
-      )}
+
+        {showCountdownTimer && (
+          <div
+            className={`${classes.promptRefreshTimer} ${baseClasses.baseVertFlex}`}
+          >
+            <div>New prompts refresh in</div>
+            <Countdown
+              date={resetAtDate}
+              onComplete={() => setShowCountdownTimer(false)}
+            />
+          </div>
+        )}
+      </div>
     </div>
   );
 };

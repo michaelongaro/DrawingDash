@@ -2,6 +2,8 @@ import { createContext, useState } from "react";
 import { useAuth0 } from "@auth0/auth0-react";
 import { useEffect } from "react";
 
+import isEqual from "lodash/isEqual";
+
 import {
   getDatabase,
   ref,
@@ -48,6 +50,8 @@ export function DrawingSelectionProvider(props) {
   const [showEndOverlay, setShowEndOverlay] = useState(false);
   const [showEndOutline, setShowEndOutline] = useState(false);
 
+  const [animateExtraPromptsContainer, setAnimateExtraPromptsContainer] = useState(true);
+
   // used to determine whether PromptSelection slides in from left/right
   const [startFromLeft, setStartFromLeft] = useState(true);
 
@@ -60,31 +64,77 @@ export function DrawingSelectionProvider(props) {
     resetToSelectBar: false,
   });
 
-  // i hate doing this below
+  // !isLoading && !isAuthenticated
+  // ? {
+  //     60: false,
+  //     180: false,
+  //     300: false,
+  //   }
+  //   : { 60: false, 180: false, 300: false, extra: false }
   const [drawingStatuses, setDrawingStatuses] = useState({
     60: false,
     180: false,
     300: false,
-    extra: false,
   });
+
   const [dailyPrompts, setDailyPrompts] = useState({
     60: "",
     180: "",
     300: "",
   });
+
   const [extraPrompt, setExtraPrompt] = useState({
     seconds: 60,
     title: "",
   });
 
   useEffect(() => {
-    if (!isLoading && isAuthenticated) {
-      onValue(ref(db, `dailyPrompts`), (snapshot) => {
-        if (snapshot.exists()) {
-          setDailyPrompts(snapshot.val());
-        }
-      });
+    // attaching firebase listener so that when prompts update from firebase
+    // scheduler function it will update the context states here
+    onValue(ref(db, `dailyPrompts`), (snapshot) => {
+      if (snapshot.exists()) {
+        setDailyPrompts(snapshot.val());
 
+        // storing current user localStorage data
+        let currentUserInfo = JSON.parse(
+          localStorage.getItem("unregisteredUserInfo")
+        );
+
+        // checking to see if user's drawing statuses need to be updated based
+        // on if their last seen prompts match the current prompts
+        if (currentUserInfo) {
+          if (!isEqual(currentUserInfo["lastSeenPrompts"], snapshot.val())) {
+            currentUserInfo["lastSeenPrompts"] = snapshot.val();
+            currentUserInfo["dailyCompletedPrompts"] = {
+              60: false,
+              180: false,
+              300: false,
+            };
+            localStorage.setItem(
+              "unregisteredUserInfo",
+              JSON.stringify(currentUserInfo)
+            );
+          }
+        }
+      }
+    });
+
+    // if user isn't logged in
+    if (!isLoading && !isAuthenticated) {
+      let currentUserInfo = JSON.parse(
+        localStorage.getItem("unregisteredUserInfo")
+      );
+
+      // this will be set initially when unregistered user visits page,
+      // and we manually update drawingStatuses from DrawingScreen component
+      // when user finishes a drawing.
+      if (currentUserInfo) {
+        setDrawingStatuses(currentUserInfo.dailyCompletedPrompts);
+      }
+    }
+
+    // if user is logged in
+    if (!isLoading && isAuthenticated) {
       onValue(
         ref(db, `users/${user.sub}/completedDailyPrompts`),
         (snapshot) => {
@@ -103,7 +153,7 @@ export function DrawingSelectionProvider(props) {
   }, [isLoading, isAuthenticated]);
 
   function updatePBStates(field, value) {
-    let tempPBStatuses = {...PBStates};
+    let tempPBStatuses = { ...PBStates };
     tempPBStatuses[field] = value;
     console.log("setting context to", tempPBStatuses);
     setPBStates(tempPBStatuses);
@@ -181,8 +231,11 @@ export function DrawingSelectionProvider(props) {
     setPBStates: setPBStates,
     updatePBStates: updatePBStates,
     resetProgressBar: resetProgressBar,
+    animateExtraPromptsContainer: animateExtraPromptsContainer,
+    setAnimateExtraPromptsContainer: setAnimateExtraPromptsContainer,
 
     drawingStatuses: drawingStatuses,
+    setDrawingStatuses: setDrawingStatuses,
     dailyPrompts: dailyPrompts,
     extraPrompt: extraPrompt,
     paletteColors: paletteColors,

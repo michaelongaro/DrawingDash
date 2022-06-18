@@ -1,11 +1,13 @@
 import React, { useState, useEffect, useRef, useContext } from "react";
 
+import Countdown from "react-countdown";
 import { useAuth0 } from "@auth0/auth0-react";
 import { v4 as uuidv4 } from "uuid";
 
 import { CountdownCircleTimer } from "react-countdown-circle-timer";
 
 import anime from "animejs/lib/anime.es.js";
+import isEqual from "lodash/isEqual";
 
 import { useCanvas } from "./CanvasContext";
 import DrawingSelectionContext from "./DrawingSelectionContext";
@@ -15,6 +17,7 @@ import Controls from "./Controls";
 import CopyToClipboard from "../components/layout/CopyToClipboard";
 import DownloadIcon from "../svgs/DownloadIcon";
 import RedoIcon from "../svgs/RedoIcon";
+import LogInButton from "../oauth/LogInButton";
 
 import { getDatabase, ref, set, child, get, update } from "firebase/database";
 
@@ -28,10 +31,11 @@ import {
 import { app } from "../util/init-firebase";
 
 import classes from "./Canvas.module.css";
+import baseClasses from "../index.module.css";
 
 const DrawingScreen = () => {
   const DSCtx = useContext(DrawingSelectionContext);
-  const { user } = useAuth0();
+  const { user, isLoading, isAuthenticated } = useAuth0();
 
   const db = getDatabase(app);
   const dbRef = ref(getDatabase(app));
@@ -57,6 +61,11 @@ const DrawingScreen = () => {
 
   const [showPendingDownload, setShowPendingDownload] = useState(false);
   const [showPendingCopy, setShowPendingCopy] = useState(false);
+
+  const [showCountdownTimer, setShowCountdownTimer] = useState(true);
+  const [resetAtDate, setResetAtDate] = useState(
+    "January 01, 2030 00:00:00 GMT+03:00"
+  );
 
   const drawingScreenRef = useRef(null);
 
@@ -178,6 +187,147 @@ const DrawingScreen = () => {
     }
   }, [DSCtx.showPaletteChooser]);
 
+  useEffect(() => {
+    if (DSCtx.drawingTime > 0) {
+      setDrawingTime(DSCtx.drawingTime);
+    }
+  }, [DSCtx.drawingTime]);
+
+  useEffect(() => {
+    if (DSCtx.showEndOverlay && DSCtx.showEndOutline) {
+      setShowEndOverlay(classes.overlayBreathingBackground);
+      setShowEndOutline(classes.canvasOutline);
+    } else {
+      setShowEndOverlay(classes.hide);
+      setShowEndOutline(classes.hide);
+    }
+  }, [DSCtx.showEndOverlay, DSCtx.showEndOutline]);
+
+  useEffect(() => {
+    if (DSCtx.seconds > 0) {
+      setTimeout(() => DSCtx.setSeconds(DSCtx.seconds - 1), 1000);
+    } else {
+      setShowCountdownOverlay(classes.hide);
+      setShowCanvasOutline(classes.hide);
+
+      clearCanvas();
+
+      setShowCanvas(true);
+
+      setCountdownKey((prevKey) => prevKey + 1);
+      setStartTimer(true);
+    }
+  }, [DSCtx.seconds]);
+
+  useEffect(() => {
+    let id = null;
+    prepareCanvas();
+
+    if (!isLoading && isAuthenticated) {
+      if (
+        DSCtx.drawingStatuses["60"] &&
+        DSCtx.drawingStatuses["180"] &&
+        DSCtx.drawingStatuses["300"] &&
+        DSCtx.drawingStatuses["extra"]
+      ) {
+        setShowCountdownTimer(true);
+        // ideally have all progressbar logic inside that component, have it look for these exact
+        // conditions (drop the extra if user isn't logged in)
+      }
+
+      id = setTimeout(sendToDB, DSCtx.drawingTime * 1000 + 3015);
+    } else if (!isLoading && !isAuthenticated) {
+      if (
+        DSCtx.drawingStatuses["60"] &&
+        DSCtx.drawingStatuses["180"] &&
+        DSCtx.drawingStatuses["300"]
+      ) {
+        setShowCountdownTimer(true);
+        // ideally have all progressbar logic inside that component, have it look for these exact
+        // conditions (drop the extra if user isn't logged in)
+      }
+
+      id = setTimeout(updateUserLocalStorage, DSCtx.drawingTime * 1000 + 3015);
+    }
+
+    return () => {
+      clearTimeout(id);
+    };
+  }, [isLoading, isAuthenticated, DSCtx.drawingStatuses]);
+
+  function updateUserLocalStorage() {
+    if (DSCtx.drawingTime === 0 || DSCtx.drawingTime === undefined) return;
+
+    setShowCanvas(false);
+
+    let currentStorageValues = JSON.parse(
+      localStorage.getItem("unregisteredUserInfo")
+    );
+
+    const canvas = canvasRef.current;
+    const title = DSCtx.chosenPrompt;
+
+    // eventually have this turn into full words when in fullscreen modal
+    const today = new Date();
+    const day = today.getDate();
+    const month = today.getMonth() + 1;
+    const year = today.getFullYear();
+
+    const uniqueID = uuidv4();
+
+    let averageImageRGB = getAverageRGB(canvas);
+
+    // adding actual drawing
+
+    if (currentStorageValues.drawings === "") {
+      currentStorageValues.drawings = {};
+    }
+    currentStorageValues["drawings"][`${uniqueID}`] =
+      canvas.toDataURL("image/jpeg");
+
+    // adding misc drawing data
+    currentStorageValues["drawingMetadata"][`${uniqueID}`] = {
+      title: title,
+      seconds: DSCtx.drawingTime,
+      date: `${month}/${day}/${year}`,
+      drawnBy: null,
+      averageColor: averageImageRGB,
+      index: uniqueID,
+    };
+
+    let tempUpdatedStatuses = DSCtx.drawingStatuses;
+
+    tempUpdatedStatuses[DSCtx.drawingTime] = true;
+
+    // updating daily completed prompts in localStorage
+    currentStorageValues["dailyCompletedPrompts"] = tempUpdatedStatuses;
+    // updating daily completed prompts in context
+    DSCtx.setDrawingStatuses(tempUpdatedStatuses);
+
+    // actually setting user localstorage with all updated values
+    localStorage.setItem(
+      "unregisteredUserInfo",
+      JSON.stringify(currentStorageValues)
+    );
+
+    DSCtx.setShowEndOverlay(true);
+    DSCtx.setShowEndOutline(true);
+
+    console.log("removing listeners");
+    document.removeEventListener("mousemove", draw);
+    document.documentElement.removeEventListener(
+      "mouseenter",
+
+      draw,
+      {
+        once: true,
+      }
+    );
+
+    setStartTimer(false);
+    DSCtx.setDrawingTime(0);
+  }
+
   const renderTime = ({ remainingTime }) => {
     if (remainingTime === 0) {
       return (
@@ -225,50 +375,52 @@ const DrawingScreen = () => {
   // used to find average color used in image to use as a background gradient
   // on gallary item bottom banner
   function getAverageRGB(imgEl) {
-
     var blockSize = 5, // only visit every 5 pixels
-        defaultRGB = {r:0,g:0,b:0}, // for non-supporting envs
-        canvas = document.createElement('canvas'),
-        context = canvas.getContext && canvas.getContext('2d'),
-        data, width, height,
-        i = -4,
-        length,
-        rgb = {r:0,g:0,b:0},
-        count = 0;
+      defaultRGB = { r: 0, g: 0, b: 0 }, // for non-supporting envs
+      canvas = document.createElement("canvas"),
+      context = canvas.getContext && canvas.getContext("2d"),
+      data,
+      width,
+      height,
+      i = -4,
+      length,
+      rgb = { r: 0, g: 0, b: 0 },
+      count = 0;
 
     if (!context) {
-        return defaultRGB;
+      return defaultRGB;
     }
 
-    height = canvas.height = imgEl.naturalHeight || imgEl.offsetHeight || imgEl.height;
-    width = canvas.width = imgEl.naturalWidth || imgEl.offsetWidth || imgEl.width;
+    height = canvas.height =
+      imgEl.naturalHeight || imgEl.offsetHeight || imgEl.height;
+    width = canvas.width =
+      imgEl.naturalWidth || imgEl.offsetWidth || imgEl.width;
 
     context.drawImage(imgEl, 0, 0);
 
     try {
-        data = context.getImageData(0, 0, width, height);
-    } catch(e) {
-        /* security error, img on diff domain */
-        return defaultRGB;
+      data = context.getImageData(0, 0, width, height);
+    } catch (e) {
+      /* security error, img on diff domain */
+      return defaultRGB;
     }
 
     length = data.data.length;
 
-    while ( (i += blockSize * 4) < length ) {
-        ++count;
-        rgb.r += data.data[i];
-        rgb.g += data.data[i+1];
-        rgb.b += data.data[i+2];
+    while ((i += blockSize * 4) < length) {
+      ++count;
+      rgb.r += data.data[i];
+      rgb.g += data.data[i + 1];
+      rgb.b += data.data[i + 2];
     }
 
     // ~~ used to floor values
-    rgb.r = ~~(rgb.r/count);
-    rgb.g = ~~(rgb.g/count);
-    rgb.b = ~~(rgb.b/count);
+    rgb.r = ~~(rgb.r / count);
+    rgb.g = ~~(rgb.g / count);
+    rgb.b = ~~(rgb.b / count);
 
     return rgb;
-
-}
+  }
 
   function postTitle(seconds, id, title, profileDest = "") {
     let destination = `${profileDest}titles/${seconds}/${title}`;
@@ -326,8 +478,6 @@ const DrawingScreen = () => {
         );
       });
     });
-
-
 
     // posting titles w/ drawing ref ids
     postTitle(DSCtx.drawingTime, uniqueID, title);
@@ -395,47 +545,6 @@ const DrawingScreen = () => {
     DSCtx.setDrawingTime(0);
   };
 
-  useEffect(() => {
-    if (DSCtx.drawingTime > 0) {
-      setDrawingTime(DSCtx.drawingTime);
-    }
-  }, [DSCtx.drawingTime]);
-
-  useEffect(() => {
-    if (DSCtx.showEndOverlay && DSCtx.showEndOutline) {
-      setShowEndOverlay(classes.overlayBreathingBackground);
-      setShowEndOutline(classes.canvasOutline);
-    } else {
-      setShowEndOverlay(classes.hide);
-      setShowEndOutline(classes.hide);
-    }
-  }, [DSCtx.showEndOverlay, DSCtx.showEndOutline]);
-
-  useEffect(() => {
-    if (DSCtx.seconds > 0) {
-      setTimeout(() => DSCtx.setSeconds(DSCtx.seconds - 1), 1000);
-    } else {
-      setShowCountdownOverlay(classes.hide);
-      setShowCanvasOutline(classes.hide);
-
-      clearCanvas();
-
-      setShowCanvas(true);
-
-      setCountdownKey((prevKey) => prevKey + 1);
-      setStartTimer(true);
-    }
-  }, [DSCtx.seconds]);
-
-  useEffect(() => {
-    prepareCanvas();
-    const id = setTimeout(sendToDB, DSCtx.drawingTime * 1000 + 3015);
-
-    return () => {
-      clearTimeout(id);
-    };
-  }, []);
-
   function drawAgain() {
     anime({
       targets: "#drawingScreen",
@@ -476,7 +585,9 @@ const DrawingScreen = () => {
           ref={drawingScreenRef}
           className={classes.canvasBreathingBackground}
         >
-          <div style={{ pointerEvents: "none", userSelect: "none" }}>{DSCtx.chosenPrompt}</div>
+          <div style={{ pointerEvents: "none", userSelect: "none" }}>
+            {DSCtx.chosenPrompt}
+          </div>
 
           <div className={classes.sharedContain}>
             <div className={`${showCanvasOutline} ${classes.startScreen}`}>
@@ -530,79 +641,157 @@ const DrawingScreen = () => {
 
             <div className={`${showEndOutline} ${classes.endScreen}`}>
               <div className={classes.endButtonContainer}>
-                <button className={classes.drawAgainButton} onClick={drawAgain}>
-                  <RedoIcon dimensions={"2em"} />
-                  <div style={{fontSize: "1.25em"}}>Draw another prompt</div>
-                </button>
-
-                <div className={classes.orSeparator}>
-                  <div className={classes.leadingLine}></div>
-                  <div>OR</div>
-                  <div className={classes.trailingLine}></div>
-                </div>
-
-                <div style={{ marginBottom: "1.25em" }}>Share your drawing!</div>
-
-                <div className={classes.baseFlex}>
+                {showCountdownTimer ? (
                   <div
-                    style={{
-                      opacity: !downloadedDrawing ? 0.5 : 1,
-                      cursor: !downloadedDrawing ? "auto" : "pointer",
-                      transition: "200ms all",
-                    }}
-
-                    onMouseEnter={() => {
-                      if (!showPendingCopy && !downloadedDrawing)
-                        setShowPendingCopy(true);
-                    }}
-                    onMouseLeave={() => {
-                      setShowPendingCopy(false);
+                    className={`${classes.promptRefreshTimer} ${baseClasses.baseVertFlex}`}
+                  >
+                    <div>New prompts refresh in</div>
+                    <Countdown
+                      date={resetAtDate}
+                      onComplete={() => setShowCountdownTimer(false)}
+                    />
+                  </div>
+                ) : (
+                  <button
+                    className={classes.drawAgainButton}
+                    onClick={() => {
+                      // unregistered users don't get the access to the extra prompt so only need to check
+                      // if drawingStatuses values are all true (completed)
+                      if (
+                        !isEqual(Object.values(DSCtx.drawingStatuses), [
+                          true,
+                          true,
+                          true,
+                        ])
+                      ) {
+                        drawAgain();
+                      }
                     }}
                   >
-                    <div style={{ position: "relative" }}>
-                      <CopyToClipboard url={downloadedDrawing} />
+                    <RedoIcon dimensions={"2em"} />
+                    <div
+                      style={{
+                        opacity:
+                          !isLoading &&
+                          !isAuthenticated &&
+                          isEqual(Object.values(DSCtx.drawingStatuses), [
+                            true,
+                            true,
+                            true,
+                          ])
+                            ? 0.4
+                            : 1,
+                        cursor:
+                          !isLoading &&
+                          !isAuthenticated &&
+                          isEqual(Object.values(DSCtx.drawingStatuses), [
+                            true,
+                            true,
+                            true,
+                          ])
+                            ? "auto"
+                            : "pointer",
+                        fontSize: "1.25em",
+                      }}
+                    >
+                      Draw another prompt
+                    </div>
+                  </button>
+                )}
+
+                {!isLoading && !isAuthenticated ? (
+                  <button className={classes.registerPromoContainer}>
+                    <div className={classes.baseFlex}>
+                      <LogInButton forceShow={true} />
+                      <div>or</div>
+                      <LogInButton forceShow={false} />
+                    </div>
+
+                    <div style={{ width: "60%" }}>
+                      to publish your drawing and gain full access to all
+                      features!
+                    </div>
+                  </button>
+                ) : (
+                  <>
+                    <div className={classes.orSeparator}>
+                      <div className={classes.leadingLine}></div>
+                      <div>OR</div>
+                      <div className={classes.trailingLine}></div>
+                    </div>
+
+                    <div style={{ marginBottom: "1.25em" }}>
+                      Share your drawing!
+                    </div>
+
+                    <div className={classes.baseFlex}>
                       <div
-                        style={{ opacity: showPendingCopy && !downloadedDrawing ? 1 : 0 }}
-                        className={classes.infoModal}
+                        style={{
+                          opacity: !downloadedDrawing ? 0.5 : 1,
+                          cursor: !downloadedDrawing ? "auto" : "pointer",
+                          transition: "200ms all",
+                        }}
+                        onMouseEnter={() => {
+                          if (!showPendingCopy && !downloadedDrawing)
+                            setShowPendingCopy(true);
+                        }}
+                        onMouseLeave={() => {
+                          setShowPendingCopy(false);
+                        }}
                       >
-                        Upload in progress
+                        <div style={{ position: "relative" }}>
+                          <CopyToClipboard url={downloadedDrawing} />
+                          <div
+                            style={{
+                              opacity:
+                                showPendingCopy && !downloadedDrawing ? 1 : 0,
+                            }}
+                            className={classes.infoModal}
+                          >
+                            Upload in progress
+                          </div>
+                        </div>
+                      </div>
+                      {/* <div className={classes.fadingVerticalLine}></div> */}
+
+                      <div
+                        style={{
+                          opacity: !downloadedDrawing ? 0.5 : 1,
+                          cursor: !downloadedDrawing ? "auto" : "pointer",
+                          transition: "200ms all",
+                        }}
+                        onMouseEnter={() => {
+                          if (!showPendingDownload && !downloadedDrawing)
+                            setShowPendingDownload(true);
+                        }}
+                        onMouseLeave={() => {
+                          setShowPendingDownload(false);
+                        }}
+                      >
+                        <div style={{ position: "relative" }}>
+                          <div
+                            className={classes.download}
+                            onClick={downloadDrawing}
+                          >
+                            <div>Download</div>
+                            <DownloadIcon />
+                          </div>
+                          <div
+                            style={{
+                              opacity:
+                                showPendingDownload && !downloadedDrawing
+                                  ? 1
+                                  : 0,
+                            }}
+                            className={classes.infoModal}
+                          >
+                            Upload in progress
+                          </div>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                  {/* <div className={classes.fadingVerticalLine}></div> */}
-
-                  <div
-                    style={{
-                      opacity: !downloadedDrawing ? 0.5 : 1,
-                      cursor: !downloadedDrawing ? "auto" : "pointer",
-                      transition: "200ms all",
-                    }}
-
-                    onMouseEnter={() => {
-                      if (!showPendingDownload && !downloadedDrawing)
-                        setShowPendingDownload(true);
-                    }}
-                    onMouseLeave={() => {
-                      setShowPendingDownload(false);
-                    }}
-                  >
-                    <div style={{ position: "relative" }}>
-                      <div
-                        className={classes.download}
-                        onClick={downloadDrawing}
-                      >
-                        <div>Download</div>
-                        <DownloadIcon />
-                      </div>
-                      <div
-                        style={{ opacity: showPendingDownload && !downloadedDrawing ? 1 : 0 }}
-                        className={classes.infoModal}
-                      >
-                        Upload in progress
-                      </div>
-                    </div>
-                  </div>
-                </div>
+                  </>
+                )}
               </div>
             </div>
           </div>

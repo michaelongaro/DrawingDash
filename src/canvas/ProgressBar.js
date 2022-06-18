@@ -1,12 +1,15 @@
 import React, { useContext, useState, useRef, useEffect } from "react";
 
 import anime from "animejs/lib/anime.es.js";
+import { useAuth0 } from "@auth0/auth0-react";
 
 import DrawingSelectionContext from "./DrawingSelectionContext";
 
 import classes from "./ProgressBar.module.css";
 
 const ProgressBar = () => {
+  const { isLoading, isAuthenticated } = useAuth0();
+
   const DSCtx = useContext(DrawingSelectionContext);
 
   const [firstCheckpointStyles, setFirstCheckpointStyles] = useState(
@@ -34,6 +37,21 @@ const ProgressBar = () => {
     console.log(DSCtx.PBStates);
     // starting off with showing select prompt screen
     if (DSCtx.PBStates["selectCircle"] && !localPBStates["selectCircle"]) {
+      let dailyDrawingsAreComplete;
+
+      if (!isLoading && isAuthenticated) {
+        dailyDrawingsAreComplete =
+          DSCtx.drawingStatuses["60"] &&
+          DSCtx.drawingStatuses["180"] &&
+          DSCtx.drawingStatuses["300"] &&
+          DSCtx.drawingStatuses["extra"];
+      } else if (!isLoading && !isAuthenticated) {
+        dailyDrawingsAreComplete =
+          DSCtx.drawingStatuses["60"] &&
+          DSCtx.drawingStatuses["180"] &&
+          DSCtx.drawingStatuses["300"];
+      }
+
       anime({
         targets: "#select",
         loop: false,
@@ -50,8 +68,8 @@ const ProgressBar = () => {
         direction: "normal",
         delay: 150,
         duration: 500,
-        translateX: [0, "265px"],
-        translateY: [0, "205px"],
+        translateX: dailyDrawingsAreComplete ? 0 : [0, "265px"],
+        translateY: dailyDrawingsAreComplete ? 0 : [0, "175px"],
         fontSize: ["1.25em", "1.5em"],
         fontWeight: [400, 600],
         color: ["rgb(100, 100, 100)", "rgb(0, 0, 0)"],
@@ -70,7 +88,7 @@ const ProgressBar = () => {
         direction: "normal",
         duration: 500,
         translateX: ["265px", 0],
-        translateY: ["205px", 0],
+        translateY: ["175px", 0],
         fontSize: ["1.5em", "1.25em"],
         fontWeight: [600, 400],
         color: ["rgb(0, 0, 0)", "rgb(100, 100, 100)"],
@@ -154,7 +172,7 @@ const ProgressBar = () => {
             direction: "normal",
             duration: 500,
             translateX: [0, "265px"],
-            translateY: [0, "205px"],
+            translateY: [0, "175px"],
             fontSize: ["1.25em", "1.5em"],
             fontWeight: [400, 600],
             color: ["rgb(100, 100, 100)", "rgb(0, 0, 0)"],
@@ -276,7 +294,7 @@ const ProgressBar = () => {
     }
 
     setLocalPBStates(DSCtx.PBStates);
-  }, [DSCtx.PBStates]);
+  }, [isLoading, isAuthenticated, DSCtx.drawingStatuses, DSCtx.PBStates]);
 
   // useEffect(() => {
   //   if (DSCtx.showPromptSelection) {

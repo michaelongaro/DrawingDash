@@ -37,15 +37,10 @@
 } */
 
 .header a {
+  text-align: center;
   text-decoration: none;
   /* font-size: 1.5rem; */
   color: black;
-}
-
-.header a:hover,
-.header a:active,
-.header a.active {
-  color: white;
 }
 
 .badge {
@@ -90,13 +85,13 @@
 }
 
 .dailyDrawButton:hover {
-  border-color: hsl(348deg 100% 44%);
+  /* border-color: hsl(348deg 100% 44%); */
   background-color: hsl(348deg 100% 44%);
 }
 
 /* hoping that classes defined later take higher precendence */
 .activeDailyDraw {
-  border-color: hsl(348deg 100% 44%);
+  /* border-color: hsl(348deg 100% 44%); */
   background-color: hsl(348deg 100% 44%);
 }
 
@@ -127,20 +122,98 @@
 }
 
 .exploreButton:hover {
-  border-color: hsl(67deg 100% 45%);
+  /* border-color: hsl(67deg 100% 45%); */
   background-color: hsl(67deg 100% 45%);
 }
 
 .activeExplore {
-  border-color: hsl(67deg 100% 45%);
+  /* border-color: hsl(67deg 100% 45%); */
   background-color: hsl(67deg 100% 45%);
 }
 
 .profilePicture {
+  /* position: absolute;
+  top: 0;
+  left: 0; */
   border-radius: 50%;
   object-fit: cover;
   width: 3em;
   height: 3em;
+}
+
+.profileDropdownContainer {
+  position: relative;
+  width: 48px;
+  height: 48px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.dropdownContainer {
+  position: absolute;
+
+  width: 8em;
+  height: 72px;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.profileButton {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.5em;
+
+  background-color: white;
+  border-radius: 1em 1em 0 0;
+  outline: none;
+  border: none;
+  transition: all 200ms;
+}
+
+.profileButton:hover {
+  color: white;
+  background-color: #ff7e31;
+  cursor: pointer;
+}
+
+.profileDropdown {
+  width: 8em;
+  height: 7em;
+  position: relative;
+  top: 91px;
+  background: white;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  /* gap: 1em; */
+  opacity: 0;
+  border-radius: 1em;
+  transition: all 250ms;
+  z-index: 400;
+}
+
+.profileDropdown:after {
+  bottom: 100%;
+  left: 50%;
+  border: solid transparent;
+  content: "";
+  height: 0;
+  width: 0;
+  position: absolute;
+  pointer-events: none;
+  border-color: rgba(194, 194, 194, 0);
+  border-bottom-color: white;
+  border-width: 10px;
+  margin-left: -10px;
 }
 
 .rainbow {

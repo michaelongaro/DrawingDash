@@ -51,7 +51,7 @@ const FeaturedLikes = () => {
   return (
     <div className={classes.marginFlex}>
       <div style={{ fontSize: "1.65em" }}>Daily Featured Drawings</div>
-      <Card width={"70"}>
+
         <div className={classes.overallContain}>
           <div className={classes.leftSideContain}>
             {/* --------------- 60 ------------------- */}
@@ -140,7 +140,7 @@ const FeaturedLikes = () => {
             />
           </div>
         </div>
-      </Card>
+
     </div>
   );
 };

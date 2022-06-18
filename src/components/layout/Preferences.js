@@ -16,12 +16,12 @@ import ExitIcon from "../../svgs/ExitIcon";
 import EditPreferencesIcon from "../../svgs/EditPreferencesIcon";
 import ResizeIcon from "../../svgs/ResizeIcon";
 import UploadIcon from "../../svgs/UploadIcon";
-import DefaultUserIcon from "../../svgs/DefaultUserIcon";
 
 import {
   getDatabase,
   ref as ref_database,
   set,
+  onValue,
   child,
   get,
 } from "firebase/database";
@@ -38,6 +38,7 @@ import {
 import { app } from "../../util/init-firebase";
 
 import classes from "./Preferences.module.css";
+import baseClasses from "../../index.module.css"
 
 const Preferences = () => {
   const { user, isAuthenticated, isLoading } = useAuth0();
@@ -46,6 +47,8 @@ const Preferences = () => {
   const dbRef = ref_database(getDatabase(app));
 
   const storage = getStorage();
+
+  const [isFetching, setIsFetching] = useState(true);
 
   const [username, setUsername] = useState("Username");
   const [status, setStatus] = useState("Your Status Here");
@@ -56,7 +59,6 @@ const Preferences = () => {
   const [userUploadedImage, setUserUploadedImage] = useState(null);
   const [cropReadyImage, setCropReadyImage] = useState(null);
   const [hasChangedPicture, setHasChangedPicture] = useState(false);
-  const [imageCroppedAndLoaded, setImageCroppedAndLoaded] = useState(false);
 
   // used to check and see if last
 
@@ -93,7 +95,7 @@ const Preferences = () => {
       setShowCropModal(false);
 
       if (disableSkeleton) {
-        setImageCroppedAndLoaded(true);
+        setIsFetching(false);
       }
     } catch (e) {
       console.log(e);
@@ -120,9 +122,9 @@ const Preferences = () => {
       setUserEmail(user.email);
       setImageAltInfo(user.name);
 
-      getDownloadURL(ref_storage(storage, `${user.sub}/profile`))
+      getDownloadURL(ref_storage(storage, `users/${user.sub}/profile`))
         .then((url) => {
-          getMetadata(ref_storage(storage, `${user.sub}/profile`))
+          getMetadata(ref_storage(storage, `users/${user.sub}/profile`))
             .then((metadata) => {
               setImageFileType(metadata.contentType);
               setImage(url);
@@ -136,8 +138,16 @@ const Preferences = () => {
             error.code === "storage/object-not-found" ||
             error.code === "storage/unknown"
           ) {
-            setImageCroppedAndLoaded(true);
-            console.log("user profile image not found"); //don't need to log this
+            // defaulting to auth0 image
+            onValue(
+              ref_database(db, `users/${user.sub}/preferences`),
+              (snapshot) => {
+                if (snapshot.exists()) {
+                  setImage(snapshot.val()["defaultProfilePicture"]);
+                  setIsFetching(false);
+                }
+              }
+            );
           }
         });
     }
@@ -162,6 +172,7 @@ const Preferences = () => {
     set(ref_database(db, `users/${user.sub}/preferences`), {
       username: username,
       status: status,
+      defaultProfilePicture: user.picture,
       profileCropMetadata: croppedAreaPixels ? croppedAreaPixels : false,
     });
 
@@ -261,11 +272,24 @@ const Preferences = () => {
         </div>
 
         <div className={classes.rightSide}>
-          {imageCroppedAndLoaded ? (
+          {isFetching ? (
+            <div
+              style={{
+                width: "165px",
+                height: "165px",
+                borderRadius: "50%",
+              }}
+              className={baseClasses.skeletonLoading}
+            ></div>
+          ) : (
             <div style={{ position: "relative" }}>
               <img
                 className={classes.profilePicture}
-                src={croppedImage ? croppedImage : image ?? <DefaultUserIcon />}
+                src={
+                  croppedImage
+                    ? croppedImage
+                    : image
+                }
                 alt={imageAltInfo}
               />
 
@@ -304,11 +328,6 @@ const Preferences = () => {
                 />
               </div>
             </div>
-          ) : (
-            <div
-              style={{ width: "165px", height: "165px" }}
-              className={classes.skeletonLoading}
-            ></div>
           )}
           {/* need to bring this up as soon as image is uploaded */}
           {showCropModal ? (

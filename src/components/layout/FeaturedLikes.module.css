@@ -2,7 +2,9 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  /* gap: 2em; */
+  width: 70%;
+  padding: 1.5em;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
 .drawingContainer {

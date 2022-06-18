@@ -43,6 +43,13 @@ exports.pushDailyWords = functions.pubsub
       });
     });
 
+    const date = new Date(Date.now() + 86400000);
+    const formattedDate = date.toDateString();
+
+    database
+      .ref(`masterDateToResetPromptsAt`)
+      .set(`${formattedDate} 00:00:00 GMT-0500`);
+
     database
       .ref("users")
       .once("value")
