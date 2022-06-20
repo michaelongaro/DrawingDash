@@ -25,22 +25,50 @@
 
 .drawingTitleContainer {
   position: absolute;
-  top: 0;
-  right: 0;
+  top: 0.5em;
+  right: 0.5em;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 1em;
+  gap: 0.5em;
+  padding: 1em;
+  background-color: white;
+  z-index: 600;
 }
 
-.gridContainer {
+.durationContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.5em;
+}
+
+.focalProgressBar {
+  position: absolute;
+  bottom: 0;
+  height: 5px;
+  width: 0;
+  border-radius: 1em;
+}
+
+.searchGridContainer {
+  height: 100%;
   display: grid;
-  grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+  grid-template-columns: repeat(10, 1fr);
   grid-template-rows: 1fr 1fr 1fr;
   gap: 0px 0px;
   grid-auto-flow: row;
   grid-template-areas:
-    "drawing0 drawing1 drawing2 drawing3 drawing4"
-    "drawing5 drawing6 drawing7 drawing8 drawing9"
-    "drawing10 drawing11 drawing12 drawing13 drawing14";
+    "drawing0 drawing1 drawing2 drawing3 drawing4 drawing5 drawing6 drawing7 drawing8 drawing9"
+    "drawing10 drawing11 drawing12 drawing13 drawing14 drawing15 drawing16 drawing17 drawing18 drawing19"
+    "drawing20 drawing21 drawing22 drawing23 drawing24 drawing25 drawing26 drawing27 drawing28 drawing29";
 }
 
+/* start of first row */
+
+/* can technically add the colors here if there is still a visable rerender when switching between
+   durations */
 .drawing0 {
   grid-area: drawing0;
 }
@@ -54,51 +82,117 @@
 }
 
 .drawing3 {
-  grid-area: drawing1;
+  grid-area: drawing3;
 }
 
 .drawing4 {
-  grid-area: drawing2;
+  grid-area: drawing4;
 }
 
 .drawing5 {
-  grid-area: drawing1;
+  grid-area: drawing5;
 }
 
 .drawing6 {
-  grid-area: drawing2;
+  grid-area: drawing6;
 }
 
 .drawing7 {
-  grid-area: drawing1;
+  grid-area: drawing7;
 }
 
 .drawing8 {
-  grid-area: drawing2;
+  grid-area: drawing8;
 }
 
 .drawing9 {
-  grid-area: drawing1;
+  grid-area: drawing9;
 }
 
+/* start of second row */
 .drawing10 {
-  grid-area: drawing2;
+  grid-area: drawing10;
 }
 
 .drawing11 {
-  grid-area: drawing1;
+  grid-area: drawing11;
 }
 
 .drawing12 {
-  grid-area: drawing2;
+  grid-area: drawing12;
 }
 
 .drawing13 {
-  grid-area: drawing1;
+  grid-area: drawing13;
 }
 
 .drawing14 {
-  grid-area: drawing2;
+  grid-area: drawing14;
+}
+
+.drawing15 {
+  grid-area: drawing15;
+}
+
+.drawing16 {
+  grid-area: drawing16;
+}
+
+.drawing17 {
+  grid-area: drawing17;
+}
+
+.drawing18 {
+  grid-area: drawing18;
+}
+
+.drawing19 {
+  grid-area: drawing19;
+}
+
+.drawing20 {
+  grid-area: drawing20;
+}
+
+.drawing21 {
+  grid-area: drawing21;
+}
+
+/* start of third row */
+.drawing22 {
+  grid-area: drawing22;
+}
+
+.drawing23 {
+  grid-area: drawing23;
+}
+
+.drawing24 {
+  grid-area: drawing24;
+}
+
+.drawing25 {
+  grid-area: drawing25;
+}
+
+.drawing26 {
+  grid-area: drawing26;
+}
+
+.drawing27 {
+  grid-area: drawing27;
+}
+
+.drawing28 {
+  grid-area: drawing28;
+}
+
+.drawing29 {
+  grid-area: drawing29;
+}
+
+.drawing30 {
+  grid-area: drawing30;
 }
 
 @-webkit-keyframes backgroundFade {

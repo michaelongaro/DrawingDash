@@ -1,6 +1,9 @@
 import React, { useState, useEffect, useRef } from "react";
 import anime from "animejs/lib/anime.es.js";
 
+import classes from "./AnimatedDrawing.module.css";
+import { useLinkClickHandler } from "react-router-dom";
+
 const AnimatedDrawing = (props) => {
   const animationRef = useRef(null);
 
@@ -28,15 +31,22 @@ const AnimatedDrawing = (props) => {
     animationRef.current = anime({
       targets: `#drawing${props.id}`,
 
-      scale: props.id % 2 === 0 ? [0, 0.97] : [0.97, 0],
-      opacity: props.id % 2 === 0 ? [0, 1] : [1, 0],
+      // scale: props.id % 2 === 0 ? [0, 0.97] : [0.97, 0],
+      // opacity: props.id % 2 === 0 ? [0, 1] : [1, 0],
+      // opacity: [1,0],
 
-      delay: props.id % 2 === 0 ? 0 : 500,
+      /// MAYYYY need to have drawing fit oh damn the actual tile is rectangle sooo 
+      // def need to mech out how to make it look natural when width and height aren't the same
+      rotateY: "90deg",
 
-      duration: 2000,
+      delay: props.delay,
+      endDelay: 1000,
+
+      duration: 1000,
       loop: true,
       direction: "alternate",
-      easing: props.id % 2 === 0 ? "easeOutCirc" : "easeInCirc",
+      // easing: props.id % 2 === 0 ? "easeOutCirc" : "easeInCirc",
+      easing: "linear",
       // on the fifth one
     });
   }, []);
@@ -44,16 +54,19 @@ const AnimatedDrawing = (props) => {
   return (
     <div
       id={`drawing${props.id}`}
+      className={classes.spinner}
       style={{
-        zIndex: "1",
+        // zIndex: "1",
         pointerEvents: "none",
-        scale: props.id % 2 === 0 ? 0 : 0.95,
-        opacity: props.id % 2 === 0 ? 0 : 1,
+        // scale: props.id % 2 === 0 ? 0 : 0.95,
+        // opacity: props.id % 2 === 0 ? 0 : 1,
       }}
     >
+      {/* <div className={classes.face3}></div> */}
       <img
-        style={styles}
-        alt={"floating focal drawing"}
+        // style={styles}
+        className={classes.face2}
+        alt={"spinning featured drawing"}
         src={props.drawing}
       ></img>
     </div>

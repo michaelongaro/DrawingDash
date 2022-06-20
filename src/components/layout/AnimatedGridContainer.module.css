@@ -71,6 +71,7 @@
 }
 
 .searchGridContainer {
+  height: 100%;
   display: grid;
   grid-template-columns: repeat(10, 1fr);
   grid-template-rows: 1fr 1fr 1fr;
@@ -78,15 +79,14 @@
   grid-auto-flow: row;
   grid-template-areas:
     "drawing0 drawing1 drawing2 drawing3 drawing4 drawing5 drawing6 drawing7 drawing8 drawing9"
-    "drawing11 drawing12 drawing13 drawing14 drawing15 drawing16 drawing17 drawing18 drawing19 drawing20"
-    "drawing22 drawing23 drawing24 drawing25 drawing26 drawing27 drawing28 drawing29 drawing30 drawing31";
-  /* grid-template-areas:
-    "drawing0 drawing1 drawing2 drawing3 drawing4 drawing5 drawing6 drawing7 drawing8 drawing9 drawing10 drawing11 drawing12"
-    "drawing5 drawing6 drawing7 drawing8 drawing9 drawing10 drawing11 drawing12 drawing13 drawing14 drawing5 drawing6 drawing7"
-    "drawing10 drawing11 drawing12 drawing13 drawing14 drawing0 drawing1 drawing2 drawing3 drawing4 drawing0 drawing1 drawing2"; */
+    "drawing10 drawing11 drawing12 drawing13 drawing14 drawing15 drawing16 drawing17 drawing18 drawing19"
+    "drawing20 drawing21 drawing22 drawing23 drawing24 drawing25 drawing26 drawing27 drawing28 drawing29";
 }
 
 /* start of first row */
+
+/* can technically add the colors here if there is still a visable rerender when switching between
+   durations */
 .drawing0 {
   grid-area: drawing0;
 }
