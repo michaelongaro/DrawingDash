@@ -39,7 +39,7 @@ const PinnedArt = (props) => {
 
   return (
     <div ref={pinRef}>
-      <div className={`${classes.baseHoverHighlight} ${showHighlighted}`}>
+      <div style={{ cursor: "pointer" }} className={`${classes.baseHoverHighlight} ${showHighlighted}`}>
         <GallaryItem
           drawingID={props.drawingID}
           settings={{

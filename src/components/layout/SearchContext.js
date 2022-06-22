@@ -28,6 +28,7 @@ export function SearchProvider(props) {
   }
 
   function resetAllValues(idx) {
+    console.log("RESETTING ALL VALUES");
     updateSearchValues("adjSearch", "", idx);
     updateSearchValues("nounSearch", "", idx);
     updateSearchValues("autofilledAdjectiveInput", "", idx);
@@ -38,14 +39,18 @@ export function SearchProvider(props) {
   }
 
   function getGallary(profile = "") {
+    const dbRef = ref(getDatabase(app));
+
     let idx = profile.length > 0 ? 1 : 0;
     let fetchAll = false;
+
     if (
       searchValues["adjSearch"][idx] === "" &&
       searchValues["nounSearch"][idx] === ""
     ) {
       if (idx === 1) {
         fetchAll = true;
+        // return; // comment this out
       } else {
         return;
       }
@@ -54,9 +59,7 @@ export function SearchProvider(props) {
     let fullQuery = `${searchValues["adjSearch"][idx]} ${searchValues["nounSearch"][idx]}`;
     let gallaryResults = { 60: [], 180: [], 300: [] };
     const drawingIDS = [];
-    // const promises = [];
-    const dbRef = ref(getDatabase(app));
-    
+
     get(child(dbRef, `${profile}titles`))
       .then((snapshot) => {
         for (const index in Object.values(snapshot.val())) {
@@ -65,39 +68,21 @@ export function SearchProvider(props) {
             if (title === fullQuery || fetchAll) {
               for (let drawingID of durationObj[index][title]["drawingID"]) {
                 drawingIDS.push(drawingID);
-                console.log(Object.keys(snapshot.val())[index], gallaryResults, drawingID);
-                gallaryResults[Object.keys(snapshot.val())[index]].push(drawingID);
+                console.log("refeshing in Context");
+                // console.log(Object.keys(snapshot.val())[index], gallaryResults, drawingID);
+                gallaryResults[Object.keys(snapshot.val())[index]].push(
+                  drawingID
+                );
               }
             }
           }
         }
-
-        // for (const id of drawingIDS) {
-        //   promises.push(get(child(dbRef, `drawings/${id}`)));
-        // }
-        // return Promise.all(promises);
       })
       .then(() => {
-        // if (drawingIDS.length === 0) {
-        //   updateSearchValues("gallary", "none", idx);
-        // } else {
-          updateSearchValues("gallary", gallaryResults, idx);
-          // this below is not currently being used.
-          setPersistingUserGallary(drawingIDS);
-        // }
+        updateSearchValues("gallary", gallaryResults, idx);
+        // this below is not currently being used.
+        setPersistingUserGallary(drawingIDS);
       });
-      // .then((results) => {
-      //   if (results.length === 0) {
-      //     updateSearchValues("gallary", "none", idx);
-      //   } else {
-      //     for (const result of results) {
-      //       gallaryResults[result.val()["seconds"]].push(result.val());
-      //     }
-
-      //     updateSearchValues("gallary", gallaryResults, idx);
-      //     setPersistingUserGallary(gallaryResults);
-      //   }
-      // });
   }
 
   const context = {

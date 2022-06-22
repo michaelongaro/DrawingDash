@@ -8,11 +8,17 @@ import PinnedContext from "./PinnedContext";
 import { getDatabase, get, ref, child } from "firebase/database";
 import { app } from "../../util/init-firebase";
 
+import OneMinuteIcon from "../../svgs/OneMinuteIcon";
+import ThreeMinuteIcon from "../../svgs/ThreeMinuteIcon";
+import FiveMinuteIcon from "../../svgs/FiveMinuteIcon";
+
 import classes from "./PinnedArtwork.module.css";
+import baseClasses from "../../index.module.css";
 
 const PinnedModal = (props) => {
   const pinnedCtx = useContext(PinnedContext);
   const [loadedDrawingIDs, setLoadedDrawingIDs] = useState([]);
+  const [durationIcon, setDurationIcon] = useState();
 
   const { user } = useAuth0();
 
@@ -38,10 +44,13 @@ const PinnedModal = (props) => {
         setLoadedDrawingIDs(fetchedDrawingIDs.flat());
 
         if (props.seconds === 60) {
+          setDurationIcon(<OneMinuteIcon dimensions="3em" />);
           pinnedCtx.setUser60Drawings(fetchedDrawingIDs.flat());
         } else if (props.seconds === 180) {
+          setDurationIcon(<ThreeMinuteIcon dimensions="3em" />);
           pinnedCtx.setUser180Drawings(fetchedDrawingIDs.flat());
         } else if (props.seconds === 300) {
+          setDurationIcon(<FiveMinuteIcon dimensions="3em" />);
           pinnedCtx.setUser300Drawings(fetchedDrawingIDs.flat());
         }
       }
@@ -49,12 +58,9 @@ const PinnedModal = (props) => {
   }, []);
 
   return (
-    <Card>
+    <Card width="80">
       <div className={classes.innerModal}>
         <div className={classes.topControlsContainer}>
-          <div className={classes.title}>
-            <h3>{`${props.seconds / 60} Minute Drawings`}</h3>
-          </div>
           <div className={classes.save}>
             <button
               className={classes.activeButton}
@@ -71,10 +77,13 @@ const PinnedModal = (props) => {
               Save
             </button>
           </div>
+          <div className={classes.title}>
+            {durationIcon}
+            <h3>{`${props.seconds / 60} Minute Drawings`}</h3>
+          </div>
           <div className={classes.exit}>
             <div
-              className={classes.close}
-              style={{ cursor: "pointer" }}
+              className={baseClasses.close}
               onClick={() => {
                 console.log("close was clicked");
                 pinnedCtx.setShow60({ display: "none" });

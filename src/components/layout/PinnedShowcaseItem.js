@@ -3,6 +3,9 @@ import Card from "../../ui/Card";
 
 import classes from "./PinnedArt.module.css";
 import GallaryItem from "./GallaryItem";
+import OneMinuteIcon from "../../svgs/OneMinuteIcon";
+import ThreeMinuteIcon from "../../svgs/ThreeMinuteIcon";
+import FiveMinuteIcon from "../../svgs/FiveMinuteIcon";
 
 const PinnedShowcaseItem = ({ drawingID, timer }) => {
   if (drawingID === undefined || drawingID === "") {
@@ -28,7 +31,10 @@ const PinnedShowcaseItem = ({ drawingID, timer }) => {
         gap: "1em",
       }}
     >
-      <div>{timer}</div>
+      {timer === "One Minute" && <OneMinuteIcon dimensions={"3.5em"} />}
+      {timer === "Three Minutes" && <ThreeMinuteIcon dimensions={"3.5em"} />}
+      {timer === "Five Minutes" && <FiveMinuteIcon dimensions={"3.5em"} />}
+
       <GallaryItem
         drawingID={drawingID}
         settings={{

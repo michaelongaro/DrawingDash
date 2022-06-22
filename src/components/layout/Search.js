@@ -28,12 +28,21 @@ const Search = (props) => {
   let idx = props.userProfile.length > 0 ? 1 : 0;
 
   useEffect(() => {
-    searchCtx.resetAllValues(idx);
+    if (idx === 0) {
+      console.log(0);
+    }
     if (idx === 1) {
+    
+      console.log(1);
+      console.log("refreshing in Search");
       searchCtx.setPersistingUserGallary([]);
       searchCtx.getGallary(`users/${props.userProfile}/`);
     }
-  }, [props]);
+
+    return () => {
+      searchCtx.resetAllValues(idx);
+    };
+  }, []);
 
   const [showAdjResults, setShowAdjResults] = useState(classes.hide);
   const [showNounResults, setShowNounResults] = useState(classes.hide);
@@ -261,15 +270,13 @@ const Search = (props) => {
         <button className={classes.searchButton}>Search</button>
       </form>
 
-      {/* {searchCtx.searchValues["gallary"][idx] !== null && ( */}
-        <GallaryList
-          drawingIDs={searchCtx.searchValues["gallary"][idx]}
-          title={gallaryListStaticTitle}
-          margin={props.margin}
-        />
-      {/* )} */}
+      <GallaryList
+        drawingIDs={searchCtx.searchValues["gallary"][idx]}
+        title={gallaryListStaticTitle}
+        margin={props.margin}
+      />
     </>
   );
 };
 
-export default Search;
+export default React.memo(Search);

@@ -8,7 +8,7 @@ import GallaryItem from "./GallaryItem";
 
 import classes from "./GallaryList.module.css";
 
-const GallaryList = (props) => {
+const GallaryList = ({ drawingIDs, title, margin }) => {
   const [displayedDrawings, setDisplayedDrawings] = useState();
   const [durationStates, setDurationStates] = useState();
   const [availableDurations, setAvailableDurations] = useState();
@@ -19,30 +19,30 @@ const GallaryList = (props) => {
   const [greenOpacity, setGreenOpacity] = useState(0);
 
   useEffect(() => {
-    if (props.drawingIDs) {
-      setDisplayedDrawings(props.drawingIDs);
+    if (drawingIDs) {
+      setDisplayedDrawings(drawingIDs);
       setAvailableDurations([
-        props.drawingIDs["60"].length !== 0 ? true : false,
-        props.drawingIDs["180"].length !== 0 ? true : false,
-        props.drawingIDs["300"].length !== 0 ? true : false,
+        drawingIDs["60"].length !== 0 ? true : false,
+        drawingIDs["180"].length !== 0 ? true : false,
+        drawingIDs["300"].length !== 0 ? true : false,
       ]);
-      if (props.drawingIDs["60"].length !== 0) {
+      if (drawingIDs["60"].length !== 0) {
         setDurationStates([true, false, false]);
         setShowButtonColors([true, false, false]);
         return;
       }
-      if (props.drawingIDs["180"].length !== 0) {
+      if (drawingIDs["180"].length !== 0) {
         setDurationStates([false, true, false]);
         setShowButtonColors([false, true, false]);
         return;
       }
-      if (props.drawingIDs["300"].length !== 0) {
+      if (drawingIDs["300"].length !== 0) {
         setDurationStates([false, false, true]);
         setShowButtonColors([false, false, true]);
         return;
       }
     }
-  }, [props]);
+  }, [drawingIDs]);
 
   useEffect(() => {
     console.log(showButtonColors);
@@ -59,9 +59,10 @@ const GallaryList = (props) => {
               style={{
                 position: "relative",
 
-                background: !redOpacity && durationStates[0]
-                  ? "linear-gradient(to bottom, #FFFFFF, rgb(255 0 0 / 40%))"
-                  : "linear-gradient(to bottom, rgb(194 194 194 / 40%), #FFFFFF)",
+                background:
+                  !redOpacity && durationStates[0]
+                    ? "linear-gradient(to bottom, #FFFFFF, rgb(255 0 0 / 40%))"
+                    : "linear-gradient(to bottom, rgb(194 194 194 / 40%), #FFFFFF)",
 
                 border: "solid red",
 
@@ -109,9 +110,10 @@ const GallaryList = (props) => {
               style={{
                 position: "relative",
 
-                background: !yellowOpacity && durationStates[1]
-                  ? "linear-gradient(to bottom, #FFFFFF, rgb(255 255 0 / 40%))"
-                  : "linear-gradient(to bottom, rgb(194 194 194 / 40%), #FFFFFF)",
+                background:
+                  !yellowOpacity && durationStates[1]
+                    ? "linear-gradient(to bottom, #FFFFFF, rgb(255 255 0 / 40%))"
+                    : "linear-gradient(to bottom, rgb(194 194 194 / 40%), #FFFFFF)",
 
                 border: "solid yellow",
 
@@ -158,9 +160,10 @@ const GallaryList = (props) => {
               style={{
                 position: "relative",
 
-                background: !greenOpacity && durationStates[2]
-                  ? "linear-gradient(to bottom, #FFFFFF, rgb(0 255 0 / 40%))"
-                  : "linear-gradient(to bottom, rgb(194 194 194 / 40%), #FFFFFF)",
+                background:
+                  !greenOpacity && durationStates[2]
+                    ? "linear-gradient(to bottom, #FFFFFF, rgb(0 255 0 / 40%))"
+                    : "linear-gradient(to bottom, rgb(194 194 194 / 40%), #FFFFFF)",
 
                 border: "solid green",
                 borderWidth: "2px 2px 0 2px",
@@ -184,7 +187,6 @@ const GallaryList = (props) => {
               }}
             >
               <div
-                className={classes.durationIconContainer}
                 style={{
                   opacity: greenOpacity,
                   border: "solid green",
@@ -195,6 +197,7 @@ const GallaryList = (props) => {
                   width: "188px",
                   height: "66px",
                 }}
+                className={`${classes.baseButtonFlex} ${classes.durationIconContainer} ${classes.hoverGreen}`}
               >
                 <FiveMinuteIcon dimensions={"3.5em"} />
               </div>
@@ -203,81 +206,78 @@ const GallaryList = (props) => {
             </div>
           </div>
 
-          <Card margin={props.margin}>
-            {/* <div className={classes.flexListContain}> */}
-              <div
-                className={`${durationStates[0] ? "" : classes.hide} ${
-                  classes.gridListContain
-                }`}
-              >
-                {Object.values(displayedDrawings["60"])
-                  .flat()
-                  .map((drawingID, i) => (
-                    <GallaryItem
-                      key={i}
-                      drawingID={drawingID}
-                      settings={{
-                        width: 100,
-                        forHomepage: false,
-                        forPinnedShowcase: false,
-                        forPinnedItem: false,
-                        skeleHeight: "10em",
-                        skeleDateWidth: "6em",
-                        skeleTitleWidth: "6em",
-                      }}
-                    />
-                  ))}
-              </div>
+          <Card margin={margin}>
+            <div
+              className={`${durationStates[0] ? "" : classes.hide} ${
+                classes.gridListContain
+              }`}
+            >
+              {Object.values(displayedDrawings["60"])
+                .flat()
+                .map((drawingID, i) => (
+                  <GallaryItem
+                    key={i}
+                    drawingID={drawingID}
+                    settings={{
+                      width: 100,
+                      forHomepage: false,
+                      forPinnedShowcase: false,
+                      forPinnedItem: false,
+                      skeleHeight: "10em",
+                      skeleDateWidth: "6em",
+                      skeleTitleWidth: "6em",
+                    }}
+                  />
+                ))}
+            </div>
 
-              <div
-                className={`${durationStates[1] ? "" : classes.hide} ${
-                  classes.gridListContain
-                }`}
-              >
-                {Object.values(displayedDrawings["180"])
-                  .flat()
-                  .map((drawingID, i) => (
-                    <GallaryItem
-                      key={i}
-                      drawingID={drawingID}
-                      settings={{
-                        width: 100,
-                        forHomepage: false,
-                        forPinnedShowcase: false,
-                        forPinnedItem: false,
-                        skeleHeight: "10em",
-                        skeleDateWidth: "6em",
-                        skeleTitleWidth: "6em",
-                      }}
-                    />
-                  ))}
-              </div>
+            <div
+              className={`${durationStates[1] ? "" : classes.hide} ${
+                classes.gridListContain
+              }`}
+            >
+              {Object.values(displayedDrawings["180"])
+                .flat()
+                .map((drawingID, i) => (
+                  <GallaryItem
+                    key={i}
+                    drawingID={drawingID}
+                    settings={{
+                      width: 100,
+                      forHomepage: false,
+                      forPinnedShowcase: false,
+                      forPinnedItem: false,
+                      skeleHeight: "10em",
+                      skeleDateWidth: "6em",
+                      skeleTitleWidth: "6em",
+                    }}
+                  />
+                ))}
+            </div>
 
-              <div
-                className={`${durationStates[2] ? "" : classes.hide} ${
-                  classes.gridListContain
-                }`}
-              >
-                {/* {console.log(displayedDrawings)} */}
-                {Object.values(displayedDrawings["300"])
-                  .flat()
-                  .map((drawingID, i) => (
-                    <GallaryItem
-                      key={i}
-                      drawingID={drawingID}
-                      settings={{
-                        width: 100,
-                        forHomepage: false,
-                        forPinnedShowcase: false,
-                        forPinnedItem: false,
-                        skeleHeight: "10em",
-                        skeleDateWidth: "6em",
-                        skeleTitleWidth: "6em",
-                      }}
-                    />
-                  ))}
-              </div>
-            {/* </div> */}
+            <div
+              className={`${durationStates[2] ? "" : classes.hide} ${
+                classes.gridListContain
+              }`}
+            >
+              {Object.values(displayedDrawings["300"])
+                .flat()
+                .map((drawingID, i) => (
+                  <GallaryItem
+                    key={i}
+                    drawingID={drawingID}
+                    settings={{
+                      width: 100,
+                      forHomepage: false,
+                      forPinnedShowcase: false,
+                      forPinnedItem: false,
+                      skeleHeight: "10em",
+                      skeleDateWidth: "6em",
+                      skeleTitleWidth: "6em",
+                    }}
+                  />
+                ))}
+            </div>
           </Card>
         </div>
       )}

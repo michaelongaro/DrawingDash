@@ -4,7 +4,6 @@
   justify-content: center;
   align-items: center;
   gap: 3em;
-  margin-top: 3em;
 }
 
 .pinnedContain {
@@ -45,7 +44,7 @@
 }
 
 .topControlsContainer {
-  display: grid;
+  /* display: grid;
   grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
   grid-template-rows: 1fr;
   gap: 0px 0px;
@@ -53,7 +52,15 @@
   grid-template-areas: "save . . . title title title title title title . . . exit";
   background-color: rgb(167, 167, 167);
   border-radius: 1em;
-  margin: 1em;
+  margin: 1em; */
+  position: relative;
+  background-color: rgb(167, 167, 167);
+  border-radius: 1em;
+  display: flex;
+  width: 100%;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1em 1em 0.5em 1em;
 }
 
 .title {
@@ -61,6 +68,7 @@
   display: flex;
   justify-content: center;
   align-items: center;
+  gap: 1em;
 }
 
 .save {
@@ -69,6 +77,8 @@
 
 .exit {
   grid-area: exit;
+  width: 2em;
+  height: 2em;
 }
 
 .activeButton {
@@ -85,7 +95,7 @@
   line-height: 40px;
   outline: 0;
   overflow: hidden;
-  padding: 0 50px;
+  padding: 0 20px;
   pointer-events: auto;
   position: relative;
   text-align: center;
@@ -106,31 +116,4 @@
 
 .activeButton:hover:enabled {
   box-shadow: rgba(253, 76, 0, 0.5) 0 3px 8px;
-}
-
-.close {
-  position: absolute;
-  right: 32px;
-  top: 32px;
-  width: 32px;
-  height: 32px;
-  opacity: 0.3;
-}
-.close:hover {
-  opacity: 1;
-}
-.close:before,
-.close:after {
-  position: absolute;
-  left: 15px;
-  content: " ";
-  height: 33px;
-  width: 2px;
-  background-color: #333;
-}
-.close:before {
-  transform: rotate(45deg);
-}
-.close:after {
-  transform: rotate(-45deg);
 }

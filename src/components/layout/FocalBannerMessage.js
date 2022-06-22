@@ -56,7 +56,7 @@ const FocalBannerMessage = (props) => {
     };
   }
 
-  console.log(props.forHomepage, props.forSearch);
+  // console.log(props.forHomepage, props.forSearch);
 
   const usersAnimationRef = useRef(null);
   const drawingsAnimationRef = useRef(null);
@@ -143,25 +143,12 @@ const FocalBannerMessage = (props) => {
   // either value/innerText attributes in animejs
 
   return (
-    <div
-      style={{
-        display: "flex",
-        flexDirection: "column",
-        justifyContent: "center",
-        alignItems: "center",
-
-        backgroundColor: "rgba(255, 255, 255, 1)",
-        borderRadius: "0.25em",
-        width: "25em",
-        zIndex: 200,
-      }}
-    >
+    <div className={classes.bannerContainer}>
       <div className={classes.bannerTitleFlex}>
-        
         <div>{miscSettings.current.title}</div>
         {miscSettings.current.title === "Search" && (
           <div>
-            <MagnifyingGlassIcon dimensions={".75em"} />
+            <MagnifyingGlassIcon dimensions={".75em"} color={"black"} />
           </div>
         )}
       </div>

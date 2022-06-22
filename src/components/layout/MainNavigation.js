@@ -193,6 +193,9 @@ function MainNavigation() {
           }
         });
     }
+
+    // making sure that user modal can always be opened when visiting page for the first time
+    localStorage.setItem("baseUserModalOpened", "false");
   }, [isLoading, isAuthenticated]);
 
   useEffect(() => {
@@ -252,7 +255,7 @@ function MainNavigation() {
               }
             >
               <div className={classes.drawButtonBackground}>
-                <MagnifyingGlassIcon dimensions={"1.75em"} />
+                <MagnifyingGlassIcon dimensions={"1.75em"} color={"white"} />
                 <div style={{ fontSize: "1.25em", color: "#fff" }}>Explore</div>
               </div>
             </NavLink>
@@ -285,11 +288,7 @@ function MainNavigation() {
                 <div style={{ position: "absolute" }}>
                   <img
                     className={classes.profilePicture}
-                    src={
-                      croppedImage
-                        ? croppedImage
-                        : image
-                    }
+                    src={croppedImage ? croppedImage : image}
                     alt={"cropped profile"}
                   />
                 </div>

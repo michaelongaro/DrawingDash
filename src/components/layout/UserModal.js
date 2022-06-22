@@ -1,14 +1,13 @@
 import React, { useState, useEffect } from "react";
 
 import getCroppedImg from "../../util/cropImage";
+import SlideShow from "./SlideShow";
 
 import Search from "./Search";
-import SlideShow from "./SlideShow";
 
 import {
   getDatabase,
   ref as ref_database,
-  set,
   onValue,
   child,
   get,
@@ -19,7 +18,6 @@ import {
   getStorage,
   getMetadata,
   ref as ref_storage,
-  uploadBytes,
 } from "firebase/storage";
 
 import { app } from "../../util/init-firebase";
@@ -27,7 +25,7 @@ import { app } from "../../util/init-firebase";
 import classes from "./UserModal.module.css";
 import baseClasses from "../../index.module.css";
 
-const UserModal = (props) => {
+const UserModal = ({ user }) => {
   const db = getDatabase(app);
   const dbRef = ref_database(getDatabase(app));
 
@@ -36,7 +34,9 @@ const UserModal = (props) => {
   const [username, setUsername] = useState("");
   const [status, setStatus] = useState("");
 
-  const [isFetching, setIsFetching] = useState(true);
+  const [isFetchingProfilePicture, setIsFetchingProfilePicture] = useState(true);
+  const [isFetchingPinnedDrawings, setIsFetchingPinnedDrawings] = useState(true);
+
   const [image, setImage] = useState(null);
   const [pinnedIDs, setPinnedIDs] = useState();
   const [pinnedMetadata, setPinnedMetadata] = useState();
@@ -47,14 +47,10 @@ const UserModal = (props) => {
 
   const showCroppedImage = async () => {
     try {
-      const croppedImg = await getCroppedImg(
-        image,
-        DBCropData,
-        imageFileType
-      );
+      const croppedImg = await getCroppedImg(image, DBCropData, imageFileType);
 
       setCroppedImage(croppedImg);
-      setIsFetching(false);
+      setIsFetchingProfilePicture(false);
     } catch (e) {
       console.log(e);
     }
@@ -63,12 +59,12 @@ const UserModal = (props) => {
   useEffect(() => {
     // fetch data from db if it is present
     console.log("am trying to get loaded");
-    get(child(dbRef, `users/${props.uid}/preferences`)).then((snapshot) => {
+    get(child(dbRef, `users/${user}/preferences`)).then((snapshot) => {
       if (snapshot.exists()) {
         setUsername(snapshot.val()["username"]);
         setStatus(snapshot.val()["status"]);
         setDBCropData(snapshot.val()["profileCropMetadata"]);
-        get(child(dbRef, `users/${props.uid}/pinnedArt`)).then((snapshot2) => {
+        get(child(dbRef, `users/${user}/pinnedArt`)).then((snapshot2) => {
           if (snapshot2.exists()) {
             setPinnedIDs(Object.values(snapshot2.val()));
 
@@ -80,9 +76,9 @@ const UserModal = (props) => {
       }
     });
 
-    getDownloadURL(ref_storage(storage, `users/${props.user}/profile`))
+    getDownloadURL(ref_storage(storage, `users/${user}/profile`))
       .then((url) => {
-        getMetadata(ref_storage(storage, `users/${props.user}/profile`))
+        getMetadata(ref_storage(storage, `users/${user}/profile`))
           .then((metadata) => {
             setImageFileType(metadata.contentType);
             setImage(url);
@@ -98,11 +94,12 @@ const UserModal = (props) => {
         ) {
           // defaulting to auth0 image
           onValue(
-            ref_database(db, `users/${props.user}/preferences`),
+            ref_database(db, `users/${user}/preferences`),
             (snapshot) => {
               if (snapshot.exists()) {
+                console.log("found", snapshot.val());
                 setImage(snapshot.val()["defaultProfilePicture"]);
-                setIsFetching(false);
+                setIsFetchingProfilePicture(false);
               }
             }
           );
@@ -117,7 +114,7 @@ const UserModal = (props) => {
   }, [imageFileType, image, DBCropData]);
 
   useEffect(() => {
-    if (pinnedMetadata && pinnedDrawings) setIsFetching(false);
+    if (pinnedMetadata && pinnedDrawings) setIsFetchingPinnedDrawings(false);
   }, [pinnedMetadata, pinnedDrawings]);
 
   function fetchPinnedMetadata(ids) {
@@ -166,22 +163,11 @@ const UserModal = (props) => {
       });
   }
 
-  if (pinnedDrawings === null) {
-    return null;
-  }
-
   return (
     <div className={classes.horizContain}>
       <div className={`${classes.container} ${classes.prefCard}`}>
         <div className={classes.leftSide}>
-          {/* <img
-            className={classes.image}
-            width={"165px"}
-            src={croppedImage ?? profileImage}
-            alt={"Profile"}
-          /> */}
-
-          {isFetching ? (
+          {isFetchingProfilePicture ? (
             <div
               style={{
                 width: "165px",
@@ -191,17 +177,16 @@ const UserModal = (props) => {
               className={baseClasses.skeletonLoading}
             ></div>
           ) : (
-            
-              <img
-                style={{
+            <img
+              style={{
                 width: "165px",
                 height: "165px",
+                objectFit: "cover",
                 borderRadius: "50%",
               }}
-                src={croppedImage ?? image}
-                alt="Profile"
-              />
-            
+              src={croppedImage ? croppedImage : image}
+              alt="Profile"
+            />
           )}
 
           <div className={classes.showUsername}>{username}</div>
@@ -211,7 +196,7 @@ const UserModal = (props) => {
         </div>
 
         <div className={classes.rightSide}>
-          {isFetching ? (
+          {isFetchingPinnedDrawings ? (
             <div
               style={{ width: "5em", height: "50%" }}
               className={classes.skeletonLoading}
@@ -225,7 +210,7 @@ const UserModal = (props) => {
         </div>
       </div>
 
-      <Search userProfile={props.uid} />
+      <Search userProfile={user} />
     </div>
   );
 };

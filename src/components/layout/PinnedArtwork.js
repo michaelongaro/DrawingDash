@@ -23,15 +23,27 @@ const PinnedArtwork = () => {
   const ref300 = useRef();
 
   const showModal = {
+    // position: "absolute",
+    // left: "15em",
+    // top: "7em",
+    // right: "5em",
+    // display: "flex",
+    // justifyContent: "center",
+    // alignItems: "center",
+    // margin: "3em",
+    // zIndex: "500",
     position: "absolute",
-    left: "15em",
-    top: "7em",
-    right: "5em",
+    left: "0",
+    top: "0",
+    width: "100vw",
+    height: "100vh",
     display: "flex",
+    flexDirection: "column",
     justifyContent: "center",
     alignItems: "center",
-    margin: "3em",
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
     zIndex: "500",
+    transition: "all 200ms",
   };
 
   useEffect(() => {
@@ -42,25 +54,29 @@ const PinnedArtwork = () => {
 
   useEffect(() => {
     let handler = (event) => {
+      console.log("hmmm");
       if (
         pinnedCtx.show60["display"] !== "none" ||
         pinnedCtx.show180["display"] !== "none" ||
         pinnedCtx.show300["display"] !== "none"
       ) {
+        console.log("getting further", event.target);
         if (
           !ref60.current.contains(event.target) &&
           !ref180.current.contains(event.target) &&
           !ref300.current.contains(event.target)
         ) {
+        console.log("should be clearing all");
+
           // have NO clue why this block of code below doesn't work when called as a function
           // stored in PinnedContext... seems like it should work
           pinnedCtx.setShow60({ display: "none" });
           pinnedCtx.setShow180({ display: "none" });
           pinnedCtx.setShow300({ display: "none" });
 
-          setShow60Showcase();
-          setShow180Showcase();
-          setShow300Showcase();
+          // setShow60Showcase();
+          // setShow180Showcase();
+          // setShow300Showcase();
 
           pinnedCtx.resetAllAndHighlightNewInit();
         }
@@ -87,7 +103,7 @@ const PinnedArtwork = () => {
           onClick={() => {
             if (show60["display"] === "none") {
               pinnedCtx.setShow60(showModal);
-              hideShowcaseDrawings()
+              // hideShowcaseDrawings();
             }
           }}
         >
@@ -106,7 +122,7 @@ const PinnedArtwork = () => {
           onClick={() => {
             if (show180["display"] === "none") {
               pinnedCtx.setShow180(showModal);
-              hideShowcaseDrawings()
+              // hideShowcaseDrawings();
             }
           }}
         >
@@ -125,7 +141,7 @@ const PinnedArtwork = () => {
           onClick={() => {
             if (show300["display"] === "none") {
               pinnedCtx.setShow300(showModal);
-              hideShowcaseDrawings()
+              // hideShowcaseDrawings();
             }
           }}
         >

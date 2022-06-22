@@ -1,4 +1,19 @@
-.horizContain,
+.horizContain {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+  gap: 1em;
+
+  width: 80vw;
+  max-height: 95vh;
+  overflow-y: scroll;
+
+  background-color: rgb(235, 235, 235);
+  padding: 3em;
+  border-radius: 1em;
+}
+
 .leftSide {
   display: flex;
   flex-direction: column;

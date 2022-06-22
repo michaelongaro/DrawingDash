@@ -66,7 +66,7 @@ const AnimatedGridContainer = ({
         tempRandomExtraTileIndicies.push(i);
     }
 
-    console.log(tempRandomDrawingIndicies, tempRandomExtraTileIndicies);
+    // console.log(tempRandomDrawingIndicies, tempRandomExtraTileIndicies);
     setRandomDrawingIndicies(tempRandomDrawingIndicies);
     setRandomExtraTileIndicies(tempRandomExtraTileIndicies);
   }

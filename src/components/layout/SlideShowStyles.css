@@ -1,0 +1,22 @@
+/* only in this file because I couldn't figure out how to get regular .module css
+   file to recognize the chained class styles */
+
+.durationIndicator {
+  opacity: 0.3;
+  cursor: pointer;
+  transition: all 200ms;
+}
+
+.durationIndicator.active {
+  opacity: 1;
+}
+
+.react-slideshow-container .default-nav:last-of-type {
+  margin-left: -35px;
+}
+
+.react-slideshow-container .default-nav:first-of-type {
+  margin-right: -35px;
+  border-right: 0;
+  border-top: 0;
+}

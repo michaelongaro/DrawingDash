@@ -100,7 +100,7 @@ const LogoutButton = () => {
                   }
                 });
 
-                // adding to user titles
+                // adding drawing to user titles
                 set(ref(db, `users/${user.sub}/titles/${seconds}/${id}`), {
                   drawingID: [id],
                 });
@@ -137,6 +137,17 @@ const LogoutButton = () => {
               60: "",
               180: "",
               300: "",
+            });
+
+            // creating titles directory if it wasn't already there (needed?)
+            get(child(dbRef, `users/${user.sub}/titles`)).then((snapshot2) => {
+              if (!snapshot2.exists()) {
+                set(ref(db, `users/${user.sub}/titles`), {
+                  60: {},
+                  180: {},
+                  300: {},
+                });
+              }
             });
             createExtraPrompt();
 

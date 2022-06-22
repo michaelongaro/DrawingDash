@@ -2,6 +2,7 @@ import React from "react";
 import { useState, useEffect, useCallback, useContext, useRef } from "react";
 import { useLocation } from "react-router-dom";
 import { useAuth0 } from "@auth0/auth0-react";
+import { remove } from "lodash";
 
 import ProfilePicture from "./ProfilePicture";
 import FavoritesContext from "./FavoritesContext";
@@ -17,6 +18,7 @@ import FiveMinuteIcon from "../../svgs/FiveMinuteIcon";
 import OneMinuteIcon from "../../svgs/OneMinuteIcon";
 import ThreeMinuteIcon from "../../svgs/ThreeMinuteIcon";
 import ExitIcon from "../../svgs/ExitIcon";
+import GarbageIcon from "../../svgs/GarbageIcon";
 
 import { getDatabase, get, ref, update, set, child } from "firebase/database";
 
@@ -31,8 +33,7 @@ import {
 import { app } from "../../util/init-firebase";
 
 import classes from "./GallaryItem.module.css";
-import GarbageIcon from "../../svgs/GarbageIcon";
-import { remove } from "lodash";
+import baseClasses from "../../index.module.css";
 
 const GallaryItem = ({ drawingID, settings }) => {
   const location = useLocation();
@@ -47,15 +48,17 @@ const GallaryItem = ({ drawingID, settings }) => {
   const userModalRef = useRef();
   const drawingModalRef = useRef(null);
   const confirmDeleteModalRef = useRef();
-  const imageDimensionsRef = useCallback(node => {
+  const imageDimensionsRef = useCallback((node) => {
     if (node !== null) {
       // setSkeletonWidth(node.getBoundingClientRect().width);
       // setSkeletonHeight(node.getBoundingClientRect().height);
-      console.log(node.getBoundingClientRect().width, node.getBoundingClientRect().height);
+      console.log(
+        node.getBoundingClientRect().width,
+        node.getBoundingClientRect().height
+      );
       console.log(node.offsetWidth, node.offsetHeight);
 
-
-            setSkeletonWidth(node.offsetWidth);
+      setSkeletonWidth(node.offsetWidth);
       setSkeletonHeight(node.offsetHeight);
     }
   }, []);
@@ -73,7 +76,7 @@ const GallaryItem = ({ drawingID, settings }) => {
 
   const [showConfirmDeleteModal, setShowConfirmDeleteModal] = useState(false);
 
-  const [showUserModal, setShowUserModal] = useState(classes.hide);
+  const [showUserModal, setShowUserModal] = useState(false);
   const [loadUserModal, setLoadUserModal] = useState(false);
   // have to catch userModal logic up with drawing/delete modals
   const [userModalStyles, setUserModalStyles] = useState({ width: "100%" });
@@ -101,7 +104,8 @@ const GallaryItem = ({ drawingID, settings }) => {
 
     if (!isLoading && isAuthenticated && drawingDetails) {
       if (
-        (location.pathname !== "/profile/gallery" &&
+        (!settings.forPinnedItem &&
+          location.pathname !== "/profile/gallery" &&
           location.pathname !== "/profile/likes") ||
         drawingDetails.drawnBy !== user.sub
       ) {
@@ -109,7 +113,15 @@ const GallaryItem = ({ drawingID, settings }) => {
         return;
       }
     }
-  }, [user, isLoading, isAuthenticated, location, showDrawingModal, drawingDetails]);
+  }, [
+    user,
+    isLoading,
+    isAuthenticated,
+    location,
+    showDrawingModal,
+    drawingDetails,
+    settings,
+  ]);
 
   useEffect(() => {
     get(child(dbRef, `drawings/${drawingID}`)).then((snapshot) => {
@@ -126,9 +138,9 @@ const GallaryItem = ({ drawingID, settings }) => {
     );
   }, [drawingID]);
 
-  useEffect(() => {
-    console.log(drawingModalRef.current);
-  }, [drawingModalRef.current]);
+  // useEffect(() => {
+  //   console.log(drawingModalRef.current);
+  // }, [drawingModalRef.current]);
 
   useEffect(() => {
     if (drawingDetails && fetchedDrawing) {
@@ -156,26 +168,48 @@ const GallaryItem = ({ drawingID, settings }) => {
 
   useEffect(() => {
     let handler = (event) => {
-      if (showDrawingModal && showUserModal === classes.hide) {
+      // console.log(event.target);
+      if (showDrawingModal && !showUserModal) {
         if (!drawingModalRef.current.contains(event.target)) {
           setShowDrawingModal(false);
           setDrawingWidth(settings.width);
+
+          // need to find better way to display all of this man
+          if (location.pathname === "/explore")
+            setAbleToShowProfilePicture(true);
+          else if (
+            (settings.forPinnedItem &&
+              location.pathname === "/profile/gallery" &&
+              location.pathname === "/profile/likes") ||
+            drawingDetails.drawnBy === user.sub
+          ) {
+            setAbleToShowProfilePicture(false);
+            return;
+          }
         }
         return;
       }
 
       if (
-        (!showDrawingModal && showUserModal !== classes.hide) ||
-        (showDrawingModal && showUserModal !== classes.hide)
+        (!showDrawingModal && showUserModal) ||
+        (showDrawingModal && showUserModal)
       ) {
-        if (!confirmDeleteModalRef.current.contains(event.target)) {
-          setShowUserModal(classes.hide);
+        // if (!confirmDeleteModalRef.current.contains(event.target)) {
+
+        if (!userModalRef.current.contains(event.target)) {
+          setShowUserModal(false);
+          setLoadUserModal(false);
+
+          // updating localStorage to reflect modal closing
+          localStorage.setItem("baseUserModalOpened", "false");
         }
         return;
       }
 
       if (showConfirmDeleteModal) {
-        if (!drawingModalRef.current.contains(event.target)) {
+        // if (!drawingModalRef.current.contains(event.target)) {
+
+        if (!confirmDeleteModalRef.current.contains(event.target)) {
           setShowConfirmDeleteModal(false);
         }
       }
@@ -215,12 +249,18 @@ const GallaryItem = ({ drawingID, settings }) => {
     if (modalType === "drawingID") {
       setShowDrawingModal(true);
     } else {
-      setShowUserModal(classes.modal);
-      setLoadUserModal(true);
-      if (showDrawingModal) {
-        setUserModalStyles({ width: "100%", top: 0 });
+      // if looking at drawing from within a user modal and user clicks on profile picture there
+      // just hide drawing modal to go back to user modal
+      if (showDrawingModal && showUserModal) {
+        setShowDrawingModal(false);
       } else {
-        setUserModalStyles({ width: "100%", top: "5em" });
+        setShowUserModal(true);
+        setLoadUserModal(true);
+        if (showDrawingModal) {
+          setUserModalStyles({ width: "100%", top: 0 });
+        } else {
+          setUserModalStyles({ width: "100%", top: "5em" });
+        }
       }
     }
   }
@@ -340,6 +380,7 @@ const GallaryItem = ({ drawingID, settings }) => {
   }
 
   return (
+    // <div style={{ position: "relative" }}>
     <div
       className={showDrawingModal ? classes.modal : ""}
       onMouseEnter={() => {
@@ -371,15 +412,24 @@ const GallaryItem = ({ drawingID, settings }) => {
 
           <div className={classes.deleteModalControls}>
             <button
+              style={{
+                pointerEvents: showConfirmDeleteModal ? "auto" : "none",
+              }}
               className={classes.closeButton}
-              onClick={() => setShowConfirmDeleteModal(false)}
+              onClick={() => {
+                if (showConfirmDeleteModal) setShowConfirmDeleteModal(false);
+              }}
             >
               <ExitIcon />
             </button>
             <button
-              // className={classes.baseFlex}
+              style={{
+                pointerEvents: showConfirmDeleteModal ? "auto" : "none",
+              }}
               className={classes.editButton}
-              onClick={() => deleteDrawing()}
+              onClick={() => {
+                if (showConfirmDeleteModal) deleteDrawing();
+              }}
             >
               {/* <div>Confirm</div> <GarbageIcon dimensions={"1em"} /> */}
               Confirm
@@ -389,14 +439,17 @@ const GallaryItem = ({ drawingID, settings }) => {
       </div>
 
       {/* image container */}
-      <div className={classes.baseFlex} ref={drawingModalRef}>
+      {/*  make this a vertFlex */}
+      <div
+        style={{ gap: "1em" }}
+        className={baseClasses.baseVertFlex}
+        ref={drawingModalRef}
+      >
         <Card>
           {/* ------ imageinfo -------- */}
           {/* <div style={{ width: "100%", minHeight: "100%"}} ref={imageDimensionsRef}> */}
           {isFetching ? (
-            
             <div
-
               // eventually find way to have this be dynamic based on size of image so it isn't
               // as jarring when image is actually loaded/rendered
               style={{
@@ -407,7 +460,7 @@ const GallaryItem = ({ drawingID, settings }) => {
                 // height: skeletonHeight,
                 width: "306px",
                 height: "148px",
-                borderRadius: "0.5em 0.5em 0 0",
+                borderRadius: "1em 1em 0 0",
               }}
               className={classes.skeletonLoading}
             ></div>
@@ -415,7 +468,6 @@ const GallaryItem = ({ drawingID, settings }) => {
             <div
               className={classes.glossOver}
               style={{ position: "relative" }}
-
               onClick={() => {
                 if (
                   !settings.forHomepage &&
@@ -428,7 +480,12 @@ const GallaryItem = ({ drawingID, settings }) => {
               }}
             >
               <img
-                style={{ cursor: "pointer" }}
+                style={{
+                  cursor: "pointer",
+                  borderRadius: settings.forPinnedShowcase
+                    ? "1em"
+                    : "1em 1em 0 0",
+                }}
                 src={fetchedDrawing}
                 alt={drawingDetails.title}
               />
@@ -503,10 +560,20 @@ const GallaryItem = ({ drawingID, settings }) => {
                   ></div>
                 ) : (
                   <div
-                    style={{ cursor: "pointer"}}
+                    style={{ cursor: "pointer" }}
                     onClick={() => {
-                      if (!settings.forPinned) {
+                      if (
+                        !localStorage.getItem("baseUserModalOpened") ||
+                        localStorage.getItem("baseUserModalOpened") === "false"
+                      ) {
                         showFullscreenModal();
+                        localStorage.setItem("baseUserModalOpened", "true");
+                      } else {
+                        // closing drawing modal and taking user back to original user modal
+                        // done to save bandwidth and also for user clarity so they don't go
+                        // multiple layers deep
+                        setShowDrawingModal(false);
+                        setDrawingWidth(settings.width);
                       }
                     }}
                   >
@@ -519,10 +586,38 @@ const GallaryItem = ({ drawingID, settings }) => {
               ) : null}
 
               {/* ----- user modal ------- */}
-              <div style={userModalStyles} className={showUserModal}>
+              <div className={showUserModal ? classes.modal : ""}>
                 {loadUserModal && (
                   <div ref={userModalRef}>
-                    <UserModal uid={drawingDetails.drawnBy} />
+                    <div style={{ position: "relative" }}>
+                      {showDrawingModal && (
+                        <button
+                          className={classes.goBackButton}
+                          onClick={() => {
+                            // closing user modal
+                            setShowUserModal(false);
+                            setLoadUserModal(false);
+                          }}
+                        >
+                          Return to image
+                        </button>
+                      )}
+                      <div
+                        className={baseClasses.close}
+                        onClick={() => {
+                          // closing all modals
+                          setShowDrawingModal(false);
+                          setDrawingWidth(settings.width);
+                          setShowUserModal(false);
+                          setLoadUserModal(false);
+
+                          // updating localStorage to reflect modal closing
+                          localStorage.setItem("baseUserModalOpened", "false");
+                        }}
+                      ></div>
+                    </div>
+
+                    <UserModal user={drawingDetails.drawnBy} />
                   </div>
                 )}
               </div>
@@ -553,7 +648,8 @@ const GallaryItem = ({ drawingID, settings }) => {
 
               {/* seconds */}
 
-              {(location.pathname !== "/profile/gallery" &&
+              {(!settings.forPinnedItem &&
+                location.pathname !== "/profile/gallery" &&
                 location.pathname !== "/profile/likes") ||
               showDrawingModal ? (
                 isFetching ? (
@@ -584,7 +680,11 @@ const GallaryItem = ({ drawingID, settings }) => {
                 ></div>
               ) : (
                 <div
-                  style={{ width: "1.5em", height: "1.5em", cursor: "pointer" }}
+                  style={{
+                    width: "1.5em",
+                    height: "1.5em",
+                    cursor: "pointer",
+                  }}
                   onClick={toggleFavoriteStatusHandler}
                   onMouseEnter={() => {
                     setHoveringOnHeart(true);
@@ -670,6 +770,7 @@ const GallaryItem = ({ drawingID, settings }) => {
           )
         ) : null}
       </div>
+      {/* </div> */}
     </div>
   );
 };

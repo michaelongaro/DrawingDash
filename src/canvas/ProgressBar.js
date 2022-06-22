@@ -34,7 +34,7 @@ const ProgressBar = () => {
   });
 
   useEffect(() => {
-    console.log(DSCtx.PBStates);
+    // console.log(DSCtx.PBStates);
     // starting off with showing select prompt screen
     if (DSCtx.PBStates["selectCircle"] && !localPBStates["selectCircle"]) {
       let dailyDrawingsAreComplete;

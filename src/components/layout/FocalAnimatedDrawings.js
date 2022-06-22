@@ -86,8 +86,8 @@ const FocalAnimatedDrawings = (props) => {
   if (!props.forSearch) {
     if (props.forHomepage) {
       miscSettings.current = {
-        fullHeight: "22.85em",
-        fullWidth: "66%",
+        fullHeight: "20em",
+        fullWidth: "70%",
         radius: "1em",
         forHomepage: props.forHomepage,
       };
@@ -103,7 +103,7 @@ const FocalAnimatedDrawings = (props) => {
     miscSettings.current = {
       fullHeight: "20em",
       fullWidth: "90%",
-      radius: 0,
+      radius: "1em",
       forHomepage: props.forHomepage,
     };
   }
@@ -118,12 +118,12 @@ const FocalAnimatedDrawings = (props) => {
 
   useEffect(() => {
     getRandomDrawingIDs();
-    console.log("loaded and started fetch of words");
+    // console.log("loaded and started fetch of words");
   }, []);
 
   useEffect(() => {
     if (randomDrawingIDs60 && randomDrawingIDs180 && randomDrawingIDs300) {
-      console.log("collected all ids & fetching images from ids");
+      // console.log("collected all ids & fetching images from ids");
       getImagesFromIDs();
       // setOffsetX(testRef.current.getBoundingClientRect().left);
     }
@@ -131,7 +131,7 @@ const FocalAnimatedDrawings = (props) => {
 
   useEffect(() => {
     if (fetchedDrawings60.length > 0) {
-      console.log("found 60 and starting interval");
+      // console.log("found 60 and starting interval");
       setShowPrompt([true, false, false]);
       setStartIntervalTimer(true);
     }
@@ -139,10 +139,10 @@ const FocalAnimatedDrawings = (props) => {
 
   useEffect(() => {
     if (startIntervalTimer) {
-      console.log("starting interval");
+      // console.log("starting interval");
       intervalID.current = setInterval(() => {
         setShowPrompt((showPrompt) => {
-          console.log(showPrompt);
+          // console.log(showPrompt);
           if (
             isEqual(showPrompt, [false, false, false]) ||
             isEqual(showPrompt, [false, false, true])
@@ -163,9 +163,9 @@ const FocalAnimatedDrawings = (props) => {
   }, [startIntervalTimer]);
 
   useEffect(() => {
-    console.log("tried to do something");
+    // console.log("tried to do something");
     if (isEqual(showPrompt, [true, false, false])) {
-      console.log("tried to do something 60");
+      // console.log("tried to do something 60");
 
       anime({
         targets: `#redFocalProgressBar`,
@@ -180,7 +180,7 @@ const FocalAnimatedDrawings = (props) => {
         easing: "linear",
       });
     } else if (isEqual(showPrompt, [false, true, false])) {
-      console.log("tried to do something 180");
+      // console.log("tried to do something 180");
 
       anime({
         targets: `#yellowFocalProgressBar`,
@@ -195,7 +195,7 @@ const FocalAnimatedDrawings = (props) => {
         easing: "linear",
       });
     } else if (isEqual(showPrompt, [false, false, true])) {
-      console.log("tried to do something 300");
+      // console.log("tried to do something 300");
 
       anime({
         targets: `#greenFocalProgressBar`,
@@ -281,7 +281,7 @@ const FocalAnimatedDrawings = (props) => {
 
       tempArr.push(actualID);
     }
-    console.log("finished finding ids");
+    // console.log("finished finding ids");
   }
 
   function getImagesFromIDs() {
@@ -348,7 +348,7 @@ const FocalAnimatedDrawings = (props) => {
         <div className={classes.drawingTitleContainer}>
           <div className={classes.durationContainer}>
             <ThreeMinuteIcon dimensions={"3em"} />
-            <div>{drawingTitle60}</div>
+            <div>{drawingTitle180}</div>
           </div>
           <div
             style={{ backgroundColor: "yellow" }}
@@ -362,7 +362,7 @@ const FocalAnimatedDrawings = (props) => {
         <div className={classes.drawingTitleContainer}>
           <div className={classes.durationContainer}>
             <FiveMinuteIcon dimensions={"3em"} />
-            <div>{drawingTitle60}</div>
+            <div>{drawingTitle300}</div>
           </div>
           <div
             style={{ backgroundColor: "green" }}

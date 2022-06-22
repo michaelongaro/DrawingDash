@@ -4,7 +4,7 @@ function Card(props) {
   return (
     <div
       className={classes.card}
-      style={{ width: `${props.width}%`, margin: `${props.margin}` }}
+      style={{ width: `${props.width}%`, margin: `${props.margin}`, borderRadius: "1em" }}
     >
       {props.children}
     </div>
