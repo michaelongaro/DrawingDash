@@ -20,3 +20,7 @@
   border-right: 0;
   border-top: 0;
 }
+
+.images-wrap > div > div > img {
+  border-radius: 1em;
+}

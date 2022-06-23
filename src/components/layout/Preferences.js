@@ -10,6 +10,8 @@ import { useAuth0 } from "@auth0/auth0-react";
 import ImageCropModal from "./ImageCropModal";
 import getCroppedImg from "../../util/cropImage";
 
+import ProfilePictureUpdateContext from "./ProfilePictureUpdateContext";
+
 import PinnedArtwork from "./PinnedArtwork";
 import ProfileHeader from "./ProfileHeader";
 import ExitIcon from "../../svgs/ExitIcon";
@@ -38,9 +40,14 @@ import {
 import { app } from "../../util/init-firebase";
 
 import classes from "./Preferences.module.css";
-import baseClasses from "../../index.module.css"
+import baseClasses from "../../index.module.css";
 
 const Preferences = () => {
+  // context to set when profile picture needs to be refetched
+  // only doing it this way because there doesn't seem to be an eqivalent
+  // to "onValue" for the firebase Storage side of things...
+  const PFPUpdateCtx = useContext(ProfilePictureUpdateContext);
+
   const { user, isAuthenticated, isLoading } = useAuth0();
 
   const db = getDatabase(app);
@@ -186,7 +193,7 @@ const Preferences = () => {
   }
 
   async function upload() {
-    const photoRef = ref_storage(storage, `${user.sub}/profile`);
+    const photoRef = ref_storage(storage, `users/${user.sub}/profile`);
 
     // probably add a reset button to the crop modal, just show normal image and make profileCropMetadata = false
     const snapshot = await uploadBytes(photoRef, userUploadedImage ?? image, {
@@ -196,6 +203,9 @@ const Preferences = () => {
     const photoURL = await getDownloadURL(photoRef);
 
     setImage(photoURL);
+
+    // telling MainNavigation to refetch it's profile picture to the newly uploaded one
+    PFPUpdateCtx.setRefreshProfilePicture(true);
   }
 
   const handleChange = (e) => {
@@ -285,11 +295,7 @@ const Preferences = () => {
             <div style={{ position: "relative" }}>
               <img
                 className={classes.profilePicture}
-                src={
-                  croppedImage
-                    ? croppedImage
-                    : image
-                }
+                src={croppedImage ? croppedImage : image}
                 alt={imageAltInfo}
               />
 
@@ -331,19 +337,24 @@ const Preferences = () => {
           )}
           {/* need to bring this up as soon as image is uploaded */}
           {showCropModal ? (
-            <div className={classes.cropImageModal}>
-              <ImageCropModal
-                id={1}
-                imageUrl={cropReadyImage ?? image}
-                cropInit={crop}
-                zoomInit={zoom}
-                onCropChange={setCrop}
-                onRotationChange={setRotation}
-                onCropComplete={onCropComplete}
-                onZoomChange={setZoom}
-                applyChanges={showCroppedImage}
-                discardChanges={onClose}
-              />
+            <div
+              style={{ opacity: showCropModal ? 1 : 0 }}
+              className={classes.modal}
+            >
+              <div className={classes.cropImageModal}>
+                <ImageCropModal
+                  id={1}
+                  imageUrl={cropReadyImage ?? image}
+                  cropInit={crop}
+                  zoomInit={zoom}
+                  onCropChange={setCrop}
+                  onRotationChange={setRotation}
+                  onCropComplete={onCropComplete}
+                  onZoomChange={setZoom}
+                  applyChanges={showCroppedImage}
+                  discardChanges={onClose}
+                />
+              </div>
             </div>
           ) : null}
 

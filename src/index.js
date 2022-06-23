@@ -7,6 +7,7 @@ import { SearchProvider } from "./components/layout/SearchContext";
 import { FavoritesProvider } from "./components/layout/FavoritesContext";
 import { PinnedProvider } from "./components/layout/PinnedContext";
 import { DrawingSelectionProvider } from "./canvas/DrawingSelectionContext";
+import { ProfilePictureUpdateProvider } from "./components/layout/ProfilePictureUpdateContext";
 import App from "./App";
 
 import "./index.module.css";
@@ -18,17 +19,19 @@ ReactDOM.render(
       clientId="HiuFz0Yo30naHcGzk8PbPOYr0qIK6dae"
       redirectUri={window.location.origin}
     >
-      <PinnedProvider>
-        <FavoritesProvider>
-          <SearchProvider>
-            <DrawingSelectionProvider>
-              <WordsProvider>
-                <App />
-              </WordsProvider>
-            </DrawingSelectionProvider>
-          </SearchProvider>
-        </FavoritesProvider>
-      </PinnedProvider>
+      <ProfilePictureUpdateProvider>
+        <PinnedProvider>
+          <FavoritesProvider>
+            <SearchProvider>
+              <DrawingSelectionProvider>
+                <WordsProvider>
+                  <App />
+                </WordsProvider>
+              </DrawingSelectionProvider>
+            </SearchProvider>
+          </FavoritesProvider>
+        </PinnedProvider>
+      </ProfilePictureUpdateProvider>
     </Auth0Provider>
   </BrowserRouter>,
   document.getElementById("root")

@@ -203,6 +203,21 @@
   margin: 0;
 }
 
+.modal {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 500;
+  transition: all 200ms;
+}
+
 .cropImageModal {
   position: fixed;
   top: 50%;
@@ -215,8 +230,8 @@
   border-radius: 1em;
   background: linear-gradient(
     350deg,
-    rgba(27, 138, 56, 1) 0%,
-    rgba(0, 230, 31, 1) 100%
+    rgb(27, 138, 56) 0%,
+    rgb(36, 231, 62) 100%
   );
 
   z-index: 350;

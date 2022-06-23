@@ -184,21 +184,24 @@
 }
 
 .profileDropdown {
-  width: 8em;
-  height: 7em;
   position: relative;
   top: 91px;
-  background: white;
 
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  /* gap: 1em; */
+
+  width: 8em;
+  height: 7em;
+  background: white;
+
+  box-shadow: rgb(0 0 0 / 30%) 2px 4px 8px 0px;
+
   opacity: 0;
   border-radius: 1em;
-  transition: all 250ms;
   z-index: 400;
+  transition: all 250ms;
 }
 
 .profileDropdown:after {

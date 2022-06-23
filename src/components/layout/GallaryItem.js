@@ -20,7 +20,15 @@ import ThreeMinuteIcon from "../../svgs/ThreeMinuteIcon";
 import ExitIcon from "../../svgs/ExitIcon";
 import GarbageIcon from "../../svgs/GarbageIcon";
 
-import { getDatabase, get, ref, update, set, child } from "firebase/database";
+import {
+  getDatabase,
+  get,
+  ref,
+  onValue,
+  update,
+  set,
+  child,
+} from "firebase/database";
 
 import {
   getDownloadURL,
@@ -48,6 +56,7 @@ const GallaryItem = ({ drawingID, settings }) => {
   const userModalRef = useRef();
   const drawingModalRef = useRef(null);
   const confirmDeleteModalRef = useRef();
+
   const imageDimensionsRef = useCallback((node) => {
     if (node !== null) {
       // setSkeletonWidth(node.getBoundingClientRect().width);
@@ -70,16 +79,12 @@ const GallaryItem = ({ drawingID, settings }) => {
   const [drawingDailyLikes, setDrawingDailyLikes] = useState(0);
   const [drawingWidth, setDrawingWidth] = useState(settings.width);
 
-  // this below was set to classes.marginContain (don't think we need now because we
-  // added a gap to the flex list)
   const [showDrawingModal, setShowDrawingModal] = useState(false);
-
-  const [showConfirmDeleteModal, setShowConfirmDeleteModal] = useState(false);
 
   const [showUserModal, setShowUserModal] = useState(false);
   const [loadUserModal, setLoadUserModal] = useState(false);
-  // have to catch userModal logic up with drawing/delete modals
-  const [userModalStyles, setUserModalStyles] = useState({ width: "100%" });
+
+  const [showConfirmDeleteModal, setShowConfirmDeleteModal] = useState(false);
 
   const [isFetching, setIsFetching] = useState(true);
   const [drawingDetails, setDrawingDetails] = useState();
@@ -89,12 +94,16 @@ const GallaryItem = ({ drawingID, settings }) => {
   const [hoveringOnHeart, setHoveringOnHeart] = useState(false);
   const [hoveringOnImage, setHoveringOnImage] = useState(false);
   const [hoveringOnDeleteButton, setHoveringOnDeleteButton] = useState(false);
+  const [hoveringOnTooltip, setHoveringOnTooltip] = useState(false);
 
   // used when image is deleted (just for ui purposes)
   const [hideImage, setHideImage] = useState(false);
 
   const [ableToShowProfilePicture, setAbleToShowProfilePicture] =
     useState(false);
+
+  // states for showing "signup/login" tooltip when clicking like button when unregistered
+  const [showTooltip, setShowTooltip] = useState(false);
 
   useEffect(() => {
     if (showDrawingModal || (!isLoading && !isAuthenticated)) {
@@ -152,17 +161,18 @@ const GallaryItem = ({ drawingID, settings }) => {
 
   useEffect(() => {
     if (drawingDetails) {
-      get(
-        child(
-          dbRef,
+      onValue(
+        ref(
+          db,
           `drawingLikes/${drawingDetails.seconds}/${drawingDetails.index}`
-        )
-      ).then((snapshot) => {
-        if (snapshot.exists()) {
-          setDrawingTotalLikes(snapshot.val()["totalLikes"]);
-          setDrawingDailyLikes(snapshot.val()["dailyLikes"]);
+        ),
+        (snapshot) => {
+          if (snapshot.exists()) {
+            setDrawingTotalLikes(snapshot.val()["totalLikes"]);
+            setDrawingDailyLikes(snapshot.val()["dailyLikes"]);
+          }
         }
-      });
+      );
     }
   }, [drawingDetails]);
 
@@ -221,6 +231,17 @@ const GallaryItem = ({ drawingID, settings }) => {
     };
   });
 
+  useEffect(() => {
+    let setTimeoutID;
+    if (showTooltip) {
+      setTimeoutID = setTimeout(() => setShowTooltip(false), 1250);
+    }
+
+    return () => {
+      clearTimeout(setTimeoutID);
+    };
+  }, [showTooltip]);
+
   function toggleFavoriteStatusHandler() {
     if (favoritesCtx.itemIsFavorite(drawingID, drawingDetails.seconds)) {
       favoritesCtx.removeFavorite(
@@ -229,10 +250,8 @@ const GallaryItem = ({ drawingID, settings }) => {
         drawingTotalLikes - 1,
         drawingDailyLikes - 1
       );
-      // i guess this and the one below are just because the state doesn't update in time?
-      // should be able to fix
-      setDrawingTotalLikes(drawingTotalLikes - 1);
-      setDrawingDailyLikes(drawingDailyLikes - 1);
+      // setDrawingTotalLikes(drawingTotalLikes - 1);
+      // setDrawingDailyLikes(drawingDailyLikes - 1);
     } else {
       favoritesCtx.addFavorite(
         drawingID,
@@ -240,8 +259,8 @@ const GallaryItem = ({ drawingID, settings }) => {
         drawingTotalLikes + 1,
         drawingDailyLikes + 1
       );
-      setDrawingTotalLikes(drawingTotalLikes + 1);
-      setDrawingDailyLikes(drawingDailyLikes + 1);
+      // setDrawingTotalLikes(drawingTotalLikes + 1);
+      // setDrawingDailyLikes(drawingDailyLikes + 1);
     }
   }
 
@@ -256,11 +275,11 @@ const GallaryItem = ({ drawingID, settings }) => {
       } else {
         setShowUserModal(true);
         setLoadUserModal(true);
-        if (showDrawingModal) {
-          setUserModalStyles({ width: "100%", top: 0 });
-        } else {
-          setUserModalStyles({ width: "100%", top: "5em" });
-        }
+        // if (showDrawingModal) {
+        //   setUserModalStyles({ width: "100%", top: 0 });
+        // } else {
+        //   setUserModalStyles({ width: "100%", top: "5em" });
+        // }
       }
     }
   }
@@ -490,6 +509,7 @@ const GallaryItem = ({ drawingID, settings }) => {
                 alt={drawingDetails.title}
               />
 
+              {/* delete drawing button */}
               <button
                 className={classes.deleteButton}
                 style={{
@@ -513,10 +533,6 @@ const GallaryItem = ({ drawingID, settings }) => {
                 }}
                 onClick={() => setShowConfirmDeleteModal(true)}
               >
-                {/* <ExitIcon
-                  color={hoveringOnDeleteButton ? "white" : "#f44336"}
-                  dimensions={"1em"}
-                /> */}
                 <GarbageIcon dimensions={"1.25em"} />
               </button>
 
@@ -648,10 +664,7 @@ const GallaryItem = ({ drawingID, settings }) => {
 
               {/* seconds */}
 
-              {(!settings.forPinnedItem &&
-                location.pathname !== "/profile/gallery" &&
-                location.pathname !== "/profile/likes") ||
-              showDrawingModal ? (
+              {location.pathname === "/" || showDrawingModal ? (
                 isFetching ? (
                   <div
                     style={{ width: "3em", height: "3em" }}
@@ -681,11 +694,17 @@ const GallaryItem = ({ drawingID, settings }) => {
               ) : (
                 <div
                   style={{
+                    position: "relative",
                     width: "1.5em",
                     height: "1.5em",
-                    cursor: "pointer",
                   }}
-                  onClick={toggleFavoriteStatusHandler}
+                  onClick={() => {
+                    if (!isLoading && !isAuthenticated) {
+                      setShowTooltip(true);
+                    } else if (!isLoading && isAuthenticated) {
+                      toggleFavoriteStatusHandler();
+                    }
+                  }}
                   onMouseEnter={() => {
                     setHoveringOnHeart(true);
                   }}
@@ -693,25 +712,49 @@ const GallaryItem = ({ drawingID, settings }) => {
                     setHoveringOnHeart(false);
                   }}
                 >
-                  {hoveringOnHeart ? (
-                    favoritesCtx.itemIsFavorite(
-                      drawingID,
-                      drawingDetails.seconds
-                    ) ? (
-                      <HeartBrokenIcon />
-                    ) : (
+                  {/* heart icon(s) */}
+                  <div style={{ cursor: "pointer" }}>
+                    {hoveringOnHeart ? (
+                      favoritesCtx.itemIsFavorite(
+                        drawingID,
+                        drawingDetails.seconds
+                      ) ? (
+                        <HeartBrokenIcon />
+                      ) : (
+                        <HeartFilledIcon />
+                      )
+                    ) : favoritesCtx.itemIsFavorite(
+                        drawingID,
+                        drawingDetails.seconds
+                      ) ? (
                       <HeartFilledIcon />
-                    )
-                  ) : favoritesCtx.itemIsFavorite(
-                      drawingID,
-                      drawingDetails.seconds
-                    ) ? (
-                    <HeartFilledIcon />
-                  ) : (
-                    <HeartOutlineIcon />
-                  )}
+                    ) : (
+                      <HeartOutlineIcon />
+                    )}
+                  </div>
+
+                  {/* unregistered user tooltip */}
+                  <div
+                    style={{
+                      opacity: hoveringOnTooltip || showTooltip ? 1 : 0,
+                      transform:
+                        hoveringOnTooltip || showTooltip
+                          ? "scale(1)"
+                          : "scale(0)",
+                    }}
+                    className={classes.likesTooltip}
+                    onMouseEnter={() => {
+                      setHoveringOnTooltip(true);
+                    }}
+                    onMouseLeave={() => {
+                      setHoveringOnTooltip(false);
+                    }}
+                  >
+                    Sign up or Log in to like drawings
+                  </div>
                 </div>
               )}
+
               {/* move to % widths */}
 
               {/* for homepage dailymostliked gallaryitem */}

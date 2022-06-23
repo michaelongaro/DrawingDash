@@ -97,9 +97,15 @@ export function FavoritesProvider(props) {
     get(child(dbRef, `users/${user.sub}/likes`)).then((snapshot) => {
       if (snapshot.exists()) {
         let tempLikes = snapshot.val();
-        tempLikes[drawingSeconds].filter(
+
+        // taking out any occurance of the liked drawing in the array
+        tempLikes[drawingSeconds] = tempLikes[drawingSeconds].filter(
           (drawingID) => drawingID !== currDrawingID
         );
+
+        // if there are no liked drawings left for that duration then replaces it with "temp"
+        // so that when fetching there are no errors
+        if (tempLikes[drawingSeconds].length === 0) tempLikes[drawingSeconds].push("temp");
 
         set(ref(db, `users/${user.sub}/likes/`), tempLikes);
       }
