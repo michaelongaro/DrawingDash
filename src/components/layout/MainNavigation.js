@@ -1,10 +1,12 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 
 import { Link, NavLink } from "react-router-dom";
 import { useAuth0 } from "@auth0/auth0-react";
 import getCroppedImg from "../../util/cropImage";
 import anime from "animejs/lib/anime.es";
 import isEqual from "lodash/isEqual";
+
+import ProfilePictureUpdateContext from "./ProfilePictureUpdateContext";
 
 import LogInButton from "../../oauth/LogInButton";
 import LogOutButton from "../../oauth/LogOutButton";
@@ -37,6 +39,9 @@ import { app } from "../../util/init-firebase";
 import classes from "./MainNavigation.module.css";
 
 function MainNavigation() {
+  // context to determine whether profile picture needs to be refetched
+  const PFPUpdateCtx = useContext(ProfilePictureUpdateContext);
+
   // auth0 states
   const { user, isLoading, isAuthenticated } = useAuth0();
 
@@ -203,6 +208,39 @@ function MainNavigation() {
       showCroppedImage(true);
     }
   }, [image, DBCropData]);
+
+  useEffect(() => {
+    if (PFPUpdateCtx.refreshProfilePicture) {
+      getDownloadURL(ref_storage(storage, `users/${user.sub}/profile`))
+        .then((url) => {
+          getMetadata(ref_storage(storage, `users/${user.sub}/profile`))
+            .then((metadata) => {
+              setImageFileType(metadata.contentType);
+              setImage(url);
+            })
+            .catch((e) => {
+              console.error(e);
+            });
+        })
+        .catch((error) => {
+          if (
+            error.code === "storage/object-not-found" ||
+            error.code === "storage/unknown"
+          ) {
+            // defaulting to auth0 image
+            onValue(
+              ref_database(db, `users/${user.sub}/preferences`),
+              (snapshot) => {
+                if (snapshot.exists()) {
+                  setImage(snapshot.val()["defaultProfilePicture"]);
+                  setImageCroppedAndLoaded(true);
+                }
+              }
+            );
+          }
+        });
+    }
+  }, [PFPUpdateCtx.refreshProfilePicture]);
 
   useEffect(() => {
     if (username) {
