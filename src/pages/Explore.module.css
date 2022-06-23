@@ -4,8 +4,8 @@
   justify-content: flex-start;
   align-items: center;
   gap: 2em;
+  height: 100vh;
   margin-left: 5em;
   margin-right: 5em;
   margin-top: -3em;
-  /* height: 85vh; */
 }

@@ -1,0 +1,10 @@
+.footerContainer {
+  position: relative;
+
+  display: flex;
+  width: 100vw;
+  height: 150px;
+  background-color: #18d638;
+
+  margin-top: 5vh;
+}

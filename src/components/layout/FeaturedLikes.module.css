@@ -4,6 +4,7 @@
   align-items: center;
   width: 70%;
   padding: 1.5em;
+  border-radius: 1em;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 

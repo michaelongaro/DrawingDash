@@ -103,6 +103,13 @@ h6 {
   box-shadow: rgba(253, 76, 0, 0.5) 0 3px 8px;
 }
 
+.baseFlex {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
 .baseVertFlex {
   display: flex;
   flex-direction: column;

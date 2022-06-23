@@ -173,7 +173,7 @@
   border-radius: 25px;
   display: grid;
   place-items: end center;
-  margin-bottom: 1em;
+  margin-bottom: 4em;
   margin-top: 3em;
   width: 77%;
 }
@@ -221,7 +221,7 @@
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  margin-bottom: 1em;
+  margin-bottom: 4em;
   margin-top: 3em;
   width: 78vw;
   height: 90vh;

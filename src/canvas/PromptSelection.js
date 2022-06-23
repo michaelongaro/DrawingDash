@@ -453,11 +453,11 @@ const PromptSelection = () => {
     <div
       id={"promptSelection"}
       style={{
-        position: "absolute",
+        position: "relative",
         left: `${
           DSCtx.startFromLeft ? -1 * window.innerWidth : window.innerWidth
         }px`,
-        top: "185px",
+        top: "5vh",
         width: "100vw",
       }}
     >

@@ -1,4 +1,4 @@
-import React, { useContext, useState, useRef, useEffect } from "react";
+import React, { useContext, useState, useEffect } from "react";
 
 import anime from "animejs/lib/anime.es.js";
 import { useAuth0 } from "@auth0/auth0-react";
@@ -12,18 +12,6 @@ const ProgressBar = () => {
 
   const DSCtx = useContext(DrawingSelectionContext);
 
-  const [firstCheckpointStyles, setFirstCheckpointStyles] = useState(
-    classes.active
-  );
-  const [secondCheckpointStyles, setSecondCheckpointStyles] = useState(
-    classes.inactive
-  );
-  const [thirdCheckpointStyles, setThirdCheckpointStyles] = useState(
-    classes.inactive
-  );
-
-  const progressBarRef = useRef(null);
-
   const [localPBStates, setLocalPBStates] = useState({
     selectCircle: false,
     chooseCircle: false,
@@ -34,7 +22,6 @@ const ProgressBar = () => {
   });
 
   useEffect(() => {
-    // console.log(DSCtx.PBStates);
     // starting off with showing select prompt screen
     if (DSCtx.PBStates["selectCircle"] && !localPBStates["selectCircle"]) {
       let dailyDrawingsAreComplete;
@@ -238,7 +225,7 @@ const ProgressBar = () => {
       !localPBStates["resetToSelectBar"]
     ) {
       // scroll progressBar into view when reset button is clicked
-      progressBarRef.current.scrollIntoView({ behavior: "smooth" });
+      window.scrollIntoView({ behavior: "smooth" });
 
       anime({
         targets: "#draw",
@@ -297,29 +284,13 @@ const ProgressBar = () => {
   }, [isLoading, isAuthenticated, DSCtx.drawingStatuses, DSCtx.PBStates]);
 
   // useEffect(() => {
-  //   if (DSCtx.showPromptSelection) {
-  //     setFirstCheckpointStyles(classes.active);
-  //   } else {
-  //     setFirstCheckpointStyles(classes.inactive);
+  //   return () => {
+
   //   }
-  //   if (DSCtx.showPaletteChooser) {
-  //     setSecondCheckpointStyles(classes.active);
-  //   } else {
-  //     setSecondCheckpointStyles(classes.inactive);
-  //   }
-  //   if (DSCtx.showDrawingScreen) {
-  //     setThirdCheckpointStyles(classes.active);
-  //   } else {
-  //     setThirdCheckpointStyles(classes.inactive);
-  //   }
-  // }, [
-  //   DSCtx.showPromptSelection,
-  //   DSCtx.showPaletteChooser,
-  //   DSCtx.showDrawingScreen,
-  // ]);
+  // }, []);
 
   return (
-    <div ref={progressBarRef} className={classes.rectangle}>
+    <div  className={classes.rectangle}>
       {/* select circle */}
       <div className={classes.circle}>
         <div
@@ -332,7 +303,7 @@ const ProgressBar = () => {
         <div
           id="animatedGreenPB"
           className={classes.completedProgressSkeleton}
-          style={{ position: "absolute", top: 130, left: 700 }}
+          style={{ position: "absolute", top: 0, left: "15px" }}
         ></div>
 
         <div id="selectText" className={classes.inactive}>

@@ -41,6 +41,7 @@ import { app } from "../../util/init-firebase";
 
 import classes from "./Preferences.module.css";
 import baseClasses from "../../index.module.css";
+import Footer from "../../ui/Footer";
 
 const Preferences = () => {
   // context to set when profile picture needs to be refetched

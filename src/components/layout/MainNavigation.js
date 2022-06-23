@@ -300,7 +300,7 @@ function MainNavigation() {
           </li>
 
           {!isLoading && !isAuthenticated ? (
-            <div className={classes.signinout}>
+            <div className={classes.signInButtons}>
               <LogInButton forceShow={true} />
               <LogInButton forceShow={false} />
             </div>

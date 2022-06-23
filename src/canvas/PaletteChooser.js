@@ -102,9 +102,9 @@ const PaletteChooser = () => {
     <div
       id={"paletteChooser"}
       style={{
-        position: "absolute",
+        position: "relative",
         left: `${-1 * window.innerWidth}px`,
-        top: "185px",
+        top: "5vh",
         width: "100vw",
       }}
       className={classes.vertContain}

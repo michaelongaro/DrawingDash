@@ -11,7 +11,6 @@ import isEqual from "lodash/isEqual";
 
 import { useCanvas } from "./CanvasContext";
 import DrawingSelectionContext from "./DrawingSelectionContext";
-import PromptSelection from "./PromptSelection";
 import Controls from "./Controls";
 
 import CopyToClipboard from "../components/layout/CopyToClipboard";
@@ -53,7 +52,6 @@ const DrawingScreen = () => {
     300: 2,
   };
 
-  const [countdownTimer, setCountdownTimer] = useState(3);
   const [startTimer, setStartTimer] = useState(false);
   const [countdownKey, setCountdownKey] = useState(0);
   const [drawingTime, setDrawingTime] = useState(60);
@@ -565,11 +563,13 @@ const DrawingScreen = () => {
     <div
       id={"drawingScreen"}
       style={{
-        position: "absolute",
+        position: "relative",
         left: `${-1 * window.innerWidth}px`,
-        top: "185px",
+        top: "5vh",
         width: "100vw",
       }}
+          ref={drawingScreenRef}
+
       className={classes.flexContain}
     >
       <div
@@ -582,7 +582,6 @@ const DrawingScreen = () => {
         }}
       >
         <div
-          ref={drawingScreenRef}
           className={classes.canvasBreathingBackground}
         >
           <div style={{ pointerEvents: "none", userSelect: "none" }}>

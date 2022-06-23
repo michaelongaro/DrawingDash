@@ -51,7 +51,7 @@
   margin-left: 0.5rem;
 }
 
-.signinout button {
+/* .signInButtons button {
   display: inline-block;
   padding: 0.35em 1.2em;
   border: 0.1em solid #ffffff;
@@ -65,9 +65,17 @@
   text-align: center;
   transition: all 0.2s;
 }
-.signinout button:hover {
+.signInButtons button:hover {
   color: #000000;
   background-color: #23c50d;
+} */
+
+.signInButtons {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1em;
+  margin-left: 2em;
 }
 
 .dailyDrawButton {
@@ -144,7 +152,7 @@
 .profileDropdownContainer {
   position: relative;
   width: 48px;
-  height: 48px;
+  height: 56px;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -153,7 +161,7 @@
 .dropdownContainer {
   position: absolute;
 
-  width: 8em;
+  width: 48px;
   height: 72px;
 
   display: flex;
@@ -184,8 +192,8 @@
 }
 
 .profileDropdown {
-  position: relative;
-  top: 91px;
+  position: absolute;
+  top: 72px;
 
   display: flex;
   flex-direction: column;

@@ -232,7 +232,7 @@ const LogoutButton = () => {
         style={{
           backgroundColor: buttonIsClicked ? "#c2c2c2" : "white",
           color: buttonIsClicked ? "white" : "black",
-          borderColor: buttonIsHovered ? "#c2c2c2" : "white",
+          borderColor: buttonIsHovered ? "#c2c2c2" : "rgb(194,194,194)",
         }}
         className={classes.logOut}
         onMouseDown={() => {

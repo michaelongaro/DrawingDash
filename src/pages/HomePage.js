@@ -1,10 +1,13 @@
 import { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
+import anime from "animejs";
 
 import CardContainer from "../components/layout/CardContainer";
 import FeaturedLikes from "../components/layout/FeaturedLikes";
 import FocalAnimatedDrawings from "../components/layout/FocalAnimatedDrawings";
 import Card from "../ui/Card";
 import LogInButton from "../oauth/LogInButton";
+import Footer from "../ui/Footer";
 
 import { useAuth0 } from "@auth0/auth0-react";
 
@@ -22,51 +25,74 @@ function HomePage() {
     }
   }, [isLoading, isAuthenticated]);
 
+  useEffect(() => {
+    if (!isLoading) {
+      anime({
+        targets: "#homePageContainer",
+
+        opacity: [0, 1],
+
+        direction: "normal",
+        loop: false,
+        duration: 200,
+        easing: "linear",
+      });
+    }
+  }, [isLoading, showRegisterContainer]);
+
   return (
-    <section>
-      <div
-        style={{
-          gap: "2em",
-        }}
-        className={classes.flexContain}
-      >
-        <FocalAnimatedDrawings
-          forHomepage={showRegisterContainer}
-          forSearch={false}
-        />
+    <>
+      {!isLoading && (
+        <section id={"homePageContainer"} style={{ opacity: 0 }}>
+          <div
+            style={{
+              gap: "2em",
+            }}
+            className={classes.flexContain}
+          >
+            <FocalAnimatedDrawings
+              forHomepage={showRegisterContainer}
+              forSearch={false}
+            />
 
+            {/* as a sidenote mayyyybe make wide version like 90% width or something, looks a bit off */}
+            {showRegisterContainer && (
+              <div>
+                <Card>
+                  <div
+                    style={{
+                      height: "20em",
+                    }}
+                    className={classes.flexContainColumn}
+                  >
+                    <div className={classes.flexContainColumn}>
+                      <LogInButton forceShow={true} />
+                      <LogInButton forceShow={false} />
+                    </div>
 
-        {/* as a sidenote mayyyybe make wide version like 90% width or something, looks a bit off */}
-        {showRegisterContainer && (
-          <div>
-            <Card>
-              <div
-                style={{
-                  gap: ".5em",
-                  height: "20em",
-                }}
-                className={classes.flexContainColumn}
-              >
-                <div className={classes.flexContainColumn}>
-                  <LogInButton forceShow={true} />
-                  <LogInButton forceShow={false} />
-                </div>
-
-                <div className={classes.fadingOrContainer}>
-                  <div className={classes.leadingLine}></div>
-                  <div className={classes.or}>OR</div>
-                  <div className={classes.trailingLine}></div>
-                </div>
-                <button>Start Your First Drawing!</button>
+                    <div className={classes.fadingOrContainer}>
+                      <div className={classes.leadingLine}></div>
+                      <div className={classes.or}>OR</div>
+                      <div className={classes.trailingLine}></div>
+                    </div>
+                    <div className={classes.animatedRainbow}>
+                      <Link to="/daily-drawings">
+                        Start Your First Drawing!
+                      </Link>
+                    </div>
+                  </div>
+                </Card>
               </div>
-            </Card>
+            )}
           </div>
-        )}
-      </div>
-      <CardContainer />
+          <CardContainer />
 
-      <FeaturedLikes />
-    </section>
+          <FeaturedLikes />
+          
+          <Footer />
+        </section>
+      )}
+    </>
   );
 }
 

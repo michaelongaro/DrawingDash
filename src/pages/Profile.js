@@ -1,6 +1,8 @@
 import { Outlet } from "react-router";
 
 import ProfileNavigation from "../components/layout/ProfileNavigation";
+import Footer from "../ui/Footer";
+
 import classes from "../components/layout/ProfileLayout.module.css";
 
 const Profile = () => {
@@ -11,12 +13,15 @@ const Profile = () => {
   };
 
   return (
+    <>
     <div className={classes.horizontalContain}>
       <ProfileNavigation />
       <div style={profileCardStyles}>
-          <Outlet />
+        <Outlet />
       </div>
     </div>
+    <Footer />
+    </>
   );
 };
 

@@ -13,10 +13,12 @@ export function Canvas() {
 
   useEffect(() => {
     DSCtx.resetSelections();
+      console.log(("resetSelections()"));
 
     return () => {
       DSCtx.setStartFromLeft(true);
       DSCtx.resetProgressBar();
+      console.log(("resetProgressBar()"));
     }
   }, []);
 
