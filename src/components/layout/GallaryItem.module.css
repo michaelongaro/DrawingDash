@@ -77,6 +77,26 @@
   margin-top: 1.5em;
 }
 
+.innerUsernameTooltipContainer {
+  position: absolute;
+  width: 50px;
+  height: 62px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.usernameTooltipContainer {
+  position: absolute;
+  top: 0;
+
+  width: 50px;
+  height: 70px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
 .editButton {
   background-color: initial;
   background-image: linear-gradient(-180deg, #ff7e31, #e62c03);
@@ -203,6 +223,44 @@
 
 .goBackButton:hover {
   box-shadow: rgba(253, 76, 0, 0.5) 0 3px 8px;
+}
+
+.usernameTooltip {
+  position: relative;
+  top: 6px;
+  left: -248%;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+
+  width: 9em;
+  height: 5em;
+  background: white;
+
+  box-shadow: rgb(0 0 0 / 30%) 2px 4px 8px 0px;
+  text-align: center;
+  padding: 0.5em;
+
+  border-radius: 1em;
+  z-index: 400;
+  transition: all 250ms;
+}
+
+.usernameTooltip:after {
+  bottom: 100%;
+  left: 50%;
+  border: solid transparent;
+  content: "";
+  height: 0;
+  width: 0;
+  position: absolute;
+  pointer-events: none;
+  border-color: rgba(194, 194, 194, 0);
+  border-bottom-color: white;
+  border-width: 10px;
+  margin-left: -10px;
 }
 
 .likesTooltip {

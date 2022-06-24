@@ -89,12 +89,15 @@ const GallaryItem = ({ drawingID, settings }) => {
   const [isFetching, setIsFetching] = useState(true);
   const [drawingDetails, setDrawingDetails] = useState();
   const [fetchedDrawing, setFetchedDrawing] = useState();
+  const [artistUsername, setArtistUsername] = useState();
 
   // user hover states
   const [hoveringOnHeart, setHoveringOnHeart] = useState(false);
   const [hoveringOnImage, setHoveringOnImage] = useState(false);
   const [hoveringOnDeleteButton, setHoveringOnDeleteButton] = useState(false);
-  const [hoveringOnTooltip, setHoveringOnTooltip] = useState(false);
+  const [hoveringOnLikesTooltip, setHoveringOnLikesTooltip] = useState(false);
+  const [hoveringOnUsernameTooltip, setHoveringOnUsernameTooltip] =
+    useState(false);
 
   // used when image is deleted (just for ui purposes)
   const [hideImage, setHideImage] = useState(false);
@@ -170,6 +173,14 @@ const GallaryItem = ({ drawingID, settings }) => {
           if (snapshot.exists()) {
             setDrawingTotalLikes(snapshot.val()["totalLikes"]);
             setDrawingDailyLikes(snapshot.val()["dailyLikes"]);
+          }
+        }
+      );
+
+      get(child(dbRef, `users/${drawingDetails.drawnBy}/preferences`)).then(
+        (snapshot) => {
+          if (snapshot.exists()) {
+            setArtistUsername(snapshot.val().username);
           }
         }
       );
@@ -576,7 +587,12 @@ const GallaryItem = ({ drawingID, settings }) => {
                   ></div>
                 ) : (
                   <div
-                    style={{ cursor: "pointer" }}
+                    style={{
+                      position: "relative",
+                      cursor: "pointer",
+                      width: "50px",
+                      height: "50px",
+                    }}
                     onClick={() => {
                       if (
                         !localStorage.getItem("baseUserModalOpened") ||
@@ -592,11 +608,56 @@ const GallaryItem = ({ drawingID, settings }) => {
                         setDrawingWidth(settings.width);
                       }
                     }}
+                    onMouseEnter={() => {
+                      setHoveringOnUsernameTooltip(true);
+                    }}
+                    onMouseLeave={() => {
+                      setHoveringOnUsernameTooltip(false);
+                      console.log("left outer");
+                    }}
                   >
                     <ProfilePicture
                       user={drawingDetails.drawnBy}
                       size="small"
                     />
+
+                    {/* username tooltip */}
+                    <div
+                      style={{ cursor: "pointer"}}
+                      className={classes.usernameTooltipContainer}
+                      onMouseEnter={() => {
+                        setHoveringOnUsernameTooltip(true);
+                      }}
+                      onMouseLeave={() => {
+                        setHoveringOnUsernameTooltip(false);
+                        console.log("left inner");
+                      }}
+                    >
+                      <div
+                        style={{
+                          opacity: hoveringOnUsernameTooltip ? 1 : 0,
+                          transform: hoveringOnUsernameTooltip
+                            ? "scale(1)"
+                            : "scale(0)",
+                          cursor: "pointer",
+                          left: 0,
+                          top: "70px",
+                          padding: "2em",
+                        }}
+                        className={classes.usernameTooltip}
+                        // onMouseEnter={() => {
+                        //   setHoveringOnUsernameTooltip(true);
+                        // }}
+                        // onMouseLeave={() => {
+                        //   setHoveringOnUsernameTooltip(false);
+                        //   console.log("left most inner");
+                        // }}
+                      >
+                        {/* <div className={classes.innerUsernameTooltipContainer}> */}
+                        {artistUsername}
+                        {/* </div> */}
+                      </div>
+                    </div>
                   </div>
                 )
               ) : null}
@@ -736,18 +797,18 @@ const GallaryItem = ({ drawingID, settings }) => {
                   {/* unregistered user tooltip */}
                   <div
                     style={{
-                      opacity: hoveringOnTooltip || showTooltip ? 1 : 0,
+                      opacity: hoveringOnLikesTooltip || showTooltip ? 1 : 0,
                       transform:
-                        hoveringOnTooltip || showTooltip
+                        hoveringOnLikesTooltip || showTooltip
                           ? "scale(1)"
                           : "scale(0)",
                     }}
                     className={classes.likesTooltip}
                     onMouseEnter={() => {
-                      setHoveringOnTooltip(true);
+                      setHoveringOnLikesTooltip(true);
                     }}
                     onMouseLeave={() => {
-                      setHoveringOnTooltip(false);
+                      setHoveringOnLikesTooltip(false);
                     }}
                   >
                     Sign up or Log in to like drawings

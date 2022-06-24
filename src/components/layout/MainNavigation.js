@@ -330,6 +330,7 @@ function MainNavigation() {
                     alt={"cropped profile"}
                   />
                 </div>
+                
                 <div
                   className={classes.dropdownContainer}
                   onMouseEnter={() => {
