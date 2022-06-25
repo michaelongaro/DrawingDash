@@ -1,4 +1,4 @@
-import React, { useState, useContext, useRef } from "react";
+import React, { useState, useContext, useEffect, useRef } from "react";
 
 const CanvasContext = React.createContext();
 
@@ -6,11 +6,16 @@ export const CanvasProvider = ({ children }) => {
   let isDrawing = false;
   let lastEvent;
 
+  const [mouseInsideOfCanvas, setMouseInsideOfCanvas] = useState(false);
   const [floodFillStatus, setFloodFillStatus] = useState(false);
   const [currentColor, setCurrentColor] = useState("#FFFFFF");
 
   const canvasRef = useRef(null);
   const contextRef = useRef(null);
+
+  useEffect(() => {
+    console.log("mouse", mouseInsideOfCanvas, "flood", floodFillStatus);
+  }, [mouseInsideOfCanvas, floodFillStatus]);
 
   const prepareCanvas = () => {
     const canvas = canvasRef.current;
@@ -272,15 +277,24 @@ export const CanvasProvider = ({ children }) => {
     context.fillRect(0, 0, canvas.width, canvas.height);
   };
 
+  // not sure if these getter methods are necessary as opposed to directly exporting the states
   const getFloodFillStatus = () => {
     return floodFillStatus;
-  }
+  };
+
+  const getMouseInsideOfCanvasStatus = () => {
+    return mouseInsideOfCanvas;
+  };
 
   return (
     <CanvasContext.Provider
       value={{
         canvasRef,
         contextRef,
+        mouseInsideOfCanvas: mouseInsideOfCanvas,
+        setMouseInsideOfCanvas: setMouseInsideOfCanvas,
+        floodFillStatus: floodFillStatus,
+        setFloodFillStatus: setFloodFillStatus,
         prepareCanvas,
         changeColor,
         changeBrushSize,
@@ -289,6 +303,7 @@ export const CanvasProvider = ({ children }) => {
         clearCanvas,
         draw,
         getFloodFillStatus,
+        getMouseInsideOfCanvasStatus,
       }}
     >
       {children}

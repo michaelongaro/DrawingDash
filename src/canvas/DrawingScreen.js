@@ -12,6 +12,7 @@ import isEqual from "lodash/isEqual";
 import { useCanvas } from "./CanvasContext";
 import DrawingSelectionContext from "./DrawingSelectionContext";
 import Controls from "./Controls";
+import { getCursorPaintbucketIcon } from "../svgs/cursorPaintbucketIcon";
 
 import CopyToClipboard from "../components/layout/CopyToClipboard";
 import DownloadIcon from "../svgs/DownloadIcon";
@@ -74,6 +75,9 @@ const DrawingScreen = () => {
     finishDrawing,
     draw,
     getFloodFillStatus,
+    floodFillStatus,
+    mouseInsideOfCanvas,
+    setMouseInsideOfCanvas,
   } = useCanvas();
 
   function preventScrolling(e) {
@@ -568,8 +572,7 @@ const DrawingScreen = () => {
         top: "5vh",
         width: "100vw",
       }}
-          ref={drawingScreenRef}
-
+      ref={drawingScreenRef}
       className={classes.flexContain}
     >
       <div
@@ -581,9 +584,7 @@ const DrawingScreen = () => {
           gap: "1em",
         }}
       >
-        <div
-          className={classes.canvasBreathingBackground}
-        >
+        <div className={classes.canvasBreathingBackground}>
           <div style={{ pointerEvents: "none", userSelect: "none" }}>
             {DSCtx.chosenPrompt}
           </div>
@@ -616,23 +617,35 @@ const DrawingScreen = () => {
               <div className={classes.canvasBorder}>
                 <canvas
                   style={{
-                    cursor: `url('data:image/svg+xml;utf8,<svg id="svg" xmlns="http://www.w3.org/2000/svg" version="1.1" width="40" height="40"><circle cx="${
-                      DSCtx.currentCursorSize
-                    }" cy="${DSCtx.currentCursorSize}" r="${
-                      DSCtx.currentCursorSize
-                    }" style="fill: %23${DSCtx.currentColor.replace(
-                      "#",
-                      ""
-                    )};stroke: ${
-                      DSCtx.currentColor === "#FFFFFF" ? "%23c4c4c4" : "none"
-                    }; strokeWidth:${
-                      DSCtx.currentColor === "#FFFFFF" ? "1px" : "none"
-                    }; "/></svg>') ${DSCtx.currentCursorSize} ${
-                      DSCtx.currentCursorSize
-                    }, pointer`,
+                    cursor: floodFillStatus
+                      ? 
+                        // paintbucket cursor svg
+                      getCursorPaintbucketIcon(
+                          DSCtx.currentColor.replace("#", "")
+                        )
+                      : 
+                        // regular selected color cursor svg
+                      `url('data:image/svg+xml;utf8,<svg id="svg" xmlns="http://www.w3.org/2000/svg" version="1.1" width="40" height="40"><circle cx="${
+                          DSCtx.currentCursorSize
+                        }" cy="${DSCtx.currentCursorSize}" r="${
+                          DSCtx.currentCursorSize
+                        }" style="fill: %23${DSCtx.currentColor.replace(
+                          "#",
+                          ""
+                        )}; stroke: ${
+                          DSCtx.currentColor === "#FFFFFF"
+                            ? "%23c4c4c4"
+                            : "none"
+                        }; strokeWidth:${
+                          DSCtx.currentColor === "#FFFFFF" ? "1px" : "none"
+                        }; "/></svg>') ${DSCtx.currentCursorSize} ${
+                          DSCtx.currentCursorSize
+                        }, pointer`,
                   }}
                   onMouseDown={draw}
                   onMouseUp={finishDrawing}
+                  onMouseEnter={() => setMouseInsideOfCanvas(true)}
+                  onMouseLeave={() => setMouseInsideOfCanvas(false)}
                   ref={canvasRef}
                 />
               </div>
