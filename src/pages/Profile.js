@@ -1,4 +1,5 @@
 import { Outlet } from "react-router";
+import { motion } from "framer-motion";
 
 import ProfileNavigation from "../components/layout/ProfileNavigation";
 import Footer from "../ui/Footer";
@@ -13,15 +14,20 @@ const Profile = () => {
   };
 
   return (
-    <>
-    <div className={classes.horizontalContain}>
-      <ProfileNavigation />
-      <div style={profileCardStyles}>
-        <Outlet />
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: .2}}
+    >
+      <div className={classes.horizontalContain}>
+        <ProfileNavigation />
+        <div style={profileCardStyles}>
+          <Outlet />
+        </div>
       </div>
-    </div>
-    <Footer />
-    </>
+      <Footer />
+    </motion.div>
   );
 };
 

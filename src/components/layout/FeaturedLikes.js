@@ -8,6 +8,9 @@ import { getDatabase, get, ref, child } from "firebase/database";
 import { app } from "../../util/init-firebase";
 
 import classes from "./FeaturedLikes.module.css";
+import OneMinuteIcon from "../../svgs/OneMinuteIcon";
+import ThreeMinuteIcon from "../../svgs/ThreeMinuteIcon";
+import FiveMinuteIcon from "../../svgs/FiveMinuteIcon";
 
 const FeaturedLikes = () => {
   const [dailyMostLiked, setDailyMostLiked] = useState(false);
@@ -52,95 +55,73 @@ const FeaturedLikes = () => {
     <div className={classes.marginFlex}>
       <div style={{ fontSize: "1.65em" }}>Daily Featured Drawings</div>
 
-        <div className={classes.overallContain}>
-          <div className={classes.leftSideContain}>
-            {/* --------------- 60 ------------------- */}
-            <Card width={"90"}>
-              <div
-                style={{ cursor: "pointer" }}
-                className={`${classes.detailsContain} ${selected[0]} ${classes.redBackground}`}
-                onClick={() => {
-                  selectTimer(0);
-                  setCurrentDrawing(0);
-                }}
-              >
-                <div className={classes.seconds}>1 Minute</div>
-                <div className={classes.gridMetadata}>
-                  <div className={classes.profilePicture}>
-                    <ProfilePicture
-                      user={dailyMostLiked[2].drawnBy}
-                      size="medium"
-                    />
-                  </div>
-                  <div className={classes.title}>{dailyMostLiked[0].title}</div>
-                </div>
-              </div>
-            </Card>
+      <div className={classes.overallContain}>
+        <div className={classes.leftSideContain}>
+          {/* --------------- 60 ------------------- */}
+          <div
+            style={{ backgroundPosition: selected[0] ? "100px" : "" }}
+            className={`${classes.durationButton} ${classes.redBackground}`}
+            onClick={() => {
+              selectTimer(0);
+              setCurrentDrawing(0);
+            }}
+          >
+            <ProfilePicture user={dailyMostLiked[0].drawnBy} size="medium" />
 
-            {/* --------------- 180 ------------------- */}
-            <Card width={"90"}>
-              <div
-                style={{ cursor: "pointer" }}
-                className={`${classes.detailsContain} ${selected[1]} ${classes.yellowBackground}`}
-                onClick={() => {
-                  selectTimer(1);
-                  setCurrentDrawing(1);
-                }}
-              >
-                <div className={classes.seconds}>3 Minutes</div>
-                <div className={classes.gridMetadata}>
-                  <div className={classes.profilePicture}>
-                    <ProfilePicture
-                      user={dailyMostLiked[2].drawnBy}
-                      size="medium"
-                    />
-                  </div>
-                  <div className={classes.title}>{dailyMostLiked[1].title}</div>
-                </div>
-              </div>
-            </Card>
+            <div className={classes.shadowText}>{dailyMostLiked[0].title}</div>
 
-            {/* --------------- 300 ------------------- */}
-            <Card width={"90"}>
-              <div
-                style={{ cursor: "pointer" }}
-                className={`${classes.detailsContain} ${selected[2]} ${classes.greenBackground}`}
-                onClick={() => {
-                  selectTimer(2);
-                  setCurrentDrawing(2);
-                }}
-              >
-                <div className={classes.seconds}>5 Minutes</div>
-                <div className={classes.gridMetadata}>
-                  <div className={classes.profilePicture}>
-                    <ProfilePicture
-                      user={dailyMostLiked[2].drawnBy}
-                      size="medium"
-                    />
-                  </div>
-                  <div className={classes.title}>{dailyMostLiked[2].title}</div>
-                </div>
-              </div>
-            </Card>
+            <OneMinuteIcon dimensions={"3.5em"} />
           </div>
 
-          {/* ----------- Shown Drawing ----------- */}
-          <div className={classes.drawingContainer}>
-            <GallaryItem
-              drawingID={dailyMostLiked[currentDrawing].index}
-              settings={{
-                width: 95,
-                forHomepage: true,
-                forPinnedShowcase: false,
-                forPinnedItem: false,
-                skeleHeight: "30em",
-                skeleDateWidth: "6em",
-                skeleTitleWidth: "6em",
-              }}
-            />
+          {/* --------------- 180 ------------------- */}
+          <div
+            style={{ backgroundPosition: selected[1] ? "100px" : "" }}
+            className={`${classes.durationButton} ${classes.yellowBackground}`}
+            onClick={() => {
+              selectTimer(1);
+              setCurrentDrawing(1);
+            }}
+          >
+            <ProfilePicture user={dailyMostLiked[1].drawnBy} size="medium" />
+
+            <div className={classes.shadowText}>{dailyMostLiked[1].title}</div>
+
+            <ThreeMinuteIcon dimensions={"3.5em"} />
+          </div>
+
+          {/* --------------- 300 ------------------- */}
+          <div
+            style={{ backgroundPosition: selected[2] ? "100px" : "" }}
+            className={`${classes.durationButton} ${classes.greenBackground}`}
+            onClick={() => {
+              selectTimer(2);
+              setCurrentDrawing(2);
+            }}
+          >
+            <ProfilePicture user={dailyMostLiked[2].drawnBy} size="medium" />
+
+            <div className={classes.shadowText}>{dailyMostLiked[2].title}</div>
+
+            <FiveMinuteIcon dimensions={"3.5em"} />
           </div>
         </div>
 
+        {/* ----------- Shown Drawing ----------- */}
+        <div className={classes.drawingContainer}>
+          <GallaryItem
+            drawingID={dailyMostLiked[currentDrawing].index}
+            settings={{
+              width: 95,
+              forHomepage: true,
+              forPinnedShowcase: false,
+              forPinnedItem: false,
+              skeleHeight: "30em",
+              skeleDateWidth: "6em",
+              skeleTitleWidth: "6em",
+            }}
+          />
+        </div>
+      </div>
     </div>
   );
 };

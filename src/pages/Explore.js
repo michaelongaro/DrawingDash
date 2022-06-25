@@ -1,4 +1,5 @@
 import React, { useState, useContext, useEffect } from "react";
+import { motion } from "framer-motion";
 
 import SearchContext from "../components/layout/SearchContext";
 
@@ -26,14 +27,20 @@ function Explore() {
     }
   }, [searchCtx.searchValues]);
   return (
-    <>
+    <motion.div 
+    initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: .2}}
+
+      >
       <div style={{ height: dynamicHeight }} className={classes.exploreContain}>
         <div styles={{ marginTop: "3em" }}></div>
         <FocalAnimatedDrawings forHomepage={false} forSearch={true} />
         <Search userProfile={""} />
       </div>
       <Footer />
-    </>
+    </motion.div>
   );
 }
 

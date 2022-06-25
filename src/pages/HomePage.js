@@ -1,5 +1,7 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
+import { motion } from "framer-motion";
+
 import anime from "animejs";
 
 import CardContainer from "../components/layout/CardContainer";
@@ -41,7 +43,12 @@ function HomePage() {
   }, [isLoading, showRegisterContainer]);
 
   return (
-    <>
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: .2}}
+    >
       {!isLoading && (
         <section id={"homePageContainer"} style={{ opacity: 0 }}>
           <div
@@ -88,11 +95,11 @@ function HomePage() {
           <CardContainer />
 
           <FeaturedLikes />
-          
+
           <Footer />
         </section>
       )}
-    </>
+    </motion.div>
   );
 }
 
