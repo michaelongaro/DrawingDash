@@ -420,7 +420,8 @@ const GallaryItem = ({ drawingID, settings }) => {
         setHoveringOnImage(false);
       }}
       style={{
-        display: hideImage ? "none" : "flex",
+        // display: hideImage ? "none" : "flex",
+        // opacity: hideImage ? 0 : 1,
       }}
     >
       {/* confirm delete modal */}
@@ -466,6 +467,46 @@ const GallaryItem = ({ drawingID, settings }) => {
             </button>
           </div>
         </div>
+      </div>
+
+      {/* ----- user modal ------- */}
+      <div
+        style={{ opacity: showUserModal ? 1 : 0 }}
+        className={showUserModal ? classes.modal : ""}
+      >
+        {loadUserModal && (
+          <div ref={userModalRef}>
+            <div style={{ position: "relative" }}>
+              {showDrawingModal && (
+                <button
+                  className={classes.goBackButton}
+                  onClick={() => {
+                    // closing user modal
+                    setShowUserModal(false);
+                    setLoadUserModal(false);
+                  }}
+                >
+                  Return to image
+                </button>
+              )}
+              <div
+                className={baseClasses.close}
+                onClick={() => {
+                  // closing all modals
+                  setShowDrawingModal(false);
+                  setDrawingWidth(settings.width);
+                  setShowUserModal(false);
+                  setLoadUserModal(false);
+
+                  // updating localStorage to reflect modal closing
+                  localStorage.setItem("baseUserModalOpened", "false");
+                }}
+              ></div>
+            </div>
+
+            <UserModal user={drawingDetails.drawnBy} />
+          </div>
+        )}
       </div>
 
       {/* image container */}
@@ -623,7 +664,7 @@ const GallaryItem = ({ drawingID, settings }) => {
 
                     {/* username tooltip */}
                     <div
-                      style={{ cursor: "pointer"}}
+                      style={{ cursor: "pointer" }}
                       className={classes.usernameTooltipContainer}
                       onMouseEnter={() => {
                         setHoveringOnUsernameTooltip(true);
@@ -645,59 +686,13 @@ const GallaryItem = ({ drawingID, settings }) => {
                           padding: "2em",
                         }}
                         className={classes.usernameTooltip}
-                        // onMouseEnter={() => {
-                        //   setHoveringOnUsernameTooltip(true);
-                        // }}
-                        // onMouseLeave={() => {
-                        //   setHoveringOnUsernameTooltip(false);
-                        //   console.log("left most inner");
-                        // }}
                       >
-                        {/* <div className={classes.innerUsernameTooltipContainer}> */}
                         {artistUsername}
-                        {/* </div> */}
                       </div>
                     </div>
                   </div>
                 )
               ) : null}
-
-              {/* ----- user modal ------- */}
-              <div className={showUserModal ? classes.modal : ""}>
-                {loadUserModal && (
-                  <div ref={userModalRef}>
-                    <div style={{ position: "relative" }}>
-                      {showDrawingModal && (
-                        <button
-                          className={classes.goBackButton}
-                          onClick={() => {
-                            // closing user modal
-                            setShowUserModal(false);
-                            setLoadUserModal(false);
-                          }}
-                        >
-                          Return to image
-                        </button>
-                      )}
-                      <div
-                        className={baseClasses.close}
-                        onClick={() => {
-                          // closing all modals
-                          setShowDrawingModal(false);
-                          setDrawingWidth(settings.width);
-                          setShowUserModal(false);
-                          setLoadUserModal(false);
-
-                          // updating localStorage to reflect modal closing
-                          localStorage.setItem("baseUserModalOpened", "false");
-                        }}
-                      ></div>
-                    </div>
-
-                    <UserModal user={drawingDetails.drawnBy} />
-                  </div>
-                )}
-              </div>
 
               {/* ----- drawingID data ----- */}
 

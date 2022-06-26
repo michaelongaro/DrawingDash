@@ -105,7 +105,6 @@ h6 {
 
 .baseFlex {
   display: flex;
-  flex-direction: column;
   justify-content: center;
   align-items: center;
 }

@@ -449,6 +449,25 @@ const PromptSelection = () => {
     });
   }
 
+  // formatting function to display HH:MM:SS for countdown
+  const formatTime = ({ hours, minutes, seconds, completed }) => {
+  if (completed) {
+    // Render a complete state
+    return <div>New prompts are arriving soon!</div>;
+  } else {
+    // Render a countdown
+    let formattedHours = hours < 10 ? `0${hours}` : hours;
+    let formattedMinutes = minutes < 10 ? `0${minutes}` : minutes;
+    let formattedSeconds = seconds < 10 ? `0${seconds}` : seconds;
+
+    return (
+      <span>
+        {formattedHours}:{formattedMinutes}:{formattedSeconds}
+      </span>
+    );
+  }
+};
+
   return (
     <div
       id={"promptSelection"}
@@ -716,6 +735,7 @@ const PromptSelection = () => {
             <div>New prompts refresh in</div>
             <Countdown
               date={resetAtDate}
+              renderer={formatTime}
               onComplete={() => setShowCountdownTimer(false)}
             />
           </div>

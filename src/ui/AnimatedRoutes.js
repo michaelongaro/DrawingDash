@@ -11,6 +11,7 @@ import Gallary from "../components/layout/Gallary";
 import Likes from "../components/layout/Likes";
 
 import { AnimatePresence } from "framer-motion";
+import NotFound from "../pages/NotFound";
 
 const AnimatedRoutes = () => {
   const location = useLocation();
@@ -26,6 +27,7 @@ const AnimatedRoutes = () => {
           <Route path="gallery" element={<Gallary />} />
           <Route path="likes" element={<Likes />} />
         </Route>
+        <Route path="*" element={<NotFound />} />
       </Routes>
     </AnimatePresence>
   );
