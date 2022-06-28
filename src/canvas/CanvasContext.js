@@ -13,10 +13,6 @@ export const CanvasProvider = ({ children }) => {
   const canvasRef = useRef(null);
   const contextRef = useRef(null);
 
-  useEffect(() => {
-    console.log("mouse", mouseInsideOfCanvas, "flood", floodFillStatus);
-  }, [mouseInsideOfCanvas, floodFillStatus]);
-
   const prepareCanvas = () => {
     const canvas = canvasRef.current;
     const mod_width = window.innerWidth * 0.75;
@@ -26,7 +22,7 @@ export const CanvasProvider = ({ children }) => {
     canvas.height = mod_height;
     canvas.style.width = `${mod_width}px`;
     canvas.style.height = `${mod_height}px`;
-    console.log(mod_width, mod_height);
+
     const context = canvas.getContext("2d");
     context.lineCap = "round";
     context.lineJoin = "round";
@@ -189,6 +185,7 @@ export const CanvasProvider = ({ children }) => {
   }
 
   const finishDrawing = () => {
+    // had && mouseInsideOfCanvas here too but want to keep it out for testing purposes
     if (!floodFillStatus && isDrawing) {
       contextRef.current.closePath();
       contextRef.current.beginPath();
@@ -214,7 +211,7 @@ export const CanvasProvider = ({ children }) => {
       floodFillHandler(ev);
       return;
     }
-
+    console.log(mouseInsideOfCanvas, floodFillStatus);
     const previous_evt = lastEvent || {};
     const was_offscreen = previous_evt.offscreen;
 
@@ -241,8 +238,8 @@ export const CanvasProvider = ({ children }) => {
       if (was_offscreen && ev.buttons === 1 && isDrawing) {
         if (isValid(previous_point.x, previous_point.y, point.x, point.y)) {
           contextRef.current.lineTo(point.x, point.y);
-          contextRef.current.stroke();
           finishDrawing();
+          contextRef.current.stroke();
           return;
         }
       }

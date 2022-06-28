@@ -43,8 +43,8 @@ const DrawingScreen = () => {
 
   const timerOptions = [
     { seconds: 60, colorArray: [60, 45, 30, 15] },
-    { seconds: 180, colorArray: [180, 120, 60, 0] },
-    { seconds: 300, colorArray: [300, 180, 120, 60] },
+    { seconds: 180, colorArray: [180, 135, 90, 45] },
+    { seconds: 300, colorArray: [300, 225, 150, 75] },
   ];
 
   const currentTimer = {
@@ -644,8 +644,8 @@ const DrawingScreen = () => {
                   }}
                   onMouseDown={draw}
                   onMouseUp={finishDrawing}
-                  onMouseEnter={() => setMouseInsideOfCanvas(true)}
-                  onMouseLeave={() => setMouseInsideOfCanvas(false)}
+                  // onMouseEnter={() => setMouseInsideOfCanvas(true)}
+                  // onMouseLeave={() => setMouseInsideOfCanvas(false)}
                   ref={canvasRef}
                 />
               </div>

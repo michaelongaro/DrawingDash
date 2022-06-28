@@ -39,7 +39,8 @@ const PromptSelection = () => {
   const db = getDatabase(app);
   const dbRef = ref_database(getDatabase(app));
 
-  const [showExtraPrompt, setShowExtraPrompt] = useState(classes.hide);
+  // classes.hide
+  const [showExtraPrompt, setShowExtraPrompt] = useState(true);
   const [formattedSeconds, setFormattedSeconds] = useState("");
   const [adaptiveBackground, setAdaptiveBackground] = useState("");
   const [customAdaptiveBackground, setCustomAdaptiveBackground] = useState(
@@ -55,6 +56,8 @@ const PromptSelection = () => {
   const [durationOptions, setDurationOptions] = useState();
   const [adjectiveOptions, setAdjectiveOptions] = useState();
   const [nounOptions, setNounOptions] = useState();
+
+  const [forceUpdateForDropdown, setForceUpdateForDropdown] = useState(false);
 
   const [selectedDurationOption, setSelectedDurationOption] = useState();
   const [selectedAdjectiveOption, setSelectedAdjectiveOption] = useState();
@@ -72,6 +75,14 @@ const PromptSelection = () => {
   const [resetAtDate, setResetAtDate] = useState(
     "January 01, 2030 00:00:00 GMT+03:00"
   );
+
+  const styles = {
+    menu: ({ width, ...css }) => ({
+      ...css,
+      width: "max-content",
+      minWidth: "75%",
+    }),
+  };
 
   useEffect(() => {
     if (!isLoading && isAuthenticated) {
@@ -94,7 +105,7 @@ const PromptSelection = () => {
         DSCtx.drawingStatuses["300"] &&
         !DSCtx.drawingStatuses["extra"]
       ) {
-        setShowExtraPrompt("");
+        setShowExtraPrompt(true);
       }
 
       setStylingButtonClasses([
@@ -232,7 +243,7 @@ const PromptSelection = () => {
 
   useEffect(() => {
     if (
-      showExtraPrompt === "" &&
+      showExtraPrompt &&
       DSCtx.extraPrompt.title !== "" &&
       !DSCtx.drawingStatuses["extra"]
     ) {
@@ -451,22 +462,22 @@ const PromptSelection = () => {
 
   // formatting function to display HH:MM:SS for countdown
   const formatTime = ({ hours, minutes, seconds, completed }) => {
-  if (completed) {
-    // Render a complete state
-    return <div>New prompts are arriving soon!</div>;
-  } else {
-    // Render a countdown
-    let formattedHours = hours < 10 ? `0${hours}` : hours;
-    let formattedMinutes = minutes < 10 ? `0${minutes}` : minutes;
-    let formattedSeconds = seconds < 10 ? `0${seconds}` : seconds;
+    if (completed) {
+      // Render a complete state
+      return <div>New prompts are arriving soon!</div>;
+    } else {
+      // Render a countdown
+      let formattedHours = hours < 10 ? `0${hours}` : hours;
+      let formattedMinutes = minutes < 10 ? `0${minutes}` : minutes;
+      let formattedSeconds = seconds < 10 ? `0${seconds}` : seconds;
 
-    return (
-      <span>
-        {formattedHours}:{formattedMinutes}:{formattedSeconds}
-      </span>
-    );
-  }
-};
+      return (
+        <span>
+          {formattedHours}:{formattedMinutes}:{formattedSeconds}
+        </span>
+      );
+    }
+  };
 
   return (
     <div
@@ -509,7 +520,7 @@ const PromptSelection = () => {
               height: "25px",
               top: "-25px",
               textAlign: "center",
-              opacity: !showCountdownTimer && showExtraPrompt === "" ? 1 : 0,
+              opacity: !showCountdownTimer && showExtraPrompt ? 1 : 0,
             }}
           >
             An Extra Prompt
@@ -589,14 +600,14 @@ const PromptSelection = () => {
 
           <div
             id={"extraPromptContainer"}
-            className={showExtraPrompt}
+            className={showExtraPrompt ? "" : classes.hide}
             style={{
               position: "absolute",
               top: "-225px",
               width: "675px",
               height: "276px",
               opacity: 0,
-              pointerEvents: "none",
+              pointerEvents: showExtraPrompt ? "auto" : "none",
             }}
           >
             <div className={classes.horizContain}>
@@ -625,33 +636,65 @@ const PromptSelection = () => {
                 onClick={() => {
                   setSelectedExtraPrompt("custom");
                   setNextDisabled(false);
+                  // setForceUpdateForDropdown(oldValue => !oldValue)
                 }}
               >
+                {/* <div style={{textAlign: selectedDurationOption ? }}> */}
                 <Select
                   defaultValue={defaultDurationOption}
                   options={durationOptions}
+                  styles={styles}
                   placeholder="Duration"
                   isOptionDisabled={(option) => option.disabled}
                   onChange={setSelectedDurationOption}
                   formatOptionLabel={(option) => (
                     <>
                       {option.value === 60 && (
-                        <OneMinuteIcon dimensions={"1.5em"} />
+                        <div
+                          style={{
+                            // backgroundColor: option.disabled
+                            //   ? "#c2c2c2"
+                            //   : "#fff",
+                            opacity: option.disabled ? 0.5 : 1,
+                          }}
+                        >
+                          <OneMinuteIcon dimensions={"1.5em"} />
+                        </div>
                       )}
                       {option.value === 180 && (
-                        <ThreeMinuteIcon dimensions={"1.5em"} />
+                        <div
+                          style={{
+                            // backgroundColor: option.disabled
+                            //   ? "#c2c2c2"
+                            //   : "#fff",
+                            opacity: option.disabled ? 0.5 : 1,
+                          }}
+                        >
+                          <ThreeMinuteIcon dimensions={"1.5em"} />
+                        </div>
                       )}
 
                       {option.value === 300 && (
-                        <FiveMinuteIcon dimensions={"1.5em"} />
+                        <div
+                          style={{
+                            // backgroundColor: option.disabled
+                            //   ? "#c2c2c2"
+                            //   : "#fff",
+                            opacity: option.disabled ? 0.5 : 1,
+                          }}
+                        >
+                          <FiveMinuteIcon dimensions={"1.5em"} />
+                        </div>
                       )}
                     </>
                   )}
                 />
+                {/* </div> */}
 
                 <Select
                   defaultValue={defaultAdjectiveOption}
                   options={adjectiveOptions}
+                  styles={styles}
                   placeholder="Adjective"
                   isOptionDisabled={(option) => option.disabled}
                   onChange={setSelectedAdjectiveOption}
@@ -660,6 +703,7 @@ const PromptSelection = () => {
                 <Select
                   defaultValue={defaultNounOption}
                   options={nounOptions}
+                  styles={styles}
                   placeholder="Noun"
                   isOptionDisabled={(option) => option.disabled}
                   onChange={setSelectedNounOption}
