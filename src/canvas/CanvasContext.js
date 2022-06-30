@@ -10,10 +10,14 @@ export const CanvasProvider = ({ children }) => {
   const [floodFillStatus, setFloodFillStatus] = useState(false);
   const [currentColor, setCurrentColor] = useState("#FFFFFF");
 
+  // const [previousDrawingSnapshots, setPreviousDrawingSnapshots] = useState([]);
+  // let previousDrawingSnapshots = [];
+  const previousDrawingSnapshots = useRef([]);
+
   const canvasRef = useRef(null);
   const contextRef = useRef(null);
 
-  const prepareCanvas = () => {
+  function prepareCanvas() {
     const canvas = canvasRef.current;
     const mod_width = window.innerWidth * 0.75;
     const mod_height = window.innerHeight * 0.75;
@@ -30,7 +34,7 @@ export const CanvasProvider = ({ children }) => {
     contextRef.current = context;
   };
 
-  const changeColor = (color) => {
+  function changeColor(color) {
     const canvas = canvasRef.current;
     const context = canvas.getContext("2d");
     context.strokeStyle = color;
@@ -38,14 +42,14 @@ export const CanvasProvider = ({ children }) => {
     setCurrentColor(color);
   };
 
-  const changeBrushSize = (brushSize) => {
+  function changeBrushSize(brushSize) {
     const canvas = canvasRef.current;
     const context = canvas.getContext("2d");
     context.lineWidth = brushSize;
     contextRef.current = context;
   };
 
-  const toggleFloodFill = () => {
+  function toggleFloodFill() {
     setFloodFillStatus((prevStatus) => {
       console.log("flood fill should be", !prevStatus);
       return !prevStatus;
@@ -182,16 +186,46 @@ export const CanvasProvider = ({ children }) => {
     ctx.putImageData(imageData, 0, 0);
     contextRef.current = ctx;
     contextRef.current.beginPath();
+
+    // adding to lastDrawingSnapshot
+    // setPreviousDrawingSnapshots([
+    //   ...previousDrawingSnapshots,
+    //   ctx.getImageData(0, 0, canvas.width, canvas.height),
+    // ]);
+    previousDrawingSnapshots.current.push(ctx.getImageData(0, 0, canvas.width, canvas.height));
+    console.log("added 'floodFill' screenshot");
+    // console.log(previousDrawingSnapshots.length);
   }
 
-  const finishDrawing = () => {
+  function finishDrawing() {
     // had && mouseInsideOfCanvas here too but want to keep it out for testing purposes
     if (!floodFillStatus && isDrawing) {
+      const canvas = canvasRef.current;
+      const ctx = canvas.getContext("2d");
+
       contextRef.current.closePath();
       contextRef.current.beginPath();
+
+      let lastDrawingSnapshot = ctx.getImageData(
+        0,
+        0,
+        canvas.width,
+        canvas.height
+      );
+      // previousDrawingSnapshots.push(lastDrawingSnapshot);
+      // setPreviousDrawingSnapshots([
+      //   ...previousDrawingSnapshots,
+      //   lastDrawingSnapshot,
+      // ]);
+
+    previousDrawingSnapshots.current.push(lastDrawingSnapshot);
+
+      console.log("added 'normal' screenshot");
+      // console.log(previousDrawingSnapshots.length);
+
       isDrawing = false;
     }
-  };
+  }
 
   function getRelativePointFromEvent(ev, elem) {
     const bbox = elem.getBoundingClientRect();
@@ -205,13 +239,43 @@ export const CanvasProvider = ({ children }) => {
     return Math.abs(x - prevx) <= 5 && Math.abs(y - prevy) <= 5;
   }
 
-  const draw = (ev) => {
+  function undo() {
+    if (previousDrawingSnapshots.current.length <= 1) {
+      // setPreviousDrawingSnapshots([]);
+      previousDrawingSnapshots.current = [];
+      clearCanvas();
+    } else {
+      const canvas = canvasRef.current;
+      const ctx = canvas.getContext("2d");
+      // console.log("started with:", previousDrawingSnapshots.length);
+
+      // let tempSnapshots = [...previousDrawingSnapshots];
+      console.log("undo-ing");
+      // cutting out fluff
+      // tempSnapshots.pop();
+      previousDrawingSnapshots.current.pop();
+      // ctx.putImageData(tempSnapshots[tempSnapshots.length - 1], 0, 0);
+      ctx.putImageData(previousDrawingSnapshots.current[previousDrawingSnapshots.current.length - 1], 0, 0);
+
+      // console.log("changed to:", previousDrawingSnapshots.length);
+      // setPreviousDrawingSnapshots(tempSnapshots);
+
+      contextRef.current = ctx;
+      contextRef.current.beginPath();
+    }
+  }
+
+  // useEffect(() => {
+  //   console.log(previousDrawingSnapshots.length);
+  // }, [previousDrawingSnapshots]);
+
+  function draw(ev) {
     // not sure how you are able to draw while in paintbucket when this is a condition below
-    if (floodFillStatus) {
+    if (floodFillStatus && ev.buttons === 1) {
       floodFillHandler(ev);
       return;
     }
-    console.log(mouseInsideOfCanvas, floodFillStatus);
+
     const previous_evt = lastEvent || {};
     const was_offscreen = previous_evt.offscreen;
 
@@ -265,9 +329,9 @@ export const CanvasProvider = ({ children }) => {
       contextRef.current.lineTo(point.x, point.y);
       contextRef.current.stroke();
     }
-  };
+  }
 
-  const clearCanvas = () => {
+  function clearCanvas() {
     const canvas = canvasRef.current;
     const context = canvas.getContext("2d");
     context.fillStyle = "white";
@@ -299,6 +363,7 @@ export const CanvasProvider = ({ children }) => {
         finishDrawing,
         clearCanvas,
         draw,
+        undo,
         getFloodFillStatus,
         getMouseInsideOfCanvasStatus,
       }}

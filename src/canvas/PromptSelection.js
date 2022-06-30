@@ -40,7 +40,7 @@ const PromptSelection = () => {
   const dbRef = ref_database(getDatabase(app));
 
   // classes.hide
-  const [showExtraPrompt, setShowExtraPrompt] = useState(true);
+  const [showExtraPrompt, setShowExtraPrompt] = useState(false);
   const [formattedSeconds, setFormattedSeconds] = useState("");
   const [adaptiveBackground, setAdaptiveBackground] = useState("");
   const [customAdaptiveBackground, setCustomAdaptiveBackground] = useState(

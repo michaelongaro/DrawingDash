@@ -1,22 +1,37 @@
-import React, { useState, useEffect } from "react";
-import FiveMinuteIcon from "../../svgs/FiveMinuteIcon";
-import OneMinuteIcon from "../../svgs/OneMinuteIcon";
-import ThreeMinuteIcon from "../../svgs/ThreeMinuteIcon";
+import React, { useState, useEffect, useContext } from "react";
+
+import SearchContext from "./SearchContext";
 import Card from "../../ui/Card";
 
 import GallaryItem from "./GallaryItem";
 
-import classes from "./GallaryList.module.css";
+import FiveMinuteIcon from "../../svgs/FiveMinuteIcon";
+import OneMinuteIcon from "../../svgs/OneMinuteIcon";
+import ThreeMinuteIcon from "../../svgs/ThreeMinuteIcon";
 
-const GallaryList = ({ drawingIDs, title, margin }) => {
+import classes from "./GallaryList.module.css";
+import baseClasses from "../../index.module.css";
+import PageSelectorButton from "./PageSelectorButton";
+
+const GallaryList = ({ drawingIDs, title, margin, databasePath, forModal }) => {
+  const searchCtx = useContext(SearchContext);
+
   const [displayedDrawings, setDisplayedDrawings] = useState();
   const [durationStates, setDurationStates] = useState();
   const [availableDurations, setAvailableDurations] = useState();
   const [showButtonColors, setShowButtonColors] = useState();
+  const [pageSelectorButtons, setPageSelectorButtons] = useState([]);
 
   const [redOpacity, setRedOpacity] = useState(0);
   const [yellowOpacity, setYellowOpacity] = useState(0);
   const [greenOpacity, setGreenOpacity] = useState(0);
+
+  const [skeletonRatio, setSkeletonRatio] = useState(1);
+
+  // will prob want to change the 60 below to be empty then have logic down below to handle
+  const [currentlyShownDuration, setCurrentlyShownDuration] = useState();
+
+  let idx = databasePath === "" ? 0 : 1;
 
   useEffect(() => {
     if (drawingIDs) {
@@ -26,27 +41,76 @@ const GallaryList = ({ drawingIDs, title, margin }) => {
         drawingIDs["180"].length !== 0 ? true : false,
         drawingIDs["300"].length !== 0 ? true : false,
       ]);
-      if (drawingIDs["60"].length !== 0) {
-        setDurationStates([true, false, false]);
-        setShowButtonColors([true, false, false]);
-        return;
+
+      if (forModal) {
+        setSkeletonRatio(4.341);
+      } else if (idx === 1) {
+        setSkeletonRatio(6.275);
+      } else if (idx === 0) {
+        setSkeletonRatio(3.5);
       }
-      if (drawingIDs["180"].length !== 0) {
-        setDurationStates([false, true, false]);
-        setShowButtonColors([false, true, false]);
+
+      // used if want to load a different page other than the default order (60->180->300)
+      if (searchCtx.pageSelectorDetails["durationToManuallyLoad"][idx]) {
+        // console.log("reloaded to set manually with", searchCtx.durationToManuallyLoad);
+        setDurationStates(
+          searchCtx.manuallyLoadDurations(databasePath === "" ? 0 : 1)
+        );
+        setShowButtonColors(
+          searchCtx.manuallyLoadDurations(databasePath === "" ? 0 : 1)
+        );
+        setCurrentlyShownDuration(
+          searchCtx.pageSelectorDetails["durationToManuallyLoad"][idx]
+        );
+        // setCurrentlyShownDuration()
         return;
-      }
-      if (drawingIDs["300"].length !== 0) {
-        setDurationStates([false, false, true]);
-        setShowButtonColors([false, false, true]);
-        return;
+      } else {
+        console.log("reloading the old fashioned way, nothing fancy");
+        if (drawingIDs["60"].length !== 0) {
+          setDurationStates([true, false, false]);
+          setShowButtonColors([true, false, false]);
+          setCurrentlyShownDuration("60");
+
+          return;
+        }
+        if (drawingIDs["180"].length !== 0) {
+          setDurationStates([false, true, false]);
+          setShowButtonColors([false, true, false]);
+          setCurrentlyShownDuration("180");
+
+          return;
+        }
+        if (drawingIDs["300"].length !== 0) {
+          setDurationStates([false, false, true]);
+          setShowButtonColors([false, false, true]);
+          setCurrentlyShownDuration("300");
+
+          return;
+        }
       }
     }
   }, [drawingIDs]);
 
-  useEffect(() => {
-    console.log(showButtonColors);
-  }, [showButtonColors]);
+  // useEffect(() => {
+  //   console.log(
+  //     Math.floor(
+  //       (searchCtx.pageSelectorDetails["totalDrawingsByDuration"][idx][
+  //         currentlyShownDuration
+  //       ] +
+  //         6 -
+  //         1) /
+  //         6
+  //     ),
+  //     (searchCtx.pageSelectorDetails["totalDrawingsByDuration"][idx][
+  //       currentlyShownDuration
+  //     ] +
+  //       6 -
+  //       1) /
+  //       6,
+  //     searchCtx.pageSelectorDetails["totalDrawingsByDuration"][idx],
+  //     currentlyShownDuration
+  //   );
+  // }, [searchCtx.pageSelectorDetails, currentlyShownDuration]);
 
   return (
     <>
@@ -82,6 +146,18 @@ const GallaryList = ({ drawingIDs, title, margin }) => {
                   setDurationStates([true, false, false]);
                   setYellowOpacity(0);
                   setGreenOpacity(0);
+                  searchCtx.updatePageSelectorDetails(
+                    "durationToManuallyLoad",
+                    "60",
+                    idx
+                  );
+
+                  setCurrentlyShownDuration("60");
+                  searchCtx.updatePageSelectorDetails(
+                    "currentPageNumber",
+                    1,
+                    idx
+                  );
                 }
               }}
             >
@@ -133,6 +209,17 @@ const GallaryList = ({ drawingIDs, title, margin }) => {
                   setDurationStates([false, true, false]);
                   setRedOpacity(0);
                   setGreenOpacity(0);
+                  searchCtx.updatePageSelectorDetails(
+                    "durationToManuallyLoad",
+                    "180",
+                    idx
+                  );
+                  setCurrentlyShownDuration("180");
+                  searchCtx.updatePageSelectorDetails(
+                    "currentPageNumber",
+                    1,
+                    idx
+                  );
                 }
               }}
             >
@@ -183,6 +270,17 @@ const GallaryList = ({ drawingIDs, title, margin }) => {
                   setDurationStates([false, false, true]);
                   setRedOpacity(0);
                   setYellowOpacity(0);
+                  searchCtx.updatePageSelectorDetails(
+                    "durationToManuallyLoad",
+                    "300",
+                    idx
+                  );
+                  setCurrentlyShownDuration("300");
+                  searchCtx.updatePageSelectorDetails(
+                    "currentPageNumber",
+                    1,
+                    idx
+                  );
                 }
               }}
             >
@@ -226,6 +324,8 @@ const GallaryList = ({ drawingIDs, title, margin }) => {
                       skeleHeight: "10em",
                       skeleDateWidth: "6em",
                       skeleTitleWidth: "6em",
+                      widthRatio: skeletonRatio,
+                      heightRatio: skeletonRatio,
                     }}
                   />
                 ))}
@@ -250,6 +350,8 @@ const GallaryList = ({ drawingIDs, title, margin }) => {
                       skeleHeight: "10em",
                       skeleDateWidth: "6em",
                       skeleTitleWidth: "6em",
+                      widthRatio: skeletonRatio,
+                      heightRatio: skeletonRatio,
                     }}
                   />
                 ))}
@@ -274,11 +376,59 @@ const GallaryList = ({ drawingIDs, title, margin }) => {
                       skeleHeight: "10em",
                       skeleDateWidth: "6em",
                       skeleTitleWidth: "6em",
+                      widthRatio: skeletonRatio,
+                      heightRatio: skeletonRatio,
                     }}
                   />
                 ))}
             </div>
           </Card>
+
+          {/* page swap buttons */}
+          {/* note: will need to calculate width of page above and then have breakpoints for how many
+              images to fetch  */}
+          <div
+            style={{ position: "relative", right: 0, bottom: 0, gap: "1em" }}
+            className={baseClasses.baseFlex}
+          >
+            {currentlyShownDuration &&
+              Array(
+                Math.floor(
+                  (searchCtx.pageSelectorDetails["totalDrawingsByDuration"][
+                    idx
+                  ][currentlyShownDuration] +
+                    6 -
+                    1) /
+                    6
+                )
+              )
+                .fill("")
+                .map((val, i) => (
+                  <button
+                    style={{
+                      backgroundColor:
+                        searchCtx.pageSelectorDetails["currentPageNumber"][
+                          idx
+                        ] ===
+                        i + 1
+                          ? "#c2c2c2"
+                          : "#fff",
+                    }}
+                    className={classes.pageSelectorButton}
+                    // replace 6 with the max allowed per page
+                    onClick={() => {
+                      searchCtx.getGallary(6 * i, 6 * (i + 1), 6, databasePath);
+                      searchCtx.updatePageSelectorDetails(
+                        "currentPageNumber",
+                        i + 1,
+                        idx
+                      );
+                    }}
+                  >
+                    {i + 1}
+                  </button>
+                ))}
+          </div>
         </div>
       )}
     </>

@@ -7,6 +7,9 @@ import EraserIcon from "../svgs/EraserIcon";
 import GarbageIcon from "../svgs/GarbageIcon";
 import PaintBucketIcon from "../svgs/PaintBucketIcon";
 import PencilIcon from "../svgs/PencilIcon";
+import RedoIcon from "../svgs/RedoIcon";
+
+import baseClasses from "../index.module.css"
 
 const Controls = () => {
   const DSCtx = useContext(DrawingSelectionContext);
@@ -14,6 +17,7 @@ const Controls = () => {
   const {
     canvasRef,
     changeColor,
+    undo,
     changeBrushSize,
     toggleFloodFill,
     clearCanvas,
@@ -72,9 +76,9 @@ const Controls = () => {
     };
   }, [currentCursorSize]);
 
-  useEffect(() => {
-    console.log(currentCursorSize);
-  }, [currentCursorSize]);
+  // useEffect(() => {
+  //   console.log(currentCursorSize);
+  // }, [currentCursorSize]);
 
   function updateSelectedColor(brushID) {
     let tempArr = buttonStyles;
@@ -343,7 +347,11 @@ const Controls = () => {
           <EraserIcon />
         </div>
 
-        <div onClick={clearCanvas} style={{ marginLeft: "2em" }}>
+        <div onClick={undo} style={{ marginLeft: "1em" }} className={baseClasses.baseFlex}>
+          <RedoIcon dimensions={"3em"} color={"#dbdbdb"} />
+        </div>
+
+        <div onClick={clearCanvas} style={{ marginLeft: "1em" }} className={baseClasses.baseFlex}>
           <GarbageIcon dimensions={"3em"} />
         </div>
       </div>

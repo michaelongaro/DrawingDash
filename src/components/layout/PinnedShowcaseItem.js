@@ -45,6 +45,8 @@ const PinnedShowcaseItem = ({ drawingID, timer }) => {
           skeleHeight: "15em",
           skeleDateWidth: "0",
           skeleTitleWidth: "100%",
+          widthRatio: 7.45,
+          heightRatio: 7.45
         }}
       />
     </div>

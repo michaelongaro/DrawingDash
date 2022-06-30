@@ -32,11 +32,10 @@ const Search = (props) => {
       console.log(0);
     }
     if (idx === 1) {
-    
       console.log(1);
       console.log("refreshing in Search");
-      searchCtx.setPersistingUserGallary([]);
-      searchCtx.getGallary(`users/${props.userProfile}/`);
+
+      searchCtx.getGallary(0, 6, 6, `users/${props.userProfile}/`);
     }
 
     return () => {
@@ -54,6 +53,7 @@ const Search = (props) => {
 
   const adjectiveInputRef = useRef();
   const nounInputRef = useRef();
+  // const outerRef = useRef();
 
   const refreshAdjSearch = (event) => {
     searchCtx.updateSearchValues("adjSearch", event.target.value.trim(), idx);
@@ -137,6 +137,8 @@ const Search = (props) => {
     let handler = (event) => {
       // adjective handling
       if (!adjectiveInputRef.current.contains(event.target)) {
+        console.log("hiding from handler");
+        // if (idx === 1) outerRef.current.click();
         setShowAdjResults(classes.hide);
         setCheckAdjPair(false);
       } else if (
@@ -213,10 +215,11 @@ const Search = (props) => {
       return;
     }
 
+    searchCtx.updatePageSelectorDetails("durationToManuallyLoad", null, idx);
     if (idx === 1) {
-      searchCtx.getGallary(`users/${props.userProfile}/`);
+      searchCtx.getGallary(0, 6, 6, `users/${props.userProfile}/`);
     } else {
-      searchCtx.getGallary();
+      searchCtx.getGallary(0, 6, 6, "");
     }
 
     setGallaryListStaticTitle(
@@ -231,6 +234,7 @@ const Search = (props) => {
   }
 
   return (
+    // <div ref={outerRef}>
     <>
       <form className={classes.formContainer} onSubmit={prepGallarySearch}>
         <div className={classes.searchContainer}>
@@ -274,8 +278,11 @@ const Search = (props) => {
         drawingIDs={searchCtx.searchValues["gallary"][idx]}
         title={gallaryListStaticTitle}
         margin={props.margin}
+        databasePath={idx === 1 ? `users/${props.userProfile}/` : ""}
+        forModal={props.forModal}
       />
     </>
+
   );
 };
 

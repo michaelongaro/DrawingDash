@@ -118,6 +118,8 @@ const FeaturedLikes = () => {
               skeleHeight: "30em",
               skeleDateWidth: "6em",
               skeleTitleWidth: "6em",
+              widthRatio: 2.162,
+              heightRatio: 2.162,
             }}
           />
         </div>

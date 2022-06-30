@@ -210,7 +210,7 @@ const UserModal = ({ user }) => {
         </div>
       </div>
 
-      <Search userProfile={user} />
+      <Search userProfile={user} forModal={true} />
     </div>
   );
 };

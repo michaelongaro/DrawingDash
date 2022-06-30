@@ -21,7 +21,7 @@ const Gallary = () => {
       {showGallery && (
         <div className={`${classes.baseFlex} ${classes.prefCard}`}>
           <ProfileHeader title={"Gallery"} />
-          <Search userProfile={user.sub} margin={"1em"} />
+          <Search userProfile={user.sub} margin={"1em"} forModal={false} />
         </div>
       )}
     </>

@@ -22,7 +22,7 @@ const Likes = () => {
       ) : (
         // looks like will need to refactor Search to be able to search through just user likes
         // tedious, but should be EXACT same logic soooo
-        <Search userProfile={user.sub} margin={"1em"} />
+        <Search userProfile={user.sub} margin={"1em"} forModal={false} />
         // <GallaryList drawingIDs={favoritesCtx.favorites} />
       )}
     </div>

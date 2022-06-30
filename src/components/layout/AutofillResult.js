@@ -1,8 +1,9 @@
 import React from "react";
 import { useEffect, useContext, useRef } from "react";
 
-import classes from "./AutofillResult.module.css";
 import SearchContext from "./SearchContext";
+
+import classes from "./AutofillResult.module.css";
 
 const AutofillResult = (props) => {
   const searchCtx = useContext(SearchContext);

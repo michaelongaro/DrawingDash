@@ -37,6 +37,7 @@ import {
 import { app } from "../../util/init-firebase";
 
 import classes from "./MainNavigation.module.css";
+import baseClasses from "../../index.module.css";
 
 function MainNavigation() {
   // context to determine whether profile picture needs to be refetched
@@ -64,6 +65,8 @@ function MainNavigation() {
 
   const [croppedImage, setCroppedImage] = useState(null);
 
+  const [isFetching, setIsFetching] = useState(true);
+
   // to see if user is hovering on profile picture to show dropdown menu
   const [hoveringOnProfilePicture, setHoveringOnProfilePicture] =
     useState(false);
@@ -89,6 +92,15 @@ function MainNavigation() {
       console.log(e);
     }
   };
+
+  useEffect(() => {
+    if (image) {
+      if (DBCropData !== null) {
+        if (DBCropData === false) setIsFetching(false);
+        if (croppedImage) setIsFetching(false);
+      }
+    }
+  }, [DBCropData, image, croppedImage]);
 
   useEffect(() => {
     if (!isLoading && !isAuthenticated) {
@@ -324,13 +336,20 @@ function MainNavigation() {
                 }}
               >
                 <div style={{ position: "absolute" }}>
-                  <img
-                    className={classes.profilePicture}
-                    src={croppedImage ? croppedImage : image}
-                    alt={"cropped profile"}
-                  />
+                  {isFetching ? (
+                    <div
+                      style={{ width: "3em", height: "3em", borderRadius: "50%" }}
+                      className={baseClasses.skeletonLoading}
+                    ></div>
+                  ) : (
+                    <img
+                      className={classes.profilePicture}
+                      src={croppedImage ? croppedImage : image}
+                      alt={"cropped profile"}
+                    />
+                  )}
                 </div>
-                
+
                 <div
                   className={classes.dropdownContainer}
                   onMouseEnter={() => {

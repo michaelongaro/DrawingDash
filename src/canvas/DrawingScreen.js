@@ -166,7 +166,7 @@ const DrawingScreen = () => {
     };
   }, []);
 
-  console.log(getFloodFillStatus());
+  // console.log(getFloodFillStatus());
 
   const [showCanvas, setShowCanvas] = useState(false);
 

@@ -11,6 +11,7 @@ import ImageCropModal from "./ImageCropModal";
 import getCroppedImg from "../../util/cropImage";
 
 import ProfilePictureUpdateContext from "./ProfilePictureUpdateContext";
+import Footer from "../../ui/Footer";
 
 import PinnedArtwork from "./PinnedArtwork";
 import ProfileHeader from "./ProfileHeader";
@@ -41,7 +42,6 @@ import { app } from "../../util/init-firebase";
 
 import classes from "./Preferences.module.css";
 import baseClasses from "../../index.module.css";
-import Footer from "../../ui/Footer";
 
 const Preferences = () => {
   // context to set when profile picture needs to be refetched
@@ -84,6 +84,17 @@ const Preferences = () => {
   const [zoom, setZoom] = useState(1);
   const [croppedAreaPixels, setCroppedAreaPixels] = useState(null);
   const [croppedImage, setCroppedImage] = useState(null);
+
+  const [showTempBaselineSkeleton, setShowTempBaselineSkeleton] =
+    useState(true);
+
+  useEffect(() => {
+    const timerID = setTimeout(() => setShowTempBaselineSkeleton(false), 10000);
+
+    return () => {
+      clearTimeout(timerID);
+    };
+  }, []);
 
   const onCropComplete = useCallback((croppedArea, croppedAreaPixels) => {
     setCroppedAreaPixels(croppedAreaPixels);
@@ -242,136 +253,169 @@ const Preferences = () => {
     <div className={`${classes.baseFlex} ${classes.prefCard}`}>
       <ProfileHeader title={"Preferences"} />
 
-      <div className={classes.container}>
-        {/* absolutely should be done with flex or just figure out a way to make grid
+      <div style={{ position: "relative" }}>
+        <div
+          style={{ gap: "4em" }}
+          className={baseClasses.baseFlex}
+        >
+          {/* absolutely should be done with flex or just figure out a way to make grid
             less jank */}
-        <div className={classes.extraPadding}></div>
+          {/* <div className={classes.extraPadding}></div>
         <div className={classes.extraPadding2}></div>
         <div className={classes.extraPadding3}></div>
-        <div className={classes.extraPadding4}></div>
-        <div className={classes.username}>Username</div>
-        {editAvailable ? (
-          <div>{username}</div>
-        ) : (
-          <input
-            className={classes.setUsername}
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-          ></input>
-        )}
+        <div className={classes.extraPadding4}></div> */}
+          <div
+            style={{ gap: "3em", width: "33%", alignItems: "flex-start" }}
+            className={baseClasses.baseVertFlex}
+          >
+            <div style={{ gap: "3em" }} className={baseClasses.baseFlex}>
+              <div className={classes.username}>Username</div>
 
-        <div className={classes.email}>Email</div>
-        <div className={classes.setEmail}>{userEmail}</div>
-
-        <button className={classes.resetPassword}>Reset Password</button>
-
-        <div className={classes.status}>Status</div>
-        {editAvailable ? (
-          <div>
-            <i>{status}</i>
-          </div>
-        ) : (
-          <input
-            className={classes.setStatus}
-            value={status}
-            onChange={(e) => setStatus(e.target.value)}
-          ></input>
-        )}
-
-        <div className={classes.vertLine}>
-          <div className={classes.vertTrailing}></div>
-        </div>
-
-        <div className={classes.rightSide}>
-          {isFetching ? (
-            <div
-              style={{
-                width: "165px",
-                height: "165px",
-                borderRadius: "50%",
-              }}
-              className={baseClasses.skeletonLoading}
-            ></div>
-          ) : (
-            <div style={{ position: "relative" }}>
-              <img
-                className={classes.profilePicture}
-                src={croppedImage ? croppedImage : image}
-                alt={imageAltInfo}
-              />
-
-              <div style={{ display: `${!editAvailable ? "" : "none"}` }}>
-                <div className={classes.uploadOverlay}>
-                  <button
-                    className={classes.resizeButton}
-                    onClick={() => {
-                      setShowCropModal(true);
-                    }}
-                  >
-                    <div className={classes.buttonOperationContainer}>
-                      <div>Resize</div>
-                      <ResizeIcon />
-                    </div>
-                  </button>
-                  <button
-                    style={{ margin: 0 }}
-                    className={classes.editButton}
-                    onClick={() => {
-                      inputRef.current.click();
-                    }}
-                  >
-                    <div className={classes.buttonOperationContainer}>
-                      <div>Upload</div>
-                      <UploadIcon />
-                    </div>
-                  </button>
-                </div>
+              {editAvailable ? (
+                <div>{username}</div>
+              ) : (
                 <input
-                  ref={inputRef}
-                  type="file"
-                  name="profileImage"
-                  accept=".jpg,.jpeg,.png"
-                  onChange={handleChange}
-                />
-              </div>
+                  className={classes.setUsername}
+                  value={username}
+                  onChange={(e) => setUsername(e.target.value)}
+                ></input>
+              )}
             </div>
-          )}
-          {/* need to bring this up as soon as image is uploaded */}
-          {showCropModal ? (
-            <div
-              style={{ opacity: showCropModal ? 1 : 0 }}
-              className={classes.modal}
-            >
-              <div className={classes.cropImageModal}>
-                <ImageCropModal
-                  id={1}
-                  imageUrl={cropReadyImage ?? image}
-                  cropInit={crop}
-                  zoomInit={zoom}
-                  onCropChange={setCrop}
-                  onRotationChange={setRotation}
-                  onCropComplete={onCropComplete}
-                  onZoomChange={setZoom}
-                  applyChanges={showCroppedImage}
-                  discardChanges={onClose}
-                />
-              </div>
-            </div>
-          ) : null}
 
-          <div className={classes.showUsername}>{username}</div>
-          <div className={classes.showStatus}>
-            <i>{status}</i>
+            <div style={{ gap: "3em" }} className={baseClasses.baseFlex}>
+              <div className={classes.status}>Status</div>
+              {editAvailable ? (
+                <div>
+                  <i>{status}</i>
+                </div>
+              ) : (
+                <input
+                  className={classes.setStatus}
+                  value={status}
+                  onChange={(e) => setStatus(e.target.value)}
+                ></input>
+              )}
+            </div>
+
+            <div style={{ gap: "3em" }} className={baseClasses.baseFlex}>
+              <div className={classes.email}>Email</div>
+              <div className={classes.setEmail}>{userEmail}</div>
+            </div>
+
+            <button style={{ width: "70%" }} className={classes.resetPassword}>
+              Reset Password
+            </button>
+          </div>
+
+          <div  className={baseClasses.baseFlex}>
+            <div className={classes.vertTrailing}></div>
+          </div>
+
+          <div
+            style={{ gap: "1em", width: "33%" }}
+            className={baseClasses.baseVertFlex}
+          >
+            {isFetching ? (
+              <div
+                style={{
+                  width: "165px",
+                  height: "165px",
+                  borderRadius: "50%",
+                }}
+                className={baseClasses.skeletonLoading}
+              ></div>
+            ) : (
+              <div
+                style={{
+                  position: "relative",
+                  borderRadius: "50%",
+                  boxShadow: "0 4px 8px 2px rgba(0,0, 0, .2)",
+                }}
+              >
+                <img
+                  className={classes.profilePicture}
+                  src={croppedImage ? croppedImage : image}
+                  alt={imageAltInfo}
+                />
+
+                <div style={{ display: `${!editAvailable ? "" : "none"}` }}>
+                  <div className={classes.uploadOverlay}>
+                    <button
+                      className={classes.resizeButton}
+                      onClick={() => {
+                        setShowCropModal(true);
+                      }}
+                    >
+                      <div className={classes.buttonOperationContainer}>
+                        <div>Resize</div>
+                        <ResizeIcon />
+                      </div>
+                    </button>
+                    <button
+                      style={{ margin: 0 }}
+                      className={classes.editButton}
+                      onClick={() => {
+                        inputRef.current.click();
+                      }}
+                    >
+                      <div className={classes.buttonOperationContainer}>
+                        <div>Upload</div>
+                        <UploadIcon />
+                      </div>
+                    </button>
+                  </div>
+                  <input
+                    ref={inputRef}
+                    type="file"
+                    name="profileImage"
+                    accept=".jpg,.jpeg,.png"
+                    onChange={handleChange}
+                  />
+                </div>
+              </div>
+            )}
+            {/* need to bring this up as soon as image is uploaded */}
+            {showCropModal ? (
+              <div
+                style={{ opacity: showCropModal ? 1 : 0 }}
+                className={classes.modal}
+              >
+                <div className={classes.cropImageModal}>
+                  <ImageCropModal
+                    id={1}
+                    imageUrl={cropReadyImage ?? image}
+                    cropInit={crop}
+                    zoomInit={zoom}
+                    onCropChange={setCrop}
+                    onRotationChange={setRotation}
+                    onCropComplete={onCropComplete}
+                    onZoomChange={setZoom}
+                    applyChanges={showCroppedImage}
+                    discardChanges={onClose}
+                  />
+                </div>
+              </div>
+            ) : null}
+
+            <div className={classes.showUsername}>{username}</div>
+            <div className={classes.showStatus}>
+              <i>{status}</i>
+            </div>
           </div>
         </div>
-        <div className={classes.change}>
+
+        <div
+          style={{ position: "absolute", right: 0, bottom: 0 }}
+          className={classes.change}
+        >
           {editAvailable ? (
             <button
+              // style={{ width: "150px" }}
               className={classes.editButton}
               onClick={() => setEditAvailable(false)}
             >
               <div className={classes.baseHorizFlex}>
-                <div>Edit</div>
+                {/* <div>Edit</div> */}
                 <EditPreferencesIcon />
               </div>
             </button>
@@ -386,21 +430,25 @@ const Preferences = () => {
               {/* eventually will look at checking whether inputs were actually changed
                   and disable this button until then, but for now is always on */}
               <button className={classes.editButton} onClick={handleSubmit}>
-                Save Changes
+                Save
               </button>
             </div>
           )}
         </div>
+      </div>
 
-        <div className={classes.pinnedTitle}>
-          <div className={classes.leadingLine}></div>
-          <h3>Pinned Drawings</h3>
-          <div className={classes.trailingLine}></div>
-        </div>
+      {/* may need to center this */}
+      <div style={{ marginTop: "3em" }} className={classes.pinnedTitle}>
+        <div className={classes.leadingLine}></div>
+        <h3>Pinned Drawings</h3>
+        <div className={classes.trailingLine}></div>
+      </div>
 
-        <div className={classes.pinned}>
-          <PinnedArtwork />
-        </div>
+      <div
+        style={{ paddingBottom: "3em", marginTop: "1em" }}
+        className={baseClasses.baseFlex}
+      >
+        <PinnedArtwork />
       </div>
     </div>
   );

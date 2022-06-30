@@ -42,6 +42,7 @@ import { app } from "../../util/init-firebase";
 
 import classes from "./GallaryItem.module.css";
 import baseClasses from "../../index.module.css";
+import Skeleton from "../../ui/Skeleton";
 
 const GallaryItem = ({ drawingID, settings }) => {
   const location = useLocation();
@@ -107,6 +108,17 @@ const GallaryItem = ({ drawingID, settings }) => {
 
   // states for showing "signup/login" tooltip when clicking like button when unregistered
   const [showTooltip, setShowTooltip] = useState(false);
+
+  const [showTempBaselineSkeleton, setShowTempBaselineSkeleton] =
+    useState(true);
+
+  useEffect(() => {
+    const timerID = setTimeout(() => setShowTempBaselineSkeleton(false), 10000);
+
+    return () => {
+      clearTimeout(timerID);
+    };
+  }, []);
 
   useEffect(() => {
     if (showDrawingModal || (!isLoading && !isAuthenticated)) {
@@ -419,10 +431,12 @@ const GallaryItem = ({ drawingID, settings }) => {
       onMouseLeave={() => {
         setHoveringOnImage(false);
       }}
-      style={{
-        // display: hideImage ? "none" : "flex",
-        // opacity: hideImage ? 0 : 1,
-      }}
+      style={
+        {
+          minWidth: showDrawingModal ? "100vw" : "100%",
+          minHeight: showDrawingModal ? "100vh" : "100%",
+        }
+      }
     >
       {/* confirm delete modal */}
       <div
@@ -518,19 +532,11 @@ const GallaryItem = ({ drawingID, settings }) => {
       >
         <Card>
           {/* ------ imageinfo -------- */}
-          {/* <div style={{ width: "100%", minHeight: "100%"}} ref={imageDimensionsRef}> */}
-          {isFetching ? (
+          {isFetching || showTempBaselineSkeleton ? (
             <div
-              // eventually find way to have this be dynamic based on size of image so it isn't
-              // as jarring when image is actually loaded/rendered
               style={{
-                // width: drawingModalRef.current !== null ? drawingModalRef.current.offsetWidth : "100%",
-                // height: settings.skeleHeight,
-                // height: drawingModalRef.current !== null ? `${drawingModalRef.current.offsetHeight - 65}px` : "9.5em",
-                // width: skeletonWidth,
-                // height: skeletonHeight,
-                width: "306px",
-                height: "148px",
+                width: window.innerWidth / settings.widthRatio,
+                height: window.innerHeight / settings.heightRatio,
                 borderRadius: "1em 1em 0 0",
               }}
               className={classes.skeletonLoading}
@@ -593,7 +599,6 @@ const GallaryItem = ({ drawingID, settings }) => {
               </div>
             </div>
           )}
-          {/* </div> */}
 
           {/* -------- metainfo --------- */}
           {settings.forPinnedShowcase ? null : (
@@ -617,7 +622,7 @@ const GallaryItem = ({ drawingID, settings }) => {
             >
               {/* profile image */}
               {ableToShowProfilePicture ? (
-                isFetching ? (
+                showTempBaselineSkeleton || isFetching ? (
                   <div
                     style={{
                       width: "3.3em",
@@ -654,7 +659,6 @@ const GallaryItem = ({ drawingID, settings }) => {
                     }}
                     onMouseLeave={() => {
                       setHoveringOnUsernameTooltip(false);
-                      console.log("left outer");
                     }}
                   >
                     <ProfilePicture
@@ -671,7 +675,6 @@ const GallaryItem = ({ drawingID, settings }) => {
                       }}
                       onMouseLeave={() => {
                         setHoveringOnUsernameTooltip(false);
-                        console.log("left inner");
                       }}
                     >
                       <div
@@ -697,7 +700,7 @@ const GallaryItem = ({ drawingID, settings }) => {
               {/* ----- drawingID data ----- */}
 
               {/* title */}
-              {isFetching ? (
+              {showTempBaselineSkeleton || isFetching ? (
                 <div
                   style={{ width: settings.skeleTitleWidth, height: "40%" }}
                   className={classes.skeletonLoading}
@@ -709,7 +712,7 @@ const GallaryItem = ({ drawingID, settings }) => {
               )}
 
               {/* date */}
-              {isFetching ? (
+              {showTempBaselineSkeleton || isFetching ? (
                 <div
                   style={{ width: "6em", height: "40%" }}
                   className={classes.skeletonLoading}
@@ -721,9 +724,9 @@ const GallaryItem = ({ drawingID, settings }) => {
               {/* seconds */}
 
               {location.pathname === "/" || showDrawingModal ? (
-                isFetching ? (
+                showTempBaselineSkeleton || isFetching ? (
                   <div
-                    style={{ width: "3em", height: "3em" }}
+                    style={{ width: "3em", height: "3em", borderRadius: "50%" }}
                     className={classes.skeletonLoading}
                   ></div>
                 ) : (
@@ -742,7 +745,7 @@ const GallaryItem = ({ drawingID, settings }) => {
               ) : null}
 
               {/* like toggle */}
-              {settings.forPinnedItem ? null : isFetching ? (
+              {settings.forPinnedItem ? null : showTempBaselineSkeleton || isFetching ? (
                 <div
                   style={{ width: "3em", height: "40%" }}
                   className={classes.skeletonLoading}
@@ -859,9 +862,9 @@ const GallaryItem = ({ drawingID, settings }) => {
         </Card>
 
         {settings.forPinnedShowcase ? (
-          isFetching ? (
+          showTempBaselineSkeleton || isFetching ? (
             <div
-              style={{ width: "4em", height: "50%" }}
+              style={{ width: "4em", height: "1em" }}
               className={classes.skeletonLoading}
             ></div>
           ) : (

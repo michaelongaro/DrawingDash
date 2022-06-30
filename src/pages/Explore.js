@@ -18,8 +18,8 @@ function Explore() {
   useEffect(() => {
     if (searchCtx.searchValues["gallary"][0]) {
       if (
-        searchCtx.searchValues["gallary"][0]["60"].length !== 0 &&
-        searchCtx.searchValues["gallary"][0]["180"].length !== 0 &&
+        searchCtx.searchValues["gallary"][0]["60"].length !== 0 ||
+        searchCtx.searchValues["gallary"][0]["180"].length !== 0 ||
         searchCtx.searchValues["gallary"][0]["300"].length !== 0
       ) {
         setDynamicHeight("100%");
@@ -27,17 +27,16 @@ function Explore() {
     }
   }, [searchCtx.searchValues]);
   return (
-    <motion.div 
-    initial={{ opacity: 0 }}
+    <motion.div
+      initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      transition={{ duration: .2}}
-
-      >
+      transition={{ duration: 0.2 }}
+    >
       <div style={{ height: dynamicHeight }} className={classes.exploreContain}>
         <div styles={{ marginTop: "3em" }}></div>
         <FocalAnimatedDrawings forHomepage={false} forSearch={true} />
-        <Search userProfile={""} />
+        <Search userProfile={""} forModal={false} />
       </div>
       <Footer />
     </motion.div>
