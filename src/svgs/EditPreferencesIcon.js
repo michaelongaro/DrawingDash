@@ -1,13 +1,14 @@
 import React from "react";
 
-const EditPreferencesIcon = () => {
+const EditPreferencesIcon = ({ dimensions, marginBottom=0 }) => {
   return (
     <svg
       id="Capa_1"
       enableBackground="new 0 0 511.984 511.984"
-      height="1.25em"
+      height={dimensions}
       viewBox="0 0 511.984 511.984"
-      width="1.25em"
+      width={dimensions}
+      style={{marginBottom: marginBottom}}
       xmlns="http://www.w3.org/2000/svg"
     >
       <g>

@@ -14,7 +14,15 @@
 }
 
 .autofillResult:hover {
-  background-color: rgb(119, 119, 119);
+  background-color: #d7d7d7;
+}
+
+.autofillFormatting {
+  display: flex;
+  align-items: center;
+
+  margin-left: 1em;
+  padding: 0.25em 0 0.25em 0;
 }
 
 .autofillRelatedDivider {

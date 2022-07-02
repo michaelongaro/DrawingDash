@@ -1,5 +1,4 @@
-import React from "react";
-import { useEffect, useContext, useRef } from "react";
+import React, { useState, useEffect, useRef, useContext } from "react";
 
 import SearchContext from "./SearchContext";
 
@@ -11,6 +10,10 @@ const AutofillResult = (props) => {
   let idx = props.userProfile.length > 0 ? 1 : 0;
 
   const resultRef = useRef();
+
+  const [preHighlightedText, setPreHighlightedText] = useState("");
+  const [highlightedText, setHighlightedText] = useState("");
+  const [postHighlightedText, setPostHighlightedText] = useState("");
 
   useEffect(() => {
     if (props.word !== "related") {
@@ -24,6 +27,70 @@ const AutofillResult = (props) => {
       }
     };
   }, []);
+
+  useEffect(() => {
+    let highlightedAdjIndex = props.word
+      .toLowerCase()
+      .indexOf(searchCtx.searchValues["adjSearch"][idx].toLowerCase());
+    let highlightedNounIndex = props.word
+      .toLowerCase()
+      .indexOf(searchCtx.searchValues["nounSearch"][idx].toLowerCase());
+
+    let adjLength = searchCtx.searchValues["adjSearch"][idx].length;
+    let nounLength = searchCtx.searchValues["nounSearch"][idx].length;
+
+    // adjective highlighting
+    if (props.type === "adj" && highlightedAdjIndex === 0) {
+      setHighlightedText(props.word.substring(0, adjLength));
+      setPostHighlightedText(props.word.substring(adjLength));
+    }
+
+    if (props.type === "adj" && highlightedAdjIndex > 0) {
+      setPreHighlightedText(props.word.substring(0, highlightedAdjIndex));
+      setHighlightedText(
+        props.word.substring(
+          highlightedAdjIndex,
+          highlightedAdjIndex + adjLength
+        )
+      );
+      setPostHighlightedText(
+        props.word.substring(highlightedAdjIndex + adjLength)
+      );
+    }
+
+    // noun highlighting
+    if (props.type === "noun" && highlightedNounIndex === 0) {
+      setHighlightedText(props.word.substring(0, nounLength));
+      setPostHighlightedText(props.word.substring(nounLength));
+    }
+
+    if (props.type === "noun" && highlightedNounIndex > 0) {
+      setPreHighlightedText(props.word.substring(0, highlightedNounIndex));
+      setHighlightedText(
+        props.word.substring(
+          highlightedNounIndex,
+          highlightedNounIndex + nounLength
+        )
+      );
+      setPostHighlightedText(
+        props.word.substring(highlightedNounIndex + nounLength)
+      );
+    }
+
+    // for suggested related word
+    if (props.type === "adj" && adjLength === 0) {
+      setPreHighlightedText("");
+      setHighlightedText(props.word);
+      setPostHighlightedText("");
+    }
+
+    if (props.type === "noun" && nounLength === 0) {
+      setPreHighlightedText("");
+      setHighlightedText(props.word);
+      setPostHighlightedText("");
+    }
+    
+  }, [searchCtx.searchValues, props, idx]);
 
   function fillText() {
     if (props.type === "adj") {
@@ -43,7 +110,11 @@ const AutofillResult = (props) => {
         </div>
       ) : (
         <div className={classes.autofillResult} ref={resultRef}>
-          <div style={{ marginLeft: "1em", paddingTop: ".25em", paddingBottom: ".25em" }}>{props.word}</div>
+          <div className={classes.autofillFormatting}>
+            <div style={{ color: "#6b6b6b" }}>{preHighlightedText}</div>
+            <div style={{ color: "#000000" }}>{highlightedText}</div>
+            <div style={{ color: "#6b6b6b" }}>{postHighlightedText}</div>
+          </div>
         </div>
       )}
     </>

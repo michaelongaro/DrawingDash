@@ -35,3 +35,14 @@
   border: 0.5em solid #92df89;
   border-radius: 1.5em;
 }
+
+.emptyShowcase {
+  background: rgba(0, 0, 0, 0.6);
+  border-radius: 1em;
+  transition: all 200ms;
+  cursor: pointer;
+}
+
+.emptyShowcase:hover {
+  background: rgba(0, 0, 0, 0.8);
+}

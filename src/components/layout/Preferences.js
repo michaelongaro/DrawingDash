@@ -11,7 +11,6 @@ import ImageCropModal from "./ImageCropModal";
 import getCroppedImg from "../../util/cropImage";
 
 import ProfilePictureUpdateContext from "./ProfilePictureUpdateContext";
-import Footer from "../../ui/Footer";
 
 import PinnedArtwork from "./PinnedArtwork";
 import ProfileHeader from "./ProfileHeader";
@@ -19,6 +18,7 @@ import ExitIcon from "../../svgs/ExitIcon";
 import EditPreferencesIcon from "../../svgs/EditPreferencesIcon";
 import ResizeIcon from "../../svgs/ResizeIcon";
 import UploadIcon from "../../svgs/UploadIcon";
+import RedoIcon from "../../svgs/RedoIcon";
 
 import {
   getDatabase,
@@ -49,7 +49,7 @@ const Preferences = () => {
   // to "onValue" for the firebase Storage side of things...
   const PFPUpdateCtx = useContext(ProfilePictureUpdateContext);
 
-  const { user, isAuthenticated, isLoading } = useAuth0();
+  const { loginWithRedirect, user, isAuthenticated, isLoading } = useAuth0();
 
   const db = getDatabase(app);
   const dbRef = ref_database(getDatabase(app));
@@ -70,7 +70,6 @@ const Preferences = () => {
 
   // used to check and see if last
 
-  const [disableSave, setDisableSave] = useState(true);
   const [editAvailable, setEditAvailable] = useState(true);
 
   const inputRef = useRef();
@@ -84,6 +83,10 @@ const Preferences = () => {
   const [zoom, setZoom] = useState(1);
   const [croppedAreaPixels, setCroppedAreaPixels] = useState(null);
   const [croppedImage, setCroppedImage] = useState(null);
+
+  const [inputWasChanged, setInputWasChanged] = useState(false);
+
+  const [hoveringOnResetPassword, setHoveringOnResetPassword] = useState(false);
 
   const [showTempBaselineSkeleton, setShowTempBaselineSkeleton] =
     useState(true);
@@ -199,9 +202,21 @@ const Preferences = () => {
       upload();
     }
 
+    setInputWasChanged(false);
     setHasChangedPicture(false);
-    setDisableSave(true);
     setEditAvailable(true);
+  }
+
+  function fetchUserPreferences() {
+    get(child(dbRef, `users/${user.sub}/preferences`)).then((snapshot) => {
+      if (snapshot.exists()) {
+        setUsername(snapshot.val()["username"]);
+        setStatus(snapshot.val()["status"]);
+        setDBCropData(snapshot.val()["profileCropMetadata"]);
+      }
+    });
+    setHasChangedPicture(false);
+    setInputWasChanged(false);
   }
 
   async function upload() {
@@ -253,22 +268,13 @@ const Preferences = () => {
     <div className={`${classes.baseFlex} ${classes.prefCard}`}>
       <ProfileHeader title={"Preferences"} />
 
-      <div style={{ position: "relative" }}>
-        <div
-          style={{ gap: "4em" }}
-          className={baseClasses.baseFlex}
-        >
-          {/* absolutely should be done with flex or just figure out a way to make grid
-            less jank */}
-          {/* <div className={classes.extraPadding}></div>
-        <div className={classes.extraPadding2}></div>
-        <div className={classes.extraPadding3}></div>
-        <div className={classes.extraPadding4}></div> */}
+      <div style={{ position: "relative", width: "100%" }}>
+        <div style={{ gap: "4em" }} className={baseClasses.baseFlex}>
           <div
             style={{ gap: "3em", width: "33%", alignItems: "flex-start" }}
             className={baseClasses.baseVertFlex}
           >
-            <div style={{ gap: "3em" }} className={baseClasses.baseFlex}>
+            <div style={{ gap: "1.5em" }} className={baseClasses.baseFlex}>
               <div className={classes.username}>Username</div>
 
               {editAvailable ? (
@@ -277,7 +283,12 @@ const Preferences = () => {
                 <input
                   className={classes.setUsername}
                   value={username}
-                  onChange={(e) => setUsername(e.target.value)}
+                  minLength={1}
+                  maxLength={25}
+                  onChange={(e) => {
+                    setUsername(e.target.value);
+                    setInputWasChanged(true);
+                  }}
                 ></input>
               )}
             </div>
@@ -292,7 +303,12 @@ const Preferences = () => {
                 <input
                   className={classes.setStatus}
                   value={status}
-                  onChange={(e) => setStatus(e.target.value)}
+                  minLength={1}
+                  maxLength={40}
+                  onChange={(e) => {
+                    setStatus(e.target.value);
+                    setInputWasChanged(true);
+                  }}
                 ></input>
               )}
             </div>
@@ -302,12 +318,28 @@ const Preferences = () => {
               <div className={classes.setEmail}>{userEmail}</div>
             </div>
 
-            <button style={{ width: "70%" }} className={classes.resetPassword}>
-              Reset Password
+            <button
+              style={{ width: "70%", gap: "1em" }}
+              className={`${classes.resetPasswordButton} ${baseClasses.baseFlex}`}
+              onMouseEnter={() => setHoveringOnResetPassword(true)}
+              onMouseLeave={() => setHoveringOnResetPassword(false)}
+              onClick={() => {
+                loginWithRedirect();
+              }}
+            >
+              <RedoIcon
+                dimensions={"1em"}
+                color={hoveringOnResetPassword ? "white" : "black"}
+              />
+              <div
+                style={{ color: hoveringOnResetPassword ? "white" : "black" }}
+              >
+                Reset Password
+              </div>
             </button>
           </div>
 
-          <div  className={baseClasses.baseFlex}>
+          <div className={baseClasses.baseFlex}>
             <div className={classes.vertTrailing}></div>
           </div>
 
@@ -360,7 +392,7 @@ const Preferences = () => {
                     >
                       <div className={classes.buttonOperationContainer}>
                         <div>Upload</div>
-                        <UploadIcon />
+                        <UploadIcon color={"white"} />
                       </div>
                     </button>
                   </div>
@@ -374,28 +406,6 @@ const Preferences = () => {
                 </div>
               </div>
             )}
-            {/* need to bring this up as soon as image is uploaded */}
-            {showCropModal ? (
-              <div
-                style={{ opacity: showCropModal ? 1 : 0 }}
-                className={classes.modal}
-              >
-                <div className={classes.cropImageModal}>
-                  <ImageCropModal
-                    id={1}
-                    imageUrl={cropReadyImage ?? image}
-                    cropInit={crop}
-                    zoomInit={zoom}
-                    onCropChange={setCrop}
-                    onRotationChange={setRotation}
-                    onCropComplete={onCropComplete}
-                    onZoomChange={setZoom}
-                    applyChanges={showCroppedImage}
-                    discardChanges={onClose}
-                  />
-                </div>
-              </div>
-            ) : null}
 
             <div className={classes.showUsername}>{username}</div>
             <div className={classes.showStatus}>
@@ -405,39 +415,77 @@ const Preferences = () => {
         </div>
 
         <div
-          style={{ position: "absolute", right: 0, bottom: 0 }}
+          style={{ position: "absolute", right: "1em", bottom: 0 }}
           className={classes.change}
         >
           {editAvailable ? (
             <button
-              // style={{ width: "150px" }}
               className={classes.editButton}
               onClick={() => setEditAvailable(false)}
             >
               <div className={classes.baseHorizFlex}>
-                {/* <div>Edit</div> */}
-                <EditPreferencesIcon />
+                <div>Edit</div>
+
+                <EditPreferencesIcon
+                  dimensions={"1.5em"}
+                  marginBottom={"4px"}
+                />
               </div>
             </button>
           ) : (
             <div className={classes.updateButtons}>
               <button
                 className={classes.closeButton}
-                onClick={() => setEditAvailable(true)}
+                onClick={() => {
+                  setEditAvailable(true);
+                  fetchUserPreferences();
+                }}
               >
                 <ExitIcon />
               </button>
-              {/* eventually will look at checking whether inputs were actually changed
-                  and disable this button until then, but for now is always on */}
-              <button className={classes.editButton} onClick={handleSubmit}>
-                Save
-              </button>
+
+              {/* parent container to allow for transition between linear-gradient backgrounds */}
+              <div style={{ position: "relative", width: "73px", height: "40px" }}>
+                <button
+                  style={{
+                    position: "absolute",
+                    top: 0,
+                    left: 0,
+                    backgroundImage:
+                      "linear-gradient(-180deg, #d3d3d3, #3a3a3a)",
+                    opacity: hasChangedPicture || inputWasChanged ? 0 : 1,
+                    cursor: "auto"
+                    
+                  }}
+                  disabled={!hasChangedPicture && !inputWasChanged}
+
+                  className={classes.editButton}
+                >
+                  Save
+                </button>
+                <button
+                  style={{
+                    position: "absolute",
+                    top: 0,
+                    left: 0,
+                    opacity: hasChangedPicture || inputWasChanged ? 1 : 0,
+
+                    pointerEvents:
+                      hasChangedPicture || inputWasChanged ? "auto" : "none",
+                      cursor: hasChangedPicture || inputWasChanged ? "pointer" : "auto",
+                  }}
+                  disabled={!hasChangedPicture && !inputWasChanged}
+                  className={classes.editButton}
+                  onClick={handleSubmit}
+                >
+                  Save
+                </button>
+              </div>
             </div>
           )}
         </div>
       </div>
 
-      {/* may need to center this */}
       <div style={{ marginTop: "3em" }} className={classes.pinnedTitle}>
         <div className={classes.leadingLine}></div>
         <h3>Pinned Drawings</h3>
@@ -450,6 +498,28 @@ const Preferences = () => {
       >
         <PinnedArtwork />
       </div>
+
+      {showCropModal ? (
+        <div
+          style={{ opacity: showCropModal ? 1 : 0 }}
+          className={classes.modal}
+        >
+          <div className={classes.cropImageModal}>
+            <ImageCropModal
+              id={1}
+              imageUrl={cropReadyImage ?? image}
+              cropInit={crop}
+              zoomInit={zoom}
+              onCropChange={setCrop}
+              onRotationChange={setRotation}
+              onCropComplete={onCropComplete}
+              onZoomChange={setZoom}
+              applyChanges={showCroppedImage}
+              discardChanges={onClose}
+            />
+          </div>
+        </div>
+      ) : null}
     </div>
   );
 };

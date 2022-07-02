@@ -13,43 +13,6 @@
   gap: 0.75em;
 }
 
-/* add more padding on both sides of vertLine, want the labels and inputs closer together
-    also look at getting reset password to be centered */
-.container {
-  display: grid;
-  grid-template-columns: 0.5fr 0.5fr 2.25fr 0.25fr 1fr 1fr 0.5fr;
-  grid-template-rows: 1fr 1fr 1fr 1fr 1.25fr 3fr 0.75fr;
-  gap: 0px 0px;
-  grid-auto-flow: row;
-  grid-template-areas:
-    "extraPadding username setUsername vertLine rightSide rightSide extraPadding2"
-    "extraPadding status setStatus vertLine rightSide rightSide extraPadding2"
-    "extraPadding email setEmail vertLine rightSide rightSide extraPadding2"
-    "extraPadding resetPassword resetPassword vertLine extraPadding3 change extraPadding2"
-    "pinnedTitle pinnedTitle pinnedTitle pinnedTitle pinnedTitle pinnedTitle pinnedTitle"
-    "pinned pinned pinned pinned pinned pinned pinned"
-    "extraPadding4 extraPadding4 extraPadding4 extraPadding4 extraPadding4 extraPadding4 extraPadding4";
-  justify-content: space-evenly;
-  align-items: center;
-  justify-items: center;
-}
-
-.rightSide {
-  display: grid;
-  grid-template-columns: 1fr;
-  grid-template-rows: 3.25fr 1.5fr 0.6fr;
-  gap: 0px 0px;
-  grid-auto-flow: row;
-  grid-template-areas:
-    "picture"
-    "showUsername"
-    "showStatus";
-  grid-area: rightSide;
-  justify-content: space-evenly;
-  align-items: center;
-  justify-items: center;
-}
-
 .profilePicture {
   border-radius: 50%;
   object-fit: cover;
@@ -85,27 +48,10 @@
   box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.2);
 }
 
-.extraPadding {
-  grid-area: extraPadding;
-}
-
-.extraPadding2 {
-  grid-area: extraPadding2;
-}
-
-.extraPadding3 {
-  grid-area: extraPadding3;
-}
-
-.extraPadding4 {
-  grid-area: extraPadding4;
-}
-
 .pinnedTitle {
   display: flex;
   justify-content: center;
   align-items: center;
-  grid-area: pinnedTitle;
 }
 
 .leadingLine {
@@ -155,7 +101,7 @@
   white-space: nowrap;
   z-index: 9;
   border: 0;
-  transition: box-shadow 0.2s;
+  transition: all 0.2s;
 }
 
 .editButton:disabled {
@@ -281,56 +227,18 @@ input[type="file"] {
   bottom: 0;
 }
 
-.vertLine {
-  grid-area: vertLine;
+.resetPasswordButton {
+  border: none;
+  border-radius: 1em;
+  background-color: #e0e0e0;
+  cursor: pointer;
+  transition: all 200ms;
+  padding: 0.5em 2em 0.5em 2em;
+  box-shadow: rgba(0, 0, 0, 0.1) 0 2px 4px;
 }
 
-.pinned {
-  grid-area: pinned;
-}
-
-.change {
-  grid-area: change;
-}
-
-.status {
-  grid-area: status;
-}
-
-.setStatus {
-  grid-area: setStatus;
-}
-
-.username {
-  grid-area: username;
-}
-
-.setUsername {
-  grid-area: setUsername;
-}
-
-.email {
-  grid-area: email;
-}
-
-.setEmail {
-  grid-area: setEmail;
-}
-
-.picture {
-  grid-area: picture;
-}
-
-.showUsername {
-  grid-area: showUsername;
-}
-
-.showStatus {
-  grid-area: showStatus;
-}
-
-.resetPassword {
-  grid-area: resetPassword;
+.resetPasswordButton:hover {
+  background-color: #c2c2c2;
 }
 
 .skeletonLoading {

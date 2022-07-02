@@ -103,7 +103,28 @@ exports.pushDailyWords = functions.pubsub
             });
           }
 
-          if (mostLikedID !== "") {
+          // if there were no drawings that were liked for that day (per time bracket)
+          if (mostLikedID === "") {
+            let randomDrawingWithLikesID = "";
+            let likedImageNotFound = true;
+            while (likedImageNotFound) {
+              let randomIndex = Math.floor(Math.random() * drawingIDs.length);
+
+              if (
+                snapshot.val()[timeBracket][drawingIDs[randomIndex]][
+                  "totalLikes"
+                ] > 0``
+              ) {
+                randomDrawingWithLikesID = drawingIDs[randomIndex];
+                likedImageNotFound = false;
+              }
+            }
+            database.ref(`dailyMostLiked`).update({
+              [timeBracket]: { id: randomDrawingWithLikesID },
+            });
+          }
+          // updating to the most liked image of that day (per time bracket)
+          else {
             database.ref(`dailyMostLiked`).update({
               [timeBracket]: { id: mostLikedID },
             });

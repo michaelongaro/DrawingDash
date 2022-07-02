@@ -230,9 +230,9 @@ const LogoutButton = () => {
     isAuthenticated && (
       <button
         style={{
-          backgroundColor: buttonIsClicked ? "#c2c2c2" : "white",
+          backgroundColor: buttonIsClicked ? "#c2c2c2" : "#eeeeee",
           color: buttonIsClicked ? "white" : "black",
-          borderColor: buttonIsHovered ? "#c2c2c2" : "rgb(194,194,194)",
+          borderColor: buttonIsHovered ? "#c2c2c2" : "#eeeeee"
         }}
         className={classes.logOut}
         onMouseDown={() => {

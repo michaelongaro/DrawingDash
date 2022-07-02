@@ -23,15 +23,6 @@ const PinnedArtwork = () => {
   const ref300 = useRef();
 
   const showModal = {
-    // position: "absolute",
-    // left: "15em",
-    // top: "7em",
-    // right: "5em",
-    // display: "flex",
-    // justifyContent: "center",
-    // alignItems: "center",
-    // margin: "3em",
-    // zIndex: "500",
     position: "absolute",
     left: "0",
     top: "0",

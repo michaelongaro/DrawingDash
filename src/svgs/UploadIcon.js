@@ -1,6 +1,6 @@
 import React from "react";
 
-const UploadIcon = () => {
+const UploadIcon = ({ color }) => {
   return (
     <svg
       version="1.1"
@@ -11,7 +11,7 @@ const UploadIcon = () => {
       width="1.25em"
       height="1.25em"
       viewBox="0 0 512 512"
-      style={{ enableBackground: "new 0 0 512 512" }}
+      style={{ enableBackground: "new 0 0 512 512", fill: color }}
     >
       <g>
         <g>
