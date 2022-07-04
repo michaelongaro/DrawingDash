@@ -23,7 +23,11 @@ function Explore() {
         searchCtx.searchValues["gallary"][0]["300"].length !== 0
       ) {
         setDynamicHeight("100%");
+      } else {
+        setDynamicHeight("100vh");
       }
+    } else {
+      setDynamicHeight("100vh");
     }
   }, [searchCtx.searchValues]);
   return (

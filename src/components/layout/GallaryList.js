@@ -384,7 +384,11 @@ const GallaryList = ({ drawingIDs, title, margin, databasePath, forModal }) => {
 
             {showEmptyResults && (
               <div
-                style={{ gap: "1em", minWidth: "85vw", minHeight: "350px" }}
+                style={{
+                  gap: "1em",
+                  minWidth: idx === 1 ? "85vw" : "74vw",
+                  minHeight: "350px",
+                }}
                 className={baseClasses.baseVertFlex}
               >
                 <MagnifyingGlassIcon dimensions={"4.5em"} color={"black"} />

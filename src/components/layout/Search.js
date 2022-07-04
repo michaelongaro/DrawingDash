@@ -43,8 +43,8 @@ const Search = (props) => {
     };
   }, []);
 
-  const [showAdjResults, setShowAdjResults] = useState(classes.hide);
-  const [showNounResults, setShowNounResults] = useState(classes.hide);
+  const [showAdjResults, setShowAdjResults] = useState(false);
+  const [showNounResults, setShowNounResults] = useState(false);
 
   const [checkAdjPair, setCheckAdjPair] = useState(false);
   const [checkNounPair, setCheckNounPair] = useState(false);
@@ -58,20 +58,20 @@ const Search = (props) => {
   const refreshAdjSearch = (event) => {
     searchCtx.updateSearchValues("adjSearch", event.target.value.trim(), idx);
 
-    setShowAdjResults(classes.show);
+    setShowAdjResults(true);
 
     if (event.target.value === "") {
-      setShowAdjResults(classes.hide);
+      setShowAdjResults(false)
     }
   };
 
   const refreshNounSearch = (event) => {
     searchCtx.updateSearchValues("nounSearch", event.target.value.trim(), idx);
 
-    setShowNounResults(classes.show);
+    setShowNounResults(true);
 
     if (event.target.value === "") {
-      setShowNounResults(classes.hide);
+      setShowNounResults(false);
     }
   };
 
@@ -133,13 +133,18 @@ const Search = (props) => {
     }
   }, [searchCtx.searchValues["autofilledNounInput"][idx]]);
 
+
+  useEffect(() => {
+    console.log(showAdjResults);
+  }, [showAdjResults])
+
   useEffect(() => {
     let handler = (event) => {
       // adjective handling
       if (!adjectiveInputRef.current.contains(event.target)) {
-        console.log("hiding from handler");
+        // console.log("hiding from handler");
         // if (idx === 1) outerRef.current.click();
-        setShowAdjResults(classes.hide);
+        setShowAdjResults(false);
         setCheckAdjPair(false);
       } else if (
         adjectiveInputRef.current.contains(event.target) &&
@@ -147,28 +152,30 @@ const Search = (props) => {
         nounInputRef.current.value.trim().length !== 0
       ) {
         setCheckAdjPair(true);
+          // console.log("showing adj results 1");
 
-        setShowAdjResults(classes.show);
+        setShowAdjResults(true);
       } else if (
         adjectiveInputRef.current.contains(event.target) &&
         adjectiveInputRef.current.value.trim().length !== 0 &&
         nounInputRef.current.value.trim().length === 0
       ) {
         // checking to see if currently input value is equal to the one that is going to be suggested,
-        // if it is, do not show suggestion
+        // if it isn't, show the suggestion
         if (
           searchCtx.searchValues["requestedAdjectives"][
             idx
           ][0].toLowerCase() !==
           adjectiveInputRef.current.value.trim().toLowerCase()
         ) {
-          setShowAdjResults(classes.show);
+          // console.log("showing adj results 2");
+          setShowAdjResults(true);
         }
       }
 
       // noun handling
       if (!nounInputRef.current.contains(event.target)) {
-        setShowNounResults(classes.hide);
+        setShowNounResults(false);
         setCheckNounPair(false);
       } else if (
         nounInputRef.current.contains(event.target) &&
@@ -177,19 +184,19 @@ const Search = (props) => {
       ) {
         setCheckNounPair(true);
 
-        setShowNounResults(classes.show);
+        setShowNounResults(true);
       } else if (
         nounInputRef.current.contains(event.target) &&
         nounInputRef.current.value.trim().length !== 0 &&
         adjectiveInputRef.current.value.trim().length === 0
       ) {
         // checking to see if currently input value is equal to the one that is going to be suggested,
-        // if it is, do not show suggestion
+        // if it isn't, show the suggestion
         if (
           searchCtx.searchValues["requestedNouns"][idx][0].toLowerCase() !==
           nounInputRef.current.value.trim().toLowerCase()
         ) {
-          setShowNounResults(classes.show);
+          setShowNounResults(true);
         }
       }
     };
@@ -198,14 +205,15 @@ const Search = (props) => {
     return () => {
       document.removeEventListener("mousedown", handler);
     };
-  }, [
-    searchCtx.searchValues["requestedAdjectives"][idx],
-    searchCtx.searchValues["requestedNouns"][idx],
-  ]);
+  }, []);
+
+  //  searchCtx.searchValues["requestedAdjectives"][idx],
+  // searchCtx.searchValues["requestedNouns"][idx],
 
   function prepGallarySearch(event) {
     event.preventDefault();
 
+    // why does this have an '&& idx === 0' ? feel like it should apply to both scenarios
     if (
       searchCtx.searchValues["adjSearch"][idx].length === 0 &&
       searchCtx.searchValues["nounSearch"][idx].length === 0 &&
@@ -234,7 +242,6 @@ const Search = (props) => {
   }
 
   return (
-    // <div ref={outerRef}>
     <>
       <form className={classes.formContainer} onSubmit={prepGallarySearch}>
         <div className={classes.searchContainer}>
@@ -246,7 +253,7 @@ const Search = (props) => {
             required
           ></input>
           <label>Adjective</label>
-          <div className={showAdjResults}>
+          <div className={showAdjResults ? classes.show : classes.hide}>
             <AdjAutofillResults
               titles={dbTitles}
               checkForPair={checkAdjPair}
@@ -263,7 +270,7 @@ const Search = (props) => {
             required
           ></input>
           <label>Noun</label>
-          <div className={showNounResults}>
+          <div className={showNounResults ? classes.show : classes.hide}>
             <NounAutofillResults
               titles={dbTitles}
               checkForPair={checkNounPair}
@@ -282,7 +289,6 @@ const Search = (props) => {
         forModal={props.forModal}
       />
     </>
-
   );
 };
 
