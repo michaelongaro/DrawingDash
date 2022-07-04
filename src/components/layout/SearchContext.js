@@ -238,9 +238,9 @@ export function SearchProvider(props) {
           } else {
             if (fullQuery60) {
               let drawingIDs = getFlattenedIDs(Object.values(fullQuery60));
-                totalDrawings["60"] = drawingIDs.length;
+              totalDrawings["60"] = drawingIDs.length;
 
-                gallaryResults["60"] = drawingIDs.slice(startIndex, endIndex);
+              gallaryResults["60"] = drawingIDs.slice(startIndex, endIndex);
 
               startIndex = 0;
               endIndex = maxAllowed;
@@ -248,9 +248,9 @@ export function SearchProvider(props) {
 
             if (fullQuery180) {
               let drawingIDs = getFlattenedIDs(Object.values(fullQuery180));
-                totalDrawings["180"] = drawingIDs.length;
+              totalDrawings["180"] = drawingIDs.length;
 
-                gallaryResults["180"] = drawingIDs.slice(startIndex, endIndex);
+              gallaryResults["180"] = drawingIDs.slice(startIndex, endIndex);
 
               startIndex = 0;
               endIndex = maxAllowed;
@@ -258,9 +258,9 @@ export function SearchProvider(props) {
 
             if (fullQuery300) {
               let drawingIDs = getFlattenedIDs(Object.values(fullQuery300));
-                totalDrawings["300"] = drawingIDs.length;
+              totalDrawings["300"] = drawingIDs.length;
 
-                gallaryResults["300"] = drawingIDs.slice(startIndex, endIndex);
+              gallaryResults["300"] = drawingIDs.slice(startIndex, endIndex);
 
               startIndex = 0;
               endIndex = maxAllowed;

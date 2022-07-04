@@ -113,7 +113,7 @@ const GallaryItem = ({ drawingID, settings }) => {
     useState(true);
 
   useEffect(() => {
-    const timerID = setTimeout(() => setShowTempBaselineSkeleton(false), 10000);
+    const timerID = setTimeout(() => setShowTempBaselineSkeleton(false), 500);
 
     return () => {
       clearTimeout(timerID);

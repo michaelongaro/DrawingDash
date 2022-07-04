@@ -1,5 +1,7 @@
 import React, { useState, useEffect, useContext } from "react";
 
+import { isEqual } from "lodash";
+
 import SearchContext from "./SearchContext";
 import Card from "../../ui/Card";
 
@@ -11,16 +13,27 @@ import ThreeMinuteIcon from "../../svgs/ThreeMinuteIcon";
 
 import classes from "./GallaryList.module.css";
 import baseClasses from "../../index.module.css";
-import PageSelectorButton from "./PageSelectorButton";
+import MagnifyingGlassIcon from "../../svgs/MagnifyingGlassIcon";
 
 const GallaryList = ({ drawingIDs, title, margin, databasePath, forModal }) => {
   const searchCtx = useContext(SearchContext);
 
-  const [displayedDrawings, setDisplayedDrawings] = useState();
-  const [durationStates, setDurationStates] = useState();
-  const [availableDurations, setAvailableDurations] = useState();
+  const [showEmptyResults, setShowEmptyResults] = useState(false);
+
+  // const [displayedDrawings, setDisplayedDrawings] = useState({
+  //   60: [],
+  //   180: [],
+  //   300: [],
+  // });
+  const [durationStates, setDurationStates] = useState([false, false, false]);
+  const [availableDurations, setAvailableDurations] = useState([
+    false,
+    false,
+    false,
+  ]);
   const [showButtonColors, setShowButtonColors] = useState();
   const [pageSelectorButtons, setPageSelectorButtons] = useState([]);
+  const [renderGallaryList, setRenderGallaryList] = useState(false);
 
   const [redOpacity, setRedOpacity] = useState(0);
   const [yellowOpacity, setYellowOpacity] = useState(0);
@@ -35,86 +48,72 @@ const GallaryList = ({ drawingIDs, title, margin, databasePath, forModal }) => {
 
   useEffect(() => {
     if (drawingIDs) {
-      setDisplayedDrawings(drawingIDs);
-      setAvailableDurations([
-        drawingIDs["60"].length !== 0 ? true : false,
-        drawingIDs["180"].length !== 0 ? true : false,
-        drawingIDs["300"].length !== 0 ? true : false,
-      ]);
+      if (isEqual(drawingIDs, { 60: [], 180: [], 300: [] })) {
+        console.log("showing Empty");
+        setShowEmptyResults(true);
+        // setRenderGallaryList(true);
+      } else if (!isEqual(drawingIDs, { 60: [], 180: [], 300: [] })) {
+        // hiding empty results if they are currently being shown
+        setShowEmptyResults(false);
 
-      if (forModal) {
-        setSkeletonRatio(4.341);
-      } else if (idx === 1) {
-        setSkeletonRatio(6.275);
-      } else if (idx === 0) {
-        setSkeletonRatio(3.5);
-      }
+        setAvailableDurations([
+          drawingIDs["60"].length !== 0 ? true : false,
+          drawingIDs["180"].length !== 0 ? true : false,
+          drawingIDs["300"].length !== 0 ? true : false,
+        ]);
 
-      // used if want to load a different page other than the default order (60->180->300)
-      if (searchCtx.pageSelectorDetails["durationToManuallyLoad"][idx]) {
-        // console.log("reloaded to set manually with", searchCtx.durationToManuallyLoad);
-        setDurationStates(
-          searchCtx.manuallyLoadDurations(databasePath === "" ? 0 : 1)
-        );
-        setShowButtonColors(
-          searchCtx.manuallyLoadDurations(databasePath === "" ? 0 : 1)
-        );
-        setCurrentlyShownDuration(
-          searchCtx.pageSelectorDetails["durationToManuallyLoad"][idx]
-        );
-        // setCurrentlyShownDuration()
-        return;
-      } else {
-        console.log("reloading the old fashioned way, nothing fancy");
-        if (drawingIDs["60"].length !== 0) {
-          setDurationStates([true, false, false]);
-          setShowButtonColors([true, false, false]);
-          setCurrentlyShownDuration("60");
-
-          return;
+        if (forModal) {
+          setSkeletonRatio(4.341);
+        } else if (idx === 1) {
+          setSkeletonRatio(6.275);
+        } else if (idx === 0) {
+          setSkeletonRatio(3.5);
         }
-        if (drawingIDs["180"].length !== 0) {
-          setDurationStates([false, true, false]);
-          setShowButtonColors([false, true, false]);
-          setCurrentlyShownDuration("180");
+
+        // used if want to load a different page other than the default order (60->180->300)
+        if (searchCtx.pageSelectorDetails["durationToManuallyLoad"][idx]) {
+          setDurationStates(
+            searchCtx.manuallyLoadDurations(databasePath === "" ? 0 : 1)
+          );
+          setShowButtonColors(
+            searchCtx.manuallyLoadDurations(databasePath === "" ? 0 : 1)
+          );
+          setCurrentlyShownDuration(
+            searchCtx.pageSelectorDetails["durationToManuallyLoad"][idx]
+          );
 
           return;
-        }
-        if (drawingIDs["300"].length !== 0) {
-          setDurationStates([false, false, true]);
-          setShowButtonColors([false, false, true]);
-          setCurrentlyShownDuration("300");
+        } else {
+          console.log("reloading the old fashioned way, nothing fancy");
+          if (drawingIDs["60"].length !== 0) {
+            setDurationStates([true, false, false]);
+            setShowButtonColors([true, false, false]);
+            setCurrentlyShownDuration("60");
 
-          return;
+            return;
+          }
+          if (drawingIDs["180"].length !== 0) {
+            setDurationStates([false, true, false]);
+            setShowButtonColors([false, true, false]);
+            setCurrentlyShownDuration("180");
+
+            return;
+          }
+          if (drawingIDs["300"].length !== 0) {
+            setDurationStates([false, false, true]);
+            setShowButtonColors([false, false, true]);
+            setCurrentlyShownDuration("300");
+
+            return;
+          }
         }
       }
     }
   }, [drawingIDs]);
 
-  // useEffect(() => {
-  //   console.log(
-  //     Math.floor(
-  //       (searchCtx.pageSelectorDetails["totalDrawingsByDuration"][idx][
-  //         currentlyShownDuration
-  //       ] +
-  //         6 -
-  //         1) /
-  //         6
-  //     ),
-  //     (searchCtx.pageSelectorDetails["totalDrawingsByDuration"][idx][
-  //       currentlyShownDuration
-  //     ] +
-  //       6 -
-  //       1) /
-  //       6,
-  //     searchCtx.pageSelectorDetails["totalDrawingsByDuration"][idx],
-  //     currentlyShownDuration
-  //   );
-  // }, [searchCtx.pageSelectorDetails, currentlyShownDuration]);
-
   return (
     <>
-      {displayedDrawings && durationStates && (
+      {drawingIDs && (
         <div className={classes.baseFlex}>
           <div className={classes.buttonContainer}>
             {/* One Minute Button */}
@@ -310,7 +309,7 @@ const GallaryList = ({ drawingIDs, title, margin, databasePath, forModal }) => {
                 classes.gridListContain
               }`}
             >
-              {Object.values(displayedDrawings["60"])
+              {Object.values(drawingIDs["60"])
                 .flat()
                 .map((drawingID, i) => (
                   <GallaryItem
@@ -336,7 +335,7 @@ const GallaryList = ({ drawingIDs, title, margin, databasePath, forModal }) => {
                 classes.gridListContain
               }`}
             >
-              {Object.values(displayedDrawings["180"])
+              {Object.values(drawingIDs["180"])
                 .flat()
                 .map((drawingID, i) => (
                   <GallaryItem
@@ -362,7 +361,7 @@ const GallaryList = ({ drawingIDs, title, margin, databasePath, forModal }) => {
                 classes.gridListContain
               }`}
             >
-              {Object.values(displayedDrawings["300"])
+              {Object.values(drawingIDs["300"])
                 .flat()
                 .map((drawingID, i) => (
                   <GallaryItem
@@ -382,6 +381,17 @@ const GallaryList = ({ drawingIDs, title, margin, databasePath, forModal }) => {
                   />
                 ))}
             </div>
+
+            {showEmptyResults && (
+              <div
+                style={{ gap: "1em", minWidth: "85vw", minHeight: "350px" }}
+                className={baseClasses.baseVertFlex}
+              >
+                <MagnifyingGlassIcon dimensions={"4.5em"} color={"black"} />
+                <div style={{ fontSize: "20px" }}>No drawings found for:</div>
+                <div style={{ fontSize: "25px" }}>"{title}"</div>
+              </div>
+            )}
           </Card>
 
           {/* page swap buttons */}

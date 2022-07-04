@@ -5,6 +5,7 @@
   gap: 2.5em;
 
   margin-top: 1em;
+  margin-bottom: 3em;
 }
 
 .searchContainer {
@@ -67,8 +68,12 @@ input {
 }
 
 .show {
-  margin-top: 0.5em;
+  position: absolute;
+  top: 3.5em;
+  left: 0;
+  width: 100%;
   min-height: 3em;
+
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -78,6 +83,8 @@ input {
   border-width: 0;
   border-radius: 1em;
   background-color: #eeeeee;
+  z-index: 500;
+  box-shadow: 0 4px 8px 2px rgb(0 0 0 / 20%);
 }
 
 /* 100% CAN use css here to target the first child and last child
