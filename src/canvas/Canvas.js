@@ -2,24 +2,23 @@ import React, { useContext, useEffect, useState } from "react";
 
 import DrawingSelectionContext from "./DrawingSelectionContext";
 
-import classes from "./Canvas.module.css";
 import ProgressBar from "./ProgressBar";
 import PaletteChooser from "./PaletteChooser";
 import PromptSelection from "./PromptSelection";
 import DrawingScreen from "./DrawingScreen";
 
+import classes from "./Canvas.module.css";
+
 export function Canvas() {
   const DSCtx = useContext(DrawingSelectionContext);
 
   useEffect(() => {
-    DSCtx.resetSelections();
-      console.log(("resetSelections()"));
-
     return () => {
+      // resetting all context data
       DSCtx.setStartFromLeft(true);
       DSCtx.resetProgressBar();
-      console.log(("resetProgressBar()"));
-    }
+      DSCtx.resetSelections();
+    };
   }, []);
 
   function renderCurrentScreen() {

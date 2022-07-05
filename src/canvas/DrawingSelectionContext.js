@@ -39,7 +39,7 @@ export function DrawingSelectionProvider(props) {
     "#FFFFFF",
   ]);
   const [currentCursorSize, setCurrentCursorSize] = useState(5);
-  const [currentColor, setCurrentColor] = useState("white");
+  const [currentColor, setCurrentColor] = useState("#FFFFFF");
 
   const [fetchNewWords, setFetchNewWords] = useState(true);
 
@@ -50,7 +50,8 @@ export function DrawingSelectionProvider(props) {
   const [showEndOverlay, setShowEndOverlay] = useState(false);
   const [showEndOutline, setShowEndOutline] = useState(false);
 
-  const [animateExtraPromptsContainer, setAnimateExtraPromptsContainer] = useState(true);
+  const [animateExtraPromptsContainer, setAnimateExtraPromptsContainer] =
+    useState(true);
 
   // used to determine whether PromptSelection slides in from left/right
   const [startFromLeft, setStartFromLeft] = useState(true);
@@ -64,13 +65,6 @@ export function DrawingSelectionProvider(props) {
     resetToSelectBar: false,
   });
 
-  // !isLoading && !isAuthenticated
-  // ? {
-  //     60: false,
-  //     180: false,
-  //     300: false,
-  //   }
-  //   : { 60: false, 180: false, 300: false, extra: false }
   const [drawingStatuses, setDrawingStatuses] = useState({
     60: false,
     180: false,
@@ -87,6 +81,21 @@ export function DrawingSelectionProvider(props) {
     seconds: 60,
     title: "",
   });
+
+  useEffect(() => {
+    console.log(currentColor);
+    if (currentColor.toLowerCase() === "#ffffff") {
+       
+      document.documentElement.style.setProperty(
+        "--dark-animated-gradient-color",
+        "rgba(230, 230, 230, .9)"
+      );
+      document.documentElement.style.setProperty(
+        "--light-animated-gradient-color",
+        "rgba(230, 230, 230, .5)"
+      );
+    }
+  }, [currentColor])
 
   useEffect(() => {
     // attaching firebase listener so that when prompts update from firebase
@@ -188,34 +197,6 @@ export function DrawingSelectionProvider(props) {
     setShowPromptSelection(true);
   }
 
-  function titleForPromptSelection() {
-    if (
-      showPromptSelection &&
-      !showDrawingScreen &&
-      buttonAvailability.includes(true)
-    ) {
-      return "A Drawing Prompt";
-    } else if (
-      !showPromptSelection &&
-      showDrawingScreen &&
-      !buttonAvailability.includes(true)
-    ) {
-      return "Come back tomorrow for more prompts";
-    } else if (
-      !showPromptSelection &&
-      showDrawingScreen &&
-      buttonAvailability.includes(true)
-    ) {
-      return "Time's Up! \nChoose Another Drawing";
-    } else if (
-      !showPromptSelection &&
-      showDrawingScreen &&
-      !buttonAvailability.includes(true)
-    ) {
-      return "Time's Up! \nCome back tomorrow for more prompts";
-    }
-  }
-
   const context = {
     seconds: seconds,
     setSeconds: setSeconds,
@@ -258,7 +239,6 @@ export function DrawingSelectionProvider(props) {
     setShowEndOutline: setShowEndOutline,
     goBackToPromptSelection: goBackToPromptSelection,
     resetSelections: resetSelections,
-    titleForPromptSelection: titleForPromptSelection,
   };
 
   return (

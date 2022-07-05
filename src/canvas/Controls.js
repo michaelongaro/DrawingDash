@@ -1,4 +1,5 @@
 import React, { useContext, useState, useEffect } from "react";
+import { isEqual } from "lodash";
 import { useCanvas } from "./CanvasContext";
 
 import DrawingSelectionContext from "./DrawingSelectionContext";
@@ -9,7 +10,7 @@ import PaintBucketIcon from "../svgs/PaintBucketIcon";
 import PencilIcon from "../svgs/PencilIcon";
 import RedoIcon from "../svgs/RedoIcon";
 
-import baseClasses from "../index.module.css"
+import baseClasses from "../index.module.css";
 
 const Controls = () => {
   const DSCtx = useContext(DrawingSelectionContext);
@@ -56,9 +57,12 @@ const Controls = () => {
       setTempDisable(false);
       changeColor(DSCtx.paletteColors[0]);
       DSCtx.setCurrentColor(DSCtx.paletteColors[0]);
-      updateSelectedColor(0);
+      updateSelectedColor(0, false);
       changeBrushSize(8);
       updateSelectedBrushSize(1);
+    } else if (DSCtx.seconds > 0) {
+      console.log(DSCtx.paletteColors);
+      DSCtx.setCurrentColor("#FFFFFF");
     }
   }, [DSCtx.seconds]);
 
@@ -80,7 +84,7 @@ const Controls = () => {
   //   console.log(currentCursorSize);
   // }, [currentCursorSize]);
 
-  function updateSelectedColor(brushID) {
+  function updateSelectedColor(brushID, updateCurrentlySelectedTool) {
     let tempArr = buttonStyles;
 
     tempArr[prevClickedColor] = classes.hide;
@@ -88,8 +92,32 @@ const Controls = () => {
 
     setButtonStyles(tempArr);
 
-    if (brushID === 5) {
+    // reselecting the pencil icon when directly clicking on a color while on eraser tool
+    if (updateCurrentlySelectedTool && currToolIdx !== 1) {
+      updateSelectedTool(0);
+
+      setCurrToolIdx(0);
+    }
+
+    if (brushID !== 5) {
+      document.documentElement.style.setProperty(
+        "--dark-animated-gradient-color",
+        hexToRgbA(DSCtx.paletteColors[brushID], 0.9)
+      );
+      document.documentElement.style.setProperty(
+        "--light-animated-gradient-color",
+        hexToRgbA(DSCtx.paletteColors[brushID], 0.5)
+      );
+    } else if (brushID === 5) {
       setColorIdToReselect(prevClickedColor);
+      document.documentElement.style.setProperty(
+        "--dark-animated-gradient-color",
+        "rgba(230, 230, 230, .9)"
+      );
+      document.documentElement.style.setProperty(
+        "--light-animated-gradient-color",
+        "rgba(230, 230, 230, .5)"
+      );
       return;
     }
     setPrevClickedColor(brushID);
@@ -154,7 +182,7 @@ const Controls = () => {
       if ((idx === 0 || idx === 1) && currToolIdx === 2) {
         changeColor(DSCtx.paletteColors[colorIdToReselect]);
         DSCtx.setCurrentColor(DSCtx.paletteColors[colorIdToReselect]);
-        updateSelectedColor(colorIdToReselect);
+        updateSelectedColor(colorIdToReselect, false);
       }
 
       // going to or from paint bucket
@@ -185,6 +213,23 @@ const Controls = () => {
     setToolStatuses(tempToolStatuses);
   }
 
+  function hexToRgbA(hex, a) {
+    let c;
+    if (/^#([A-Fa-f0-9]{3}){1,2}$/.test(hex)) {
+      c = hex.substring(1).split("");
+      if (c.length === 3) {
+        c = [c[0], c[0], c[1], c[1], c[2], c[2]];
+      }
+      c = "0x" + c.join("");
+      return (
+        "rgba(" +
+        [(c >> 16) & 255, (c >> 8) & 255, c & 255].join(",") +
+        `,${a})`
+      );
+    }
+    throw new Error("Bad Hex");
+  }
+
   return (
     // eventually make this into a loop, is entirely possible and looks terrible as is
     <div className={classes.contain}>
@@ -197,7 +242,7 @@ const Controls = () => {
             changeColor(DSCtx.paletteColors[0]);
             DSCtx.setCurrentColor(DSCtx.paletteColors[0]);
 
-            updateSelectedColor(0);
+            updateSelectedColor(0, true);
           }}
         >
           <div className={`${classes.innerBorder} ${buttonStyles[0]}`}></div>
@@ -210,7 +255,7 @@ const Controls = () => {
             changeColor(DSCtx.paletteColors[1]);
             DSCtx.setCurrentColor(DSCtx.paletteColors[1]);
 
-            updateSelectedColor(1);
+            updateSelectedColor(1, true);
           }}
         >
           <div className={`${classes.innerBorder} ${buttonStyles[1]}`}></div>
@@ -223,7 +268,7 @@ const Controls = () => {
             changeColor(DSCtx.paletteColors[2]);
             DSCtx.setCurrentColor(DSCtx.paletteColors[2]);
 
-            updateSelectedColor(2);
+            updateSelectedColor(2, true);
           }}
         >
           <div className={`${classes.innerBorder} ${buttonStyles[2]}`}></div>
@@ -236,7 +281,7 @@ const Controls = () => {
             changeColor(DSCtx.paletteColors[3]);
             DSCtx.setCurrentColor(DSCtx.paletteColors[3]);
 
-            updateSelectedColor(3);
+            updateSelectedColor(3, true);
           }}
         >
           <div className={`${classes.innerBorder} ${buttonStyles[3]}`}></div>
@@ -249,7 +294,7 @@ const Controls = () => {
             changeColor(DSCtx.paletteColors[4]);
             DSCtx.setCurrentColor(DSCtx.paletteColors[4]);
 
-            updateSelectedColor(4);
+            updateSelectedColor(4, true);
           }}
         >
           <div className={`${classes.innerBorder} ${buttonStyles[4]}`}></div>
@@ -347,11 +392,19 @@ const Controls = () => {
           <EraserIcon />
         </div>
 
-        <div onClick={undo} style={{ marginLeft: "1em" }} className={baseClasses.baseFlex}>
+        <div
+          onClick={undo}
+          style={{ marginLeft: "1em" }}
+          className={baseClasses.baseFlex}
+        >
           <RedoIcon dimensions={"3em"} color={"#dbdbdb"} />
         </div>
 
-        <div onClick={clearCanvas} style={{ marginLeft: "1em" }} className={baseClasses.baseFlex}>
+        <div
+          onClick={clearCanvas}
+          style={{ marginLeft: "1em" }}
+          className={baseClasses.baseFlex}
+        >
           <GarbageIcon dimensions={"3em"} />
         </div>
       </div>

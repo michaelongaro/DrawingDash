@@ -57,8 +57,6 @@ const PromptSelection = () => {
   const [adjectiveOptions, setAdjectiveOptions] = useState();
   const [nounOptions, setNounOptions] = useState();
 
-  const [forceUpdateForDropdown, setForceUpdateForDropdown] = useState(false);
-
   const [selectedDurationOption, setSelectedDurationOption] = useState();
   const [selectedAdjectiveOption, setSelectedAdjectiveOption] = useState();
   const [selectedNounOption, setSelectedNounOption] = useState();
@@ -76,6 +74,7 @@ const PromptSelection = () => {
     "January 01, 2030 00:00:00 GMT+03:00"
   );
 
+  // for custom prompt dropdown
   const styles = {
     menu: ({ width, ...css }) => ({
       ...css,
@@ -359,6 +358,7 @@ const PromptSelection = () => {
         setResetAtDate(snapshot.val());
       }
     });
+    console.log("inner width", window.innerWidth);
     anime({
       targets: "#promptSelection",
       loop: false,

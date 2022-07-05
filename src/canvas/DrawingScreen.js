@@ -46,7 +46,7 @@ const DrawingScreen = () => {
     { seconds: 180, colorArray: [180, 135, 90, 45] },
     { seconds: 300, colorArray: [300, 225, 150, 75] },
   ];
-
+console.log("rerendering");
   const currentTimer = {
     60: 0,
     180: 1,
@@ -585,7 +585,7 @@ const DrawingScreen = () => {
         }}
       >
         <div className={classes.canvasBreathingBackground}>
-          <div style={{ pointerEvents: "none", userSelect: "none" }}>
+          <div style={{ userSelect: "none" }}>
             {DSCtx.chosenPrompt}
           </div>
 

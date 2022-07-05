@@ -558,7 +558,7 @@ const GallaryItem = ({ drawingID, settings }) => {
             >
               <img
                 style={{
-                  cursor: "pointer",
+                  cursor: settings.forHomepage ? "auto" : "pointer",
                   borderRadius: settings.forPinnedShowcase
                     ? "1em"
                     : "1em 1em 0 0",

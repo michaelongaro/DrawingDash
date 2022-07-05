@@ -281,13 +281,7 @@ const ProgressBar = () => {
     }
 
     setLocalPBStates(DSCtx.PBStates);
-  }, [isLoading, isAuthenticated, DSCtx.drawingStatuses, DSCtx.PBStates]);
-
-  // useEffect(() => {
-  //   return () => {
-
-  //   }
-  // }, []);
+  }, [isLoading, isAuthenticated, DSCtx.drawingStatuses, DSCtx.PBStates, localPBStates]);
 
   return (
     <div  className={classes.rectangle}>
