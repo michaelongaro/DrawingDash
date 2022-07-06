@@ -21,15 +21,15 @@ ReactDOM.render(
     >
       <ProfilePictureUpdateProvider>
         <PinnedProvider>
-          <FavoritesProvider>
-            <SearchProvider>
+          <SearchProvider>
+            <FavoritesProvider>
               <DrawingSelectionProvider>
                 <WordsProvider>
                   <App />
                 </WordsProvider>
               </DrawingSelectionProvider>
-            </SearchProvider>
-          </FavoritesProvider>
+            </FavoritesProvider>
+          </SearchProvider>
         </PinnedProvider>
       </ProfilePictureUpdateProvider>
     </Auth0Provider>

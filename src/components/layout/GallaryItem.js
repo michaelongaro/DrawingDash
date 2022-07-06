@@ -266,24 +266,28 @@ const GallaryItem = ({ drawingID, settings }) => {
   }, [showTooltip]);
 
   function toggleFavoriteStatusHandler() {
-    if (favoritesCtx.itemIsFavorite(drawingID, drawingDetails.seconds)) {
+    if (
+      favoritesCtx.itemIsFavorite(
+        drawingID,
+        drawingDetails.seconds,
+        drawingDetails.title
+      )
+    ) {
       favoritesCtx.removeFavorite(
         drawingID,
         drawingDetails.seconds,
+        drawingDetails.title,
         drawingTotalLikes - 1,
         drawingDailyLikes - 1
       );
-      // setDrawingTotalLikes(drawingTotalLikes - 1);
-      // setDrawingDailyLikes(drawingDailyLikes - 1);
     } else {
       favoritesCtx.addFavorite(
         drawingID,
         drawingDetails.seconds,
+        drawingDetails.title,
         drawingTotalLikes + 1,
         drawingDailyLikes + 1
       );
-      // setDrawingTotalLikes(drawingTotalLikes + 1);
-      // setDrawingDailyLikes(drawingDailyLikes + 1);
     }
   }
 
@@ -298,11 +302,6 @@ const GallaryItem = ({ drawingID, settings }) => {
       } else {
         setShowUserModal(true);
         setLoadUserModal(true);
-        // if (showDrawingModal) {
-        //   setUserModalStyles({ width: "100%", top: 0 });
-        // } else {
-        //   setUserModalStyles({ width: "100%", top: "5em" });
-        // }
       }
     }
   }
@@ -399,7 +398,7 @@ const GallaryItem = ({ drawingID, settings }) => {
         if (drawingIDs.indexOf(title) > -1) {
           drawingIDs.splice(drawingIDs.indexOf(title), 1);
           if (drawingIDs.length === 0) {
-            set(ref(db, `users/${user}/likes/${seconds}`), ["temp"]);
+            set(ref(db, `users/${user}/likes/${seconds}`), null);
           }
         }
         update(ref(db, `users/${user}/titles/${seconds}`), drawingIDs);
@@ -431,12 +430,10 @@ const GallaryItem = ({ drawingID, settings }) => {
       onMouseLeave={() => {
         setHoveringOnImage(false);
       }}
-      style={
-        {
-          minWidth: showDrawingModal ? "100vw" : "100%",
-          minHeight: showDrawingModal ? "100vh" : "100%",
-        }
-      }
+      style={{
+        minWidth: showDrawingModal ? "100vw" : "100%",
+        minHeight: showDrawingModal ? "100vh" : "100%",
+      }}
     >
       {/* confirm delete modal */}
       <div
@@ -595,7 +592,17 @@ const GallaryItem = ({ drawingID, settings }) => {
               </button>
 
               <div className={`${drawingTotalLikes > 0 ? classes.likes : ""}`}>
-                {drawingTotalLikes > 0 ? `❤️ ${drawingTotalLikes}` : ""}
+                {drawingTotalLikes > 0 ? (
+                  <div
+                    style={{ gap: ".35em" }}
+                    className={baseClasses.baseFlex}
+                  >
+                    <HeartFilledIcon dimensions={"1em"} />{" "}
+                    <div>{drawingTotalLikes} </div>
+                  </div>
+                ) : (
+                  ""
+                )}
               </div>
             </div>
           )}
@@ -745,7 +752,8 @@ const GallaryItem = ({ drawingID, settings }) => {
               ) : null}
 
               {/* like toggle */}
-              {settings.forPinnedItem ? null : showTempBaselineSkeleton || isFetching ? (
+              {settings.forPinnedItem ? null : showTempBaselineSkeleton ||
+                isFetching ? (
                 <div
                   style={{ width: "3em", height: "40%" }}
                   className={classes.skeletonLoading}
@@ -776,17 +784,19 @@ const GallaryItem = ({ drawingID, settings }) => {
                     {hoveringOnHeart ? (
                       favoritesCtx.itemIsFavorite(
                         drawingID,
-                        drawingDetails.seconds
+                        drawingDetails.seconds,
+                        drawingDetails.title
                       ) ? (
                         <HeartBrokenIcon />
                       ) : (
-                        <HeartFilledIcon />
+                        <HeartFilledIcon dimensions={"1.5em"} />
                       )
                     ) : favoritesCtx.itemIsFavorite(
                         drawingID,
-                        drawingDetails.seconds
+                        drawingDetails.seconds,
+                        drawingDetails.title
                       ) ? (
-                      <HeartFilledIcon />
+                      <HeartFilledIcon dimensions={"1.5em"} />
                     ) : (
                       <HeartOutlineIcon />
                     )}

@@ -129,9 +129,9 @@ const LogoutButton = () => {
                   }
             );
             set(ref(db, `users/${user.sub}/likes`), {
-              60: ["temp"],
-              180: ["temp"],
-              300: ["temp"],
+              60: false,
+              180: false,
+              300: false,
             });
             set(ref(db, `users/${user.sub}/pinnedArt`), {
               60: "",

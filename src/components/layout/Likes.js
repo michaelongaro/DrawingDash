@@ -6,26 +6,49 @@ import FavoritesContext from "./FavoritesContext";
 
 import ProfileHeader from "./ProfileHeader";
 import Search from "./Search";
-import GallaryList from "./GallaryList";
+
+import HeartFilledIcon from "../../svgs/HeartFilledIcon";
 
 import classes from "./Preferences.module.css";
+import baseClasses from "../../index.module.css";
 
 const Likes = () => {
   const favoritesCtx = useContext(FavoritesContext);
-  const { user } = useAuth0();
+  const { isLoading, isAuthenticated, user } = useAuth0();
 
   return (
-    <div className={`${classes.baseFlex} ${classes.prefCard}`}>
-      <ProfileHeader title={"Likes"} />
-      {favoritesCtx.totalFavorites === 0 ? (
-        "You haven't selected any favorites yet. Add some and view them here!"
-      ) : (
-        // looks like will need to refactor Search to be able to search through just user likes
-        // tedious, but should be EXACT same logic soooo
-        <Search userProfile={user.sub} margin={"1em"} forModal={false} />
-        // <GallaryList drawingIDs={favoritesCtx.favorites} />
+    <>
+      {!isLoading && isAuthenticated && (
+        <div className={`${classes.baseFlex} ${classes.prefCard}`}>
+          <ProfileHeader title={"Likes"} />
+          {favoritesCtx.totalFavorites === 0 ? (
+            <div
+              style={{
+                width: "100%",
+                height: "50vh",
+                gap: "1em",
+                fontSize: "20px",
+              }}
+              className={baseClasses.baseVertFlex}
+            >
+              <div>You haven't liked any drawings yet.</div>
+              <div style={{ gap: ".5em" }} className={baseClasses.baseFlex}>
+                <HeartFilledIcon dimensions={"2em"} /> some to view them here!
+              </div>
+            </div>
+          ) : (
+            <div style={{ margin: "1em" }}>
+              <Search
+                dbPath={`users/${user.sub}/likes`}
+                margin={"1em"}
+                idx={2}
+                forModal={false}
+              />
+            </div>
+          )}
+        </div>
       )}
-    </div>
+    </>
   );
 };
 

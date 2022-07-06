@@ -5,11 +5,9 @@ import AutofillResult from "./AutofillResult";
 
 import classes from "./SharedAutofillResults.module.css";
 
-const NounAutofillResults = (props) => {
+const NounAutofillResults = ({ titles, checkForPair, idx }) => {
   const searchCtx = useContext(SearchContext);
   const [showPairedResults, setShowPairedResults] = useState(false);
-
-  let idx = props.userProfile.length > 0 ? 1 : 0;
 
   // eventually refactor this + nounautofillresults to be one component that
   // has all relevant adj/noun fields assigned properly to neutral-named vars
@@ -25,32 +23,34 @@ const NounAutofillResults = (props) => {
       getNouns();
       setShowPairedResults(false);
     }
-  }, [searchCtx.searchValues["nounSearch"][idx], props.checkForPair]);
+  }, [searchCtx.searchValues["nounSearch"][idx], checkForPair]);
 
   function getPairedAdjectives() {
     let results = [],
       related_results = [],
       totalResults = [];
 
-    if (props.titles === null) return;
+    if (titles === null) return;
 
-    for (const duration of Object.values(props.titles)) {
+    for (const duration of Object.values(titles)) {
       // console.log(duration);
       // sorting titles for each 60/180/300 duration by one's with the most entries first
       let descendingEntries = [];
       let highestEntries = 0;
 
-      // fullTitle["drawingID"].length
-      for (const title of Object.keys(duration)) {
-        // console.log(title);
-        if (duration[title]["drawingID"].length > highestEntries) {
-          descendingEntries.unshift(title);
-        } else {
-          descendingEntries.push(title);
+      // checking to see if looping through likes, else follow normal pattern
+      if (typeof duration === "object" && Array.isArray(duration)) {
+        descendingEntries = duration;
+      } else {
+        for (const title of Object.keys(duration)) {
+          // console.log(title);
+          if (duration[title]["drawingID"].length > highestEntries) {
+            descendingEntries.unshift(title);
+          } else {
+            descendingEntries.push(title);
+          }
         }
       }
-
-      // console.log(descendingEntries);
 
       // finding the titles that match or at least contain the user input
       for (const title of descendingEntries) {
@@ -122,21 +122,25 @@ const NounAutofillResults = (props) => {
       related_results = [],
       totalResults = [];
 
-    if (props.titles === null) return;
+    if (titles === null) return;
 
-    for (const duration of Object.values(props.titles)) {
+    for (const duration of Object.values(titles)) {
       // console.log(duration);
       // sorting titles for each 60/180/300 duration by one's with the most entries first
       let descendingEntries = [];
       let highestEntries = 0;
 
-      // fullTitle["drawingID"].length
-      for (const title of Object.keys(duration)) {
-        // console.log(title);
-        if (duration[title]["drawingID"].length > highestEntries) {
-          descendingEntries.unshift(title);
-        } else {
-          descendingEntries.push(title);
+      // checking to see if looping through likes, else follow normal pattern
+      if (typeof duration === "object" && Array.isArray(duration)) {
+        descendingEntries = duration;
+      } else {
+        for (const title of Object.keys(duration)) {
+          // console.log(title);
+          if (duration[title]["drawingID"].length > highestEntries) {
+            descendingEntries.unshift(title);
+          } else {
+            descendingEntries.push(title);
+          }
         }
       }
 
@@ -206,12 +210,7 @@ const NounAutofillResults = (props) => {
     <div className={classes.listContain}>
       {searchCtx.searchValues["requestedNouns"][idx].length !== 0 ? (
         searchCtx.searchValues["requestedNouns"][idx].map((title) => (
-          <AutofillResult
-            key={title}
-            word={title}
-            type="noun"
-            userProfile={props.userProfile}
-          />
+          <AutofillResult key={title} word={title} type="noun" idx={idx} />
         ))
       ) : showPairedResults ? (
         <div className={classes.autofillRelatedDivider}>

@@ -1,5 +1,9 @@
-import { createContext, useEffect, useState } from "react";
+import React, { createContext, useContext, useEffect, useState } from "react";
+
+import { isEqual } from "lodash";
 import { useAuth0 } from "@auth0/auth0-react";
+
+import SearchContext from "./SearchContext";
 
 import {
   getDatabase,
@@ -15,11 +19,16 @@ import { app } from "../../util/init-firebase";
 const FavoritesContext = createContext(null);
 
 export function FavoritesProvider(props) {
+  // cannot access context from another context
+  const searchCtx = useContext(SearchContext);
+
   const [userFavorites, setUserFavorites] = useState({
-    60: [],
-    180: [],
-    300: [],
+    60: false,
+    180: false,
+    300: false,
   });
+
+  const [totalFavorites, setTotalFavorites] = useState(0);
 
   const { user, isLoading, isAuthenticated } = useAuth0();
 
@@ -28,48 +37,79 @@ export function FavoritesProvider(props) {
 
   useEffect(() => {
     if (!isLoading && isAuthenticated) {
+      // honestly not even sure that we need this below, doesn't this happen already
+      // when you setUserFavorites?
       onValue(ref(db, `users/${user.sub}/likes`), (snapshot) => {
         if (snapshot.exists()) {
-          let tempUserFavorites = snapshot.val();
-          if (snapshot.val()["60"][0] === "temp") {
-            tempUserFavorites["60"] = [];
+          setUserFavorites(snapshot.val());
+
+          let tempTotalFavorites = 0;
+          for (const duration of Object.values(snapshot.val())) {
+              for (const title of Object.values(duration)) {
+                tempTotalFavorites += title["drawingID"].length;
+              }
           }
-          if (snapshot.val()["180"][0] === "temp") {
-            tempUserFavorites["180"] = [];
-          }
-          if (snapshot.val()["300"][0] === "temp") {
-            tempUserFavorites["300"] = [];
-          }
-          setUserFavorites(tempUserFavorites);
+
+          setTotalFavorites(tempTotalFavorites);
+
+          // set manuallyLoad[2] to null and currentPagenumber to be 1 if empty
+          // [1,0,2]
+
+          let currentPageNumber =
+            searchCtx.pageSelectorDetails["currentPageNumber"][2];
+
+          console.log(searchCtx.pageSelectorDetails);
+
+          searchCtx.getGallary(
+            (currentPageNumber - 1) * 6,
+            currentPageNumber * 6,
+            6,
+            2,
+            `users/${user.sub}/likes`
+          );
+          console.log("refreshing", searchCtx.pageSelectorDetails);
         }
       });
     }
   }, [isLoading, isAuthenticated]);
 
+  useEffect(() => {
+    console.log(userFavorites);
+  }, [userFavorites]);
+
   function addFavorite(
     currDrawingID,
     drawingSeconds,
+    drawingTitle,
     newTotalLikesCount,
     newDailyLikesCount
   ) {
-    // updating locally, could potentially just have it tied to onValue like above
-    setUserFavorites((prevUserFavorites) => {
-      prevUserFavorites[drawingSeconds].push(currDrawingID);
-      return prevUserFavorites;
-    });
-
     // updating user likes object in db
-    get(child(dbRef, `users/${user.sub}/likes`)).then((snapshot) => {
-      if (snapshot.exists()) {
-        let tempLikes = snapshot.val();
-        if (tempLikes[drawingSeconds][0] === "temp") {
-          tempLikes[drawingSeconds][0] = currDrawingID;
-        } else {
-          tempLikes[drawingSeconds].push(currDrawingID);
+    get(child(dbRef, `users/${user.sub}/likes/${drawingSeconds}`)).then(
+      (snapshot) => {
+        if (snapshot.exists()) {
+          let tempLikes = snapshot.val();
+
+          let newLikedDrawingObject = {
+            [drawingTitle]: { drawingID: [currDrawingID] },
+          };
+
+          // if there are no liked drawings for that duration or if no drawings of that title have been
+          // liked yet
+          if (!tempLikes) {
+            // populating first drawing in likes
+            tempLikes = newLikedDrawingObject;
+          } else if (!tempLikes?.drawingTitle) {
+            // adding first occurance of title to existing drawings in likes
+            tempLikes = { ...tempLikes, ...newLikedDrawingObject };
+          } else {
+            // adding to existing drawing title in likes
+            tempLikes[drawingTitle]["drawingID"].push(currDrawingID);
+          }
+          set(ref(db, `users/${user.sub}/likes/${drawingSeconds}`), tempLikes);
         }
-        set(ref(db, `users/${user.sub}/likes/`), tempLikes);
       }
-    });
+    );
 
     // updating drawingLikes values
     update(ref(db, `drawingLikes/${drawingSeconds}/${currDrawingID}`), {
@@ -81,31 +121,35 @@ export function FavoritesProvider(props) {
   function removeFavorite(
     currDrawingID,
     drawingSeconds,
+    drawingTitle,
     newTotalLikesCount,
     newDailyLikesCount
   ) {
-    // updating locally, could potentially just have it tied to onValue like above
-    setUserFavorites((prevUserFavorites) => {
-      let updatedUserFavorites = prevUserFavorites[drawingSeconds].filter(
-        (drawingID) => drawingID !== currDrawingID
-      );
-      prevUserFavorites[drawingSeconds] = updatedUserFavorites;
-      return prevUserFavorites;
-    });
-
     // updating user likes object in db
     get(child(dbRef, `users/${user.sub}/likes`)).then((snapshot) => {
       if (snapshot.exists()) {
         let tempLikes = snapshot.val();
 
         // taking out any occurance of the liked drawing in the array
-        tempLikes[drawingSeconds] = tempLikes[drawingSeconds].filter(
+        tempLikes[drawingSeconds][drawingTitle]["drawingID"] = tempLikes[
+          drawingSeconds
+        ][drawingTitle]["drawingID"].filter(
           (drawingID) => drawingID !== currDrawingID
         );
 
-        // if there are no liked drawings left for that duration then replaces it with "temp"
-        // so that when fetching there are no errors
-        if (tempLikes[drawingSeconds].length === 0) tempLikes[drawingSeconds].push("temp");
+        if (tempLikes[drawingSeconds][drawingTitle]["drawingID"].length === 0) {
+          delete tempLikes[drawingSeconds][drawingTitle];
+        }
+
+        // if there are no liked drawing titles left for that duration then replace with false
+        if (isEqual(tempLikes[drawingSeconds], {})) {
+          tempLikes[drawingSeconds] = false;
+
+          // manually switching to normal rendering flow (switching off of now null duration tab)
+          searchCtx.updatePageSelectorDetails("currentPageNumber", 1, 2);
+          searchCtx.updatePageSelectorDetails("durationToManuallyLoad", null, 2);
+
+        }
 
         set(ref(db, `users/${user.sub}/likes/`), tempLikes);
       }
@@ -118,23 +162,46 @@ export function FavoritesProvider(props) {
     });
   }
 
-  function itemIsFavorite(currDrawingID, drawingSeconds) {
-    if (
-      userFavorites["60"].length === 0 &&
-      userFavorites["180"].length === 0 &&
-      userFavorites["300"].length === 0
-    ) {
+  function itemIsFavorite(currDrawingID, drawingSeconds, drawingTitle) {
+    // if (
+    //   !userFavorites["60"] &&
+    //   !userFavorites["180"] &&
+    //   !userFavorites["300"]
+    // ) {
+    //   return false;
+    // }
+
+    if (userFavorites[drawingSeconds]?.[drawingTitle]?.["drawingID"]) {
+      if (
+        userFavorites[drawingSeconds][drawingTitle]["drawingID"].includes(
+          currDrawingID
+        ) === true
+      ) {
+        // console.log("found");
+        return true;
+      } else {
+        // console.log("not found");
+        return false;
+      }
+    } else {
+      // console.log("not found");
+
       return false;
     }
 
-    return userFavorites[drawingSeconds].some(
-      (drawingID) => drawingID === currDrawingID
-    );
+    // if (!Object.values(userFavorites[drawingSeconds]).includes(drawingTitle)) {
+    //   console.log("couldn't find the stuff");
+    //   return false;
+    // }
+
+    // return userFavorites[drawingSeconds][drawingTitle]["drawingID"].some(
+    //   (drawingID) => drawingID === currDrawingID
+    // );
   }
 
   const context = {
     favorites: userFavorites,
-    totalFavorites: userFavorites.length,
+    totalFavorites: totalFavorites,
     addFavorite: addFavorite,
     removeFavorite: removeFavorite,
     itemIsFavorite: itemIsFavorite,

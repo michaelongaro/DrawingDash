@@ -7,19 +7,17 @@ const SearchContext = createContext(null);
 
 export function SearchProvider(props) {
   const [searchValues, setSearchValues] = useState({
-    adjSearch: ["", ""],
-    nounSearch: ["", ""],
-    autofilledAdjectiveInput: ["", ""],
-    autofilledNounInput: ["", ""],
-    requestedAdjectives: [[], []],
-    requestedNouns: [[], []],
-    gallary: [null, null],
+    adjSearch: ["", "", ""],
+    nounSearch: ["", "", ""],
+    autofilledAdjectiveInput: ["", "", ""],
+    autofilledNounInput: ["", "", ""],
+    requestedAdjectives: [[], [], []],
+    requestedNouns: [[], [], []],
+    gallary: [null, null, null],
   });
 
-  // const [durationToManuallyLoad, setDurationToManuallyLoad] = useState(null);
-
   const [pageSelectorDetails, setPageSelectorDetails] = useState({
-    currentPageNumber: [1, 1],
+    currentPageNumber: [1, 1, 1],
     totalDrawingsByDuration: [
       {
         60: 0,
@@ -31,11 +29,18 @@ export function SearchProvider(props) {
         180: 0,
         300: 0,
       },
+      {
+        60: 0,
+        180: 0,
+        300: 0,
+      },
     ],
-    durationToManuallyLoad: [null, null],
+    durationToManuallyLoad: [null, null, null],
   });
 
-  const [persistingUserGallary, setPersistingUserGallary] = useState([]);
+  useEffect(() => {
+    console.log("changed to", pageSelectorDetails);
+  }, [pageSelectorDetails])
 
   function manuallyLoadDurations(idx) {
     if (pageSelectorDetails["durationToManuallyLoad"][idx] === "60") {
@@ -86,60 +91,47 @@ export function SearchProvider(props) {
     setPageSelectorDetails(tempValues);
   }
 
-  function getGallary(startIdx, endIdx, maxAllowed, profile = "") {
-    console.log("called with", startIdx, endIdx, maxAllowed);
+  // shiet idk think of clean way to distinguish between regular honestly
+  // probably just strip the last 5 chars and see if it is equal to "likes" or whatever ahhhhhhhhh
+  // because the idx shiet is everywhere honestly probably just keep it
+
+  function getGallary(startIdx, endIdx, maxAllowed, idx, dbPath) {
     const dbRef = ref(getDatabase(app));
 
     let startIndex = startIdx;
     let endIndex = endIdx;
 
-    let idx = profile.length > 0 ? 1 : 0;
     let fetchAll = false;
 
     if (
       searchValues["adjSearch"][idx] === "" &&
       searchValues["nounSearch"][idx] === ""
     ) {
-      if (idx === 1) {
+      if (idx !== 0) {
         fetchAll = true;
-        // return; // comment this out
       } else {
         return;
       }
     }
 
     let fullQuery = `${searchValues["adjSearch"][idx]} ${searchValues["nounSearch"][idx]}`;
+
     let gallaryResults = { 60: [], 180: [], 300: [] };
-    const drawingIDS = [];
     let totalDrawings = { 60: 0, 180: 0, 300: 0 };
 
-    // setDurationToManuallyLoad(null);
-
-    get(child(dbRef, `${profile}titles`))
+    get(child(dbRef, dbPath))
       .then((snapshot) => {
         // will be null if title doesn't exist in duration
         let fullQuery60, fullQuery180, fullQuery300;
 
         // make this below into 3 calls each (use idx to see whether it's for profile or not)
         if (fetchAll) {
-          console.log(fetchAll, profile);
           fullQuery60 = snapshot.val()["60"];
           fullQuery180 = snapshot.val()["180"];
           fullQuery300 = snapshot.val()["300"];
 
-          // console.log(fullQuery60);
-          // console.log(fullQuery180);
-          // console.log(fullQuery300);
-
-          // CHANGE THIS LATER 100% JUST NEED TO MAKE IT WORK FIRST
-          console.log(
-            "called with",
-            pageSelectorDetails["durationToManuallyLoad"][idx]
-          );
-          console.log(
-            "called with",
-            pageSelectorDetails["durationToManuallyLoad"][idx]
-          );
+          // CHANGE THIS LATER 100% JUST NEED TO MAKE IT WORK FIRST, maybe need to use refs
+          // since the values like endIndex getting changed will matter to the whole...
 
           if (pageSelectorDetails["durationToManuallyLoad"][idx]) {
             if (pageSelectorDetails["durationToManuallyLoad"][idx] === "60") {
@@ -312,13 +304,9 @@ export function SearchProvider(props) {
 
   const context = {
     searchValues: searchValues,
-    persistingUserGallary: persistingUserGallary,
-    // durationToManuallyLoad: durationToManuallyLoad,
-    // setDurationToManuallyLoad: setDurationToManuallyLoad,
     manuallyLoadDurations: manuallyLoadDurations,
     pageSelectorDetails: pageSelectorDetails,
     updatePageSelectorDetails: updatePageSelectorDetails,
-    setPersistingUserGallary: setPersistingUserGallary,
     updateSearchValues: updateSearchValues,
     resetAllValues: resetAllValues,
     getGallary: getGallary,

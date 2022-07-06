@@ -210,7 +210,7 @@ const UserModal = ({ user }) => {
         </div>
       </div>
 
-      <Search userProfile={user} forModal={true} />
+      <Search dbPath={`users/${user}/titles`} idx={1} forModal={true} />
     </div>
   );
 };

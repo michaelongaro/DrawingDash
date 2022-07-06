@@ -19,23 +19,16 @@ import { app } from "../../util/init-firebase";
 
 import classes from "./Search.module.css";
 
-const Search = (props) => {
+const Search = ({ dbPath, margin, idx, forModal }) => {
   const searchCtx = useContext(SearchContext);
   const db = getDatabase(app);
 
   const [dbTitles, setDBTitles] = useState(null);
 
-  let idx = props.userProfile.length > 0 ? 1 : 0;
-
   useEffect(() => {
-    if (idx === 0) {
-      console.log(0);
-    }
-    if (idx === 1) {
-      console.log(1);
-      console.log("refreshing in Search");
-
-      searchCtx.getGallary(0, 6, 6, `users/${props.userProfile}/`);
+    // if we are searching through a user's gallary/likes
+    if (idx !== 0) {
+      searchCtx.getGallary(0, 6, 6, idx, dbPath);
     }
 
     return () => {
@@ -53,7 +46,6 @@ const Search = (props) => {
 
   const adjectiveInputRef = useRef();
   const nounInputRef = useRef();
-  // const outerRef = useRef();
 
   const refreshAdjSearch = (event) => {
     searchCtx.updateSearchValues("adjSearch", event.target.value.trim(), idx);
@@ -61,7 +53,7 @@ const Search = (props) => {
     setShowAdjResults(true);
 
     if (event.target.value === "") {
-      setShowAdjResults(false)
+      setShowAdjResults(false);
     }
   };
 
@@ -76,21 +68,11 @@ const Search = (props) => {
   };
 
   useEffect(() => {
-    onValue(
-      ref(
-        db,
-        `${
-          props.userProfile.length > 0
-            ? `users/${props.userProfile}/titles`
-            : "titles"
-        }`
-      ),
-      (snapshot) => {
-        if (snapshot.exists()) {
-          setDBTitles(snapshot.val());
-        }
+    onValue(ref(db, dbPath), (snapshot) => {
+      if (snapshot.exists()) {
+        setDBTitles(snapshot.val());
       }
-    );
+    });
 
     adjectiveInputRef.current.addEventListener("input", refreshAdjSearch);
     nounInputRef.current.addEventListener("input", refreshNounSearch);
@@ -133,17 +115,14 @@ const Search = (props) => {
     }
   }, [searchCtx.searchValues["autofilledNounInput"][idx]]);
 
-
   useEffect(() => {
     console.log(showAdjResults);
-  }, [showAdjResults])
+  }, [showAdjResults]);
 
   useEffect(() => {
     let handler = (event) => {
       // adjective handling
       if (!adjectiveInputRef.current.contains(event.target)) {
-        // console.log("hiding from handler");
-        // if (idx === 1) outerRef.current.click();
         setShowAdjResults(false);
         setCheckAdjPair(false);
       } else if (
@@ -152,8 +131,6 @@ const Search = (props) => {
         nounInputRef.current.value.trim().length !== 0
       ) {
         setCheckAdjPair(true);
-          // console.log("showing adj results 1");
-
         setShowAdjResults(true);
       } else if (
         adjectiveInputRef.current.contains(event.target) &&
@@ -168,7 +145,6 @@ const Search = (props) => {
           ][0].toLowerCase() !==
           adjectiveInputRef.current.value.trim().toLowerCase()
         ) {
-          // console.log("showing adj results 2");
           setShowAdjResults(true);
         }
       }
@@ -207,27 +183,25 @@ const Search = (props) => {
     };
   }, []);
 
-  //  searchCtx.searchValues["requestedAdjectives"][idx],
-  // searchCtx.searchValues["requestedNouns"][idx],
-
   function prepGallarySearch(event) {
     event.preventDefault();
 
     // why does this have an '&& idx === 0' ? feel like it should apply to both scenarios
-    if (
-      searchCtx.searchValues["adjSearch"][idx].length === 0 &&
-      searchCtx.searchValues["nounSearch"][idx].length === 0 &&
-      idx === 0
-    ) {
-      searchCtx.updateSearchValues("gallary", null, idx);
-      return;
-    }
+    // if (
+    //   searchCtx.searchValues["adjSearch"][idx].length === 0 &&
+    //   searchCtx.searchValues["nounSearch"][idx].length === 0 &&
+    //   idx === 0
+    // ) {
+    //   searchCtx.updateSearchValues("gallary", null, idx);
+    //   return;
+    // }
 
     searchCtx.updatePageSelectorDetails("durationToManuallyLoad", null, idx);
-    if (idx === 1) {
-      searchCtx.getGallary(0, 6, 6, `users/${props.userProfile}/`);
+
+    if (idx !== 0) {
+      searchCtx.getGallary(0, 6, 6, idx, dbPath);
     } else {
-      searchCtx.getGallary(0, 6, 6, "");
+      searchCtx.getGallary(0, 6, 6, idx, dbPath);
     }
 
     setGallaryListStaticTitle(
@@ -257,7 +231,7 @@ const Search = (props) => {
             <AdjAutofillResults
               titles={dbTitles}
               checkForPair={checkAdjPair}
-              userProfile={props.userProfile}
+              idx={idx}
             />
           </div>
         </div>
@@ -274,7 +248,7 @@ const Search = (props) => {
             <NounAutofillResults
               titles={dbTitles}
               checkForPair={checkNounPair}
-              userProfile={props.userProfile}
+              idx={idx}
             />
           </div>
         </div>
@@ -284,9 +258,10 @@ const Search = (props) => {
       <GallaryList
         drawingIDs={searchCtx.searchValues["gallary"][idx]}
         title={gallaryListStaticTitle}
-        margin={props.margin}
-        databasePath={idx === 1 ? `users/${props.userProfile}/` : ""}
-        forModal={props.forModal}
+        margin={margin}
+        databasePath={dbPath}
+        idx={idx}
+        forModal={forModal}
       />
     </>
   );

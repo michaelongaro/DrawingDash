@@ -7,7 +7,7 @@ import classes from "./AutofillResult.module.css";
 const AutofillResult = (props) => {
   const searchCtx = useContext(SearchContext);
 
-  let idx = props.userProfile.length > 0 ? 1 : 0;
+  let idx = props.idx;
 
   const resultRef = useRef();
 

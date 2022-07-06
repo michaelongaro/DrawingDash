@@ -21,7 +21,14 @@ const Gallary = () => {
       {showGallery && (
         <div className={`${classes.baseFlex} ${classes.prefCard}`}>
           <ProfileHeader title={"Gallery"} />
-          <Search userProfile={user.sub} margin={"1em"} forModal={false} />
+          <div style={{ margin: "1em" }}>
+            <Search
+              dbPath={`users/${user.sub}/titles`}
+              margin={"1em"}
+              idx={1}
+              forModal={false}
+            />
+          </div>
         </div>
       )}
     </>

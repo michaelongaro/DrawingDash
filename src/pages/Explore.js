@@ -40,7 +40,7 @@ function Explore() {
       <div style={{ height: dynamicHeight }} className={classes.exploreContain}>
         <div styles={{ marginTop: "3em" }}></div>
         <FocalAnimatedDrawings forHomepage={false} forSearch={true} />
-        <Search userProfile={""} forModal={false} />
+        <Search dbPath={"titles"} forModal={false} idx={0} />
       </div>
       <Footer />
     </motion.div>

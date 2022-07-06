@@ -1,15 +1,15 @@
 import React from "react";
 
-const HeartFilledIcon = () => {
+const HeartFilledIcon = ({dimensions}) => {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
       version="1.1"
-      width="1.5em"
-      height="1.5em"
+      width={dimensions}
+      height={dimensions}
       x="0"
       y="0"
-      viewBox="0 0 512.00002 512"
+      viewBox="0 0 512 512"
       style={{ enableBackground: "new 0 0 512 512" }}
     >
       <g>

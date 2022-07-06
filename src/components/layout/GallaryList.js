@@ -10,12 +10,19 @@ import GallaryItem from "./GallaryItem";
 import FiveMinuteIcon from "../../svgs/FiveMinuteIcon";
 import OneMinuteIcon from "../../svgs/OneMinuteIcon";
 import ThreeMinuteIcon from "../../svgs/ThreeMinuteIcon";
+import MagnifyingGlassIcon from "../../svgs/MagnifyingGlassIcon";
 
 import classes from "./GallaryList.module.css";
 import baseClasses from "../../index.module.css";
-import MagnifyingGlassIcon from "../../svgs/MagnifyingGlassIcon";
 
-const GallaryList = ({ drawingIDs, title, margin, databasePath, forModal }) => {
+const GallaryList = ({
+  drawingIDs,
+  title,
+  margin,
+  databasePath,
+  idx,
+  forModal,
+}) => {
   const searchCtx = useContext(SearchContext);
 
   const [showEmptyResults, setShowEmptyResults] = useState(false);
@@ -44,14 +51,10 @@ const GallaryList = ({ drawingIDs, title, margin, databasePath, forModal }) => {
   // will prob want to change the 60 below to be empty then have logic down below to handle
   const [currentlyShownDuration, setCurrentlyShownDuration] = useState();
 
-  let idx = databasePath === "" ? 0 : 1;
-
   useEffect(() => {
     if (drawingIDs) {
       if (isEqual(drawingIDs, { 60: [], 180: [], 300: [] })) {
-        console.log("showing Empty");
         setShowEmptyResults(true);
-        // setRenderGallaryList(true);
       } else if (!isEqual(drawingIDs, { 60: [], 180: [], 300: [] })) {
         // hiding empty results if they are currently being shown
         setShowEmptyResults(false);
@@ -62,9 +65,11 @@ const GallaryList = ({ drawingIDs, title, margin, databasePath, forModal }) => {
           drawingIDs["300"].length !== 0 ? true : false,
         ]);
 
+        updateDurationOpacities();
+
         if (forModal) {
           setSkeletonRatio(4.341);
-        } else if (idx === 1) {
+        } else if (idx === 1 || idx === 2) {
           setSkeletonRatio(6.275);
         } else if (idx === 0) {
           setSkeletonRatio(3.5);
@@ -72,12 +77,8 @@ const GallaryList = ({ drawingIDs, title, margin, databasePath, forModal }) => {
 
         // used if want to load a different page other than the default order (60->180->300)
         if (searchCtx.pageSelectorDetails["durationToManuallyLoad"][idx]) {
-          setDurationStates(
-            searchCtx.manuallyLoadDurations(databasePath === "" ? 0 : 1)
-          );
-          setShowButtonColors(
-            searchCtx.manuallyLoadDurations(databasePath === "" ? 0 : 1)
-          );
+          setDurationStates(searchCtx.manuallyLoadDurations(idx));
+          setShowButtonColors(searchCtx.manuallyLoadDurations(idx));
           setCurrentlyShownDuration(
             searchCtx.pageSelectorDetails["durationToManuallyLoad"][idx]
           );
@@ -111,6 +112,57 @@ const GallaryList = ({ drawingIDs, title, margin, databasePath, forModal }) => {
     }
   }, [drawingIDs]);
 
+  function updateDurationOpacities() {
+    if (searchCtx.pageSelectorDetails["durationToManuallyLoad"][idx]) {
+      if (
+        drawingIDs[searchCtx.pageSelectorDetails["durationToManuallyLoad"][idx]]
+          .length !== 0
+      ) {
+        if (
+          searchCtx.pageSelectorDetails["durationToManuallyLoad"][idx] === "60"
+        ) {
+          setRedOpacity(1);
+          setYellowOpacity(0);
+          setGreenOpacity(0);
+        } else if (
+          searchCtx.pageSelectorDetails["durationToManuallyLoad"][idx] === "180"
+        ) {
+          setRedOpacity(0);
+          setYellowOpacity(1);
+          setGreenOpacity(0);
+        } else if (
+          searchCtx.pageSelectorDetails["durationToManuallyLoad"][idx] === "300"
+        ) {
+          setRedOpacity(0);
+          setYellowOpacity(0);
+          setGreenOpacity(1);
+        }
+      }
+    } else {
+      let continueChecking = true;
+      // setting duration tab color (filled in/empty)
+      if (drawingIDs["60"].length !== 0) {
+        setRedOpacity(1);
+        continueChecking = false;
+      } else {
+        setRedOpacity(0);
+      }
+      if (continueChecking && drawingIDs["180"].length !== 0) {
+        setYellowOpacity(1);
+        continueChecking = false;
+      } else {
+        setYellowOpacity(0);
+      }
+
+      if (continueChecking && drawingIDs["300"].length !== 0) {
+        setGreenOpacity(1);
+        continueChecking = false;
+      } else {
+        setGreenOpacity(0);
+      }
+    }
+  }
+
   return (
     <>
       {drawingIDs && (
@@ -132,7 +184,7 @@ const GallaryList = ({ drawingIDs, title, margin, databasePath, forModal }) => {
                 borderWidth: "2px 2px 0 2px",
 
                 cursor: availableDurations[0] ? "pointer" : "default",
-                opacity: availableDurations[0] ? "1" : ".5",
+                opacity: availableDurations[0] ? "1" : ".2",
               }}
               onMouseEnter={() => {
                 if (availableDurations[0]) setRedOpacity(1);
@@ -157,6 +209,8 @@ const GallaryList = ({ drawingIDs, title, margin, databasePath, forModal }) => {
                     1,
                     idx
                   );
+
+                  searchCtx.getGallary(0, 6, 6, idx, databasePath);
                 }
               }}
             >
@@ -169,7 +223,7 @@ const GallaryList = ({ drawingIDs, title, margin, databasePath, forModal }) => {
                   left: "-2px",
                   top: "-2px",
                   width: "188px",
-                  height: "66px",
+                  height: "74px",
                 }}
                 className={`${classes.baseButtonFlex} ${classes.durationIconContainer} ${classes.hoverRed}`}
               >
@@ -195,7 +249,7 @@ const GallaryList = ({ drawingIDs, title, margin, databasePath, forModal }) => {
                 borderWidth: "2px 2px 0 2px",
 
                 cursor: availableDurations[1] ? "pointer" : "default",
-                opacity: availableDurations[1] ? "1" : ".5",
+                opacity: availableDurations[1] ? "1" : ".2",
               }}
               onMouseEnter={() => {
                 if (availableDurations[1]) setYellowOpacity(1);
@@ -219,6 +273,8 @@ const GallaryList = ({ drawingIDs, title, margin, databasePath, forModal }) => {
                     1,
                     idx
                   );
+
+                  searchCtx.getGallary(0, 6, 6, idx, databasePath);
                 }
               }}
             >
@@ -231,7 +287,7 @@ const GallaryList = ({ drawingIDs, title, margin, databasePath, forModal }) => {
                   left: "-2px",
                   top: "-2px",
                   width: "188px",
-                  height: "66px",
+                  height: "74px",
                 }}
                 className={`${classes.baseButtonFlex} ${classes.durationIconContainer} ${classes.hoverYellow}`}
               >
@@ -255,7 +311,7 @@ const GallaryList = ({ drawingIDs, title, margin, databasePath, forModal }) => {
                 borderWidth: "2px 2px 0 2px",
 
                 cursor: availableDurations[2] ? "pointer" : "default",
-                opacity: availableDurations[2] ? "1" : ".5",
+                opacity: availableDurations[2] ? "1" : ".2",
               }}
               className={classes.durationIconContainer}
               onMouseEnter={() => {
@@ -280,6 +336,8 @@ const GallaryList = ({ drawingIDs, title, margin, databasePath, forModal }) => {
                     1,
                     idx
                   );
+
+                  searchCtx.getGallary(0, 6, 6, idx, databasePath);
                 }
               }}
             >
@@ -292,7 +350,7 @@ const GallaryList = ({ drawingIDs, title, margin, databasePath, forModal }) => {
                   left: "-2px",
                   top: "-2px",
                   width: "188px",
-                  height: "66px",
+                  height: "74px",
                 }}
                 className={`${classes.baseButtonFlex} ${classes.durationIconContainer} ${classes.hoverGreen}`}
               >
@@ -431,7 +489,13 @@ const GallaryList = ({ drawingIDs, title, margin, databasePath, forModal }) => {
                     className={classes.pageSelectorButton}
                     // replace 6 with the max allowed per page
                     onClick={() => {
-                      searchCtx.getGallary(6 * i, 6 * (i + 1), 6, databasePath);
+                      searchCtx.getGallary(
+                        6 * i,
+                        6 * (i + 1),
+                        6,
+                        idx,
+                        databasePath
+                      );
                       searchCtx.updatePageSelectorDetails(
                         "currentPageNumber",
                         i + 1,

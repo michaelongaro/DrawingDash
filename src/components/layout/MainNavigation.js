@@ -326,32 +326,10 @@ function MainNavigation() {
                   username ? ` ${username}!` : "!"
                 }`}</div>
               ) : null}
-              <div
-                className={classes.profileDropdownContainer}
-                onMouseEnter={() => {
-                  setHoveringOnProfilePicture(true);
-                }}
-                onMouseLeave={() => {
-                  setHoveringOnProfilePicture(false);
-                }}
-              >
-                <div style={{ position: "absolute" }}>
-                  {isFetching ? (
-                    <div
-                      style={{ width: "3em", height: "3em", borderRadius: "50%" }}
-                      className={baseClasses.skeletonLoading}
-                    ></div>
-                  ) : (
-                    <img
-                      className={classes.profilePicture}
-                      src={croppedImage ? croppedImage : image}
-                      alt={"cropped profile"}
-                    />
-                  )}
-                </div>
-
+              <Link to="/profile/preferences">
                 <div
-                  className={classes.dropdownContainer}
+                  style={{ cursor: "pointer" }}
+                  className={classes.profileDropdownContainer}
                   onMouseEnter={() => {
                     setHoveringOnProfilePicture(true);
                   }}
@@ -359,33 +337,64 @@ function MainNavigation() {
                     setHoveringOnProfilePicture(false);
                   }}
                 >
-                  <div
-                    style={{
-                      opacity: hoveringOnProfilePicture ? 1 : 0,
-                      pointerEvents: hoveringOnProfilePicture ? "auto" : "none",
-                    }}
-                    className={classes.profileDropdown}
-                  >
-                    <Link
-                      className={classes.profileButton}
-                      onMouseEnter={() => {
-                        setHoveringOnProfileButton(true);
-                      }}
-                      onMouseLeave={() => {
-                        setHoveringOnProfileButton(false);
-                      }}
-                      to="/profile/preferences"
-                    >
-                      <DefaultUserIcon
-                        dimensions={"1.5em"}
-                        color={hoveringOnProfileButton ? "white" : "black"}
+                  <div style={{ position: "absolute" }}>
+                    {isFetching ? (
+                      <div
+                        style={{
+                          width: "3em",
+                          height: "3em",
+                          borderRadius: "50%",
+                        }}
+                        className={baseClasses.skeletonLoading}
+                      ></div>
+                    ) : (
+                      <img
+                        className={classes.profilePicture}
+                        src={croppedImage ? croppedImage : image}
+                        alt={"cropped profile"}
                       />
-                      <div>Profile</div>
-                    </Link>
-                    <LogOutButton />
+                    )}
+                  </div>
+
+                  <div
+                    className={classes.dropdownContainer}
+                    onMouseEnter={() => {
+                      setHoveringOnProfilePicture(true);
+                    }}
+                    onMouseLeave={() => {
+                      setHoveringOnProfilePicture(false);
+                    }}
+                  >
+                    <div
+                      style={{
+                        opacity: hoveringOnProfilePicture ? 1 : 0,
+                        pointerEvents: hoveringOnProfilePicture
+                          ? "auto"
+                          : "none",
+                      }}
+                      className={classes.profileDropdown}
+                    >
+                      <Link
+                        className={classes.profileButton}
+                        onMouseEnter={() => {
+                          setHoveringOnProfileButton(true);
+                        }}
+                        onMouseLeave={() => {
+                          setHoveringOnProfileButton(false);
+                        }}
+                        to="/profile/preferences"
+                      >
+                        <DefaultUserIcon
+                          dimensions={"1.5em"}
+                          color={hoveringOnProfileButton ? "white" : "black"}
+                        />
+                        <div>Profile</div>
+                      </Link>
+                      <LogOutButton />
+                    </div>
                   </div>
                 </div>
-              </div>
+              </Link>
             </div>
           )}
         </ul>

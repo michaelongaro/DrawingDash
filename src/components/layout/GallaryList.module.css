@@ -59,7 +59,7 @@
   border-top-left-radius: 1em;
   border-top-right-radius: 1em;
   border-width: 2px 2px 0 2px;
-  padding: 0.5em 4em 0 4em;
+  padding: 0.5em 4em 0.5em 4em;
   transition: all 200ms;
 }
 
