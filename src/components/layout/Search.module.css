@@ -1,7 +1,7 @@
 .formContainer {
   display: flex;
   justify-content: center;
-  /* align-items: center; */
+  align-items: center;
   gap: 2.5em;
 
   margin-top: 1em;
@@ -29,8 +29,8 @@
   transition: 300ms ease all;
 }
 
-.searchContainer input:focus ~ label,
-.searchContainer input:valid ~ label {
+.searchContainer input:focus~label,
+.searchContainer input:valid~label {
   top: -24px;
   left: -1px;
   font-size: 0.95em;
@@ -99,8 +99,6 @@ input {
   color: #ffffff;
   cursor: pointer;
   display: inline-block;
-  font-family: Inter, -apple-system, system-ui, Roboto, "Helvetica Neue", Arial,
-    sans-serif;
   height: 40px;
   line-height: 40px;
   outline: 0;

@@ -65,13 +65,13 @@
 
 .timeBorder {
   margin-top: 0.5em;
-  text-shadow: 0px 3px 5px black;
+  text-shadow: 2px 3px 8px black;
   color: rgba(255, 255, 255, 0.9);
 }
 
 .promptTextMargin {
   margin: 0 1.5em 1.5em 1.5em;
-  text-shadow: 0px 3px 5px black;
+  text-shadow: 2px 3px 8px black;
   color: white;
   text-align: center;
 }
@@ -111,8 +111,6 @@
   background-color: white;
   border-top-width: 0px;
   border-bottom-width: 0px;
-  /* border-left: 1px solid black;
-  border-right: 1px solid black; */
   border-radius: 5px;
 }
 
@@ -259,17 +257,9 @@
   );
   background-size: 800px 800px;
   background-position: 0px 0px;
-  animation: move 10s infinite linear;
-  opacity: 1;
+  animation: move 15s infinite linear;
+  opacity: 0.8;
 }
-
-/* rgba(215, 54, 92, 0.5),
-    rgba(215, 54, 92, 0.9),
-    rgba(215, 54, 92, 0.9),
-    rgba(215, 54, 92, 0.5),
-    rgba(215, 54, 92, 0.9),
-    rgba(215, 54, 92, 0.9),
-    rgba(215, 54, 92, 0.5) */
 
 @keyframes move {
   from {

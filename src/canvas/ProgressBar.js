@@ -57,9 +57,11 @@ const ProgressBar = () => {
         duration: 500,
         translateX: dailyDrawingsAreComplete ? 0 : [0, "265px"],
         translateY: dailyDrawingsAreComplete ? 0 : [0, "175px"],
-        fontSize: ["1.25em", "1.5em"],
-        fontWeight: [400, 600],
-        color: ["rgb(100, 100, 100)", "rgb(0, 0, 0)"],
+        fontSize: dailyDrawingsAreComplete ? "1.25em" : ["1.25em", "1.5em"],
+        fontWeight: dailyDrawingsAreComplete ? 400 : [400, 600],
+        color: dailyDrawingsAreComplete
+          ? "rgb(100, 100, 100)"
+          : ["rgb(100, 100, 100)", "rgb(0, 0, 0)"],
         easing: "easeInSine",
       });
     }
@@ -225,7 +227,7 @@ const ProgressBar = () => {
       !localPBStates["resetToSelectBar"]
     ) {
       // scroll progressBar into view when reset button is clicked
-      window.scrollIntoView({ behavior: "smooth" });
+      document.body.scrollIntoView({ behavior: "smooth" });
 
       anime({
         targets: "#draw",
@@ -281,10 +283,16 @@ const ProgressBar = () => {
     }
 
     setLocalPBStates(DSCtx.PBStates);
-  }, [isLoading, isAuthenticated, DSCtx.drawingStatuses, DSCtx.PBStates, localPBStates]);
+  }, [
+    isLoading,
+    isAuthenticated,
+    DSCtx.drawingStatuses,
+    DSCtx.PBStates,
+    localPBStates,
+  ]);
 
   return (
-    <div  className={classes.rectangle}>
+    <div className={classes.rectangle}>
       {/* select circle */}
       <div className={classes.circle}>
         <div

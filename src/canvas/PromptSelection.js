@@ -269,7 +269,9 @@ const PromptSelection = () => {
         scale: [1, 0],
         pointerEvents: ["auto", "none"],
         direction: "normal",
-        duration: 500,
+        duration: 1000,
+        delay: 350,
+
         loop: false,
         easing: "linear",
       });
@@ -281,9 +283,9 @@ const PromptSelection = () => {
         scale: [0, 1],
         pointerEvents: ["auto", "none"],
         direction: "normal",
-        // delay: 800,
+        delay: 500,
         loop: false,
-        duration: 500,
+        duration: 1000,
         easing: "linear",
       });
 
@@ -293,9 +295,11 @@ const PromptSelection = () => {
         translateY: [0, "225px"],
         scale: [1, 0],
         opacity: [1, 0],
+        delay: 350,
+
         pointerEvents: ["auto", "none"],
         direction: "normal",
-        duration: 1500,
+        duration: 1000,
         loop: false,
 
         easing: "linear",
@@ -305,14 +309,16 @@ const PromptSelection = () => {
       anime({
         targets: "#extraPromptContainer",
         translateY: [0, "225px"],
-        delay: 200,
+        // delay: 200,
         opacity: [0, 1],
         scale: [0, 1],
+        delay: 500,
+
         pointerEvents: ["none", "auto"],
         direction: "normal",
         loop: false,
 
-        duration: 1500,
+        duration: 1000,
         easing: "linear",
       });
 
@@ -614,7 +620,12 @@ const PromptSelection = () => {
               {/* daily extra prompt */}
               <div
                 className={`${classes.durationButton} ${adaptiveBackground}`}
-                style={{ height: "100%", cursor: "pointer" }}
+                style={{
+                  height: "100%",
+                  cursor: "pointer",
+                  backgroundPosition:
+                    selectedExtraPrompt === "regular" ? "200px" : "",
+                }}
                 onClick={() => {
                   setSelectedExtraPrompt("regular");
                   setNextDisabled(false);
@@ -632,7 +643,13 @@ const PromptSelection = () => {
               {/* custom prompt */}
               <div
                 className={`${classes.durationButton} ${customAdaptiveBackground}`}
-                style={{ height: "276px", padding: "1.5em", cursor: "pointer" }}
+                style={{
+                  height: "276px",
+                  padding: "1.5em",
+                  cursor: "pointer",
+                  backgroundPosition:
+                    selectedExtraPrompt === "custom" ? "200px" : "",
+                }}
                 onClick={() => {
                   setSelectedExtraPrompt("custom");
                   setNextDisabled(false);

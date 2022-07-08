@@ -275,7 +275,7 @@ const Preferences = () => {
             className={baseClasses.baseVertFlex}
           >
             <div style={{ gap: "1.5em" }} className={baseClasses.baseFlex}>
-              <div className={classes.username}>Username</div>
+              <div className={classes.inputLabel}>Username</div>
 
               {editAvailable ? (
                 <div>{username}</div>
@@ -294,7 +294,7 @@ const Preferences = () => {
             </div>
 
             <div style={{ gap: "3em" }} className={baseClasses.baseFlex}>
-              <div className={classes.status}>Status</div>
+              <div className={classes.inputLabel}>Status</div>
               {editAvailable ? (
                 <div>
                   <i>{status}</i>
@@ -314,7 +314,7 @@ const Preferences = () => {
             </div>
 
             <div style={{ gap: "3em" }} className={baseClasses.baseFlex}>
-              <div className={classes.email}>Email</div>
+              <div className={classes.inputLabel}>Email</div>
               <div className={classes.setEmail}>{userEmail}</div>
             </div>
 
@@ -445,7 +445,9 @@ const Preferences = () => {
               </button>
 
               {/* parent container to allow for transition between linear-gradient backgrounds */}
-              <div style={{ position: "relative", width: "73px", height: "40px" }}>
+              <div
+                style={{ position: "relative", width: "73px", height: "40px" }}
+              >
                 <button
                   style={{
                     position: "absolute",
@@ -454,11 +456,9 @@ const Preferences = () => {
                     backgroundImage:
                       "linear-gradient(-180deg, #d3d3d3, #3a3a3a)",
                     opacity: hasChangedPicture || inputWasChanged ? 0 : 1,
-                    cursor: "auto"
-                    
+                    cursor: "auto",
                   }}
                   disabled={!hasChangedPicture && !inputWasChanged}
-
                   className={classes.editButton}
                 >
                   Save
@@ -472,7 +472,8 @@ const Preferences = () => {
 
                     pointerEvents:
                       hasChangedPicture || inputWasChanged ? "auto" : "none",
-                      cursor: hasChangedPicture || inputWasChanged ? "pointer" : "auto",
+                    cursor:
+                      hasChangedPicture || inputWasChanged ? "pointer" : "auto",
                   }}
                   disabled={!hasChangedPicture && !inputWasChanged}
                   className={classes.editButton}

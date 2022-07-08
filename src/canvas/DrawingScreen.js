@@ -19,7 +19,15 @@ import DownloadIcon from "../svgs/DownloadIcon";
 import RedoIcon from "../svgs/RedoIcon";
 import LogInButton from "../oauth/LogInButton";
 
-import { getDatabase, ref, set, child, get, update } from "firebase/database";
+import {
+  getDatabase,
+  ref,
+  set,
+  onValue,
+  child,
+  get,
+  update,
+} from "firebase/database";
 
 import {
   getDownloadURL,
@@ -46,7 +54,7 @@ const DrawingScreen = () => {
     { seconds: 180, colorArray: [180, 135, 90, 45] },
     { seconds: 300, colorArray: [300, 225, 150, 75] },
   ];
-console.log("rerendering");
+  console.log("rerendering");
   const currentTimer = {
     60: 0,
     180: 1,
@@ -61,7 +69,7 @@ console.log("rerendering");
   const [showPendingDownload, setShowPendingDownload] = useState(false);
   const [showPendingCopy, setShowPendingCopy] = useState(false);
 
-  const [showCountdownTimer, setShowCountdownTimer] = useState(true);
+  const [showCountdownTimer, setShowCountdownTimer] = useState(false);
   const [resetAtDate, setResetAtDate] = useState(
     "January 01, 2030 00:00:00 GMT+03:00"
   );
@@ -85,6 +93,16 @@ console.log("rerendering");
   }
 
   useEffect(() => {
+    // clearing canvas and preparing it to be drawn on
+    prepareCanvas();
+
+    // setting current time to reset prompts at
+    onValue(ref(db, "masterDateToResetPromptsAt"), (snapshot) => {
+      if (snapshot.exists()) {
+        setResetAtDate(snapshot.val());
+      }
+    });
+
     anime({
       targets: "#drawingScreen",
       loop: false,
@@ -166,8 +184,6 @@ console.log("rerendering");
     };
   }, []);
 
-  // console.log(getFloodFillStatus());
-
   const [showCanvas, setShowCanvas] = useState(false);
 
   const [showCountdownOverlay, setShowCountdownOverlay] = useState(
@@ -197,10 +213,10 @@ console.log("rerendering");
 
   useEffect(() => {
     if (DSCtx.showEndOverlay && DSCtx.showEndOutline) {
-      setShowEndOverlay(classes.overlayBreathingBackground);
+      // setShowEndOverlay(classes.overlayBreathingBackground);
       setShowEndOutline(classes.canvasOutline);
     } else {
-      setShowEndOverlay(classes.hide);
+      // setShowEndOverlay(classes.hide);
       setShowEndOutline(classes.hide);
     }
   }, [DSCtx.showEndOverlay, DSCtx.showEndOutline]);
@@ -223,8 +239,28 @@ console.log("rerendering");
 
   useEffect(() => {
     let id = null;
-    prepareCanvas();
 
+    // drawingTime will only be non-zero when coming from palette selection page
+    // all other renders of this effect w/ zero values are not run
+
+    if (DSCtx.drawingTime !== 0) {
+      console.log("proceeding because drawingTime is NOT 0");
+      if (!isLoading && isAuthenticated) {
+        id = setTimeout(sendToDB, DSCtx.drawingTime * 1000 + 3050);
+      } else if (!isLoading && !isAuthenticated) {
+        id = setTimeout(
+          updateUserLocalStorage,
+          DSCtx.drawingTime * 1000 + 3050
+        );
+      }
+    }
+
+    return () => {
+      clearTimeout(id);
+    };
+  }, [isLoading, isAuthenticated, DSCtx.drawingTime]);
+
+  useEffect(() => {
     if (!isLoading && isAuthenticated) {
       if (
         DSCtx.drawingStatuses["60"] &&
@@ -233,11 +269,7 @@ console.log("rerendering");
         DSCtx.drawingStatuses["extra"]
       ) {
         setShowCountdownTimer(true);
-        // ideally have all progressbar logic inside that component, have it look for these exact
-        // conditions (drop the extra if user isn't logged in)
       }
-
-      id = setTimeout(sendToDB, DSCtx.drawingTime * 1000 + 3015);
     } else if (!isLoading && !isAuthenticated) {
       if (
         DSCtx.drawingStatuses["60"] &&
@@ -245,22 +277,18 @@ console.log("rerendering");
         DSCtx.drawingStatuses["300"]
       ) {
         setShowCountdownTimer(true);
-        // ideally have all progressbar logic inside that component, have it look for these exact
-        // conditions (drop the extra if user isn't logged in)
       }
-
-      id = setTimeout(updateUserLocalStorage, DSCtx.drawingTime * 1000 + 3015);
     }
-
-    return () => {
-      clearTimeout(id);
-    };
-  }, [isLoading, isAuthenticated, DSCtx.drawingStatuses]);
+  }, [DSCtx.drawingStatuses]);
 
   function updateUserLocalStorage() {
     if (DSCtx.drawingTime === 0 || DSCtx.drawingTime === undefined) return;
 
+    DSCtx.setDrawingTime(0);
+
     setShowCanvas(false);
+
+    console.log("UPLOADING DRAWING TO LOCALSTORAGE");
 
     let currentStorageValues = JSON.parse(
       localStorage.getItem("unregisteredUserInfo")
@@ -327,14 +355,14 @@ console.log("rerendering");
     );
 
     setStartTimer(false);
-    DSCtx.setDrawingTime(0);
   }
 
   const renderTime = ({ remainingTime }) => {
     if (remainingTime === 0) {
       return (
-        <div style={{ fontFamily: "Montserrat" }}>
-          <div style={{ fontSize: "1em", userSelect: "none" }}>Time's Up!</div>
+        <div className={baseClasses.baseVertFlex}>
+          <div style={{ fontSize: ".85em" }}>Time's</div>
+          <div style={{ fontSize: ".85em" }}>Up!</div>
         </div>
       );
     }
@@ -427,6 +455,8 @@ console.log("rerendering");
   function postTitle(seconds, id, title, profileDest = "") {
     let destination = `${profileDest}titles/${seconds}/${title}`;
 
+    console.log("uploading with ", id, "to", profileDest);
+
     get(child(dbRef, destination)).then((snapshot) => {
       if (snapshot.exists()) {
         let prev_post = snapshot.val()["drawingID"];
@@ -445,6 +475,10 @@ console.log("rerendering");
   const sendToDB = () => {
     if (DSCtx.drawingTime === 0 || DSCtx.drawingTime === undefined) return;
 
+    DSCtx.setDrawingTime(0);
+
+    console.log("UPLOADING DRAWING");
+
     setShowCanvas(false);
 
     const canvas = canvasRef.current;
@@ -459,8 +493,6 @@ console.log("rerendering");
     const uniqueID = uuidv4();
 
     let averageImageRGB = getAverageRGB(canvas);
-
-    // ${title.split(" ")[0]}${title.split(" ")[1]}
 
     canvas.toBlob(function (blob) {
       var image = new Image();
@@ -544,7 +576,6 @@ console.log("rerendering");
     );
 
     setStartTimer(false);
-    DSCtx.setDrawingTime(0);
   };
 
   function drawAgain() {
@@ -585,9 +616,7 @@ console.log("rerendering");
         }}
       >
         <div className={classes.canvasBreathingBackground}>
-          <div style={{ userSelect: "none" }}>
-            {DSCtx.chosenPrompt}
-          </div>
+          <div style={{ userSelect: "none" }}>{DSCtx.chosenPrompt}</div>
 
           <div className={classes.sharedContain}>
             <div className={`${showCanvasOutline} ${classes.startScreen}`}>
@@ -618,14 +647,12 @@ console.log("rerendering");
                 <canvas
                   style={{
                     cursor: floodFillStatus
-                      ? 
-                        // paintbucket cursor svg
-                      getCursorPaintbucketIcon(
+                      ? // paintbucket cursor svg
+                        getCursorPaintbucketIcon(
                           DSCtx.currentColor.replace("#", "")
                         )
-                      : 
-                        // regular selected color cursor svg
-                      `url('data:image/svg+xml;utf8,<svg id="svg" xmlns="http://www.w3.org/2000/svg" version="1.1" width="40" height="40"><circle cx="${
+                      : // regular selected color cursor svg
+                        `url('data:image/svg+xml;utf8,<svg id="svg" xmlns="http://www.w3.org/2000/svg" version="1.1" width="40" height="40"><circle cx="${
                           DSCtx.currentCursorSize
                         }" cy="${DSCtx.currentCursorSize}" r="${
                           DSCtx.currentCursorSize
@@ -644,8 +671,6 @@ console.log("rerendering");
                   }}
                   onMouseDown={draw}
                   onMouseUp={finishDrawing}
-                  // onMouseEnter={() => setMouseInsideOfCanvas(true)}
-                  // onMouseLeave={() => setMouseInsideOfCanvas(false)}
                   ref={canvasRef}
                 />
               </div>
@@ -727,9 +752,27 @@ console.log("rerendering");
                 ) : (
                   <>
                     <div className={classes.orSeparator}>
-                      <div className={classes.leadingLine}></div>
-                      <div>OR</div>
-                      <div className={classes.trailingLine}></div>
+                      <div
+                        style={{
+                          width: showCountdownTimer ? "7em" : "3em",
+                          marginRight: showCountdownTimer ? "0" : ".5em",
+                        }}
+                        className={classes.leadingLine}
+                      ></div>
+                      <div
+                        style={{
+                          display: showCountdownTimer ? "none" : "block",
+                        }}
+                      >
+                        or
+                      </div>
+                      <div
+                        style={{
+                          width: showCountdownTimer ? "7em" : "3em",
+                          marginLeft: showCountdownTimer ? "0" : ".5em",
+                        }}
+                        className={classes.trailingLine}
+                      ></div>
                     </div>
 
                     <div style={{ marginBottom: "1.25em" }}>
@@ -764,7 +807,6 @@ console.log("rerendering");
                           </div>
                         </div>
                       </div>
-                      {/* <div className={classes.fadingVerticalLine}></div> */}
 
                       <div
                         style={{

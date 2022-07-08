@@ -18,9 +18,11 @@
 }
 
 .logo {
-  font-size: 2rem;
-  color: black;
-  font-weight: bold;
+  transition: all 200ms;
+}
+
+.logo:hover {
+  filter: brightness(1.9);
 }
 
 .header ul {

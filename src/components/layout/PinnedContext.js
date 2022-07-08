@@ -149,6 +149,8 @@ export function PinnedProvider(props) {
 
   useEffect(() => {
     if ((!isLoading, isAuthenticated)) {
+      // look into just changing this to onValue, (didn't want to deal with potential side effects
+      // with logic that is already there)
       get(child(dbRef, `users/${user.sub}/pinnedArt`)).then((snapshot) => {
         if (snapshot.exists() && !isEqual(snapshot.val(), pinnedDrawings)) {
           setPinnedDrawings(snapshot.val());

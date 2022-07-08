@@ -23,18 +23,20 @@
 .vertTrailing {
   height: 16em;
   width: 1px;
-  background-image: linear-gradient(
-    to bottom,
-    rgba(255, 255, 255, 0),
-    rgba(0, 0, 0, 1),
-    rgba(255, 255, 255, 0)
-  );
+  background-image: linear-gradient(to bottom,
+      rgba(255, 255, 255, 0),
+      rgba(0, 0, 0, 1),
+      rgba(255, 255, 255, 0));
 }
 
 .updateButtons {
   display: flex;
   justify-content: center;
   align-items: center;
+}
+
+.inputLabel {
+  color: grey;
 }
 
 .prefCard {
@@ -58,22 +60,18 @@
   height: 1px;
   width: 6em;
   margin-right: 0.5em;
-  background-image: linear-gradient(
-    to right,
-    rgba(255, 255, 255, 0),
-    rgba(0, 0, 0, 1)
-  );
+  background-image: linear-gradient(to right,
+      rgba(255, 255, 255, 0),
+      rgba(0, 0, 0, 1));
 }
 
 .trailingLine {
   height: 1px;
   width: 6em;
   margin-left: 0.5em;
-  background-image: linear-gradient(
-    to right,
-    rgba(0, 0, 0, 1),
-    rgba(255, 255, 255, 0)
-  );
+  background-image: linear-gradient(to right,
+      rgba(0, 0, 0, 1),
+      rgba(255, 255, 255, 0));
 }
 
 .editButton {
@@ -84,8 +82,6 @@
   color: #ffffff;
   cursor: pointer;
   display: inline-block;
-  font-family: Inter, -apple-system, system-ui, Roboto, "Helvetica Neue", Arial,
-    sans-serif;
   height: 40px;
   line-height: 40px;
   outline: 0;
@@ -174,11 +170,9 @@
   height: 75vh;
 
   border-radius: 1em;
-  background: linear-gradient(
-    350deg,
-    rgb(27, 138, 56) 0%,
-    rgb(36, 231, 62) 100%
-  );
+  background: linear-gradient(350deg,
+      rgb(27, 138, 56) 0%,
+      rgb(36, 231, 62) 100%);
 
   z-index: 350;
 }

@@ -16,15 +16,27 @@ import {
 
 import { app } from "../../util/init-firebase";
 
-import classes from "./FocalBannerMessage.module.css";
+import OneMinuteIcon from "../../svgs/OneMinuteIcon";
+import ThreeMinuteIcon from "../../svgs/ThreeMinuteIcon";
+import FiveMinuteIcon from "../../svgs/FiveMinuteIcon";
+
 import MagnifyingGlassIcon from "../../svgs/MagnifyingGlassIcon";
+
+import classes from "./FocalBannerMessage.module.css";
+import baseClasses from "../../index.module.css";
+import LogoIcon from "../../svgs/LogoIcon";
+import Logo from "../../svgs/Logo.png";
 
 const FocalBannerMessage = (props) => {
   const { user, isAuthenticated, isLoading } = useAuth0();
 
   const [numUsers, setNumUsers] = useState(0);
   const [numDrawings, setNumDrawings] = useState(0);
-  const [numUserRemainingDrawings, setNumUserRemainingDrawings] = useState(0);
+
+  const [completed60, setCompleted60] = useState(false);
+  const [completed180, setCompleted180] = useState(false);
+  const [completed300, setCompleted300] = useState(false);
+  const [completedExtra, setCompletedExtra] = useState(false);
 
   const miscSettings = useRef(null);
 
@@ -56,11 +68,6 @@ const FocalBannerMessage = (props) => {
     };
   }
 
-  // console.log(props.forHomepage, props.forSearch);
-
-  const usersAnimationRef = useRef(null);
-  const drawingsAnimationRef = useRef(null);
-
   const db = getDatabase(app);
 
   useEffect(() => {
@@ -85,67 +92,30 @@ const FocalBannerMessage = (props) => {
         ref(db, `users/${user.sub}/completedDailyPrompts`),
         (snapshot) => {
           if (snapshot.exists()) {
-            let tempDrawingCount = 0;
-            if (!snapshot.val()["60"]) tempDrawingCount++;
-            if (!snapshot.val()["180"]) tempDrawingCount++;
-            if (!snapshot.val()["300"]) tempDrawingCount++;
-
-            if (tempDrawingCount === 0 && snapshot.val()["extra"])
-              tempDrawingCount = -1;
-
-            setNumUserRemainingDrawings(tempDrawingCount);
+            setCompleted60(snapshot.val()["60"]);
+            setCompleted180(snapshot.val()["180"]);
+            setCompleted300(snapshot.val()["300"]);
+            setCompletedExtra(snapshot.val()["extra"]);
           }
         }
       );
     }
   }, [isLoading, isAuthenticated]);
 
-  useEffect(() => {
-    if (numUsers !== 0) {
-      usersAnimationRef.current = anime({
-        targets: `#users`,
-        innerText: [0, numUsers],
-        round: 1,
-        duration: 750,
-        easing: "easeInOutExpo",
-      });
-    }
-  }, [numUsers]);
-
-  useEffect(() => {
-    if (numDrawings !== 0) {
-      drawingsAnimationRef.current = anime({
-        targets: `#drawings`,
-        innerText: [0, numDrawings],
-        round: 1,
-        duration: 750,
-        easing: "easeInOutExpo",
-      });
-    }
-  }, [numDrawings]);
-
-  useEffect(() => {
-    if (numDrawings !== 0) {
-      drawingsAnimationRef.current = anime({
-        targets: `#userRemainingDrawings`,
-        innerText:
-          numUserRemainingDrawings !== -1
-            ? [0, numUserRemainingDrawings]
-            : [0, 1],
-        round: 1,
-        duration: 1500,
-        easing: "easeOutBack",
-      });
-    }
-  }, [numUserRemainingDrawings]);
-
-  // should absolutely be a better way to do this, just couldn't find workaround with
-  // either value/innerText attributes in animejs
-
   return (
     <div className={classes.bannerContainer}>
       <div className={classes.bannerTitleFlex}>
-        <div>{miscSettings.current.title}</div>
+        <div>
+          {miscSettings.current.title === "Drawing Dash" ? (
+            <>
+              {/* <LogoIcon width={"5em"} height={"3em"} /> */}
+
+              <img src={Logo} style={{ maxWidth: "200px", marginTop: ".25em" }} alt="Logo" />
+            </>
+          ) : (
+            <>{miscSettings.current.title}</>
+          )}
+        </div>
         {miscSettings.current.title === "Search" && (
           <div>
             <MagnifyingGlassIcon dimensions={".75em"} color={"black"} />
@@ -183,41 +153,40 @@ const FocalBannerMessage = (props) => {
           display: `${
             !props.forHomepage && !props.forSearch ? "flex" : "none"
           }`,
-        }}
-        className={classes.bannerFlex}
-      >
-        <div>Welcome Back!</div>
-      </div>
-
-      <div
-        style={{
-          display: `${
-            !props.forHomepage && !props.forSearch ? "flex" : "none"
-          }`,
           gap: "0.5em",
+          flexDirection: "column",
         }}
         className={classes.bannerFlex}
       >
         <div>remaining daily prompts:</div>
-        {/* have the number have a rainbow background (rainbow font), and replace with '1 (Extra Prompt)'
-            if they have completed all and then a 'thanks for completing all of your daily prompts! */}
 
-        {numUserRemainingDrawings >= 0 && (
-          <div id={"userRemainingDrawings"} className={classes.rainbowText}>
-            {numUserRemainingDrawings}
+        <div style={{ gap: "1em" }} className={baseClasses.baseFlex}>
+          <div style={{ opacity: completed60 ? 0.2 : 1 }}>
+            <OneMinuteIcon dimensions={"2.5em"} />
           </div>
-        )}
+          <div style={{ opacity: completed180 ? 0.2 : 1 }}>
+            <ThreeMinuteIcon dimensions={"2.5em"} />
+          </div>
 
-        {numUserRemainingDrawings === -1 && (
+          <div style={{ opacity: completed300 ? 0.2 : 1 }}>
+            <FiveMinuteIcon dimensions={"2.5em"} />
+          </div>
+
           <div
-            id={"userRemainingDrawings"}
-            className={classes.rainbowText}
-          >{`${numUserRemainingDrawings} (Extra Prompt)`}</div>
-        )}
-
-        {numUserRemainingDrawings === 0 && (
-          <div>Thank you for completing all of your daily prompts!</div>
-        )}
+            style={{
+              opacity: completedExtra ? 0.2 : 1,
+              width: "46px",
+              height: "46px",
+            }}
+          >
+            <div
+              style={{ userSelect: "none" }}
+              className={`${classes.extraDurationIcon} ${baseClasses.baseFlex}`}
+            >
+              ?
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );

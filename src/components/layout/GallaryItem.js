@@ -2,7 +2,6 @@ import React from "react";
 import { useState, useEffect, useCallback, useContext, useRef } from "react";
 import { useLocation } from "react-router-dom";
 import { useAuth0 } from "@auth0/auth0-react";
-import { remove } from "lodash";
 
 import ProfilePicture from "./ProfilePicture";
 import FavoritesContext from "./FavoritesContext";
@@ -25,6 +24,7 @@ import {
   get,
   ref,
   onValue,
+  remove,
   update,
   set,
   child,
@@ -42,7 +42,6 @@ import { app } from "../../util/init-firebase";
 
 import classes from "./GallaryItem.module.css";
 import baseClasses from "../../index.module.css";
-import Skeleton from "../../ui/Skeleton";
 
 const GallaryItem = ({ drawingID, settings }) => {
   const location = useLocation();
@@ -330,6 +329,9 @@ const GallaryItem = ({ drawingID, settings }) => {
     const uniqueID = drawingDetails.index;
     const user = drawingDetails.drawnBy;
 
+    console.log(uniqueID);
+    console.log(title, title.length);
+
     // could maybe have it fade out for a second and when that finishes update this to true
     setHideImage(true);
 
@@ -348,25 +350,19 @@ const GallaryItem = ({ drawingID, settings }) => {
     get(child(dbRef, `titles/${seconds}/${title}`)).then((snapshot) => {
       if (snapshot.exists()) {
         let drawingIDs = snapshot.val()["drawingID"];
-
+        console.log("total Ids", drawingIDs);
         // removing the index that has the corresponding drawingID
-        drawingIDs.splice(drawingIDs.indexOf(title), 1);
+        drawingIDs.splice(drawingIDs.indexOf(uniqueID), 1);
         if (drawingIDs.length === 0) {
+          console.log("removing whole reg titles of", title);
           remove(ref(db, `titles/${seconds}/${title}`));
         } else {
-          update(ref(db, `users/${user}/titles/${seconds}/${title}`), {
+          console.log("updating reg titles of", title);
+
+          update(ref(db, `titles/${seconds}/${title}`), {
             drawingID: drawingIDs,
           });
         }
-      }
-    });
-
-    // Decrementing totalDrawings
-    get(child(dbRef, "totalDrawings")).then((snapshot) => {
-      if (snapshot.exists()) {
-        let drawingCount = snapshot.val()["count"];
-
-        update(ref(db, "totalDrawings"), { count: drawingCount - 1 });
       }
     });
 
@@ -377,10 +373,14 @@ const GallaryItem = ({ drawingID, settings }) => {
           let drawingIDs = snapshot.val()["drawingID"];
 
           // removing the index that has the corresponding drawingID
-          drawingIDs.splice(drawingIDs.indexOf(title), 1);
+          drawingIDs.splice(drawingIDs.indexOf(uniqueID), 1);
           if (drawingIDs.length === 0) {
+            console.log("removing whole reg titles of", title);
+
             remove(ref(db, `users/${user}/titles/${seconds}/${title}`));
           } else {
+            console.log("updating reg titles of", title);
+
             update(ref(db, `users/${user}/titles/${seconds}/${title}`), {
               drawingID: drawingIDs,
             });
@@ -392,16 +392,28 @@ const GallaryItem = ({ drawingID, settings }) => {
     // Removing from /users/user.sub/likes (if it exists there)
     get(child(dbRef, `users/${user}/likes/${seconds}`)).then((snapshot) => {
       if (snapshot.exists()) {
-        let drawingIDs = snapshot.val();
+        // checking to see if drawing was liked by user
+        if (Object.keys(snapshot.val()).includes(title)) {
+          let numberOfTitles = Object.keys(snapshot.val()).length;
+          let drawingIDs = snapshot.val()[title]["drawingID"];
 
-        // removing the index that has the corresponding drawingID
-        if (drawingIDs.indexOf(title) > -1) {
-          drawingIDs.splice(drawingIDs.indexOf(title), 1);
+          // removing the index that has the corresponding drawingID
+          drawingIDs.splice(drawingIDs.indexOf(uniqueID), 1);
+
           if (drawingIDs.length === 0) {
-            set(ref(db, `users/${user}/likes/${seconds}`), null);
+            // if that image was the last liked image for current duration, revert value of
+            // duration object to false
+            if (numberOfTitles !== 1) {
+              remove(ref(db, `users/${user}/likes/${seconds}/${title}`));
+            } else {
+              update(ref(db, `users/${user}/likes/${seconds}`), false);
+            }
+          } else {
+            update(ref(db, `users/${user}/likes/${seconds}/${title}`), {
+              drawingID: drawingIDs,
+            });
           }
         }
-        update(ref(db, `users/${user}/titles/${seconds}`), drawingIDs);
       }
     });
 
@@ -416,6 +428,15 @@ const GallaryItem = ({ drawingID, settings }) => {
         if (drawingIDs["300"] === uniqueID) drawingIDs["300"] = "";
 
         update(ref(db, `users/${user}/pinnedArt`), drawingIDs);
+      }
+    });
+
+    // Decrementing totalDrawings
+    get(child(dbRef, "totalDrawings")).then((snapshot) => {
+      if (snapshot.exists()) {
+        let drawingCount = snapshot.val()["count"];
+
+        update(ref(db, "totalDrawings"), { count: drawingCount - 1 });
       }
     });
   }
@@ -433,6 +454,7 @@ const GallaryItem = ({ drawingID, settings }) => {
       style={{
         minWidth: showDrawingModal ? "100vw" : "100%",
         minHeight: showDrawingModal ? "100vh" : "100%",
+        display: hideImage ? "none" : "flex",
       }}
     >
       {/* confirm delete modal */}
@@ -593,12 +615,9 @@ const GallaryItem = ({ drawingID, settings }) => {
 
               <div className={`${drawingTotalLikes > 0 ? classes.likes : ""}`}>
                 {drawingTotalLikes > 0 ? (
-                  <div
-                    style={{ gap: ".35em" }}
-                    className={baseClasses.baseFlex}
-                  >
+                  <div style={{ gap: ".5em" }} className={baseClasses.baseFlex}>
                     <HeartFilledIcon dimensions={"1em"} />{" "}
-                    <div>{drawingTotalLikes} </div>
+                    <div>{drawingTotalLikes}</div>
                   </div>
                 ) : (
                   ""

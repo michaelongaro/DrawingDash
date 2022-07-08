@@ -40,7 +40,7 @@ export function SearchProvider(props) {
 
   useEffect(() => {
     console.log("changed to", pageSelectorDetails);
-  }, [pageSelectorDetails])
+  }, [pageSelectorDetails]);
 
   function manuallyLoadDurations(idx) {
     if (pageSelectorDetails["durationToManuallyLoad"][idx] === "60") {
@@ -71,9 +71,25 @@ export function SearchProvider(props) {
     updateSearchValues("gallary", null, idx);
   }
 
+  function resetPageSelectorDetails(idx) {
+    console.log("resetting Vals");
+
+    updatePageSelectorDetails("currentPageNumber", 1, idx);
+    updatePageSelectorDetails(
+      "totalDrawingsByDuration",
+      {
+        60: 0,
+        180: 0,
+        300: 0,
+      },
+      idx
+    );
+    updatePageSelectorDetails("durationToManuallyLoad", null, idx);
+  }
+
   function getFlattenedIDs(fullTitles) {
     let flattenedIDs = [];
-    console.log("undefined values...", Object.values(fullTitles));
+
     for (const titles of Object.values(fullTitles)) {
       // console.log(titles["drawingID"]);
       flattenedIDs.push(titles["drawingID"]);
@@ -309,6 +325,7 @@ export function SearchProvider(props) {
     updatePageSelectorDetails: updatePageSelectorDetails,
     updateSearchValues: updateSearchValues,
     resetAllValues: resetAllValues,
+    resetPageSelectorDetails: resetPageSelectorDetails,
     getGallary: getGallary,
   };
 

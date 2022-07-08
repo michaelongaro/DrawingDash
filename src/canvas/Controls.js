@@ -80,10 +80,6 @@ const Controls = () => {
     };
   }, [currentCursorSize]);
 
-  // useEffect(() => {
-  //   console.log(currentCursorSize);
-  // }, [currentCursorSize]);
-
   function updateSelectedColor(brushID, updateCurrentlySelectedTool) {
     let tempArr = buttonStyles;
 

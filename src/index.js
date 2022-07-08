@@ -10,6 +10,10 @@ import { DrawingSelectionProvider } from "./canvas/DrawingSelectionContext";
 import { ProfilePictureUpdateProvider } from "./components/layout/ProfilePictureUpdateContext";
 import App from "./App";
 
+import "./fonts/VisbyRoundCF-Light.otf"
+import "./fonts/VisbyRoundCF-Medium.otf"
+import "./fonts/VisbyRoundCF-Regular.otf"
+
 import "./index.module.css";
 
 ReactDOM.render(

@@ -12,21 +12,11 @@
   border-radius: 1em;
 }
 
-.rainbowText {
-  font-size: 1.75em;
-  background: linear-gradient(to bottom, #8aff7a, #ff3030);
-  /* text-shadow: 0 0 1px black; */
-  background-clip: text;
-  color: transparent;
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-}
-
 .bannerFlex {
   display: flex;
   justify-content: center;
   align-items: center;
-  gap: 0.25em;
+  gap: 0.3em;
 
   font-size: 1.15em;
 }
@@ -38,4 +28,18 @@
   gap: 0.5em;
   margin-bottom: 0.25em;
   font-size: 3em;
+}
+
+.extraDurationIcon {
+  background: linear-gradient(
+    115deg,
+    hsla(0, 100%, 50%, 90%) 0%,
+    hsla(60, 100%, 50%, 90%) 50%,
+    hsla(120, 100%, 50%, 90%) 100%
+  );
+
+  font-size: 25px;
+  border-radius: 50%;
+  width: 2.4rem;
+  height: 2.4rem;
 }

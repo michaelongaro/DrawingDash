@@ -10,10 +10,12 @@ import ProfilePictureUpdateContext from "./ProfilePictureUpdateContext";
 
 import LogInButton from "../../oauth/LogInButton";
 import LogOutButton from "../../oauth/LogOutButton";
+import Logo from "../../svgs/Logo.png"
 
 import EaselIcon from "../../svgs/EaselIcon";
 import MagnifyingGlassIcon from "../../svgs/MagnifyingGlassIcon";
 import DefaultUserIcon from "../../svgs/DefaultUserIcon";
+import LogoIcon from "../../svgs/LogoIcon";
 
 import {
   getDatabase,
@@ -273,7 +275,19 @@ function MainNavigation() {
   return (
     <header className={classes.header}>
       <div className={classes.logo}>
-        <Link to="/">Drawing Dash</Link>
+        <Link to="/">
+          {/* <div style={{ gap: ".25em" }} className={baseClasses.baseVertFlex}>
+            <div style={{postion: "absolute", left: 0, top: ".5em"}}><OneMinuteIcon dimensions={"1em"} /></div>
+            <div style={{postion: "absolute", left: "1em", top: 0}}><OneMinuteIcon dimensions={"1em"} /></div>
+            <div style={{postion: "absolute", left: "2em", top: ".5em"}}><OneMinuteIcon dimensions={"1em"} /></div>
+          </div> */}
+
+          {/* okay weird as heck but manually dimensions set to 125x175 and viewbox to 0 -100 210 297 i guess works? */}
+          {/* <LogoIcon width={"125px"} height={"175px"} /> */}
+              <img src={Logo} style={{ maxWidth: "115px", marginTop: ".25em" }} alt="Logo" />
+
+          {/* <img src={logo} alt="Logo" /> */}
+        </Link>
       </div>
       <nav>
         <ul>

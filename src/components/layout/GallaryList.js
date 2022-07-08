@@ -52,6 +52,12 @@ const GallaryList = ({
   const [currentlyShownDuration, setCurrentlyShownDuration] = useState();
 
   useEffect(() => {
+    return () => {
+      searchCtx.resetPageSelectorDetails(idx);
+    };
+  }, []);
+
+  useEffect(() => {
     if (drawingIDs) {
       if (isEqual(drawingIDs, { 60: [], 180: [], 300: [] })) {
         setShowEmptyResults(true);
