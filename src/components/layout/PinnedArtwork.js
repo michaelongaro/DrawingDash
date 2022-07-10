@@ -1,13 +1,13 @@
 import React from "react";
 import { useState, useContext, useEffect, useRef } from "react";
 
+import { isEqual } from "lodash";
+
 import PinnedContext from "./PinnedContext";
 import PinnedModal from "./PinnedModal";
 import PinnedShowcaseItem from "./PinnedShowcaseItem";
 
 import classes from "./PinnedArtwork.module.css";
-import { isEqual } from "lodash";
-import Card from "../../ui/Card";
 
 const PinnedArtwork = () => {
   const pinnedCtx = useContext(PinnedContext);

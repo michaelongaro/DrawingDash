@@ -18,9 +18,7 @@ function CardContainer() {
         >
           <OptionsIcon />
         </div>
-        <div style={{ height: "5em" }}>
-          Choose from three unique drawing prompts
-        </div>
+        <div style={{ height: "5em" }}>Choose from 3+ unique prompts</div>
       </div>
 
       <div className={classes.card}>

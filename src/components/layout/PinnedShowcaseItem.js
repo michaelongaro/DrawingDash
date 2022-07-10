@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import Card from "../../ui/Card";
 
 import GallaryItem from "./GallaryItem";
 import OneMinuteIcon from "../../svgs/OneMinuteIcon";
@@ -14,21 +13,25 @@ const PinnedShowcaseItem = ({ drawingID, timer }) => {
   const [hoveringOnShowcase, setHoveringOnShowcase] = useState(false);
   const [noPinnedDrawing, setNoPinnedDrawing] = useState(false);
 
-  // if (drawingID === undefined || drawingID === "") {
-  //   return (
-  //     <div className={classes.vertFlex} style={{ cursor: "pointer " }}>
-  //       <div>{timer}</div>
-  //       <Card>
-  //         <div style={{ margin: "5em", textAlign: "center" }}>
-  //           Click to select a drawing
-  //         </div>
-  //       </Card>
-  //     </div>
-  //   );
-  // }
+  const [showTempBaselineSkeleton, setShowTempBaselineSkeleton] =
+    useState(true);
+
   useEffect(() => {
-    if (drawingID === undefined || drawingID === "") setNoPinnedDrawing(true);
+    const timerID = setTimeout(() => setShowTempBaselineSkeleton(false), 5050);
+
+    return () => {
+      clearTimeout(timerID);
+    };
   }, []);
+
+  useEffect(() => {
+    if (drawingID === undefined || drawingID === "") {
+      setNoPinnedDrawing(true);
+    } else {
+      setNoPinnedDrawing(false);
+      setHoveringOnShowcase(false);
+    }
+  }, [drawingID]);
 
   return (
     <div
@@ -44,68 +47,98 @@ const PinnedShowcaseItem = ({ drawingID, timer }) => {
       {timer === "Three Minutes" && <ThreeMinuteIcon dimensions={"3.5em"} />}
       {timer === "Five Minutes" && <FiveMinuteIcon dimensions={"3.5em"} />}
 
-      <div
-        style={{ position: "relative", width: window.innerWidth / 7.442, height: window.innerHeight / 7.442 }}
-        onMouseEnter={() => setHoveringOnShowcase(true)}
-        onMouseLeave={() => {
-          if (!noPinnedDrawing) {
-            setHoveringOnShowcase(false);
-          }
-        }}
-      >
+      {showTempBaselineSkeleton ? (
+        <div style={{ gap: ".75em" }} className={baseClasses.baseVertFlex}>
+          <div
+            style={{
+              width: window.innerWidth / 7.442,
+              height: window.innerHeight / 7.442,
+              borderRadius: "1em",
+              boxShadow: "rgba(0, 0, 0, 0.2) 0 2px 4px",
+            }}
+            className={baseClasses.skeletonLoading}
+          ></div>
+          <div
+            style={{
+              width: "5em",
+              height: ".75em",
+              borderRadius: "1em",
+            }}
+            className={baseClasses.skeletonLoading}
+          ></div>
+        </div>
+      ) : (
         <div
           style={{
-            position: "absolute",
-            top: 0,
-            left: 0,
-            // have these dimensions be a ratio like the loading ones
+            position: "relative",
             width: window.innerWidth / 7.442,
             height: window.innerHeight / 7.442,
-            opacity: hoveringOnShowcase || noPinnedDrawing ? 1 : 0,
-            transition: "all 200ms",
-            zIndex: 50,
+          }}
+          onMouseEnter={() => setHoveringOnShowcase(true)}
+          onMouseLeave={() => {
+            if (!noPinnedDrawing) {
+              setHoveringOnShowcase(false);
+            }
           }}
         >
+          {/* Edit overlay */}
           <div
-            className={`${baseClasses.baseFlex} ${classes.emptyShowcase}`}
             style={{
-              cursor: "pointer",
-              gap: ".5em",
+              position: "absolute",
+              top: 0,
+              left: 0,
+              // have these dimensions be a ratio like the loading ones
+              width: window.innerWidth / 7.442,
+              height: window.innerHeight / 7.442,
+              opacity: hoveringOnShowcase || noPinnedDrawing ? 1 : 0,
+              transition: "all 200ms",
+              zIndex: 50,
+            }}
+          >
+            <div
+              className={`${baseClasses.baseFlex} ${classes.emptyShowcase}`}
+              style={{
+                cursor: "pointer",
+                gap: ".5em",
+                width: window.innerWidth / 7.442,
+                height: window.innerHeight / 7.442,
+                opacity: hoveringOnShowcase || noPinnedDrawing ? 1 : 0,
+              }}
+            >
+              <EditPreferencesIcon dimensions={"1.5em"} />
+              <div style={{ color: "white", fontSize: "20px" }}>Edit</div>
+            </div>
+          </div>
+
+          {/* actual pinned drawing */}
+          <div
+            style={{
+              position: "absolute",
+              top: 0,
+              left: 0,
               width: window.innerWidth / 7.442,
               height: window.innerHeight / 7.442,
             }}
           >
-            <EditPreferencesIcon dimensions={"1.5em"} />
-            <div style={{ color: "white", fontSize: "20px" }}>Edit</div>
+            {!noPinnedDrawing && (
+              <GallaryItem
+                drawingID={drawingID}
+                settings={{
+                  width: 100,
+                  forHomepage: false,
+                  forPinnedShowcase: true,
+                  forPinnedItem: false,
+                  skeleHeight: "15em",
+                  skeleDateWidth: "0",
+                  skeleTitleWidth: "100%",
+                  widthRatio: 7.442,
+                  heightRatio: 7.442,
+                }}
+              />
+            )}
           </div>
         </div>
-        <div
-          style={{
-            position: "absolute",
-            top: 0,
-            left: 0,
-            width: window.innerWidth / 7.442,
-            height: window.innerHeight / 7.442,
-          }}
-        >
-          {!noPinnedDrawing && (
-            <GallaryItem
-              drawingID={drawingID}
-              settings={{
-                width: 100,
-                forHomepage: false,
-                forPinnedShowcase: true,
-                forPinnedItem: false,
-                skeleHeight: "15em",
-                skeleDateWidth: "0",
-                skeleTitleWidth: "100%",
-                widthRatio: 7.442,
-                heightRatio: 7.442,
-              }}
-            />
-          )}
-        </div>
-      </div>
+      )}
     </div>
   );
 };

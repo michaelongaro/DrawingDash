@@ -91,14 +91,6 @@ const Preferences = () => {
   const [showTempBaselineSkeleton, setShowTempBaselineSkeleton] =
     useState(true);
 
-  useEffect(() => {
-    const timerID = setTimeout(() => setShowTempBaselineSkeleton(false), 10000);
-
-    return () => {
-      clearTimeout(timerID);
-    };
-  }, []);
-
   const onCropComplete = useCallback((croppedArea, croppedAreaPixels) => {
     setCroppedAreaPixels(croppedAreaPixels);
   }, []);
@@ -129,6 +121,14 @@ const Preferences = () => {
     setShowCropModal(false);
     setUserUploadedImage(null);
     setCropReadyImage(null);
+  }, []);
+
+  useEffect(() => {
+    const timerID = setTimeout(() => setShowTempBaselineSkeleton(false), 750);
+
+    return () => {
+      clearTimeout(timerID);
+    };
   }, []);
 
   useEffect(() => {
@@ -260,10 +260,6 @@ const Preferences = () => {
     }
   };
 
-  if (userEmail === "") {
-    return null;
-  }
-
   return (
     <div className={`${classes.baseFlex} ${classes.prefCard}`}>
       <ProfileHeader title={"Preferences"} />
@@ -278,7 +274,19 @@ const Preferences = () => {
               <div className={classes.inputLabel}>Username</div>
 
               {editAvailable ? (
-                <div>{username}</div>
+                <>
+                  {isFetching || showTempBaselineSkeleton ? (
+                    <div
+                      style={{
+                        width: "12em",
+                        height: "1.5em",
+                      }}
+                      className={baseClasses.skeletonLoading}
+                    ></div>
+                  ) : (
+                    <div>{username}</div>
+                  )}
+                </>
               ) : (
                 <input
                   className={classes.setUsername}
@@ -296,9 +304,21 @@ const Preferences = () => {
             <div style={{ gap: "3em" }} className={baseClasses.baseFlex}>
               <div className={classes.inputLabel}>Status</div>
               {editAvailable ? (
-                <div>
-                  <i>{status}</i>
-                </div>
+                <>
+                  {isFetching || showTempBaselineSkeleton ? (
+                    <div
+                      style={{
+                        width: "12em",
+                        height: "1.5em",
+                      }}
+                      className={baseClasses.skeletonLoading}
+                    ></div>
+                  ) : (
+                    <div>
+                      <i>{status}</i>
+                    </div>
+                  )}
+                </>
               ) : (
                 <input
                   className={classes.setStatus}
@@ -315,7 +335,19 @@ const Preferences = () => {
 
             <div style={{ gap: "3em" }} className={baseClasses.baseFlex}>
               <div className={classes.inputLabel}>Email</div>
-              <div className={classes.setEmail}>{userEmail}</div>
+              <>
+                {isFetching || showTempBaselineSkeleton ? (
+                  <div
+                    style={{
+                      width: "12em",
+                      height: "1.5em",
+                    }}
+                    className={baseClasses.skeletonLoading}
+                  ></div>
+                ) : (
+                  <div>{userEmail}</div>
+                )}
+              </>
             </div>
 
             <button
@@ -347,7 +379,7 @@ const Preferences = () => {
             style={{ gap: "1em", width: "33%" }}
             className={baseClasses.baseVertFlex}
           >
-            {isFetching ? (
+            {isFetching || showTempBaselineSkeleton ? (
               <div
                 style={{
                   width: "165px",
@@ -407,10 +439,34 @@ const Preferences = () => {
               </div>
             )}
 
-            <div className={classes.showUsername}>{username}</div>
-            <div className={classes.showStatus}>
-              <i>{status}</i>
-            </div>
+            <>
+              {isFetching || showTempBaselineSkeleton ? (
+                <div
+                  style={{
+                    width: "50%",
+                    height: "1.5em",
+                  }}
+                  className={baseClasses.skeletonLoading}
+                ></div>
+              ) : (
+                <div>{username}</div>
+              )}
+            </>
+            <>
+              {isFetching || showTempBaselineSkeleton ? (
+                <div
+                  style={{
+                    width: "60%",
+                    height: "1.5em",
+                  }}
+                  className={baseClasses.skeletonLoading}
+                ></div>
+              ) : (
+                <div>
+                  <i>{status}</i>
+                </div>
+              )}
+            </>
           </div>
         </div>
 
