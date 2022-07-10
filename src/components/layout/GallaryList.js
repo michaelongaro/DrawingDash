@@ -368,83 +368,77 @@ const GallaryList = ({
           </div>
 
           <Card margin={margin}>
-            <div
-              className={`${durationStates[0] ? "" : classes.hide} ${
-                classes.gridListContain
-              }`}
-            >
-              {Object.values(drawingIDs["60"])
-                .flat()
-                .map((drawingID, i) => (
-                  <GallaryItem
-                    key={i}
-                    drawingID={drawingID}
-                    settings={{
-                      width: 100,
-                      forHomepage: false,
-                      forPinnedShowcase: false,
-                      forPinnedItem: false,
-                      skeleHeight: "10em",
-                      skeleDateWidth: "6em",
-                      skeleTitleWidth: "6em",
-                      widthRatio: skeletonRatio,
-                      heightRatio: skeletonRatio,
-                    }}
-                  />
-                ))}
-            </div>
+            {durationStates[0] && (
+              <div className={classes.gridListContain}>
+                {Object.values(drawingIDs["60"])
+                  .flat()
+                  .map((drawingID, i) => (
+                    <GallaryItem
+                      key={i}
+                      drawingID={drawingID}
+                      settings={{
+                        width: 100,
+                        forHomepage: false,
+                        forPinnedShowcase: false,
+                        forPinnedItem: false,
+                        skeleHeight: "10em",
+                        skeleDateWidth: "6em",
+                        skeleTitleWidth: "6em",
+                        widthRatio: skeletonRatio,
+                        heightRatio: skeletonRatio,
+                      }}
+                    />
+                  ))}
+              </div>
+            )}
 
-            <div
-              className={`${durationStates[1] ? "" : classes.hide} ${
-                classes.gridListContain
-              }`}
-            >
-              {Object.values(drawingIDs["180"])
-                .flat()
-                .map((drawingID, i) => (
-                  <GallaryItem
-                    key={i}
-                    drawingID={drawingID}
-                    settings={{
-                      width: 100,
-                      forHomepage: false,
-                      forPinnedShowcase: false,
-                      forPinnedItem: false,
-                      skeleHeight: "10em",
-                      skeleDateWidth: "6em",
-                      skeleTitleWidth: "6em",
-                      widthRatio: skeletonRatio,
-                      heightRatio: skeletonRatio,
-                    }}
-                  />
-                ))}
-            </div>
+            {durationStates[1] && (
+              <div className={classes.gridListContain}>
+                {Object.values(drawingIDs["180"])
+                  .flat()
+                  .map((drawingID, i) => (
+                    <GallaryItem
+                      key={i}
+                      drawingID={drawingID}
+                      settings={{
+                        width: 100,
+                        forHomepage: false,
+                        forPinnedShowcase: false,
+                        forPinnedItem: false,
+                        skeleHeight: "10em",
+                        skeleDateWidth: "6em",
+                        skeleTitleWidth: "6em",
+                        widthRatio: skeletonRatio,
+                        heightRatio: skeletonRatio,
+                      }}
+                    />
+                  ))}
+              </div>
+            )}
 
-            <div
-              className={`${durationStates[2] ? "" : classes.hide} ${
-                classes.gridListContain
-              }`}
-            >
-              {Object.values(drawingIDs["300"])
-                .flat()
-                .map((drawingID, i) => (
-                  <GallaryItem
-                    key={i}
-                    drawingID={drawingID}
-                    settings={{
-                      width: 100,
-                      forHomepage: false,
-                      forPinnedShowcase: false,
-                      forPinnedItem: false,
-                      skeleHeight: "10em",
-                      skeleDateWidth: "6em",
-                      skeleTitleWidth: "6em",
-                      widthRatio: skeletonRatio,
-                      heightRatio: skeletonRatio,
-                    }}
-                  />
-                ))}
-            </div>
+            {durationStates[2] && (
+              <div className={classes.gridListContain}>
+                {Object.values(drawingIDs["300"])
+                  .flat()
+                  .map((drawingID, i) => (
+                    <GallaryItem
+                      key={i}
+                      drawingID={drawingID}
+                      settings={{
+                        width: 100,
+                        forHomepage: false,
+                        forPinnedShowcase: false,
+                        forPinnedItem: false,
+                        skeleHeight: "10em",
+                        skeleDateWidth: "6em",
+                        skeleTitleWidth: "6em",
+                        widthRatio: skeletonRatio,
+                        heightRatio: skeletonRatio,
+                      }}
+                    />
+                  ))}
+              </div>
+            )}
 
             {showEmptyResults && (
               <div

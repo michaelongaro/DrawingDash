@@ -111,13 +111,13 @@ const GallaryItem = ({ drawingID, settings }) => {
   const [showTempBaselineSkeleton, setShowTempBaselineSkeleton] =
     useState(true);
 
-  useEffect(() => {
-    const timerID = setTimeout(() => setShowTempBaselineSkeleton(false), 500);
+  // useEffect(() => {
+  //   const timerID = setTimeout(() => setShowTempBaselineSkeleton(false), 500);
 
-    return () => {
-      clearTimeout(timerID);
-    };
-  }, []);
+  //   return () => {
+  //     clearTimeout(timerID);
+  //   };
+  // }, []);
 
   useEffect(() => {
     if (showDrawingModal || (!isLoading && !isAuthenticated)) {
@@ -159,6 +159,14 @@ const GallaryItem = ({ drawingID, settings }) => {
         setFetchedDrawing(url);
       }
     );
+
+    setShowTempBaselineSkeleton(true);
+
+    const timerID = setTimeout(() => setShowTempBaselineSkeleton(false), 750);
+
+    return () => {
+      clearTimeout(timerID);
+    };
   }, [drawingID]);
 
   // useEffect(() => {
