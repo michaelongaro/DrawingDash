@@ -226,9 +226,24 @@ const ProgressBar = () => {
       DSCtx.PBStates["resetToSelectBar"] &&
       !localPBStates["resetToSelectBar"]
     ) {
+      console.log("starting finish stuff");
+
       // scroll progressBar into view when reset button is clicked
       document.body.scrollIntoView({ behavior: "smooth" });
 
+      // could have them all at base scope and then have increasingly larger delays?
+      // might not be the worst idea
+
+      anime({
+        targets: "#drawText",
+        loop: false,
+        fontSize: ["1.5em", "1.25em"],
+        fontWeight: [600, 400],
+        color: ["rgb(0, 0, 0)", "rgb(100, 100, 100)"],
+        direction: "normal",
+        duration: 50,
+        easing: "easeInSine",
+      });
       anime({
         targets: "#draw",
         loop: false,
@@ -237,48 +252,48 @@ const ProgressBar = () => {
         direction: "normal",
         duration: 50,
         easing: "easeInSine",
-        complete: () => {
-          anime({
-            targets: "#animatedGreenPB",
-            loop: false,
-            width: ["520px", "265px"],
-            direction: "normal",
-            duration: 100,
-            easing: "easeInSine",
-            complete: () => {
-              anime({
-                targets: "#choose",
-                loop: false,
-                width: ["28px", 0],
-                minHeight: ["28px", 0],
-                direction: "normal",
-                duration: 50,
-                easing: "easeInSine",
-                complete: () => {
-                  anime({
-                    targets: "#animatedGreenPB",
-                    loop: false,
-                    width: ["265px", 0],
-                    direction: "normal",
-                    duration: 100,
-                    easing: "easeInSine",
-                    complete: () => {
-                      DSCtx.resetProgressBar();
-                      setLocalPBStates({
-                        selectCircle: false,
-                        chooseCircle: false,
-                        drawCircle: false,
-                        selectToChooseBar: false,
-                        chooseToDrawBar: false,
-                        resetToSelectBar: false,
-                      });
-                    },
-                  });
-                },
-              });
-            },
-          });
-        },
+      });
+
+      anime({
+        targets: "#animatedGreenPB",
+        loop: false,
+        width: ["520px", "265px"],
+        direction: "normal",
+        delay: 50,
+        duration: 100,
+        easing: "easeInSine",
+      });
+
+      anime({
+        targets: "#choose",
+        loop: false,
+        width: ["28px", 0],
+        minHeight: ["28px", 0],
+        direction: "normal",
+        delay: 200,
+        duration: 50,
+        easing: "easeInSine",
+      });
+
+      anime({
+        targets: "#animatedGreenPB",
+        loop: false,
+        width: ["265px", 0],
+        direction: "normal",
+        delay: 250,
+        duration: 100,
+        easing: "easeInSine",
+      });
+
+      console.log("totally finished and resetting");
+      DSCtx.resetProgressBar();
+      setLocalPBStates({
+        selectCircle: false,
+        chooseCircle: false,
+        drawCircle: false,
+        selectToChooseBar: false,
+        chooseToDrawBar: false,
+        resetToSelectBar: false,
       });
     }
 

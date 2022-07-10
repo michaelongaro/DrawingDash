@@ -630,6 +630,11 @@ const GallaryItem = ({ drawingID, settings }) => {
           {settings.forPinnedShowcase ? null : (
             <div
               style={{
+                fontSize:
+                  location.pathname === "/profile/gallery" ||
+                  location.pathname === "/profile/likes"
+                    ? ".9em"
+                    : "1em",
                 background:
                   !isFetching && drawingDetails.hasOwnProperty("averageColor")
                     ? `linear-gradient(

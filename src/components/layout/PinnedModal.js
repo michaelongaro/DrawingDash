@@ -15,7 +15,7 @@ import FiveMinuteIcon from "../../svgs/FiveMinuteIcon";
 import classes from "./PinnedArtwork.module.css";
 import baseClasses from "../../index.module.css";
 
-const PinnedModal = (props) => {
+const PinnedModal = React.forwardRef((props, modalRef) => {
   const pinnedCtx = useContext(PinnedContext);
   const [loadedDrawingIDs, setLoadedDrawingIDs] = useState([]);
   const [durationIcon, setDurationIcon] = useState();
@@ -58,7 +58,7 @@ const PinnedModal = (props) => {
   }, []);
 
   return (
-    <Card width="80">
+    <div style={{ width: "80%" }} classname={classes.card} ref={modalRef}>
       <div className={classes.innerModal}>
         <div className={classes.topControlsContainer}>
           <div className={classes.save}>
@@ -102,8 +102,8 @@ const PinnedModal = (props) => {
           />
         </div>
       </div>
-    </Card>
+    </div>
   );
-};
+});
 
 export default PinnedModal;

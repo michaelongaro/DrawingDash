@@ -52,8 +52,11 @@ const PaletteChooser = () => {
       translateX: window.innerWidth,
       opacity: [0, 1],
       direction: "normal",
-      duration: 250,
+      duration: 500,
       easing: "easeInSine",
+      complete: () => {
+        DSCtx.updatePBStates("resetToSelectBar", true);
+      },
     });
 
     return () => {
@@ -138,7 +141,7 @@ const PaletteChooser = () => {
             className={classes.circle}
             style={{
               background: `${statusOfCheckmarks[0] ? "green" : "#905532"}`,
-              opacity:  `${statusOfCheckmarks[0] ? "1" : "0"}`,
+              opacity: `${statusOfCheckmarks[0] ? "1" : "0"}`,
             }}
           >
             <div
@@ -175,7 +178,7 @@ const PaletteChooser = () => {
             className={classes.circle}
             style={{
               background: `${statusOfCheckmarks[1] ? "green" : "#905532"}`,
-              opacity:  `${statusOfCheckmarks[1] ? "1" : "0"}`,
+              opacity: `${statusOfCheckmarks[1] ? "1" : "0"}`,
             }}
           >
             <div
@@ -212,7 +215,7 @@ const PaletteChooser = () => {
             className={classes.circle}
             style={{
               background: `${statusOfCheckmarks[2] ? "green" : "#905532"}`,
-              opacity:  `${statusOfCheckmarks[2] ? "1" : "0"}`,
+              opacity: `${statusOfCheckmarks[2] ? "1" : "0"}`,
             }}
           >
             <div
@@ -252,7 +255,7 @@ const PaletteChooser = () => {
             className={classes.circle}
             style={{
               background: `${statusOfCheckmarks[3] ? "green" : "#905532"}`,
-              opacity:  `${statusOfCheckmarks[3] ? "1" : "0"}`,
+              opacity: `${statusOfCheckmarks[3] ? "1" : "0"}`,
             }}
           >
             <div
@@ -289,7 +292,7 @@ const PaletteChooser = () => {
             className={classes.circle}
             style={{
               background: `${statusOfCheckmarks[4] ? "green" : "#905532"}`,
-              opacity:  `${statusOfCheckmarks[4] ? "1" : "0"}`,
+              opacity: `${statusOfCheckmarks[4] ? "1" : "0"}`,
             }}
           >
             <div

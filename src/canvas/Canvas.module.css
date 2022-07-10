@@ -28,7 +28,7 @@
   pointer-events: none;
 }
 
-.horizContain > div {
+.horizContain>div {
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -36,7 +36,7 @@
   gap: 1em;
 }
 
-.flexContain > div > div > canvas {
+.flexContain>div>div>canvas {
   border-top-width: none;
   border-bottom-width: none;
   border-left: 1px solid black;
@@ -92,11 +92,9 @@
 
 .promptRefreshTimer {
   border-radius: 1em;
-  background: linear-gradient(
-    354deg,
-    rgb(131 131 131) 0%,
-    rgb(231 231 231) 100%
-  );
+  background: linear-gradient(354deg,
+      rgb(131 131 131) 0%,
+      rgb(231 231 231) 100%);
   padding: 1.75em;
 }
 
@@ -135,22 +133,18 @@
   height: 1px;
   width: 3em;
   margin-right: 0.5em;
-  background-image: linear-gradient(
-    to right,
-    rgba(255, 255, 255, 0),
-    rgba(0, 0, 0, 1)
-  );
+  background-image: linear-gradient(to right,
+      rgba(255, 255, 255, 0),
+      rgba(0, 0, 0, 1));
 }
 
 .trailingLine {
   height: 1px;
   width: 3em;
   margin-left: 0.5em;
-  background-image: linear-gradient(
-    to right,
-    rgba(0, 0, 0, 1),
-    rgba(255, 255, 255, 0)
-  );
+  background-image: linear-gradient(to right,
+      rgba(0, 0, 0, 1),
+      rgba(255, 255, 255, 0));
 }
 
 .download {
@@ -165,11 +159,9 @@
 }
 
 .overlayBreathingBackground {
-  background: linear-gradient(
-    0deg,
-    rgba(64, 64, 64, 1) 0%,
-    rgba(204, 204, 204, 1) 100%
-  );
+  background: linear-gradient(0deg,
+      rgba(64, 64, 64, 1) 0%,
+      rgba(204, 204, 204, 1) 100%);
   border-radius: 25px;
   display: grid;
   place-items: end center;
@@ -212,11 +204,9 @@
 
 .canvasBreathingBackground {
   position: relative;
-  background: linear-gradient(
-    0deg,
-    rgb(70, 70, 70) 10%,
-    rgba(255, 255, 255, 0) 40%
-  );
+  background: linear-gradient(0deg,
+      rgb(70, 70, 70) 10%,
+      rgba(255, 255, 255, 0) 40%);
 
   border-radius: 25px;
   display: flex;
@@ -228,6 +218,7 @@
   width: 78vw;
   height: 90vh;
 }
+
 /* hmm wtf it definitely lags with that on... */
 
 .canvasBreathingBackground:after {
@@ -239,22 +230,20 @@
   border-radius: 25px;
   bottom: 0px;
   z-index: -1;
-  background-image: linear-gradient(
-    0deg,
-    var(--light-animated-gradient-color),
-    var(--dark-animated-gradient-color),
-    var(--dark-animated-gradient-color),
-    var(--dark-animated-gradient-color),
-    var(--dark-animated-gradient-color),
-    var(--dark-animated-gradient-color),
-    var(--light-animated-gradient-color),
-    var(--dark-animated-gradient-color),
-    var(--dark-animated-gradient-color),
-    var(--dark-animated-gradient-color),
-    var(--dark-animated-gradient-color),
-    var(--dark-animated-gradient-color),
-    var(--light-animated-gradient-color)
-  );
+  background-image: linear-gradient(0deg,
+      var(--light-animated-gradient-color),
+      var(--dark-animated-gradient-color),
+      var(--dark-animated-gradient-color),
+      var(--dark-animated-gradient-color),
+      var(--dark-animated-gradient-color),
+      var(--dark-animated-gradient-color),
+      var(--light-animated-gradient-color),
+      var(--dark-animated-gradient-color),
+      var(--dark-animated-gradient-color),
+      var(--dark-animated-gradient-color),
+      var(--dark-animated-gradient-color),
+      var(--dark-animated-gradient-color),
+      var(--light-animated-gradient-color));
   background-size: 800px 800px;
   background-position: 0px 0px;
   animation: move 15s infinite linear;
@@ -265,6 +254,7 @@
   from {
     background-position: 0px 0px;
   }
+
   to {
     background-position: 800px 800px;
   }
@@ -364,9 +354,8 @@
   justify-content: center;
   align-items: center;
 
-  font-size: 0.85em;
-  margin-top: 2.5em;
-  margin-bottom: 2.5em;
+  margin-top: 2.5rem;
+  margin-bottom: 2.5rem;
 }
 
 .drawAgainButton:hover {
@@ -376,12 +365,10 @@
 .fadingVerticalLine {
   height: 2.5em;
   width: 1px;
-  background-image: linear-gradient(
-    to bottom,
-    rgba(255, 255, 255, 0),
-    rgba(0, 0, 0, 1),
-    rgba(255, 255, 255, 0)
-  );
+  background-image: linear-gradient(to bottom,
+      rgba(255, 255, 255, 0),
+      rgba(0, 0, 0, 1),
+      rgba(255, 255, 255, 0));
 }
 
 .redBackground {

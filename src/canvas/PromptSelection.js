@@ -10,6 +10,8 @@ import Select from "react-select";
 import Countdown from "react-countdown";
 import { useAuth0 } from "@auth0/auth0-react";
 
+import formatTime from "../util/formatTime";
+
 import LogInButton from "../oauth/LogInButton";
 import DrawingSelectionContext from "./DrawingSelectionContext";
 
@@ -74,6 +76,11 @@ const PromptSelection = () => {
     "January 01, 2030 00:00:00 GMT+03:00"
   );
 
+  // once all of these are true then make "Next" button available
+  const [customDurationClicked, setCustomDurationClicked] = useState(false);
+  const [customAdjectiveClicked, setCustomAdjectiveClicked] = useState(false);
+  const [customNounClicked, setCustomNounClicked] = useState(false);
+
   // for custom prompt dropdown
   const styles = {
     menu: ({ width, ...css }) => ({
@@ -82,6 +89,12 @@ const PromptSelection = () => {
       minWidth: "75%",
     }),
   };
+
+  useEffect(() => {
+    if (customDurationClicked && customAdjectiveClicked && customNounClicked) {
+      setNextDisabled(false);
+    }
+  }, [customDurationClicked, customAdjectiveClicked, customNounClicked]);
 
   useEffect(() => {
     if (!isLoading && isAuthenticated) {
@@ -373,7 +386,7 @@ const PromptSelection = () => {
         : -1 * window.innerWidth,
       opacity: [0, 1],
       direction: "normal",
-      duration: 250,
+      duration: 500,
       easing: "easeInSine",
     });
 
@@ -465,25 +478,6 @@ const PromptSelection = () => {
       },
     });
   }
-
-  // formatting function to display HH:MM:SS for countdown
-  const formatTime = ({ hours, minutes, seconds, completed }) => {
-    if (completed) {
-      // Render a complete state
-      return <div>New prompts are arriving soon!</div>;
-    } else {
-      // Render a countdown
-      let formattedHours = hours < 10 ? `0${hours}` : hours;
-      let formattedMinutes = minutes < 10 ? `0${minutes}` : minutes;
-      let formattedSeconds = seconds < 10 ? `0${seconds}` : seconds;
-
-      return (
-        <span>
-          {formattedHours}:{formattedMinutes}:{formattedSeconds}
-        </span>
-      );
-    }
-  };
 
   return (
     <div
@@ -652,8 +646,15 @@ const PromptSelection = () => {
                 }}
                 onClick={() => {
                   setSelectedExtraPrompt("custom");
-                  setNextDisabled(false);
-                  // setForceUpdateForDropdown(oldValue => !oldValue)
+
+                  // if even one input hasn't been selected, disable "Next" button
+                  if (
+                    !customDurationClicked ||
+                    !customAdjectiveClicked ||
+                    !customNounClicked
+                  ) {
+                    setNextDisabled(true);
+                  }
                 }}
               >
                 {/* <div style={{textAlign: selectedDurationOption ? }}> */}
@@ -661,17 +662,18 @@ const PromptSelection = () => {
                   defaultValue={defaultDurationOption}
                   options={durationOptions}
                   styles={styles}
+                  isSearchable={false}
                   placeholder="Duration"
                   isOptionDisabled={(option) => option.disabled}
-                  onChange={setSelectedDurationOption}
+                  onChange={(e) => {
+                    setSelectedDurationOption(e);
+                    setCustomDurationClicked(true);
+                  }}
                   formatOptionLabel={(option) => (
                     <>
                       {option.value === 60 && (
                         <div
                           style={{
-                            // backgroundColor: option.disabled
-                            //   ? "#c2c2c2"
-                            //   : "#fff",
                             opacity: option.disabled ? 0.5 : 1,
                           }}
                         >
@@ -681,9 +683,6 @@ const PromptSelection = () => {
                       {option.value === 180 && (
                         <div
                           style={{
-                            // backgroundColor: option.disabled
-                            //   ? "#c2c2c2"
-                            //   : "#fff",
                             opacity: option.disabled ? 0.5 : 1,
                           }}
                         >
@@ -694,9 +693,6 @@ const PromptSelection = () => {
                       {option.value === 300 && (
                         <div
                           style={{
-                            // backgroundColor: option.disabled
-                            //   ? "#c2c2c2"
-                            //   : "#fff",
                             opacity: option.disabled ? 0.5 : 1,
                           }}
                         >
@@ -706,24 +702,31 @@ const PromptSelection = () => {
                     </>
                   )}
                 />
-                {/* </div> */}
 
                 <Select
                   defaultValue={defaultAdjectiveOption}
                   options={adjectiveOptions}
                   styles={styles}
+                  isSearchable={false}
                   placeholder="Adjective"
                   isOptionDisabled={(option) => option.disabled}
-                  onChange={setSelectedAdjectiveOption}
+                  onChange={(e) => {
+                    setSelectedAdjectiveOption(e);
+                    setCustomAdjectiveClicked(true);
+                  }}
                 />
 
                 <Select
                   defaultValue={defaultNounOption}
                   options={nounOptions}
                   styles={styles}
+                  isSearchable={false}
                   placeholder="Noun"
                   isOptionDisabled={(option) => option.disabled}
-                  onChange={setSelectedNounOption}
+                  onChange={(e) => {
+                    setSelectedNounOption(e);
+                    setCustomNounClicked(true);
+                  }}
                 />
               </div>
             </div>
@@ -798,6 +801,9 @@ const PromptSelection = () => {
               date={resetAtDate}
               renderer={formatTime}
               onComplete={() => setShowCountdownTimer(false)}
+              // i guess make function that will manually animate/change vars
+              // for select text, "a drawing prompt", whole container down a bit?
+              // and obviously the countdownTimer div out of the way
             />
           </div>
         )}

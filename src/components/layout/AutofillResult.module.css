@@ -13,6 +13,10 @@
   border-bottom-right-radius: 1em;
 }
 
+.autofillResult:only-child {
+  border-radius: .35em;
+}
+
 .autofillResult:hover {
   background-color: #d7d7d7;
 }
@@ -39,19 +43,15 @@
 .leadingLine {
   height: 1px;
   width: 30%;
-  background-image: linear-gradient(
-    to right,
-    rgba(255, 255, 255, 0),
-    rgba(0, 0, 0, 1)
-  );
+  background-image: linear-gradient(to right,
+      rgba(255, 255, 255, 0),
+      rgba(0, 0, 0, 1));
 }
 
 .trailingLine {
   height: 1px;
   width: 30%;
-  background-image: linear-gradient(
-    to right,
-    rgba(0, 0, 0, 1),
-    rgba(255, 255, 255, 0)
-  );
+  background-image: linear-gradient(to right,
+      rgba(0, 0, 0, 1),
+      rgba(255, 255, 255, 0));
 }

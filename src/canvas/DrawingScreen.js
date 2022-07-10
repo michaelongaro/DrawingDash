@@ -9,6 +9,8 @@ import { CountdownCircleTimer } from "react-countdown-circle-timer";
 import anime from "animejs/lib/anime.es.js";
 import isEqual from "lodash/isEqual";
 
+import formatTime from "../util/formatTime";
+
 import { useCanvas } from "./CanvasContext";
 import DrawingSelectionContext from "./DrawingSelectionContext";
 import Controls from "./Controls";
@@ -616,7 +618,10 @@ const DrawingScreen = () => {
         }}
       >
         <div className={classes.canvasBreathingBackground}>
-          <div style={{ userSelect: "none" }}>{DSCtx.chosenPrompt}</div>
+          {/* there is a chance that adding this marginBottom could mess up canvas drawing logic */}
+          <div style={{ userSelect: "none", marginBottom: ".25em" }}>
+            {DSCtx.chosenPrompt}
+          </div>
 
           <div className={classes.sharedContain}>
             <div className={`${showCanvasOutline} ${classes.startScreen}`}>
@@ -685,6 +690,7 @@ const DrawingScreen = () => {
                     <div>New prompts refresh in</div>
                     <Countdown
                       date={resetAtDate}
+                      renderer={formatTime}
                       onComplete={() => setShowCountdownTimer(false)}
                     />
                   </div>
