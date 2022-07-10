@@ -216,7 +216,7 @@ const NounAutofillResults = ({ titles, checkForPair, idx }) => {
         <div className={classes.autofillRelatedDivider}>
           <div className={classes.leadingLine}></div>
           <div className={classes.columnFlex}>
-            <div>No results found for</div>
+            <div style={{ fontSize: ".85em" }}>No results found for</div>
             <div>
               "{`${searchCtx.searchValues["adjSearch"][idx]} `}
               {searchCtx.searchValues["nounSearch"][idx]}"

@@ -14,6 +14,7 @@ import Footer from "../ui/Footer";
 import { useAuth0 } from "@auth0/auth0-react";
 
 import classes from "./HomePage.module.css";
+import baseClasses from "../index.module.css";
 
 function HomePage() {
   const { isLoading, isAuthenticated } = useAuth0();
@@ -47,7 +48,7 @@ function HomePage() {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      transition={{ duration: .2}}
+      transition={{ duration: 0.2 }}
     >
       {!isLoading && (
         <section id={"homePageContainer"} style={{ opacity: 0 }}>
@@ -82,7 +83,7 @@ function HomePage() {
                       <div className={classes.or}>OR</div>
                       <div className={classes.trailingLine}></div>
                     </div>
-                    <div className={classes.animatedRainbow}>
+                    <div className={baseClasses.animatedRainbow}>
                       <Link to="/daily-drawings">
                         Start Your First Drawing!
                       </Link>

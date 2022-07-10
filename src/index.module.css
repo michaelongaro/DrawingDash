@@ -158,3 +158,58 @@ h6 {
 .close:after {
   transform: rotate(-45deg);
 }
+
+
+.animatedRainbow a {
+  position: absolute;
+  top: 5px;
+  bottom: 5px;
+  left: 5px;
+  right: 5px;
+  border-radius: 3px;
+  background-color: white;
+  text-decoration: none;
+  color: black;
+  text-align: center;
+  padding: 0.6em;
+}
+
+.animatedRainbow {
+  position: relative;
+  width: 10em;
+  height: 75px;
+  margin: 0 1em 0 1em;
+  border-radius: 6px;
+  cursor: pointer;
+  background-color: yellow;
+  background-image: repeating-linear-gradient(-45deg,
+      #cf2525,
+      #e0c71b 1rem,
+      #0caa0d 2rem,
+      #234ac1 3rem,
+      #7e1cc2 4rem,
+      #cf2525 5rem);
+  background-position: 0% 0%;
+  background-size: 100000%;
+  background-repeat: repeat;
+  animation-name: colors;
+  animation-duration: 150s;
+  animation-iteration-count: infinite;
+  animation-direction: normal;
+  animation-play-state: paused;
+  animation-timing-function: linear;
+}
+
+.animatedRainbow:hover {
+  animation-play-state: running;
+}
+
+@keyframes colors {
+  0% {
+    background-position: 0% 0%;
+  }
+
+  100% {
+    background-position: 18.9% 18.9%;
+  }
+}

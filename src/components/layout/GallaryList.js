@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useContext } from "react";
 
 import { isEqual } from "lodash";
+import { Link } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 
 import SearchContext from "./SearchContext";
 import Card from "../../ui/Card";
@@ -24,6 +26,8 @@ const GallaryList = ({
   forModal,
 }) => {
   const searchCtx = useContext(SearchContext);
+
+  const location = useLocation();
 
   const [showEmptyResults, setShowEmptyResults] = useState(false);
 
@@ -117,6 +121,20 @@ const GallaryList = ({
       }
     }
   }, [drawingIDs]);
+
+  useEffect(() => {
+    if (showEmptyResults) {
+      disableAllDurationTabs();
+    }
+  }, [showEmptyResults]);
+
+  function disableAllDurationTabs() {
+    setDurationStates([false, false, false]);
+    setAvailableDurations([false, false, false]);
+    setRedOpacity(0);
+    setYellowOpacity(0);
+    setGreenOpacity(0);
+  }
 
   function updateDurationOpacities() {
     if (searchCtx.pageSelectorDetails["durationToManuallyLoad"][idx]) {
@@ -444,14 +462,37 @@ const GallaryList = ({
               <div
                 style={{
                   gap: "1em",
-                  minWidth: idx === 1 ? "85vw" : "74vw",
+                  minWidth:
+                    idx === 1
+                      ? location.pathname === "/profile/gallery"
+                        ? "50vw"
+                        : "74vw"
+                      : "75vw",
                   minHeight: "350px",
                 }}
                 className={baseClasses.baseVertFlex}
               >
-                <MagnifyingGlassIcon dimensions={"4.5em"} color={"black"} />
-                <div style={{ fontSize: "20px" }}>No drawings found for:</div>
-                <div style={{ fontSize: "25px" }}>"{title}"</div>
+                {idx === 1 && location.pathname === "/profile/gallery" ? (
+                  <>
+                    <div style={{ fontSize: "20px" }}>No drawings found</div>
+                    <div className={baseClasses.animatedRainbow}>
+                      <Link to="/daily-drawings">
+                        Start Your First Drawing!
+                      </Link>
+                    </div>
+                    <div style={{ fontSize: "20px" }}>
+                      and return here to view your masterpiece!
+                    </div>
+                  </>
+                ) : (
+                  <>
+                    <MagnifyingGlassIcon dimensions={"4.5em"} color={"black"} />
+                    <div style={{ fontSize: "20px" }}>
+                      No drawings found for:
+                    </div>
+                    <div style={{ fontSize: "25px" }}>"{title}"</div>
+                  </>
+                )}
               </div>
             )}
           </Card>

@@ -137,20 +137,132 @@ export function SearchProvider(props) {
 
     get(child(dbRef, dbPath))
       .then((snapshot) => {
-        // will be null if title doesn't exist in duration
-        let fullQuery60, fullQuery180, fullQuery300;
+        if (snapshot.exists()) {
+          // will be null if title doesn't exist in duration
+          let fullQuery60, fullQuery180, fullQuery300;
 
-        // make this below into 3 calls each (use idx to see whether it's for profile or not)
-        if (fetchAll) {
-          fullQuery60 = snapshot.val()["60"];
-          fullQuery180 = snapshot.val()["180"];
-          fullQuery300 = snapshot.val()["300"];
+          // make this below into 3 calls each (use idx to see whether it's for profile or not)
+          if (fetchAll) {
+            fullQuery60 = snapshot.val()["60"];
+            fullQuery180 = snapshot.val()["180"];
+            fullQuery300 = snapshot.val()["300"];
 
-          // CHANGE THIS LATER 100% JUST NEED TO MAKE IT WORK FIRST, maybe need to use refs
-          // since the values like endIndex getting changed will matter to the whole...
+            // CHANGE THIS LATER 100% JUST NEED TO MAKE IT WORK FIRST, maybe need to use refs
+            // since the values like endIndex getting changed will matter to the whole...
 
-          if (pageSelectorDetails["durationToManuallyLoad"][idx]) {
-            if (pageSelectorDetails["durationToManuallyLoad"][idx] === "60") {
+            if (pageSelectorDetails["durationToManuallyLoad"][idx]) {
+              if (pageSelectorDetails["durationToManuallyLoad"][idx] === "60") {
+                if (fullQuery60) {
+                  let drawingIDs = getFlattenedIDs(Object.values(fullQuery60));
+                  totalDrawings["60"] = drawingIDs.length;
+
+                  gallaryResults["60"] = drawingIDs.slice(startIndex, endIndex);
+
+                  startIndex = 0;
+                  endIndex = maxAllowed;
+                }
+
+                if (fullQuery180) {
+                  let drawingIDs = getFlattenedIDs(Object.values(fullQuery180));
+                  totalDrawings["180"] = drawingIDs.length;
+
+                  gallaryResults["180"] = drawingIDs.slice(
+                    startIndex,
+                    endIndex
+                  );
+
+                  startIndex = 0;
+                  endIndex = maxAllowed;
+                }
+
+                if (fullQuery300) {
+                  let drawingIDs = getFlattenedIDs(Object.values(fullQuery300));
+                  totalDrawings["300"] = drawingIDs.length;
+
+                  gallaryResults["300"] = drawingIDs.slice(
+                    startIndex,
+                    endIndex
+                  );
+
+                  startIndex = 0;
+                  endIndex = maxAllowed;
+                }
+              } else if (
+                pageSelectorDetails["durationToManuallyLoad"][idx] === "180"
+              ) {
+                if (fullQuery180) {
+                  let drawingIDs = getFlattenedIDs(Object.values(fullQuery180));
+                  totalDrawings["180"] = drawingIDs.length;
+
+                  gallaryResults["180"] = drawingIDs.slice(
+                    startIndex,
+                    endIndex
+                  );
+
+                  startIndex = 0;
+                  endIndex = maxAllowed;
+                }
+
+                if (fullQuery300) {
+                  let drawingIDs = getFlattenedIDs(Object.values(fullQuery300));
+                  totalDrawings["300"] = drawingIDs.length;
+
+                  gallaryResults["300"] = drawingIDs.slice(
+                    startIndex,
+                    endIndex
+                  );
+
+                  startIndex = 0;
+                  endIndex = maxAllowed;
+                }
+                if (fullQuery60) {
+                  let drawingIDs = getFlattenedIDs(Object.values(fullQuery60));
+                  totalDrawings["60"] = drawingIDs.length;
+
+                  gallaryResults["60"] = drawingIDs.slice(startIndex, endIndex);
+
+                  startIndex = 0;
+                  endIndex = maxAllowed;
+                }
+              } else if (
+                pageSelectorDetails["durationToManuallyLoad"][idx] === "300"
+              ) {
+                if (fullQuery300) {
+                  let drawingIDs = getFlattenedIDs(Object.values(fullQuery300));
+                  totalDrawings["300"] = drawingIDs.length;
+
+                  gallaryResults["300"] = drawingIDs.slice(
+                    startIndex,
+                    endIndex
+                  );
+
+                  startIndex = 0;
+                  endIndex = maxAllowed;
+                }
+                if (fullQuery60) {
+                  let drawingIDs = getFlattenedIDs(Object.values(fullQuery60));
+                  totalDrawings["60"] = drawingIDs.length;
+
+                  gallaryResults["60"] = drawingIDs.slice(startIndex, endIndex);
+
+                  startIndex = 0;
+                  endIndex = maxAllowed;
+                }
+
+                if (fullQuery180) {
+                  let drawingIDs = getFlattenedIDs(Object.values(fullQuery180));
+                  totalDrawings["180"] = drawingIDs.length;
+
+                  gallaryResults["180"] = drawingIDs.slice(
+                    startIndex,
+                    endIndex
+                  );
+
+                  startIndex = 0;
+                  endIndex = maxAllowed;
+                }
+              }
+            } else {
               if (fullQuery60) {
                 let drawingIDs = getFlattenedIDs(Object.values(fullQuery60));
                 totalDrawings["60"] = drawingIDs.length;
@@ -176,134 +288,42 @@ export function SearchProvider(props) {
                 totalDrawings["300"] = drawingIDs.length;
 
                 gallaryResults["300"] = drawingIDs.slice(startIndex, endIndex);
-
-                startIndex = 0;
-                endIndex = maxAllowed;
-              }
-            } else if (
-              pageSelectorDetails["durationToManuallyLoad"][idx] === "180"
-            ) {
-              if (fullQuery180) {
-                let drawingIDs = getFlattenedIDs(Object.values(fullQuery180));
-                totalDrawings["180"] = drawingIDs.length;
-
-                gallaryResults["180"] = drawingIDs.slice(startIndex, endIndex);
-
-                startIndex = 0;
-                endIndex = maxAllowed;
-              }
-
-              if (fullQuery300) {
-                let drawingIDs = getFlattenedIDs(Object.values(fullQuery300));
-                totalDrawings["300"] = drawingIDs.length;
-
-                gallaryResults["300"] = drawingIDs.slice(startIndex, endIndex);
-
-                startIndex = 0;
-                endIndex = maxAllowed;
-              }
-              if (fullQuery60) {
-                let drawingIDs = getFlattenedIDs(Object.values(fullQuery60));
-                totalDrawings["60"] = drawingIDs.length;
-
-                gallaryResults["60"] = drawingIDs.slice(startIndex, endIndex);
-
-                startIndex = 0;
-                endIndex = maxAllowed;
-              }
-            } else if (
-              pageSelectorDetails["durationToManuallyLoad"][idx] === "300"
-            ) {
-              if (fullQuery300) {
-                let drawingIDs = getFlattenedIDs(Object.values(fullQuery300));
-                totalDrawings["300"] = drawingIDs.length;
-
-                gallaryResults["300"] = drawingIDs.slice(startIndex, endIndex);
-
-                startIndex = 0;
-                endIndex = maxAllowed;
-              }
-              if (fullQuery60) {
-                let drawingIDs = getFlattenedIDs(Object.values(fullQuery60));
-                totalDrawings["60"] = drawingIDs.length;
-
-                gallaryResults["60"] = drawingIDs.slice(startIndex, endIndex);
-
-                startIndex = 0;
-                endIndex = maxAllowed;
-              }
-
-              if (fullQuery180) {
-                let drawingIDs = getFlattenedIDs(Object.values(fullQuery180));
-                totalDrawings["180"] = drawingIDs.length;
-
-                gallaryResults["180"] = drawingIDs.slice(startIndex, endIndex);
 
                 startIndex = 0;
                 endIndex = maxAllowed;
               }
             }
           } else {
-            if (fullQuery60) {
-              let drawingIDs = getFlattenedIDs(Object.values(fullQuery60));
-              totalDrawings["60"] = drawingIDs.length;
+            fullQuery60 = snapshot.val()["60"][fullQuery]?.drawingID;
+            fullQuery180 = snapshot.val()["180"][fullQuery]?.drawingID;
+            fullQuery300 = snapshot.val()["300"][fullQuery]?.drawingID;
 
-              gallaryResults["60"] = drawingIDs.slice(startIndex, endIndex);
+            if (fullQuery60) {
+              totalDrawings["60"] = Object.keys(fullQuery60).length;
+
+              gallaryResults["60"] = fullQuery60.slice(startIndex, endIndex);
 
               startIndex = 0;
               endIndex = maxAllowed;
             }
 
             if (fullQuery180) {
-              let drawingIDs = getFlattenedIDs(Object.values(fullQuery180));
-              totalDrawings["180"] = drawingIDs.length;
+              totalDrawings["180"] = Object.keys(fullQuery180).length;
 
-              gallaryResults["180"] = drawingIDs.slice(startIndex, endIndex);
+              gallaryResults["180"] = fullQuery180.slice(startIndex, endIndex);
 
               startIndex = 0;
               endIndex = maxAllowed;
             }
 
             if (fullQuery300) {
-              let drawingIDs = getFlattenedIDs(Object.values(fullQuery300));
-              totalDrawings["300"] = drawingIDs.length;
+              totalDrawings["300"] = Object.keys(fullQuery300).length;
 
-              gallaryResults["300"] = drawingIDs.slice(startIndex, endIndex);
+              gallaryResults["300"] = fullQuery300.slice(startIndex, endIndex);
 
               startIndex = 0;
               endIndex = maxAllowed;
             }
-          }
-        } else {
-          fullQuery60 = snapshot.val()["60"][fullQuery]?.drawingID;
-          fullQuery180 = snapshot.val()["180"][fullQuery]?.drawingID;
-          fullQuery300 = snapshot.val()["300"][fullQuery]?.drawingID;
-
-          if (fullQuery60) {
-            totalDrawings["60"] = Object.keys(fullQuery60).length;
-
-            gallaryResults["60"] = fullQuery60.slice(startIndex, endIndex);
-
-            startIndex = 0;
-            endIndex = maxAllowed;
-          }
-
-          if (fullQuery180) {
-            totalDrawings["180"] = Object.keys(fullQuery180).length;
-
-            gallaryResults["180"] = fullQuery180.slice(startIndex, endIndex);
-
-            startIndex = 0;
-            endIndex = maxAllowed;
-          }
-
-          if (fullQuery300) {
-            totalDrawings["300"] = Object.keys(fullQuery300).length;
-
-            gallaryResults["300"] = fullQuery300.slice(startIndex, endIndex);
-
-            startIndex = 0;
-            endIndex = maxAllowed;
           }
         }
       })
