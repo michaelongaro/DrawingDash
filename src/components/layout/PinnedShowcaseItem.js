@@ -17,7 +17,7 @@ const PinnedShowcaseItem = ({ drawingID, timer }) => {
     useState(true);
 
   useEffect(() => {
-    const timerID = setTimeout(() => setShowTempBaselineSkeleton(false), 5050);
+    const timerID = setTimeout(() => setShowTempBaselineSkeleton(false), 1500);
 
     return () => {
       clearTimeout(timerID);

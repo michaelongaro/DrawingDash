@@ -32,6 +32,7 @@ import { app } from "../util/init-firebase";
 
 import classes from "./Canvas.module.css";
 import baseClasses from "../index.module.css";
+import { isEqual } from "lodash";
 
 const PromptSelection = () => {
   const { isLoading, isAuthenticated } = useAuth0();
@@ -389,9 +390,24 @@ const PromptSelection = () => {
       duration: 500,
       easing: "easeInSine",
     });
-
-    DSCtx.updatePBStates("selectCircle", true);
   }, []);
+
+  useEffect(() => {
+    if (
+      isEqual(DSCtx.PBStates, {
+        selectCircle: false,
+        chooseCircle: false,
+        drawCircle: false,
+        selectToChooseBar: false,
+        chooseToDrawBar: false,
+        resetToSelectBar: false,
+      })
+    ) {
+      console.log("moving forward because", DSCtx.PBStates);
+      // maybe have to put below on slight timeout not sure.
+      DSCtx.updatePBStates("selectCircle", true);
+    }
+  }, [DSCtx.PBStates]);
 
   function updateDisabledOptions(duration, adj, noun) {
     setDurationOptions([

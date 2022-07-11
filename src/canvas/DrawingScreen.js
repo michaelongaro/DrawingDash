@@ -52,11 +52,11 @@ const DrawingScreen = () => {
   const storage = getStorage();
 
   const timerOptions = [
-    { seconds: 60, colorArray: [60, 45, 30, 15] },
-    { seconds: 180, colorArray: [180, 135, 90, 45] },
-    { seconds: 300, colorArray: [300, 225, 150, 75] },
+    { seconds: 60, colorArray: [45, 30, 15, 0] },
+    { seconds: 180, colorArray: [135, 90, 45, 0] },
+    { seconds: 300, colorArray: [225, 150, 75, 0] },
   ];
-  console.log("rerendering");
+
   const currentTimer = {
     60: 0,
     180: 1,
@@ -370,7 +370,7 @@ const DrawingScreen = () => {
     }
 
     return (
-      <div style={{ fontFamily: "Montserrat" }}>
+      <div>
         <div style={{ fontSize: "1em", userSelect: "none" }}>
           {remainingTime}
         </div>
@@ -581,6 +581,8 @@ const DrawingScreen = () => {
   };
 
   function drawAgain() {
+    document.getElementById("root").scrollIntoView({ behavior: "smooth" });
+
     anime({
       targets: "#drawingScreen",
       loop: false,

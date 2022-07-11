@@ -75,6 +75,8 @@ const GallaryItem = ({ drawingID, settings }) => {
   const [skeletonWidth, setSkeletonWidth] = useState(0);
   const [skeletonHeight, setSkeletonHeight] = useState(0);
 
+  const [showImage, setShowImage] = useState(false);
+
   const [drawingTotalLikes, setDrawingTotalLikes] = useState(0);
   const [drawingDailyLikes, setDrawingDailyLikes] = useState(0);
   const [drawingWidth, setDrawingWidth] = useState(settings.width);
@@ -110,14 +112,6 @@ const GallaryItem = ({ drawingID, settings }) => {
 
   const [showTempBaselineSkeleton, setShowTempBaselineSkeleton] =
     useState(true);
-
-  // useEffect(() => {
-  //   const timerID = setTimeout(() => setShowTempBaselineSkeleton(false), 500);
-
-  //   return () => {
-  //     clearTimeout(timerID);
-  //   };
-  // }, []);
 
   useEffect(() => {
     if (showDrawingModal || (!isLoading && !isAuthenticated)) {
@@ -169,14 +163,8 @@ const GallaryItem = ({ drawingID, settings }) => {
     };
   }, [drawingID]);
 
-  // useEffect(() => {
-  //   console.log(drawingModalRef.current);
-  // }, [drawingModalRef.current]);
-
   useEffect(() => {
     if (drawingDetails && fetchedDrawing) {
-      // maybe have some kind of delay here? idk why there is
-      // a gap between when skeleton goes away and when image actually appears
       setIsFetching(false);
     }
   }, [drawingDetails, fetchedDrawing]);
@@ -450,7 +438,6 @@ const GallaryItem = ({ drawingID, settings }) => {
   }
 
   return (
-    // <div style={{ position: "relative" }}>
     <div
       className={showDrawingModal ? classes.modal : ""}
       onMouseEnter={() => {
@@ -589,6 +576,8 @@ const GallaryItem = ({ drawingID, settings }) => {
                   borderRadius: settings.forPinnedShowcase
                     ? "1em"
                     : "1em 1em 0 0",
+                  minWidth: "100%",
+                  minHeight: "100%",
                 }}
                 src={fetchedDrawing}
                 alt={drawingDetails.title}
@@ -914,7 +903,6 @@ const GallaryItem = ({ drawingID, settings }) => {
           )
         ) : null}
       </div>
-      {/* </div> */}
     </div>
   );
 };

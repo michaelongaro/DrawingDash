@@ -54,9 +54,9 @@ const PaletteChooser = () => {
       direction: "normal",
       duration: 500,
       easing: "easeInSine",
-      complete: () => {
-        DSCtx.updatePBStates("resetToSelectBar", true);
-      },
+      // complete: () => {
+      //   DSCtx.updatePBStates("resetToSelectBar", true);
+      // },
     });
 
     return () => {

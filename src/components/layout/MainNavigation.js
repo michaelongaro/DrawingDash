@@ -10,12 +10,11 @@ import ProfilePictureUpdateContext from "./ProfilePictureUpdateContext";
 
 import LogInButton from "../../oauth/LogInButton";
 import LogOutButton from "../../oauth/LogOutButton";
-import Logo from "../../svgs/Logo.png"
+import Logo from "../../svgs/Logo.png";
 
 import EaselIcon from "../../svgs/EaselIcon";
 import MagnifyingGlassIcon from "../../svgs/MagnifyingGlassIcon";
 import DefaultUserIcon from "../../svgs/DefaultUserIcon";
-import LogoIcon from "../../svgs/LogoIcon";
 
 import {
   getDatabase,
@@ -276,17 +275,11 @@ function MainNavigation() {
     <header className={classes.header}>
       <div className={classes.logo}>
         <Link to="/">
-          {/* <div style={{ gap: ".25em" }} className={baseClasses.baseVertFlex}>
-            <div style={{postion: "absolute", left: 0, top: ".5em"}}><OneMinuteIcon dimensions={"1em"} /></div>
-            <div style={{postion: "absolute", left: "1em", top: 0}}><OneMinuteIcon dimensions={"1em"} /></div>
-            <div style={{postion: "absolute", left: "2em", top: ".5em"}}><OneMinuteIcon dimensions={"1em"} /></div>
-          </div> */}
-
-          {/* okay weird as heck but manually dimensions set to 125x175 and viewbox to 0 -100 210 297 i guess works? */}
-          {/* <LogoIcon width={"125px"} height={"175px"} /> */}
-              <img src={Logo} style={{ maxWidth: "115px", marginTop: ".25em" }} alt="Logo" />
-
-          {/* <img src={logo} alt="Logo" /> */}
+          <img
+            src={Logo}
+            style={{ maxWidth: "115px", marginTop: ".25em" }}
+            alt="Logo"
+          />
         </Link>
       </div>
       <nav>
@@ -340,10 +333,40 @@ function MainNavigation() {
                   username ? ` ${username}!` : "!"
                 }`}</div>
               ) : null}
-              <Link to="/profile/preferences">
+              <div
+                style={{ cursor: "pointer" }}
+                className={classes.profileDropdownContainer}
+                onMouseEnter={() => {
+                  setHoveringOnProfilePicture(true);
+                }}
+                onMouseLeave={() => {
+                  setHoveringOnProfilePicture(false);
+                }}
+              >
+                {/* zIndex just to be able to click on the <Link> */}
+                <div style={{ position: "absolute", zIndex: 1 }}>
+                  {isFetching ? (
+                    <div
+                      style={{
+                        width: "3em",
+                        height: "3em",
+                        borderRadius: "50%",
+                      }}
+                      className={baseClasses.skeletonLoading}
+                    ></div>
+                  ) : (
+                    <Link to="/profile/preferences">
+                      <img
+                        className={classes.profilePicture}
+                        src={croppedImage ? croppedImage : image}
+                        alt={"cropped profile"}
+                      />
+                    </Link>
+                  )}
+                </div>
+
                 <div
-                  style={{ cursor: "pointer" }}
-                  className={classes.profileDropdownContainer}
+                  className={classes.dropdownContainer}
                   onMouseEnter={() => {
                     setHoveringOnProfilePicture(true);
                   }}
@@ -351,64 +374,33 @@ function MainNavigation() {
                     setHoveringOnProfilePicture(false);
                   }}
                 >
-                  <div style={{ position: "absolute" }}>
-                    {isFetching ? (
-                      <div
-                        style={{
-                          width: "3em",
-                          height: "3em",
-                          borderRadius: "50%",
-                        }}
-                        className={baseClasses.skeletonLoading}
-                      ></div>
-                    ) : (
-                      <img
-                        className={classes.profilePicture}
-                        src={croppedImage ? croppedImage : image}
-                        alt={"cropped profile"}
-                      />
-                    )}
-                  </div>
-
                   <div
-                    className={classes.dropdownContainer}
-                    onMouseEnter={() => {
-                      setHoveringOnProfilePicture(true);
+                    style={{
+                      opacity: hoveringOnProfilePicture ? 1 : 0,
+                      pointerEvents: hoveringOnProfilePicture ? "auto" : "none",
                     }}
-                    onMouseLeave={() => {
-                      setHoveringOnProfilePicture(false);
-                    }}
+                    className={classes.profileDropdown}
                   >
-                    <div
-                      style={{
-                        opacity: hoveringOnProfilePicture ? 1 : 0,
-                        pointerEvents: hoveringOnProfilePicture
-                          ? "auto"
-                          : "none",
+                    <Link
+                      className={classes.profileButton}
+                      onMouseEnter={() => {
+                        setHoveringOnProfileButton(true);
                       }}
-                      className={classes.profileDropdown}
+                      onMouseLeave={() => {
+                        setHoveringOnProfileButton(false);
+                      }}
+                      to="/profile/preferences"
                     >
-                      <Link
-                        className={classes.profileButton}
-                        onMouseEnter={() => {
-                          setHoveringOnProfileButton(true);
-                        }}
-                        onMouseLeave={() => {
-                          setHoveringOnProfileButton(false);
-                        }}
-                        to="/profile/preferences"
-                      >
-                        <DefaultUserIcon
-                          dimensions={"1.5em"}
-                          color={hoveringOnProfileButton ? "white" : "black"}
-                        />
-                        <div>Profile</div>
-                      </Link>
-                      <LogOutButton />
-                    </div>
+                      <DefaultUserIcon
+                        dimensions={"1.5em"}
+                        color={hoveringOnProfileButton ? "white" : "black"}
+                      />
+                      <div>Profile</div>
+                    </Link>
+                    <LogOutButton />
                   </div>
                 </div>
-              </Link>
+              </div>
             </div>
           )}
         </ul>
