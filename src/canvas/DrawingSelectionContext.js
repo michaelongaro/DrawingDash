@@ -82,23 +82,10 @@ export function DrawingSelectionProvider(props) {
     title: "",
   });
 
-  const [lastSeenPrompts, setLastSeenPrompts] = useState(null);
-
-  const [promptsHaveChanged, setPromptsHaveChanged] = useState(false);
-  const [statusesHaveChanged, setStatusesHaveChanged] = useState(false);
-
   const [startNewDailyWordsAnimation, setStartNewDailyWordsAnimation] =
     useState(false);
 
-  const [tempDrawingStatuses, setTempDrawingStatuses] = useState(null);
-
-  const [tempExtraPrompt, setTempExtraPrompt] = useState({
-    seconds: 60,
-    title: "",
-  });
-
   useEffect(() => {
-    console.log(currentColor);
     if (currentColor.toLowerCase() === "#ffffff") {
       document.documentElement.style.setProperty(
         "--dark-animated-gradient-color",
@@ -111,59 +98,57 @@ export function DrawingSelectionProvider(props) {
     }
   }, [currentColor]);
 
-  useEffect(() => {
-    if (lastSeenPrompts) {
-      setDailyPrompts(lastSeenPrompts);
-      setLastSeenPrompts(null);
-      setPromptsHaveChanged(true);
-    }
-  }, [lastSeenPrompts]);
-
-  //   read this!
-  //   could have just a general counter (start at 0) for dailyPrompts and drawingStatuses
-  //   on whenever their onValue functions run increment respective counters
-  //   and when prompts === 1 -> setPromptsChanged(true)
-  //   and when statuses === 5 (init load = 1, 60180300extra = 5)
-  //   when both of these counter conditionals are true -> setStartNewDailyWordsAnimation(true);
-  //   then set counters back to 0
-  //   (can get rid of all the fluff shit that you added in the interim)
-  //
+  const [promptRefreshes, setPromptRefreshes] = useState(0);
+  const [drawingStatusRefreshes, setDrawingStatusRefreshes] = useState(0);
 
   useEffect(() => {
     // attaching firebase listener so that when prompts update from firebase
     // scheduler function it will update the context states here
-    onValue(ref(db, `dailyPrompts`), (snapshot) => {
-      if (snapshot.exists()) {
-        // setDailyPrompts(snapshot.val());
 
-        if (!lastSeenPrompts) {
-          console.log("setting last seen for first time");
-          setLastSeenPrompts(snapshot.val());
-        }
+    if (!isLoading) {
+      onValue(ref(db, `dailyPrompts`), (snapshot) => {
+        if (snapshot.exists()) {
+          setDailyPrompts(snapshot.val());
 
-        // storing current user localStorage data
-        let currentUserInfo = JSON.parse(
-          localStorage.getItem("unregisteredUserInfo")
-        );
+          setPromptRefreshes((refreshes) => refreshes + 1);
 
-        // checking to see if user's drawing statuses need to be updated based
-        // on if their last seen prompts match the current prompts
-        if (currentUserInfo) {
-          if (!isEqual(currentUserInfo["lastSeenPrompts"], snapshot.val())) {
-            currentUserInfo["lastSeenPrompts"] = snapshot.val();
-            currentUserInfo["dailyCompletedPrompts"] = {
-              60: false,
-              180: false,
-              300: false,
-            };
-            localStorage.setItem(
-              "unregisteredUserInfo",
-              JSON.stringify(currentUserInfo)
-            );
+          // storing current user localStorage data
+          let currentUserInfo = JSON.parse(
+            localStorage.getItem("unregisteredUserInfo")
+          );
+
+          // checking to see if user's drawing statuses need to be updated based
+          // on if their last seen prompts match the current prompts
+          if (currentUserInfo) {
+            if (!isEqual(currentUserInfo["lastSeenPrompts"], snapshot.val())) {
+              console.log("prompts are diff, starting changes");
+              currentUserInfo["lastSeenPrompts"] = snapshot.val();
+              currentUserInfo["dailyCompletedPrompts"] = {
+                60: false,
+                180: false,
+                300: false,
+              };
+
+              localStorage.setItem(
+                "unregisteredUserInfo",
+                JSON.stringify(currentUserInfo)
+              );
+
+              setPromptRefreshes(1);
+              setDrawingStatusRefreshes(1);
+
+              setDrawingStatuses({
+                60: false,
+                180: false,
+                300: false,
+              });
+
+              setStartNewDailyWordsAnimation(true);
+            }
           }
         }
-      }
-    });
+      });
+    }
 
     // if user isn't logged in
     if (!isLoading && !isAuthenticated) {
@@ -175,7 +160,8 @@ export function DrawingSelectionProvider(props) {
       // and we manually update drawingStatuses from DrawingScreen component
       // when user finishes a drawing.
       if (currentUserInfo) {
-        setTempDrawingStatuses(currentUserInfo.dailyCompletedPrompts);
+        setDrawingStatuses(currentUserInfo.dailyCompletedPrompts);
+        setDrawingStatusRefreshes((refreshes) => refreshes + 1);
       }
     }
 
@@ -185,45 +171,38 @@ export function DrawingSelectionProvider(props) {
         ref(db, `users/${user.sub}/completedDailyPrompts`),
         (snapshot) => {
           if (snapshot.exists()) {
-            setTempDrawingStatuses(snapshot.val());
+            setDrawingStatuses(snapshot.val());
+            setDrawingStatusRefreshes((refreshes) => refreshes + 1);
           }
         }
       );
 
       onValue(ref(db, `users/${user.sub}/extraDailyPrompt`), (snapshot) => {
         if (snapshot.exists()) {
-          setTempExtraPrompt(snapshot.val());
+          setExtraPrompt(snapshot.val());
         }
       });
     }
   }, [isLoading, isAuthenticated]);
 
-  // could have vars for promptsChanged and statusesChanged
+  // may need to use refs but
+  // useEffect(() => {
+  //   console.log("drawingStatuses changed to", drawingStatuses);
+  //   setDrawingStatusRefreshes((refreshes) => refreshes + 1);
+  // }, [drawingStatuses]);
 
   useEffect(() => {
-    if (!isLoading) {
-      if (promptsHaveChanged && statusesHaveChanged) {
-        // console.log("proceeding because", lastSeenPrompts, dailyPrompts);
-
-        console.log("2 setting anim start from context");
-        setStartNewDailyWordsAnimation(true);
-        // setPromptsHaveChanged(false);
-        // setStatusesHaveChanged(false);
-      }
-    }
-  }, [isLoading, promptsHaveChanged, statusesHaveChanged]);
+    console.log(promptRefreshes, drawingStatusRefreshes);
+  }, [promptRefreshes, drawingStatusRefreshes]);
 
   useEffect(() => {
-    // console.log(lastSeenPrompts, dailyPrompts, tempDrawingStatuses);
-    if (tempDrawingStatuses) {
-      // console.log("1 officially updated drawingStatuses");
-      setDrawingStatuses(tempDrawingStatuses);
-      setExtraPrompt(tempExtraPrompt);
-      setTempDrawingStatuses(null);
-      // setTempExtraPrompt(null); // not sure if this is necessary/good
-      setStatusesHaveChanged(true);
+    if (promptRefreshes === 2 && drawingStatusRefreshes === 6) {
+      setStartNewDailyWordsAnimation(true);
+
+      setPromptRefreshes(1);
+      setDrawingStatusRefreshes(1);
     }
-  }, [lastSeenPrompts, dailyPrompts, tempDrawingStatuses, tempExtraPrompt]);
+  }, [promptRefreshes, drawingStatusRefreshes]);
 
   function updatePBStates(field, value) {
     let tempPBStatuses = { ...PBStates };
@@ -279,16 +258,12 @@ export function DrawingSelectionProvider(props) {
     animateExtraPromptsContainer: animateExtraPromptsContainer,
     setAnimateExtraPromptsContainer: setAnimateExtraPromptsContainer,
 
-    lastSeenPrompts: lastSeenPrompts,
-    setLastSeenPrompts: setLastSeenPrompts,
     startNewDailyWordsAnimation: startNewDailyWordsAnimation,
     setStartNewDailyWordsAnimation: setStartNewDailyWordsAnimation,
-    tempDrawingStatuses: tempDrawingStatuses,
 
-    promptsHaveChanged: promptsHaveChanged,
-    setPromptsHaveChanged: setPromptsHaveChanged,
-    statusesHaveChanged: statusesHaveChanged,
-    setStatusesHaveChanged: setStatusesHaveChanged,
+    promptRefreshes: promptRefreshes,
+    drawingStatusRefreshes: drawingStatusRefreshes,
+    setDrawingStatusRefreshes: setDrawingStatusRefreshes,
 
     drawingStatuses: drawingStatuses,
     setDrawingStatuses: setDrawingStatuses,

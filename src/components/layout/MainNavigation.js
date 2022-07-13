@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useContext } from "react";
+import React, { useEffect, useState, useRef, useContext } from "react";
 
 import { Link, NavLink } from "react-router-dom";
 import { useAuth0 } from "@auth0/auth0-react";
@@ -51,6 +51,8 @@ function MainNavigation() {
   const db = getDatabase(app);
   const dbRef = ref_database(getDatabase(app));
   const storage = getStorage();
+
+  const profilePictureRef = useRef(null);
 
   // user profile info states
   const [username, setUsername] = useState();
@@ -342,9 +344,16 @@ function MainNavigation() {
                 onMouseLeave={() => {
                   setHoveringOnProfilePicture(false);
                 }}
+                onClick={() => {
+                  // only using this because I couldn't lift up z-index to be able to click link
+                  // without hover malfunctioning
+                  if (!hoveringOnProfileButton) {
+                    profilePictureRef.current.click();
+                  }
+                }}
               >
                 {/* zIndex just to be able to click on the <Link> */}
-                <div style={{ position: "absolute", zIndex: 1 }}>
+                <div style={{ position: "absolute" }}>
                   {isFetching ? (
                     <div
                       style={{
@@ -355,7 +364,7 @@ function MainNavigation() {
                       className={baseClasses.skeletonLoading}
                     ></div>
                   ) : (
-                    <Link to="/profile/preferences">
+                    <Link to="/profile/preferences" ref={profilePictureRef}>
                       <img
                         className={classes.profilePicture}
                         src={croppedImage ? croppedImage : image}

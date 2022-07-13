@@ -9,6 +9,7 @@ import anime from "animejs/lib/anime.es.js";
 import Select from "react-select";
 import Countdown from "react-countdown";
 import { useAuth0 } from "@auth0/auth0-react";
+import { isEqual } from "lodash";
 
 import formatTime from "../util/formatTime";
 
@@ -32,7 +33,6 @@ import { app } from "../util/init-firebase";
 
 import classes from "./Canvas.module.css";
 import baseClasses from "../index.module.css";
-import { isEqual } from "lodash";
 
 const PromptSelection = () => {
   const { isLoading, isAuthenticated } = useAuth0();
@@ -71,7 +71,7 @@ const PromptSelection = () => {
 
   const [nextDisabled, setNextDisabled] = useState(true);
   const [selectedExtraPrompt, setSelectedExtraPrompt] = useState("");
-  const [blurState, setBlurState] = useState("");
+  const [blur, setBlur] = useState(false);
   const [showCountdownTimer, setShowCountdownTimer] = useState(false);
   const [resetAtDate, setResetAtDate] = useState(
     "January 01, 2030 00:00:00 GMT+03:00"
@@ -84,31 +84,35 @@ const PromptSelection = () => {
 
   const [postCountdown, setPostCountdown] = useState(false);
 
-  // drawingStatus updater (if 1>  then show actual shiet..)
   // maybe just have special case for unregistered users, since seeing f f f will trigger "log in" stuff
-  const [adjustedDrawingStatuses, setAdjustedDrawingStatuses] = useState({
-    60: true,
-    180: true,
-    300: true,
-  });
+  const [adjustedDrawingStatuses, setAdjustedDrawingStatuses] = useState(
+    !isLoading && isAuthenticated
+      ? {
+          60: true,
+          180: true,
+          300: true,
+        }
+      : {
+          60: false,
+          180: false,
+          300: false,
+        }
+  );
 
   const [proceedToNormalDrawingStatuses, setProceedToNormalDrawingStatuses] =
     useState(false);
 
   useEffect(() => {
-    console.log(
-      DSCtx.drawingStatuses,
-      proceedToNormalDrawingStatuses,
-      DSCtx.statusesHaveChanged
-    );
-    if (proceedToNormalDrawingStatuses && DSCtx.statusesHaveChanged) {
+    console.log(DSCtx.drawingStatuses, proceedToNormalDrawingStatuses);
+    // === 1 just means that this is the first occurance of
+    if (proceedToNormalDrawingStatuses && DSCtx.drawingStatusRefreshes > 0) {
       setAdjustedDrawingStatuses(DSCtx.drawingStatuses);
     } else {
       setProceedToNormalDrawingStatuses(true);
     }
   }, [
     DSCtx.drawingStatuses,
-    DSCtx.statusesHaveChanged,
+    DSCtx.drawingStatusRefreshes,
     proceedToNormalDrawingStatuses,
   ]);
 
@@ -130,6 +134,18 @@ const PromptSelection = () => {
   useEffect(() => {
     if (DSCtx.startNewDailyWordsAnimation) {
       console.log("STAHTED");
+      setBlur(false);
+
+      // animate signup/login container down into view
+      anime({
+        targets: "#registerContainer",
+        opacity: [1, 0],
+        scale: [1, 0],
+        direction: "normal",
+        duration: 400,
+        easing: "linear",
+      });
+
       // animate progress bar + select text to active state
       DSCtx.updatePBStates("selectCircle", true);
 
@@ -352,8 +368,6 @@ const PromptSelection = () => {
       }
 
       if (DSCtx.startFromLeft) {
-        // animate extra container 225
-
         // animate "A Drawing Prompt" down out of view
         anime({
           targets: "#regularPromptText",
@@ -427,27 +441,27 @@ const PromptSelection = () => {
           duration: 1500,
           easing: "linear",
         });
-      } else {
-        if (
-          DSCtx.drawingStatuses["60"] &&
-          DSCtx.drawingStatuses["180"] &&
-          DSCtx.drawingStatuses["300"] &&
-          DSCtx.drawingStatuses.length === 3
-        ) {
-          // blurring out the regular prompts
-          setBlurState("blur");
+      }
+    } else {
+      if (
+        DSCtx.drawingStatuses["60"] &&
+        DSCtx.drawingStatuses["180"] &&
+        DSCtx.drawingStatuses["300"] &&
+        Object.keys(DSCtx.drawingStatuses).length === 3
+      ) {
+        // blurring out the regular prompts
+        setBlur(true);
 
-          // animate signup/login container down into view
-          anime({
-            targets: "#registerContainer",
-            opacity: [0, 1],
-            // maybe scale this [0, 1] ?
-            pointerEvents: ["none", "auto"],
-            direction: "normal",
-            duration: 1500,
-            easing: "linear",
-          });
-        }
+        // animate signup/login container down into view
+        anime({
+          targets: "#registerContainer",
+          opacity: [0, 1],
+          scale: [0, 1],
+          // maybe scale this [0, 1] ?
+          direction: "normal",
+          duration: 500,
+          easing: "linear",
+        });
       }
     }
   }, [showExtraPrompt, DSCtx.extraPrompt, DSCtx.drawingStatuses]);
@@ -470,16 +484,11 @@ const PromptSelection = () => {
       duration: 500,
       easing: "easeInSine",
     });
-
-    DSCtx.setPromptsHaveChanged(false);
-    DSCtx.setStatusesHaveChanged(false);
   }, []);
 
   useEffect(() => {
     // only set selectCircle to true if PBStates is default state
     // + not all daily's finished
-
-    console.log(DSCtx.promptsHaveChanged && DSCtx.statusesHaveChanged);
 
     if (
       isEqual(DSCtx.PBStates, {
@@ -491,7 +500,11 @@ const PromptSelection = () => {
         resetToSelectBar: false,
       })
     ) {
-      if (DSCtx.promptsHaveChanged && DSCtx.statusesHaveChanged) {
+      if (
+        DSCtx.promptRefreshes === 1 &&
+        DSCtx.drawingStatusRefreshes > 0 &&
+        DSCtx.drawingStatusRefreshes < 6
+      ) {
         if (!isLoading && isAuthenticated) {
           if (
             !DSCtx.drawingStatuses["60"] ||
@@ -501,14 +514,14 @@ const PromptSelection = () => {
           ) {
             DSCtx.updatePBStates("selectCircle", true);
           }
-        }
-      } else if (!isLoading && !isAuthenticated) {
-        if (
-          !DSCtx.drawingStatuses["60"] ||
-          !DSCtx.drawingStatuses["180"] ||
-          !DSCtx.drawingStatuses["300"]
-        ) {
-          DSCtx.updatePBStates("selectCircle", true);
+        } else if (!isLoading && !isAuthenticated) {
+          if (
+            !DSCtx.drawingStatuses["60"] ||
+            !DSCtx.drawingStatuses["180"] ||
+            !DSCtx.drawingStatuses["300"]
+          ) {
+            DSCtx.updatePBStates("selectCircle", true);
+          }
         }
       }
     }
@@ -517,10 +530,9 @@ const PromptSelection = () => {
     isAuthenticated,
     DSCtx.PBStates,
     DSCtx.drawingStatuses,
-    DSCtx.tempDrawingStatuses,
-    DSCtx.lastSeenPrompts,
+    DSCtx.promptRefreshes,
+    DSCtx.drawingStatusRefreshes,
     DSCtx.dailyPrompts,
-    DSCtx,
   ]);
 
   function updateDisabledOptions(duration, adj, noun) {
@@ -676,7 +688,13 @@ const PromptSelection = () => {
               opacity: !DSCtx.startFromLeft && showExtraPrompt ? 0 : 1,
             }}
           >
-            <div id={blurState} className={classes.horizContain}>
+            <div
+              style={{
+                filter: blur ? "blur(4px)" : "",
+                pointerEvents: blur ? "none" : "auto",
+              }}
+              className={classes.horizContain}
+            >
               <div
                 className={`${classes.durationButton} ${classes.redBackground} ${stylingButtonClasses[0]}`}
                 onClick={() => {
@@ -917,7 +935,7 @@ const PromptSelection = () => {
               // width: "475px",
               height: "275px",
               opacity: 0,
-              pointerEvents: "none",
+              pointerEvents: blur ? "auto" : "none",
             }}
           >
             <div

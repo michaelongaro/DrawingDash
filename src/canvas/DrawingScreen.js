@@ -281,7 +281,8 @@ const DrawingScreen = () => {
         setShowCountdownTimer(true);
       }
     }
-  }, [DSCtx.drawingStatuses]);
+    // added isload and auth here, not sure why they weren't there before - 7/13
+  }, [isLoading, isAuthenticated, DSCtx.drawingStatuses]);
 
   function updateUserLocalStorage() {
     if (DSCtx.drawingTime === 0 || DSCtx.drawingTime === undefined) return;
@@ -335,6 +336,7 @@ const DrawingScreen = () => {
     currentStorageValues["dailyCompletedPrompts"] = tempUpdatedStatuses;
     // updating daily completed prompts in context
     DSCtx.setDrawingStatuses(tempUpdatedStatuses);
+    DSCtx.setDrawingStatusRefreshes((refreshes) => refreshes + 1);
 
     // actually setting user localstorage with all updated values
     localStorage.setItem(

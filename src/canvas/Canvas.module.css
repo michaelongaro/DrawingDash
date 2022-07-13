@@ -23,10 +23,11 @@
   transition: all 200ms;
 }
 
+/* 
 #blur {
   filter: blur(5px);
   pointer-events: none;
-}
+} */
 
 .horizContain>div {
   display: flex;
