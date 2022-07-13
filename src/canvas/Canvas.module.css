@@ -96,6 +96,7 @@
       rgb(131 131 131) 0%,
       rgb(231 231 231) 100%);
   padding: 1.75em;
+  margin-top: .5em;
 }
 
 .canvasOutline {

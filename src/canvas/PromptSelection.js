@@ -82,6 +82,36 @@ const PromptSelection = () => {
   const [customAdjectiveClicked, setCustomAdjectiveClicked] = useState(false);
   const [customNounClicked, setCustomNounClicked] = useState(false);
 
+  const [postCountdown, setPostCountdown] = useState(false);
+
+  // drawingStatus updater (if 1>  then show actual shiet..)
+  // maybe just have special case for unregistered users, since seeing f f f will trigger "log in" stuff
+  const [adjustedDrawingStatuses, setAdjustedDrawingStatuses] = useState({
+    60: true,
+    180: true,
+    300: true,
+  });
+
+  const [proceedToNormalDrawingStatuses, setProceedToNormalDrawingStatuses] =
+    useState(false);
+
+  useEffect(() => {
+    console.log(
+      DSCtx.drawingStatuses,
+      proceedToNormalDrawingStatuses,
+      DSCtx.statusesHaveChanged
+    );
+    if (proceedToNormalDrawingStatuses && DSCtx.statusesHaveChanged) {
+      setAdjustedDrawingStatuses(DSCtx.drawingStatuses);
+    } else {
+      setProceedToNormalDrawingStatuses(true);
+    }
+  }, [
+    DSCtx.drawingStatuses,
+    DSCtx.statusesHaveChanged,
+    proceedToNormalDrawingStatuses,
+  ]);
+
   // for custom prompt dropdown
   const styles = {
     menu: ({ width, ...css }) => ({
@@ -96,6 +126,49 @@ const PromptSelection = () => {
       setNextDisabled(false);
     }
   }, [customDurationClicked, customAdjectiveClicked, customNounClicked]);
+
+  useEffect(() => {
+    if (DSCtx.startNewDailyWordsAnimation) {
+      console.log("STAHTED");
+      // animate progress bar + select text to active state
+      DSCtx.updatePBStates("selectCircle", true);
+
+      // animate "a drawing Prompt" into view
+      anime({
+        targets: "#regularPromptText",
+        // translateY: [0, "25px"],
+        opacity: [0, 1],
+        scale: [0, 1],
+        pointerEvents: ["auto", "none"],
+        direction: "normal",
+        duration: 500,
+        // delay: 350,
+
+        loop: false,
+        easing: "linear",
+      });
+      // animate countdown container out of view
+
+      anime({
+        targets: "#countdownContainer",
+        translateY: [0, "25px"],
+        opacity: [1, 0],
+        scale: [1, 0],
+        pointerEvents: ["auto", "none"],
+        direction: "normal",
+        duration: 500,
+        // delay: 350,
+
+        loop: false,
+        easing: "linear",
+        complete: () => {
+          setShowCountdownTimer(false);
+        },
+      });
+
+      DSCtx.setStartNewDailyWordsAnimation(false);
+    }
+  }, [DSCtx.startNewDailyWordsAnimation]);
 
   useEffect(() => {
     if (!isLoading && isAuthenticated) {
@@ -122,9 +195,9 @@ const PromptSelection = () => {
       }
 
       setStylingButtonClasses([
-        DSCtx.drawingStatuses["60"] ? classes.disabled : classes.pointer,
-        DSCtx.drawingStatuses["180"] ? classes.disabled : classes.pointer,
-        DSCtx.drawingStatuses["300"] ? classes.disabled : classes.pointer,
+        adjustedDrawingStatuses["60"] ? classes.disabled : classes.pointer,
+        adjustedDrawingStatuses["180"] ? classes.disabled : classes.pointer,
+        adjustedDrawingStatuses["300"] ? classes.disabled : classes.pointer,
       ]);
 
       setDurationOptions([
@@ -214,22 +287,25 @@ const PromptSelection = () => {
       // for unregistered users
 
       if (
-        DSCtx.drawingStatuses["60"] &&
-        DSCtx.drawingStatuses["180"] &&
-        DSCtx.drawingStatuses["300"]
+        adjustedDrawingStatuses["60"] &&
+        adjustedDrawingStatuses["180"] &&
+        adjustedDrawingStatuses["300"]
       ) {
         setShowCountdownTimer(true);
-        // ideally have all progressbar logic inside that component, have it look for these exact
-        // conditions (drop the extra if user isn't logged in)
       }
 
       setStylingButtonClasses([
-        DSCtx.drawingStatuses["60"] ? classes.disabled : classes.pointer,
-        DSCtx.drawingStatuses["180"] ? classes.disabled : classes.pointer,
-        DSCtx.drawingStatuses["300"] ? classes.disabled : classes.pointer,
+        adjustedDrawingStatuses["60"] ? classes.disabled : classes.pointer,
+        adjustedDrawingStatuses["180"] ? classes.disabled : classes.pointer,
+        adjustedDrawingStatuses["300"] ? classes.disabled : classes.pointer,
       ]);
     }
-  }, [isLoading, isAuthenticated, DSCtx.drawingStatuses]);
+  }, [
+    isLoading,
+    isAuthenticated,
+    DSCtx.drawingStatuses,
+    adjustedDrawingStatuses,
+  ]);
 
   useEffect(() => {
     if (
@@ -275,99 +351,103 @@ const PromptSelection = () => {
         setExtraDurationIcon(<FiveMinuteIcon dimensions={"3.5em"} />);
       }
 
-      // animate "A Drawing Prompt" down out of view
-      anime({
-        targets: "#regularPromptText",
-        translateY: [0, "25px"],
-        opacity: [1, 0],
-        scale: [1, 0],
-        pointerEvents: ["auto", "none"],
-        direction: "normal",
-        duration: 1000,
-        delay: 350,
+      if (DSCtx.startFromLeft) {
+        // animate extra container 225
 
-        loop: false,
-        easing: "linear",
-      });
-      // animate "An Extra Drawing Prompt" down into view
-      anime({
-        targets: "#extraPromptText",
-        translateY: [0, "25px"],
-        opacity: [0, 1],
-        scale: [0, 1],
-        pointerEvents: ["auto", "none"],
-        direction: "normal",
-        delay: 500,
-        loop: false,
-        duration: 1000,
-        easing: "linear",
-      });
-
-      // animate normal drawing prompts container down out of view
-      anime({
-        targets: "#normalPromptContainer",
-        translateY: [0, "225px"],
-        scale: [1, 0],
-        opacity: [1, 0],
-        delay: 350,
-
-        pointerEvents: ["auto", "none"],
-        direction: "normal",
-        duration: 1000,
-        loop: false,
-
-        easing: "linear",
-      });
-
-      // animate extra drawing prompts container down into view
-      anime({
-        targets: "#extraPromptContainer",
-        translateY: [0, "225px"],
-        // delay: 200,
-        opacity: [0, 1],
-        scale: [0, 1],
-        delay: 500,
-
-        pointerEvents: ["none", "auto"],
-        direction: "normal",
-        loop: false,
-
-        duration: 1000,
-        easing: "linear",
-      });
-
-      anime({
-        targets: "#nextButton",
-        // translateY: "1276px",
-        // height: [0, "100%"],
-
-        loop: false,
-        delay: 800,
-        opacity: [0, 1],
-        direction: "normal",
-        duration: 1500,
-        easing: "linear",
-      });
-    } else {
-      if (
-        DSCtx.drawingStatuses["60"] &&
-        DSCtx.drawingStatuses["180"] &&
-        DSCtx.drawingStatuses["300"] &&
-        DSCtx.drawingStatuses.length === 3
-      ) {
-        // blurring out the regular prompts
-        setBlurState("blur");
-
-        // animate signup/login container down into view
+        // animate "A Drawing Prompt" down out of view
         anime({
-          targets: "#registerContainer",
+          targets: "#regularPromptText",
+          translateY: [0, "25px"],
+          opacity: [1, 0],
+          scale: [1, 0],
+          pointerEvents: ["auto", "none"],
+          direction: "normal",
+          duration: 1000,
+          delay: 350,
+
+          loop: false,
+          easing: "linear",
+        });
+        // animate "An Extra Drawing Prompt" down into view
+        anime({
+          targets: "#extraPromptText",
+          translateY: [0, "25px"],
           opacity: [0, 1],
-          // maybe scale this [0, 1] ?
+          scale: [0, 1],
+          pointerEvents: ["auto", "none"],
+          direction: "normal",
+          delay: 500,
+          loop: false,
+          duration: 1000,
+          easing: "linear",
+        });
+
+        // animate normal drawing prompts container down out of view
+        anime({
+          targets: "#normalPromptContainer",
+          translateY: [0, "225px"],
+          scale: [1, 0],
+          opacity: [1, 0],
+          delay: 350,
+
+          pointerEvents: ["auto", "none"],
+          direction: "normal",
+          duration: 1000,
+          loop: false,
+
+          easing: "linear",
+        });
+
+        // animate extra drawing prompts container down into view
+        anime({
+          targets: "#extraPromptContainer",
+          translateY: ["-225px", 0],
+          // delay: 200,
+          opacity: [0, 1],
+          scale: [0, 1],
+          delay: 500,
+
           pointerEvents: ["none", "auto"],
+          direction: "normal",
+          loop: false,
+
+          duration: 1000,
+          easing: "linear",
+        });
+
+        anime({
+          targets: "#nextButton",
+          // translateY: "1312px",
+          // height: [0, "100%"],
+
+          loop: false,
+          delay: 800,
+          opacity: [0, 1],
           direction: "normal",
           duration: 1500,
           easing: "linear",
         });
+      } else {
+        if (
+          DSCtx.drawingStatuses["60"] &&
+          DSCtx.drawingStatuses["180"] &&
+          DSCtx.drawingStatuses["300"] &&
+          DSCtx.drawingStatuses.length === 3
+        ) {
+          // blurring out the regular prompts
+          setBlurState("blur");
+
+          // animate signup/login container down into view
+          anime({
+            targets: "#registerContainer",
+            opacity: [0, 1],
+            // maybe scale this [0, 1] ?
+            pointerEvents: ["none", "auto"],
+            direction: "normal",
+            duration: 1500,
+            easing: "linear",
+          });
+        }
       }
     }
   }, [showExtraPrompt, DSCtx.extraPrompt, DSCtx.drawingStatuses]);
@@ -390,9 +470,17 @@ const PromptSelection = () => {
       duration: 500,
       easing: "easeInSine",
     });
+
+    DSCtx.setPromptsHaveChanged(false);
+    DSCtx.setStatusesHaveChanged(false);
   }, []);
 
   useEffect(() => {
+    // only set selectCircle to true if PBStates is default state
+    // + not all daily's finished
+
+    console.log(DSCtx.promptsHaveChanged && DSCtx.statusesHaveChanged);
+
     if (
       isEqual(DSCtx.PBStates, {
         selectCircle: false,
@@ -403,11 +491,37 @@ const PromptSelection = () => {
         resetToSelectBar: false,
       })
     ) {
-      console.log("moving forward because", DSCtx.PBStates);
-      // maybe have to put below on slight timeout not sure.
-      DSCtx.updatePBStates("selectCircle", true);
+      if (DSCtx.promptsHaveChanged && DSCtx.statusesHaveChanged) {
+        if (!isLoading && isAuthenticated) {
+          if (
+            !DSCtx.drawingStatuses["60"] ||
+            !DSCtx.drawingStatuses["180"] ||
+            !DSCtx.drawingStatuses["300"] ||
+            !DSCtx.drawingStatuses["extra"]
+          ) {
+            DSCtx.updatePBStates("selectCircle", true);
+          }
+        }
+      } else if (!isLoading && !isAuthenticated) {
+        if (
+          !DSCtx.drawingStatuses["60"] ||
+          !DSCtx.drawingStatuses["180"] ||
+          !DSCtx.drawingStatuses["300"]
+        ) {
+          DSCtx.updatePBStates("selectCircle", true);
+        }
+      }
     }
-  }, [DSCtx.PBStates]);
+  }, [
+    isLoading,
+    isAuthenticated,
+    DSCtx.PBStates,
+    DSCtx.drawingStatuses,
+    DSCtx.tempDrawingStatuses,
+    DSCtx.lastSeenPrompts,
+    DSCtx.dailyPrompts,
+    DSCtx,
+  ]);
 
   function updateDisabledOptions(duration, adj, noun) {
     setDurationOptions([
@@ -524,6 +638,8 @@ const PromptSelection = () => {
               top: 0,
               textAlign: "center",
               opacity: !showCountdownTimer ? 1 : 0,
+              display:
+                showExtraPrompt && !DSCtx.startFromLeft ? "none" : "block",
             }}
           >
             A Drawing Prompt
@@ -534,7 +650,7 @@ const PromptSelection = () => {
               position: "absolute",
               width: "300px",
               height: "25px",
-              top: "-25px",
+              top: showExtraPrompt && !DSCtx.startFromLeft ? 0 : "-25px",
               textAlign: "center",
               opacity: !showCountdownTimer && showExtraPrompt ? 1 : 0,
             }}
@@ -547,7 +663,7 @@ const PromptSelection = () => {
           style={{
             position: "relative",
             width: "675px",
-            height: "276px",
+            height: "312px",
           }}
         >
           <div
@@ -556,7 +672,8 @@ const PromptSelection = () => {
               position: "absolute",
               top: 0,
               width: "675px",
-              height: "276px",
+              height: "312px",
+              opacity: !DSCtx.startFromLeft && showExtraPrompt ? 0 : 1,
             }}
           >
             <div id={blurState} className={classes.horizContain}>
@@ -573,8 +690,11 @@ const PromptSelection = () => {
 
                 <div className={classes.timeBorder}>1 Minute</div>
 
-                <div className={classes.promptTextMargin}>
-                  {DSCtx.dailyPrompts["60"]}
+                <div
+                  className={`${classes.promptTextMargin} ${baseClasses.baseVertFlex}`}
+                >
+                  <div>{DSCtx.dailyPrompts["60"].split(" ")[0]}</div>
+                  <div>{DSCtx.dailyPrompts["60"].split(" ")[1]}</div>
                 </div>
               </div>
               <div
@@ -590,8 +710,11 @@ const PromptSelection = () => {
 
                 <div className={classes.timeBorder}>3 Minutes</div>
 
-                <div className={classes.promptTextMargin}>
-                  {DSCtx.dailyPrompts["180"]}
+                <div
+                  className={`${classes.promptTextMargin} ${baseClasses.baseVertFlex}`}
+                >
+                  <div>{DSCtx.dailyPrompts["180"].split(" ")[0]}</div>
+                  <div>{DSCtx.dailyPrompts["180"].split(" ")[1]}</div>
                 </div>
               </div>
               <div
@@ -607,8 +730,11 @@ const PromptSelection = () => {
 
                 <div className={classes.timeBorder}>5 Minutes</div>
 
-                <div className={classes.promptTextMargin}>
-                  {DSCtx.dailyPrompts["300"]}
+                <div
+                  className={`${classes.promptTextMargin} ${baseClasses.baseVertFlex}`}
+                >
+                  <div>{DSCtx.dailyPrompts["300"].split(" ")[0]}</div>
+                  <div>{DSCtx.dailyPrompts["300"].split(" ")[1]}</div>
                 </div>
               </div>
             </div>
@@ -619,10 +745,10 @@ const PromptSelection = () => {
             className={showExtraPrompt ? "" : classes.hide}
             style={{
               position: "absolute",
-              top: "-225px",
+              top: 0,
               width: "675px",
-              height: "276px",
-              opacity: 0,
+              height: "312px",
+              opacity: 1,
               pointerEvents: showExtraPrompt ? "auto" : "none",
             }}
           >
@@ -645,8 +771,11 @@ const PromptSelection = () => {
 
                 <div className={classes.timeBorder}>{formattedSeconds}</div>
 
-                <div className={classes.promptTextMargin}>
-                  {DSCtx.extraPrompt.title}
+                <div
+                  className={`${classes.promptTextMargin} ${baseClasses.baseVertFlex}`}
+                >
+                  <div>{DSCtx.extraPrompt.title.split(" ")[0]}</div>
+                  <div>{DSCtx.extraPrompt.title.split(" ")[1]}</div>
                 </div>
               </div>
 
@@ -654,9 +783,10 @@ const PromptSelection = () => {
               <div
                 className={`${classes.durationButton} ${customAdaptiveBackground}`}
                 style={{
-                  height: "276px",
+                  height: "312px",
                   padding: "1.5em",
                   cursor: "pointer",
+                  gap: "1.5em",
                   backgroundPosition:
                     selectedExtraPrompt === "custom" ? "200px" : "",
                 }}
@@ -756,7 +886,7 @@ const PromptSelection = () => {
               left: "43%",
               width: "75px",
               height: "40px",
-              opacity: 0,
+              opacity: showExtraPrompt ? 1 : 0,
             }}
           >
             <button
@@ -810,17 +940,25 @@ const PromptSelection = () => {
 
         {showCountdownTimer && (
           <div
+            id={"countdownContainer"}
             className={`${classes.promptRefreshTimer} ${baseClasses.baseVertFlex}`}
           >
-            <div>New prompts refresh in</div>
-            <Countdown
-              date={resetAtDate}
-              renderer={formatTime}
-              onComplete={() => setShowCountdownTimer(false)}
-              // i guess make function that will manually animate/change vars
-              // for select text, "a drawing prompt", whole container down a bit?
-              // and obviously the countdownTimer div out of the way
-            />
+            <div style={{ gap: ".5em" }} className={baseClasses.baseVertFlex}>
+              <div>{`New prompts refresh${postCountdown ? "" : " in"}`}</div>
+              <div>{postCountdown && "soon"}</div>
+            </div>
+
+            {!postCountdown && (
+              <Countdown
+                date={resetAtDate}
+                renderer={formatTime}
+                onComplete={() => {
+                  // changes text to "soon" since there will be a delay from when firebase function
+                  // fires (at midnight cst) and when it completes
+                  setPostCountdown(true);
+                }}
+              />
+            )}
           </div>
         )}
       </div>

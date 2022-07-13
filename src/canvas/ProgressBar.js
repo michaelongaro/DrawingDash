@@ -110,22 +110,6 @@ const ProgressBar = () => {
       } else {
         // starting off with showing select prompt screen
         if (DSCtx.PBStates["selectCircle"] && !localPBStates["selectCircle"]) {
-          console.log("1");
-          let dailyDrawingsAreComplete;
-
-          if (!isLoading && isAuthenticated) {
-            dailyDrawingsAreComplete =
-              DSCtx.drawingStatuses["60"] &&
-              DSCtx.drawingStatuses["180"] &&
-              DSCtx.drawingStatuses["300"] &&
-              DSCtx.drawingStatuses["extra"];
-          } else if (!isLoading && !isAuthenticated) {
-            dailyDrawingsAreComplete =
-              DSCtx.drawingStatuses["60"] &&
-              DSCtx.drawingStatuses["180"] &&
-              DSCtx.drawingStatuses["300"];
-          }
-
           anime({
             targets: "#select",
             loop: false,
@@ -142,13 +126,11 @@ const ProgressBar = () => {
             direction: "normal",
             delay: 150,
             duration: 500,
-            translateX: dailyDrawingsAreComplete ? 0 : [0, "265px"],
-            translateY: dailyDrawingsAreComplete ? 0 : [0, "175px"],
-            fontSize: dailyDrawingsAreComplete ? "1.25em" : ["1.25em", "1.5em"],
-            fontWeight: dailyDrawingsAreComplete ? 400 : [400, 600],
-            color: dailyDrawingsAreComplete
-              ? "rgb(100, 100, 100)"
-              : ["rgb(100, 100, 100)", "rgb(0, 0, 0)"],
+            translateX: [0, "265px"],
+            translateY: [0, "175px"],
+            fontSize: ["1.25em", "1.5em"],
+            fontWeight: [400, 600],
+            color: ["rgb(100, 100, 100)", "rgb(0, 0, 0)"],
             easing: "easeInSine",
           });
         }
@@ -322,13 +304,7 @@ const ProgressBar = () => {
     } else {
       setLocalPBStates(DSCtx.PBStates);
     }
-  }, [
-    isLoading,
-    isAuthenticated,
-    DSCtx.drawingStatuses,
-    DSCtx.PBStates,
-    localPBStates,
-  ]);
+  }, [isLoading, isAuthenticated, DSCtx.PBStates, localPBStates]);
 
   return (
     <div className={classes.rectangle}>
