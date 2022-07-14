@@ -83,8 +83,10 @@ const DrawingScreen = () => {
     prepareCanvas,
     clearCanvas,
     finishDrawing,
+    floodFillHandler,
+    // takeSnapshot,
     draw,
-    getFloodFillStatus,
+    resetAbleToFloodFill,
     floodFillStatus,
     mouseInsideOfCanvas,
     setMouseInsideOfCanvas,
@@ -164,6 +166,9 @@ const DrawingScreen = () => {
     // });
 
     document.addEventListener("mousemove", draw);
+    document.addEventListener("mouseup", resetAbleToFloodFill);
+    // document.addEventListener("mouseup", takeSnapshot);
+
     document.documentElement.addEventListener("mouseenter", draw, {
       once: true,
     });
@@ -173,6 +178,9 @@ const DrawingScreen = () => {
 
     return () => {
       document.removeEventListener("mousemove", draw);
+      document.removeEventListener("mouseup", resetAbleToFloodFill);
+      // document.removeEventListener("mouseup", takeSnapshot);
+
       document.documentElement.removeEventListener(
         "mouseenter",
 
@@ -246,7 +254,6 @@ const DrawingScreen = () => {
     // all other renders of this effect w/ zero values are not run
 
     if (DSCtx.drawingTime !== 0) {
-      console.log("proceeding because drawingTime is NOT 0");
       if (!isLoading && isAuthenticated) {
         id = setTimeout(sendToDB, DSCtx.drawingTime * 1000 + 3050);
       } else if (!isLoading && !isAuthenticated) {
@@ -290,8 +297,6 @@ const DrawingScreen = () => {
     DSCtx.setDrawingTime(0);
 
     setShowCanvas(false);
-
-    console.log("UPLOADING DRAWING TO LOCALSTORAGE");
 
     let currentStorageValues = JSON.parse(
       localStorage.getItem("unregisteredUserInfo")
@@ -347,7 +352,6 @@ const DrawingScreen = () => {
     DSCtx.setShowEndOverlay(true);
     DSCtx.setShowEndOutline(true);
 
-    console.log("removing listeners");
     document.removeEventListener("mousemove", draw);
     document.documentElement.removeEventListener(
       "mouseenter",
@@ -459,8 +463,6 @@ const DrawingScreen = () => {
   function postTitle(seconds, id, title, profileDest = "") {
     let destination = `${profileDest}titles/${seconds}/${title}`;
 
-    console.log("uploading with ", id, "to", profileDest);
-
     get(child(dbRef, destination)).then((snapshot) => {
       if (snapshot.exists()) {
         let prev_post = snapshot.val()["drawingID"];
@@ -480,8 +482,6 @@ const DrawingScreen = () => {
     if (DSCtx.drawingTime === 0 || DSCtx.drawingTime === undefined) return;
 
     DSCtx.setDrawingTime(0);
-
-    console.log("UPLOADING DRAWING");
 
     setShowCanvas(false);
 
@@ -510,7 +510,6 @@ const DrawingScreen = () => {
       }).then((result) => {
         getDownloadURL(ref_storage(storage, `drawings/${uniqueID}.jpg`)).then(
           (url) => {
-            console.log(url);
             setDownloadedDrawing(url);
           }
         );
@@ -553,7 +552,6 @@ const DrawingScreen = () => {
     DSCtx.setShowEndOverlay(true);
     DSCtx.setShowEndOutline(true);
 
-    console.log("removing listeners");
     document.removeEventListener("mousemove", draw);
     document.documentElement.removeEventListener(
       "mouseenter",
@@ -679,7 +677,13 @@ const DrawingScreen = () => {
                         }, pointer`,
                   }}
                   onMouseDown={draw}
-                  onMouseUp={finishDrawing}
+                  onMouseUp={() => {
+                    if (mouseInsideOfCanvas) {
+                      finishDrawing();
+                    }
+                  }}
+                  onMouseEnter={() => setMouseInsideOfCanvas(true)}
+                  onMouseLeave={() => setMouseInsideOfCanvas(false)}
                   ref={canvasRef}
                 />
               </div>

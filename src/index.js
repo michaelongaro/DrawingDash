@@ -2,7 +2,6 @@ import React from "react";
 import ReactDOM from "react-dom";
 import { BrowserRouter } from "react-router-dom";
 import { Auth0Provider } from "@auth0/auth0-react";
-import { WordsProvider } from "./canvas/WordsContext";
 import { SearchProvider } from "./components/layout/SearchContext";
 import { FavoritesProvider } from "./components/layout/FavoritesContext";
 import { PinnedProvider } from "./components/layout/PinnedContext";
@@ -10,9 +9,9 @@ import { DrawingSelectionProvider } from "./canvas/DrawingSelectionContext";
 import { ProfilePictureUpdateProvider } from "./components/layout/ProfilePictureUpdateContext";
 import App from "./App";
 
-import "./fonts/VisbyRoundCF-Light.otf"
-import "./fonts/VisbyRoundCF-Medium.otf"
-import "./fonts/VisbyRoundCF-Regular.otf"
+import "./fonts/VisbyRoundCF-Light.otf";
+import "./fonts/VisbyRoundCF-Medium.otf";
+import "./fonts/VisbyRoundCF-Regular.otf";
 
 import "./index.module.css";
 
@@ -28,9 +27,7 @@ ReactDOM.render(
           <SearchProvider>
             <FavoritesProvider>
               <DrawingSelectionProvider>
-                <WordsProvider>
-                  <App />
-                </WordsProvider>
+                <App />
               </DrawingSelectionProvider>
             </FavoritesProvider>
           </SearchProvider>

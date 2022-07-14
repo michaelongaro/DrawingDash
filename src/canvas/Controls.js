@@ -21,6 +21,8 @@ const Controls = () => {
     undo,
     changeBrushSize,
     toggleFloodFill,
+    prevNumSnapshots,
+    floodFillStatus,
     clearCanvas,
   } = useCanvas();
 
@@ -58,10 +60,10 @@ const Controls = () => {
       changeColor(DSCtx.paletteColors[0]);
       DSCtx.setCurrentColor(DSCtx.paletteColors[0]);
       updateSelectedColor(0, false);
-      changeBrushSize(8);
+      changeBrushSize(5);
+      // setCurrentCursorSize
       updateSelectedBrushSize(1);
     } else if (DSCtx.seconds > 0) {
-      console.log(DSCtx.paletteColors);
       DSCtx.setCurrentColor("#FFFFFF");
     }
   }, [DSCtx.seconds]);
@@ -70,15 +72,62 @@ const Controls = () => {
     let tempPaletteColors = DSCtx.paletteColors;
     tempPaletteColors[5] = "#FFFFFF";
     DSCtx.setPaletteColors(tempPaletteColors);
+    DSCtx.setCurrentCursorSize(5);
   }, []);
 
   useEffect(() => {
+    function updateCursorSize(e) {
+      if (canvasRef.current.contains(e.target)) {
+        // don't update if paint bucket is currently being selected
+        if (!floodFillStatus) {
+          if (
+            (currentCursorSize === 2 && e.deltaY > 0) ||
+            (currentCursorSize === 8 && e.deltaY < 0)
+          ) {
+            return;
+          }
+
+          if (currentCursorSize === 2 && e.deltaY < 0) {
+            changeBrushSize(8);
+            updateSelectedBrushSize(1);
+            setCurrentCursorSize(5);
+            DSCtx.setCurrentCursorSize(5);
+            return;
+          }
+
+          if (currentCursorSize === 5 && e.deltaY > 0) {
+            changeBrushSize(3);
+            updateSelectedBrushSize(0);
+            setCurrentCursorSize(2);
+            DSCtx.setCurrentCursorSize(2);
+            return;
+          }
+
+          if (currentCursorSize === 5 && e.deltaY < 0) {
+            changeBrushSize(15);
+            updateSelectedBrushSize(2);
+            setCurrentCursorSize(8);
+            DSCtx.setCurrentCursorSize(8);
+            return;
+          }
+
+          if (currentCursorSize === 8 && e.deltaY > 0) {
+            changeBrushSize(8);
+            updateSelectedBrushSize(1);
+            setCurrentCursorSize(5);
+            DSCtx.setCurrentCursorSize(5);
+            return;
+          }
+        }
+      }
+    }
+
     document.addEventListener("wheel", updateCursorSize);
 
     return () => {
       document.removeEventListener("wheel", updateCursorSize);
     };
-  }, [currentCursorSize]);
+  }, [currentCursorSize, floodFillStatus]);
 
   function updateSelectedColor(brushID, updateCurrentlySelectedTool) {
     let tempArr = buttonStyles;
@@ -127,49 +176,6 @@ const Controls = () => {
 
     setBrushSizeStyles(tempArr);
     setPrevBrushSize(brushID);
-  }
-
-  function updateCursorSize(e) {
-    if (canvasRef.current.contains(e.target)) {
-      if (
-        (currentCursorSize === 2 && e.deltaY > 0) ||
-        (currentCursorSize === 8 && e.deltaY < 0)
-      ) {
-        return;
-      }
-
-      if (currentCursorSize === 2 && e.deltaY < 0) {
-        changeBrushSize(8);
-        updateSelectedBrushSize(1);
-        setCurrentCursorSize(5);
-        DSCtx.setCurrentCursorSize(5);
-        return;
-      }
-
-      if (currentCursorSize === 5 && e.deltaY > 0) {
-        changeBrushSize(3);
-        updateSelectedBrushSize(0);
-        setCurrentCursorSize(2);
-        DSCtx.setCurrentCursorSize(2);
-        return;
-      }
-
-      if (currentCursorSize === 5 && e.deltaY < 0) {
-        changeBrushSize(15);
-        updateSelectedBrushSize(2);
-        setCurrentCursorSize(8);
-        DSCtx.setCurrentCursorSize(8);
-        return;
-      }
-
-      if (currentCursorSize === 8 && e.deltaY > 0) {
-        changeBrushSize(8);
-        updateSelectedBrushSize(1);
-        setCurrentCursorSize(5);
-        DSCtx.setCurrentCursorSize(5);
-        return;
-      }
-    }
   }
 
   function changeTool(idx) {
@@ -390,14 +396,19 @@ const Controls = () => {
 
         <div
           onClick={undo}
-          style={{ marginLeft: "1em" }}
+          style={{
+            marginLeft: "1em",
+            transform: "rotateY(180deg)",
+            opacity: prevNumSnapshots > 0 ? 1 : 0.5,
+            pointerEvents: prevNumSnapshots > 0 ? "auto" : "none",
+          }}
           className={baseClasses.baseFlex}
         >
           <RedoIcon dimensions={"3em"} color={"#dbdbdb"} />
         </div>
 
         <div
-          onClick={clearCanvas}
+          onClick={() => clearCanvas(true)}
           style={{ marginLeft: "1em" }}
           className={baseClasses.baseFlex}
         >

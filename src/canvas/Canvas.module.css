@@ -185,7 +185,8 @@
   height: 50px;
   opacity: 0;
   padding: 1.75em;
-  border-radius: 5px;
+  font-size: .85em;
+  border-radius: 1em;
   transition: all 250ms;
 }
 

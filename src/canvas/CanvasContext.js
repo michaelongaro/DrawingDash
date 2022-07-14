@@ -3,16 +3,23 @@ import React, { useState, useContext, useEffect, useRef } from "react";
 const CanvasContext = React.createContext();
 
 export const CanvasProvider = ({ children }) => {
-  let isDrawing = false;
+  let isDrawing = useRef(false);
+
+  // ideally would only want snapshot to be taken when mouseup + isDrawing === true
+  // however really looked like a rabbit hole... investigate later
+
+  // let [isDrawingState, setIsDrawingState] = useState(false);
   let lastEvent;
 
   const [mouseInsideOfCanvas, setMouseInsideOfCanvas] = useState(false);
-  const [floodFillStatus, setFloodFillStatus] = useState(false);
   const [currentColor, setCurrentColor] = useState("#FFFFFF");
 
-  // const [previousDrawingSnapshots, setPreviousDrawingSnapshots] = useState([]);
-  // let previousDrawingSnapshots = [];
   const previousDrawingSnapshots = useRef([]);
+  const floodFillStatusRef = useRef(false);
+  const ableToFloodFill = useRef(false);
+
+  const [prevNumSnapshots, setPrevNumSnapshots] = useState(0);
+  const [floodFillStatus, setFloodFillStatus] = useState(false);
 
   const canvasRef = useRef(null);
   const contextRef = useRef(null);
@@ -32,7 +39,7 @@ export const CanvasProvider = ({ children }) => {
     context.lineJoin = "round";
     context.imageSmoothingEnabled = true;
     contextRef.current = context;
-  };
+  }
 
   function changeColor(color) {
     const canvas = canvasRef.current;
@@ -40,21 +47,26 @@ export const CanvasProvider = ({ children }) => {
     context.strokeStyle = color;
     contextRef.current = context;
     setCurrentColor(color);
-  };
+  }
 
   function changeBrushSize(brushSize) {
     const canvas = canvasRef.current;
     const context = canvas.getContext("2d");
     context.lineWidth = brushSize;
     contextRef.current = context;
-  };
+  }
 
   function toggleFloodFill() {
+    ableToFloodFill.current = true;
+    floodFillStatusRef.current = !floodFillStatusRef.current;
     setFloodFillStatus((prevStatus) => {
-      console.log("flood fill should be", !prevStatus);
       return !prevStatus;
     });
-  };
+  }
+
+  function resetAbleToFloodFill() {
+    ableToFloodFill.current = true;
+  }
 
   function getColorAtPixel(imageData, x, y) {
     const { width, data } = imageData;
@@ -85,11 +97,6 @@ export const CanvasProvider = ({ children }) => {
     const stack = [];
     const baseColor = getColorAtPixel(imageData, x, y);
     let operator = { x, y };
-
-    // Check if base color and new color are the same
-    if (colorMatch(baseColor, newColor)) {
-      return;
-    }
 
     // Add the clicked location to stack
     stack.push({ x: operator.x, y: operator.y });
@@ -179,51 +186,37 @@ export const CanvasProvider = ({ children }) => {
     };
 
     const rect = canvas.getBoundingClientRect();
+
     // could probably just do offsetX/Y
     const x = Math.round(event.clientX - rect.left);
     const y = Math.round(event.clientY - rect.top);
-    floodFill(imageData, col, x, y);
-    ctx.putImageData(imageData, 0, 0);
-    contextRef.current = ctx;
-    contextRef.current.beginPath();
 
-    // adding to lastDrawingSnapshot
-    // setPreviousDrawingSnapshots([
-    //   ...previousDrawingSnapshots,
-    //   ctx.getImageData(0, 0, canvas.width, canvas.height),
-    // ]);
-    previousDrawingSnapshots.current.push(ctx.getImageData(0, 0, canvas.width, canvas.height));
-    console.log("added 'floodFill' screenshot");
-    // console.log(previousDrawingSnapshots.length);
+    // if currently hovered color and color to fill with are the same, return
+    if (!colorMatch(getColorAtPixel(imageData, x, y), col)) {
+      floodFill(imageData, col, x, y);
+      ctx.putImageData(imageData, 0, 0);
+      contextRef.current = ctx;
+
+      takeSnapshot();
+    }
+
+    ableToFloodFill.current = false;
   }
 
-  function finishDrawing() {
-    // had && mouseInsideOfCanvas here too but want to keep it out for testing purposes
-    if (!floodFillStatus && isDrawing) {
-      const canvas = canvasRef.current;
-      const ctx = canvas.getContext("2d");
-
+  function finishDrawing(overrideMouseInsideCanvas = false) {
+    if (
+      !floodFillStatusRef.current &&
+      isDrawing.current &&
+      (mouseInsideOfCanvas || overrideMouseInsideCanvas)
+    ) {
       contextRef.current.closePath();
       contextRef.current.beginPath();
 
-      let lastDrawingSnapshot = ctx.getImageData(
-        0,
-        0,
-        canvas.width,
-        canvas.height
-      );
-      // previousDrawingSnapshots.push(lastDrawingSnapshot);
-      // setPreviousDrawingSnapshots([
-      //   ...previousDrawingSnapshots,
-      //   lastDrawingSnapshot,
-      // ]);
+      takeSnapshot();
 
-    previousDrawingSnapshots.current.push(lastDrawingSnapshot);
-
-      console.log("added 'normal' screenshot");
-      // console.log(previousDrawingSnapshots.length);
-
-      isDrawing = false;
+      isDrawing.current = false;
+      // setIsDrawingState(false);
+      lastEvent = null;
     }
   }
 
@@ -235,47 +228,53 @@ export const CanvasProvider = ({ children }) => {
     return { x, y };
   }
 
-  function isValid(prevx, prevy, x, y) {
-    return Math.abs(x - prevx) <= 5 && Math.abs(y - prevy) <= 5;
-  }
-
   function undo() {
+    // if there is <= 1 snapshots in array just empty array and fill canvas with white
     if (previousDrawingSnapshots.current.length <= 1) {
-      // setPreviousDrawingSnapshots([]);
       previousDrawingSnapshots.current = [];
+      setPrevNumSnapshots(0);
       clearCanvas();
     } else {
       const canvas = canvasRef.current;
       const ctx = canvas.getContext("2d");
-      // console.log("started with:", previousDrawingSnapshots.length);
 
-      // let tempSnapshots = [...previousDrawingSnapshots];
       console.log("undo-ing");
-      // cutting out fluff
-      // tempSnapshots.pop();
-      previousDrawingSnapshots.current.pop();
-      // ctx.putImageData(tempSnapshots[tempSnapshots.length - 1], 0, 0);
-      ctx.putImageData(previousDrawingSnapshots.current[previousDrawingSnapshots.current.length - 1], 0, 0);
 
-      // console.log("changed to:", previousDrawingSnapshots.length);
-      // setPreviousDrawingSnapshots(tempSnapshots);
+      // removing last elem since that is the screenshot we are trying to replace
+      previousDrawingSnapshots.current.pop();
+
+      ctx.putImageData(
+        previousDrawingSnapshots.current[
+          previousDrawingSnapshots.current.length - 1
+        ],
+        0,
+        0
+      );
+      setPrevNumSnapshots((prevNum) => prevNum - 1);
 
       contextRef.current = ctx;
-      contextRef.current.beginPath();
+      contextRef.current.beginPath(); // necessary?
     }
   }
 
-  // useEffect(() => {
-  //   console.log(previousDrawingSnapshots.length);
-  // }, [previousDrawingSnapshots]);
+  function takeSnapshot() {
+    const canvas = canvasRef.current;
+    const ctx = canvas.getContext("2d");
+
+    let lastDrawingSnapshot = ctx.getImageData(
+      0,
+      0,
+      canvas.width,
+      canvas.height
+    );
+
+    previousDrawingSnapshots.current.push(lastDrawingSnapshot);
+    setPrevNumSnapshots((prevNum) => prevNum + 1);
+
+    console.log(previousDrawingSnapshots.current.length);
+  }
 
   function draw(ev) {
-    // not sure how you are able to draw while in paintbucket when this is a condition below
-    if (floodFillStatus && ev.buttons === 1) {
-      floodFillHandler(ev);
-      return;
-    }
-
     const previous_evt = lastEvent || {};
     const was_offscreen = previous_evt.offscreen;
 
@@ -286,65 +285,102 @@ export const CanvasProvider = ({ children }) => {
 
     const point = getRelativePointFromEvent(ev, canvasRef.current);
 
-    if (
-      point.x < 0 ||
-      point.y < 0 ||
-      point.x > canvasRef.current.width ||
-      point.y > canvasRef.current.height
-    ) {
-      lastEvent.offscreen = true;
-
-      const previous_point = getRelativePointFromEvent(
-        previous_evt,
-        canvasRef.current
-      );
-
-      if (was_offscreen && ev.buttons === 1 && isDrawing) {
-        if (isValid(previous_point.x, previous_point.y, point.x, point.y)) {
-          contextRef.current.lineTo(point.x, point.y);
-          finishDrawing();
-          contextRef.current.stroke();
-          return;
-        }
-      }
-    } else if (was_offscreen) {
-      const previous_point = getRelativePointFromEvent(
-        previous_evt,
-        canvasRef.current
-      );
-
-      if (ev.buttons === 1 && !isDrawing) {
-        contextRef.current.moveTo(previous_point.x, previous_point.y);
-
-        isDrawing = true;
-      }
-    } else {
-      if (ev.buttons === 1 && !isDrawing) {
-        contextRef.current.moveTo(point.x, point.y);
-        isDrawing = true;
+    if (floodFillStatusRef.current && ev.buttons === 1) {
+      // if able to fill and mouse is currently inside canvas, fill
+      if (
+        ableToFloodFill.current &&
+        point.x > 0 &&
+        point.y > 0 &&
+        point.x < canvasRef.current.width &&
+        point.y < canvasRef.current.height
+      ) {
+        // console.log("flood found, exiting");
+        floodFillHandler(ev);
+        return;
       }
     }
 
-    if (ev.buttons === 1 && isDrawing) {
-      contextRef.current.lineTo(point.x, point.y);
-      contextRef.current.stroke();
+    if (!floodFillStatusRef.current) {
+      // case for if mouse is outside bounds of canvas
+      if (
+        point.x < 0 ||
+        point.y < 0 ||
+        point.x > canvasRef.current.width ||
+        point.y > canvasRef.current.height
+      ) {
+        // if last mouse position was offscreen too
+        if (was_offscreen) {
+          const previous_point = getRelativePointFromEvent(
+            previous_evt,
+            canvasRef.current
+          );
+
+          lastEvent.offscreen = true;
+          if (ev.buttons === 1) {
+            if (!isDrawing.current) {
+              contextRef.current.moveTo(previous_point.x, previous_point.y);
+
+              isDrawing.current = true;
+              // setIsDrawingState(true);
+            }
+          } else {
+            contextRef.current.closePath();
+
+            isDrawing.current = false;
+            // setIsDrawingState(false);
+          }
+        }
+        // if this is a new occurance of mouse offscreen
+        else {
+          if (ev.buttons === 1) {
+            lastEvent.offscreen = true;
+
+            if (isDrawing.current) {
+              contextRef.current.lineTo(point.x, point.y);
+              finishDrawing(true);
+              contextRef.current.stroke();
+              return;
+            }
+          } else {
+            contextRef.current.closePath();
+
+            isDrawing.current = false;
+            // setIsDrawingState(false);
+          }
+        }
+      }
+      // if mouse is inside the canvas, clicking, but hasn't started drawing yet
+      else {
+        if (ev.buttons === 1 && !isDrawing.current) {
+          contextRef.current.moveTo(point.x, point.y);
+          contextRef.current.beginPath();
+          isDrawing.current = true;
+          // setIsDrawingState(true);
+        }
+      }
+
+      // if mouse is inside the canvas, clicking, will draw like normal
+      if (ev.buttons === 1 && isDrawing.current) {
+        contextRef.current.lineTo(point.x, point.y);
+        contextRef.current.stroke();
+      }
     }
   }
 
-  function clearCanvas() {
+  function clearCanvas(snapshot = false) {
     const canvas = canvasRef.current;
     const context = canvas.getContext("2d");
     context.fillStyle = "white";
     context.fillRect(0, 0, canvas.width, canvas.height);
-  };
+
+    if (snapshot) {
+      takeSnapshot();
+    }
+  }
 
   // not sure if these getter methods are necessary as opposed to directly exporting the states
   const getFloodFillStatus = () => {
-    return floodFillStatus;
-  };
-
-  const getMouseInsideOfCanvasStatus = () => {
-    return mouseInsideOfCanvas;
+    return floodFillStatusRef.current;
   };
 
   return (
@@ -355,17 +391,21 @@ export const CanvasProvider = ({ children }) => {
         mouseInsideOfCanvas: mouseInsideOfCanvas,
         setMouseInsideOfCanvas: setMouseInsideOfCanvas,
         floodFillStatus: floodFillStatus,
+        prevNumSnapshots: prevNumSnapshots,
+        // isDrawingState: isDrawingState,
         setFloodFillStatus: setFloodFillStatus,
         prepareCanvas,
         changeColor,
         changeBrushSize,
+        floodFillHandler,
+        resetAbleToFloodFill,
         toggleFloodFill,
         finishDrawing,
         clearCanvas,
+        takeSnapshot,
         draw,
         undo,
         getFloodFillStatus,
-        getMouseInsideOfCanvasStatus,
       }}
     >
       {children}
