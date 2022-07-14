@@ -1,13 +1,12 @@
 import React, { useContext, useState, useEffect } from "react";
-import { isEqual } from "lodash";
+
 import { useCanvas } from "./CanvasContext";
 
 import DrawingSelectionContext from "./DrawingSelectionContext";
 import classes from "./Controls.module.css";
-import EraserIcon from "../svgs/EraserIcon";
 import GarbageIcon from "../svgs/GarbageIcon";
+import Paintbrush from "../svgs/Paintbrush";
 import PaintBucketIcon from "../svgs/PaintBucketIcon";
-import PencilIcon from "../svgs/PencilIcon";
 import RedoIcon from "../svgs/RedoIcon";
 
 import baseClasses from "../index.module.css";
@@ -361,7 +360,11 @@ const Controls = () => {
           }}
           onClick={() => changeTool(0)}
         >
-          <PencilIcon />
+          <Paintbrush
+            dimensions={"3em"}
+            currentColor={DSCtx.currentColor}
+            eraser={false}
+          />
         </div>
 
         <div
@@ -391,7 +394,11 @@ const Controls = () => {
           }}
           onClick={() => changeTool(2)}
         >
-          <EraserIcon />
+          <Paintbrush
+            dimensions={"3em"}
+            currentColor={"#FFFFFF"}
+            eraser={true}
+          />
         </div>
 
         <div
