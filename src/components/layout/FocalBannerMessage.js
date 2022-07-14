@@ -26,6 +26,7 @@ import classes from "./FocalBannerMessage.module.css";
 import baseClasses from "../../index.module.css";
 import LogoIcon from "../../svgs/LogoIcon";
 import Logo from "../../svgs/Logo.png";
+import RainbowExtraIcon from "../../svgs/RainbowExtraIcon";
 
 const FocalBannerMessage = (props) => {
   const { user, isAuthenticated, isLoading } = useAuth0();
@@ -110,7 +111,11 @@ const FocalBannerMessage = (props) => {
             <>
               {/* <LogoIcon width={"5em"} height={"3em"} /> */}
 
-              <img src={Logo} style={{ maxWidth: "200px", marginTop: ".25em" }} alt="Logo" />
+              <img
+                src={Logo}
+                style={{ maxWidth: "200px", marginTop: ".25em" }}
+                alt="Logo"
+              />
             </>
           ) : (
             <>{miscSettings.current.title}</>
@@ -172,19 +177,8 @@ const FocalBannerMessage = (props) => {
             <FiveMinuteIcon dimensions={"2.5em"} />
           </div>
 
-          <div
-            style={{
-              opacity: completedExtra ? 0.2 : 1,
-              width: "46px",
-              height: "46px",
-            }}
-          >
-            <div
-              style={{ userSelect: "none" }}
-              className={`${classes.extraDurationIcon} ${baseClasses.baseFlex}`}
-            >
-              ?
-            </div>
+          <div style={{ opacity: completedExtra ? 0.2 : 1 }}>
+            <RainbowExtraIcon dimensions={"2.5em"} />
           </div>
         </div>
       </div>
