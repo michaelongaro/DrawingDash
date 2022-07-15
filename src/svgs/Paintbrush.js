@@ -53,7 +53,7 @@ const Paintbrush = ({ dimensions, currentColor, eraser }) => {
             style={{
               fillOpacity: 1,
               strokeWidth: 1,
-              filter: eraser ? "" : "brightness(1.1)",
+              filter: eraser ? "" : "brightness(1.15)",
             }}
           />
           <path

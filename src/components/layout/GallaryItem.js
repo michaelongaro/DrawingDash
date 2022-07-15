@@ -4,6 +4,7 @@ import { useLocation } from "react-router-dom";
 import { useAuth0 } from "@auth0/auth0-react";
 
 import ProfilePicture from "./ProfilePicture";
+import SearchContext from "./SearchContext";
 import FavoritesContext from "./FavoritesContext";
 import UserModal from "./UserModal";
 import Card from "../../ui/Card";
@@ -43,10 +44,11 @@ import { app } from "../../util/init-firebase";
 import classes from "./GallaryItem.module.css";
 import baseClasses from "../../index.module.css";
 
-const GallaryItem = ({ drawingID, settings }) => {
+const GallaryItem = ({ drawingID, settings, idx, dbPath }) => {
   const location = useLocation();
   const { user, isLoading, isAuthenticated } = useAuth0();
 
+  const searchCtx = useContext(SearchContext);
   const favoritesCtx = useContext(FavoritesContext);
 
   const db = getDatabase(app);
@@ -112,6 +114,9 @@ const GallaryItem = ({ drawingID, settings }) => {
 
   const [showTempBaselineSkeleton, setShowTempBaselineSkeleton] =
     useState(true);
+
+  const [deletionCheckpointsReached, setDeletionCheckpointsReached] =
+    useState(0);
 
   useEffect(() => {
     if (showDrawingModal || (!isLoading && !isAuthenticated)) {
@@ -193,6 +198,13 @@ const GallaryItem = ({ drawingID, settings }) => {
       );
     }
   }, [drawingDetails]);
+
+  useEffect(() => {
+    console.log("deleted hoops", deletionCheckpointsReached);
+    if (deletionCheckpointsReached === 3) {
+      searchCtx.getGallary(0, 6, 6, idx, dbPath);
+    }
+  }, [deletionCheckpointsReached]);
 
   useEffect(() => {
     let handler = (event) => {
@@ -340,7 +352,9 @@ const GallaryItem = ({ drawingID, settings }) => {
     remove(ref(db, `drawings/${uniqueID}`));
 
     // Removing from storage
-    deleteObject(ref_storage(storage, `drawings/${drawingID}.jpg`));
+    deleteObject(ref_storage(storage, `drawings/${drawingID}.jpg`)).then(() => {
+      setDeletionCheckpointsReached((currNum) => currNum + 1);
+    });
 
     // Removing from /titles
     get(child(dbRef, `titles/${seconds}/${title}`)).then((snapshot) => {
@@ -359,6 +373,8 @@ const GallaryItem = ({ drawingID, settings }) => {
             drawingID: drawingIDs,
           });
         }
+
+        setDeletionCheckpointsReached((currNum) => currNum + 1);
       }
     });
 
@@ -381,6 +397,7 @@ const GallaryItem = ({ drawingID, settings }) => {
               drawingID: drawingIDs,
             });
           }
+          setDeletionCheckpointsReached((currNum) => currNum + 1);
         }
       }
     );

@@ -51,9 +51,9 @@ const PromptSelection = () => {
   ); // temporary
   const [extraDurationIcon, setExtraDurationIcon] = useState();
   const [stylingButtonClasses, setStylingButtonClasses] = useState([
-    classes.pointer,
-    classes.pointer,
-    classes.pointer,
+    classes.disabled,
+    classes.disabled,
+    classes.disabled,
   ]);
 
   const [durationOptions, setDurationOptions] = useState();
@@ -85,35 +85,26 @@ const PromptSelection = () => {
   const [postCountdown, setPostCountdown] = useState(false);
 
   // maybe just have special case for unregistered users, since seeing f f f will trigger "log in" stuff
-  const [adjustedDrawingStatuses, setAdjustedDrawingStatuses] = useState(
-    !isLoading && isAuthenticated
-      ? {
-          60: true,
-          180: true,
-          300: true,
-        }
-      : {
-          60: false,
-          180: false,
-          300: false,
-        }
-  );
-
-  const [proceedToNormalDrawingStatuses, setProceedToNormalDrawingStatuses] =
-    useState(false);
+  const [adjustedDrawingStatuses, setAdjustedDrawingStatuses] = useState({
+    60: true,
+    180: true,
+    300: true,
+  });
 
   useEffect(() => {
-    console.log(DSCtx.drawingStatuses, proceedToNormalDrawingStatuses);
-    // === 1 just means that this is the first occurance of
-    if (proceedToNormalDrawingStatuses && DSCtx.drawingStatusRefreshes > 0) {
+    console.log(
+      DSCtx.drawingStatuses,
+      DSCtx.drawingStatusRefreshes,
+      DSCtx.promptRefreshes
+    );
+    // adjust prompt statuses when both prompts + drawings statuses have been fully fetched
+    if (DSCtx.drawingStatusRefreshes > 0 && DSCtx.promptRefreshes === 1) {
       setAdjustedDrawingStatuses(DSCtx.drawingStatuses);
-    } else {
-      setProceedToNormalDrawingStatuses(true);
     }
   }, [
     DSCtx.drawingStatuses,
     DSCtx.drawingStatusRefreshes,
-    proceedToNormalDrawingStatuses,
+    DSCtx.promptRefreshes,
   ]);
 
   // for custom prompt dropdown
@@ -303,17 +294,17 @@ const PromptSelection = () => {
       // for unregistered users
 
       if (
-        adjustedDrawingStatuses["60"] &&
-        adjustedDrawingStatuses["180"] &&
-        adjustedDrawingStatuses["300"]
+        DSCtx.drawingStatuses["60"] &&
+        DSCtx.drawingStatuses["180"] &&
+        DSCtx.drawingStatuses["300"]
       ) {
         setShowCountdownTimer(true);
       }
 
       setStylingButtonClasses([
-        adjustedDrawingStatuses["60"] ? classes.disabled : classes.pointer,
-        adjustedDrawingStatuses["180"] ? classes.disabled : classes.pointer,
-        adjustedDrawingStatuses["300"] ? classes.disabled : classes.pointer,
+        DSCtx.drawingStatuses["60"] ? classes.disabled : classes.pointer,
+        DSCtx.drawingStatuses["180"] ? classes.disabled : classes.pointer,
+        DSCtx.drawingStatuses["300"] ? classes.disabled : classes.pointer,
       ]);
     }
   }, [

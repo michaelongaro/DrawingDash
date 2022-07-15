@@ -31,20 +31,12 @@ const GallaryList = ({
 
   const [showEmptyResults, setShowEmptyResults] = useState(false);
 
-  // const [displayedDrawings, setDisplayedDrawings] = useState({
-  //   60: [],
-  //   180: [],
-  //   300: [],
-  // });
   const [durationStates, setDurationStates] = useState([false, false, false]);
   const [availableDurations, setAvailableDurations] = useState([
     false,
     false,
     false,
   ]);
-  const [showButtonColors, setShowButtonColors] = useState();
-  const [pageSelectorButtons, setPageSelectorButtons] = useState([]);
-  const [renderGallaryList, setRenderGallaryList] = useState(false);
 
   const [redOpacity, setRedOpacity] = useState(0);
   const [yellowOpacity, setYellowOpacity] = useState(0);
@@ -88,7 +80,6 @@ const GallaryList = ({
         // used if want to load a different page other than the default order (60->180->300)
         if (searchCtx.pageSelectorDetails["durationToManuallyLoad"][idx]) {
           setDurationStates(searchCtx.manuallyLoadDurations(idx));
-          setShowButtonColors(searchCtx.manuallyLoadDurations(idx));
           setCurrentlyShownDuration(
             searchCtx.pageSelectorDetails["durationToManuallyLoad"][idx]
           );
@@ -98,21 +89,18 @@ const GallaryList = ({
           console.log("reloading the old fashioned way, nothing fancy");
           if (drawingIDs["60"].length !== 0) {
             setDurationStates([true, false, false]);
-            setShowButtonColors([true, false, false]);
             setCurrentlyShownDuration("60");
 
             return;
           }
           if (drawingIDs["180"].length !== 0) {
             setDurationStates([false, true, false]);
-            setShowButtonColors([false, true, false]);
             setCurrentlyShownDuration("180");
 
             return;
           }
           if (drawingIDs["300"].length !== 0) {
             setDurationStates([false, false, true]);
-            setShowButtonColors([false, false, true]);
             setCurrentlyShownDuration("300");
 
             return;
@@ -405,6 +393,8 @@ const GallaryList = ({
                         widthRatio: skeletonRatio,
                         heightRatio: skeletonRatio,
                       }}
+                      idx={idx}
+                      dbPath={databasePath}
                     />
                   ))}
               </div>
@@ -429,6 +419,8 @@ const GallaryList = ({
                         widthRatio: skeletonRatio,
                         heightRatio: skeletonRatio,
                       }}
+                      idx={idx}
+                      dbPath={databasePath}
                     />
                   ))}
               </div>
@@ -453,6 +445,8 @@ const GallaryList = ({
                         widthRatio: skeletonRatio,
                         heightRatio: skeletonRatio,
                       }}
+                      idx={idx}
+                      dbPath={databasePath}
                     />
                   ))}
               </div>

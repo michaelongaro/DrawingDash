@@ -402,7 +402,12 @@ const Controls = () => {
         </div>
 
         <div
-          onClick={undo}
+          onClick={() => {
+            // don't allow modifications to canvas after drawing has been completed
+            if (DSCtx.drawingTime > 0) {
+              undo();
+            }
+          }}
           style={{
             marginLeft: "1em",
             transform: "rotateY(180deg)",
@@ -415,7 +420,12 @@ const Controls = () => {
         </div>
 
         <div
-          onClick={() => clearCanvas(true)}
+          onClick={() => {
+            // don't allow modifications to canvas after drawing has been completed
+            if (DSCtx.drawingTime > 0) {
+              clearCanvas(true);
+            }
+          }}
           style={{ marginLeft: "1em" }}
           className={baseClasses.baseFlex}
         >

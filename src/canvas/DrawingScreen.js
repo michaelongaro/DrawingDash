@@ -205,7 +205,7 @@ const DrawingScreen = () => {
   );
 
   const [showEndOverlay, setShowEndOverlay] = useState(classes.hide);
-  const [showEndOutline, setShowEndOutline] = useState(classes.hide);
+  const [showEndOutline, setShowEndOutline] = useState(false);
 
   useEffect(() => {
     if (!DSCtx.showPaletteChooser) {
@@ -223,11 +223,9 @@ const DrawingScreen = () => {
 
   useEffect(() => {
     if (DSCtx.showEndOverlay && DSCtx.showEndOutline) {
-      // setShowEndOverlay(classes.overlayBreathingBackground);
-      setShowEndOutline(classes.canvasOutline);
+      setShowEndOutline(true);
     } else {
-      // setShowEndOverlay(classes.hide);
-      setShowEndOutline(classes.hide);
+      setShowEndOutline(false);
     }
   }, [DSCtx.showEndOverlay, DSCtx.showEndOutline]);
 
@@ -634,6 +632,7 @@ const DrawingScreen = () => {
               className={classes.canvasStyles}
               style={{
                 filter: showCanvas ? "" : "blur(3px)",
+                transition: "all 500ms",
               }}
             >
               <div className={classes.timer}>
@@ -689,7 +688,18 @@ const DrawingScreen = () => {
               </div>
             </div>
 
-            <div className={`${showEndOutline} ${classes.endScreen}`}>
+            <div
+              style={{
+                opacity: showEndOutline ? 1 : 0,
+                pointerEvents: showEndOutline ? "auto" : "none",
+                backgroundColor: showEndOutline
+                  ? "rgba(255,255,255, .2)"
+                  : "rgba(255,255,255, .001)",
+                transform: showEndOutline ? "scale(1)" : "scale(0)",
+                transition: "all 500ms",
+              }}
+              className={`${classes.canvasOutline} ${classes.endScreen}`}
+            >
               <div className={classes.endButtonContainer}>
                 {showCountdownTimer ? (
                   <div
@@ -768,7 +778,7 @@ const DrawingScreen = () => {
                     <div className={classes.orSeparator}>
                       <div
                         style={{
-                          width: showCountdownTimer ? "7em" : "3em",
+                          width: showCountdownTimer ? "7em" : "5em",
                           marginRight: showCountdownTimer ? "0" : ".5em",
                         }}
                         className={classes.leadingLine}
@@ -782,7 +792,7 @@ const DrawingScreen = () => {
                       </div>
                       <div
                         style={{
-                          width: showCountdownTimer ? "7em" : "3em",
+                          width: showCountdownTimer ? "7em" : "5em",
                           marginLeft: showCountdownTimer ? "0" : ".5em",
                         }}
                         className={classes.trailingLine}

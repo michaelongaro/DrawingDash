@@ -74,6 +74,7 @@ function MainNavigation() {
   const [hoveringOnProfilePicture, setHoveringOnProfilePicture] =
     useState(false);
   const [hoveringOnProfileButton, setHoveringOnProfileButton] = useState(false);
+  const [hoveringOnLogOutButton, setHoveringOnLogOutButton] = useState(false);
 
   // all of this should really be encapsulated into a hook
   const showCroppedImage = async (disableSkeleton = false) => {
@@ -347,7 +348,7 @@ function MainNavigation() {
                 onClick={() => {
                   // only using this because I couldn't lift up z-index to be able to click link
                   // without hover malfunctioning
-                  if (!hoveringOnProfileButton) {
+                  if (!hoveringOnLogOutButton) {
                     profilePictureRef.current.click();
                   }
                 }}
@@ -406,7 +407,18 @@ function MainNavigation() {
                       />
                       <div>Profile</div>
                     </Link>
-                    <LogOutButton />
+
+                    <div
+                      style={{ width: "100%", height: "100%" }}
+                      onMouseEnter={() => {
+                        setHoveringOnLogOutButton(true);
+                      }}
+                      onMouseLeave={() => {
+                        setHoveringOnLogOutButton(false);
+                      }}
+                    >
+                      <LogOutButton />
+                    </div>
                   </div>
                 </div>
               </div>
