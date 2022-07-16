@@ -1,10 +1,9 @@
 import React, { useEffect, useState } from "react";
 
-import Card from "../../ui/Card";
 import GallaryItem from "./GallaryItem";
 import ProfilePicture from "./ProfilePicture";
 
-import { getDatabase, get, ref, child } from "firebase/database";
+import { getDatabase, get, onValue, ref, child } from "firebase/database";
 import { app } from "../../util/init-firebase";
 
 import classes from "./FeaturedLikes.module.css";
@@ -16,28 +15,29 @@ const FeaturedLikes = () => {
   const [dailyMostLiked, setDailyMostLiked] = useState(false);
   const [currentDrawing, setCurrentDrawing] = useState(0);
   const [selected, setSelected] = useState([classes.highlighted, "", ""]);
-  const dbRef = ref(getDatabase(app));
 
   useEffect(() => {
-    let promises = [];
-    let formattedLikes = [];
-    get(child(dbRef, "dailyMostLiked"))
-      .then((snapshot) => {
-        if (snapshot.exists()) {
-          for (const drawing of Object.values(snapshot.val())) {
-            promises.push(get(child(dbRef, `drawings/${drawing.id}`)));
-          }
-          return Promise.all(promises);
-        }
-      })
-      .then((results) => {
-        for (const idx in results) {
-          formattedLikes.push(results[idx].val());
+    const db = getDatabase(app);
+    const dbRef = ref(getDatabase(app));
+
+    onValue(ref(db, "dailyMostLiked"), (snapshot) => {
+      let promises = [];
+      let formattedLikes = [];
+
+      if (snapshot.exists()) {
+        for (const drawing of Object.values(snapshot.val())) {
+          promises.push(get(child(dbRef, `drawings/${drawing.id}`)));
         }
 
-        console.log(formattedLikes);
-        setDailyMostLiked(formattedLikes);
-      });
+        Promise.all(promises).then((results) => {
+          for (const idx in results) {
+            formattedLikes.push(results[idx].val());
+          }
+
+          setDailyMostLiked(formattedLikes);
+        });
+      }
+    });
   }, []);
 
   function selectTimer(index) {
@@ -107,6 +107,7 @@ const FeaturedLikes = () => {
         </div>
 
         {/* ----------- Shown Drawing ----------- */}
+        {/* honestly could have all of them here, and just change opacity of which one is shown */}
         <div className={classes.drawingContainer}>
           <GallaryItem
             drawingID={dailyMostLiked[currentDrawing].index}

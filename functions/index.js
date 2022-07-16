@@ -28,10 +28,11 @@ async function fetchExtraDailyWords() {
 
 const capitalize = (s) => s.charAt(0).toUpperCase() + s.slice(1).toLowerCase();
 
-exports.pushDailyWords = functions.pubsub
+exports.dailyRefreshAndReset = functions.pubsub
   .schedule("every day 00:00")
   .timeZone("America/Chicago")
   .onRun((context) => {
+    // setting new daily prompts
     fetchDailyWords().then((response) => {
       const data = response.map((res) => res.data);
       const flattenedData = data.flat();
@@ -43,6 +44,8 @@ exports.pushDailyWords = functions.pubsub
       });
     });
 
+    // this date is used as a reference to count down to inside of
+    // PromptSelection.js & DrawingScreen.js
     const date = new Date(Date.now() + 86400000);
     const formattedDate = date.toDateString();
 
@@ -55,6 +58,9 @@ exports.pushDailyWords = functions.pubsub
       .once("value")
       .then((snapshot) => {
         const users = Object.keys(snapshot.val());
+
+        // for each user, resetting their completedDailyPrompts
+        // + adding new extra prompt
         for (const user of users) {
           const seconds = [60, 180, 300];
           const randomSeconds =
@@ -85,51 +91,71 @@ exports.pushDailyWords = functions.pubsub
       .ref("drawingLikes")
       .once("value")
       .then((snapshot) => {
-        const timeBrackets = Object.keys(snapshot.val());
-        for (const timeBracket of timeBrackets) {
-          const drawingIDs = Object.keys(snapshot.val()[timeBracket]);
-          let mostLikedID = "";
-          let mostLiked = 0;
-          for (const drawingID of drawingIDs) {
-            if (
-              snapshot.val()[timeBracket][drawingID]["dailyLikes"] > mostLiked
-            ) {
-              mostLikedID = drawingID;
-              mostLiked = snapshot.val()[timeBracket][drawingID]["dailyLikes"];
-            }
+        // getting yesterday's dailyMostLiked id's to compare to
+        database
+          .ref("dailyMostLiked")
+          .once("value")
+          .then((snapshot2) => {
+            let previousDailyMostLiked = snapshot2.val();
 
-            database.ref(`drawingLikes/${timeBracket}/${drawingID}`).update({
-              dailyLikes: 0,
-            });
-          }
+            let newDailyMostLiked = {};
 
-          // if there were no drawings that were liked for that day (per time bracket)
-          if (mostLikedID === "") {
-            let randomDrawingWithLikesID = "";
-            let likedImageNotFound = true;
-            while (likedImageNotFound) {
-              let randomIndex = Math.floor(Math.random() * drawingIDs.length);
+            const durations = Object.keys(snapshot.val());
 
-              if (
-                snapshot.val()[timeBracket][drawingIDs[randomIndex]][
-                  "totalLikes"
-                ] > 0``
-              ) {
-                randomDrawingWithLikesID = drawingIDs[randomIndex];
-                likedImageNotFound = false;
+            for (const duration of durations) {
+              const drawingIDs = Object.keys(snapshot.val()[duration]);
+              let mostLikedID = "";
+              let mostLiked = 0;
+              for (const drawingID of drawingIDs) {
+                if (
+                  snapshot.val()[duration][drawingID]["dailyLikes"] > mostLiked
+                ) {
+                  mostLikedID = drawingID;
+                  mostLiked = snapshot.val()[duration][drawingID]["dailyLikes"];
+                }
+
+                database.ref(`drawingLikes/${duration}/${drawingID}`).update({
+                  dailyLikes: 0,
+                });
+              }
+
+              // if there were no drawings that were liked for that day (per duration)
+              if (mostLikedID === "") {
+                let randomDrawingWithLikesID = "";
+                let likedImageNotFound = true;
+
+                // looping through all indicies until one is found that has > 0 totalDrawings
+                while (likedImageNotFound) {
+                  let randomIndex = Math.floor(
+                    Math.random() * drawingIDs.length
+                  );
+
+                  // making sure that drawing has likes + wasn't yesterday's most liked
+                  if (
+                    snapshot.val()[duration][drawingIDs[randomIndex]][
+                      "totalLikes"
+                    ] > 0 &&
+                    previousDailyMostLiked[duration] !== drawingIDs[randomIndex]
+                  ) {
+                    randomDrawingWithLikesID = drawingIDs[randomIndex];
+                    likedImageNotFound = false;
+                  }
+                }
+
+                newDailyMostLiked[duration] = {
+                  id: randomDrawingWithLikesID,
+                };
+              }
+
+              // most liked image of that day (per duration)
+              else {
+                newDailyMostLiked[duration] = { id: mostLikedID };
               }
             }
-            database.ref(`dailyMostLiked`).update({
-              [timeBracket]: { id: randomDrawingWithLikesID },
-            });
-          }
-          // updating to the most liked image of that day (per time bracket)
-          else {
-            database.ref(`dailyMostLiked`).update({
-              [timeBracket]: { id: mostLikedID },
-            });
-          }
-        }
+
+            // setting newDailyMostLiked obj in db
+            database.ref(`dailyMostLiked`).set(newDailyMostLiked);
+          });
       });
 
     return null;
