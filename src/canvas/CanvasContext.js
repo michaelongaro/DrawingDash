@@ -5,10 +5,6 @@ const CanvasContext = React.createContext();
 export const CanvasProvider = ({ children }) => {
   let isDrawing = useRef(false);
 
-  // ideally would only want snapshot to be taken when mouseup + isDrawing === true
-  // however really looked like a rabbit hole... investigate later
-
-  // let [isDrawingState, setIsDrawingState] = useState(false);
   let lastEvent;
 
   const [mouseInsideOfCanvas, setMouseInsideOfCanvas] = useState(false);
@@ -17,6 +13,9 @@ export const CanvasProvider = ({ children }) => {
   const previousDrawingSnapshots = useRef([]);
   const floodFillStatusRef = useRef(false);
   const ableToFloodFill = useRef(false);
+  const drawingOutsideCanvas = useRef(false);
+  const mouseInsideOfCanvasRef = useRef(false);
+  const newFloodFillAdded = useRef(false);
 
   const [prevNumSnapshots, setPrevNumSnapshots] = useState(0);
   const [floodFillStatus, setFloodFillStatus] = useState(false);
@@ -37,6 +36,7 @@ export const CanvasProvider = ({ children }) => {
     const context = canvas.getContext("2d");
     context.lineCap = "round";
     context.lineJoin = "round";
+    context.lineWidth = 8;
     context.imageSmoothingEnabled = true;
     contextRef.current = context;
   }
@@ -192,32 +192,70 @@ export const CanvasProvider = ({ children }) => {
     const y = Math.round(event.clientY - rect.top);
 
     // if currently hovered color and color to fill with are the same, return
-    if (!colorMatch(getColorAtPixel(imageData, x, y), col)) {
+    if (
+      !colorMatch(getColorAtPixel(imageData, x, y), col) &&
+      !newFloodFillAdded.current
+    ) {
       floodFill(imageData, col, x, y);
       ctx.putImageData(imageData, 0, 0);
       contextRef.current = ctx;
-
-      takeSnapshot();
+      newFloodFillAdded.current = true;
     }
 
     ableToFloodFill.current = false;
   }
 
+  useEffect(() => {
+    mouseInsideOfCanvasRef.current = mouseInsideOfCanvas;
+  }, [mouseInsideOfCanvas]);
+
   function finishDrawing(overrideMouseInsideCanvas = false) {
+    let adjustedMouseInsideCanvas =
+      typeof overrideMouseInsideCanvas === "boolean"
+        ? overrideMouseInsideCanvas
+        : false;
+
+    console.log(newFloodFillAdded.current);
+
+    if (drawingOutsideCanvas.current && !adjustedMouseInsideCanvas) {
+      takeSnapshot();
+      drawingOutsideCanvas.current = false;
+    } else if (!drawingOutsideCanvas.current) {
+      // okay actually need to add ANOTHER freaking state here to see
+      // whether the floodfill that you are trying to add will actually go through
+      // maybe could use ableToFloodFill? idk look at that ish
+      if (
+        isDrawing.current &&
+        mouseInsideOfCanvasRef.current &&
+        !adjustedMouseInsideCanvas
+      ) {
+        takeSnapshot();
+      } else if (
+        floodFillStatusRef.current &&
+        mouseInsideOfCanvasRef.current &&
+        !adjustedMouseInsideCanvas &&
+        newFloodFillAdded.current
+      ) {
+        console.log("snapshot taken and resetting ish to false");
+        takeSnapshot();
+      }
+    }
+
     if (
       !floodFillStatusRef.current &&
       isDrawing.current &&
-      (mouseInsideOfCanvas || overrideMouseInsideCanvas)
+      (mouseInsideOfCanvasRef.current || adjustedMouseInsideCanvas)
     ) {
       contextRef.current.closePath();
       contextRef.current.beginPath();
 
-      takeSnapshot();
-
       isDrawing.current = false;
-      // setIsDrawingState(false);
+
       lastEvent = null;
     }
+
+    // test again, with this on the outside it should be 100% gucci ngl
+    newFloodFillAdded.current = false;
   }
 
   function getRelativePointFromEvent(ev, elem) {
@@ -237,8 +275,6 @@ export const CanvasProvider = ({ children }) => {
     } else {
       const canvas = canvasRef.current;
       const ctx = canvas.getContext("2d");
-
-      console.log("undo-ing");
 
       // removing last elem since that is the screenshot we are trying to replace
       previousDrawingSnapshots.current.pop();
@@ -294,7 +330,6 @@ export const CanvasProvider = ({ children }) => {
         point.x < canvasRef.current.width &&
         point.y < canvasRef.current.height
       ) {
-        // console.log("flood found, exiting");
         floodFillHandler(ev);
         return;
       }
@@ -321,13 +356,11 @@ export const CanvasProvider = ({ children }) => {
               contextRef.current.moveTo(previous_point.x, previous_point.y);
 
               isDrawing.current = true;
-              // setIsDrawingState(true);
             }
           } else {
             contextRef.current.closePath();
 
             isDrawing.current = false;
-            // setIsDrawingState(false);
           }
         }
         // if this is a new occurance of mouse offscreen
@@ -338,6 +371,10 @@ export const CanvasProvider = ({ children }) => {
             if (isDrawing.current) {
               contextRef.current.lineTo(point.x, point.y);
               finishDrawing(true);
+
+              // this lets next call to finishDrawing know whether user has a current
+              // path that they are drawing
+              drawingOutsideCanvas.current = true;
               contextRef.current.stroke();
               return;
             }
@@ -345,7 +382,6 @@ export const CanvasProvider = ({ children }) => {
             contextRef.current.closePath();
 
             isDrawing.current = false;
-            // setIsDrawingState(false);
           }
         }
       }
@@ -355,7 +391,6 @@ export const CanvasProvider = ({ children }) => {
           contextRef.current.moveTo(point.x, point.y);
           contextRef.current.beginPath();
           isDrawing.current = true;
-          // setIsDrawingState(true);
         }
       }
 
@@ -378,21 +413,15 @@ export const CanvasProvider = ({ children }) => {
     }
   }
 
-  // not sure if these getter methods are necessary as opposed to directly exporting the states
-  const getFloodFillStatus = () => {
-    return floodFillStatusRef.current;
-  };
-
   return (
     <CanvasContext.Provider
       value={{
         canvasRef,
         contextRef,
         mouseInsideOfCanvas: mouseInsideOfCanvas,
-        setMouseInsideOfCanvas: setMouseInsideOfCanvas,
         floodFillStatus: floodFillStatus,
         prevNumSnapshots: prevNumSnapshots,
-        // isDrawingState: isDrawingState,
+        setMouseInsideOfCanvas: setMouseInsideOfCanvas,
         setFloodFillStatus: setFloodFillStatus,
         prepareCanvas,
         changeColor,
@@ -405,7 +434,6 @@ export const CanvasProvider = ({ children }) => {
         takeSnapshot,
         draw,
         undo,
-        getFloodFillStatus,
       }}
     >
       {children}

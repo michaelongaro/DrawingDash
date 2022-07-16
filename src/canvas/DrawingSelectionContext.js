@@ -98,6 +98,10 @@ export function DrawingSelectionProvider(props) {
     }
   }, [currentColor]);
 
+  useEffect(() => {
+    console.log("currentCursorSize", currentCursorSize);
+  }, [currentCursorSize]);
+
   const [promptRefreshes, setPromptRefreshes] = useState(0);
   const [drawingStatusRefreshes, setDrawingStatusRefreshes] = useState(0);
 
@@ -121,7 +125,6 @@ export function DrawingSelectionProvider(props) {
           // on if their last seen prompts match the current prompts
           if (currentUserInfo) {
             if (!isEqual(currentUserInfo["lastSeenPrompts"], snapshot.val())) {
-              console.log("prompts are diff, starting changes");
               currentUserInfo["lastSeenPrompts"] = snapshot.val();
               currentUserInfo["dailyCompletedPrompts"] = {
                 60: false,
@@ -191,9 +194,9 @@ export function DrawingSelectionProvider(props) {
   //   setDrawingStatusRefreshes((refreshes) => refreshes + 1);
   // }, [drawingStatuses]);
 
-  useEffect(() => {
-    console.log(promptRefreshes, drawingStatusRefreshes);
-  }, [promptRefreshes, drawingStatusRefreshes]);
+  // useEffect(() => {
+  //   console.log(promptRefreshes, drawingStatusRefreshes);
+  // }, [promptRefreshes, drawingStatusRefreshes]);
 
   useEffect(() => {
     if (promptRefreshes === 2 && drawingStatusRefreshes === 6) {
@@ -207,7 +210,6 @@ export function DrawingSelectionProvider(props) {
   function updatePBStates(field, value) {
     let tempPBStatuses = { ...PBStates };
     tempPBStatuses[field] = value;
-    console.log("setting context to", tempPBStatuses);
     setPBStates(tempPBStatuses);
   }
 

@@ -59,8 +59,7 @@ const Controls = () => {
       changeColor(DSCtx.paletteColors[0]);
       DSCtx.setCurrentColor(DSCtx.paletteColors[0]);
       updateSelectedColor(0, false);
-      changeBrushSize(5);
-      // setCurrentCursorSize
+      changeBrushSize(8);
       updateSelectedBrushSize(1);
     } else if (DSCtx.seconds > 0) {
       DSCtx.setCurrentColor("#FFFFFF");

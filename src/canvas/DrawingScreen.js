@@ -84,7 +84,7 @@ const DrawingScreen = () => {
     clearCanvas,
     finishDrawing,
     floodFillHandler,
-    // takeSnapshot,
+    takeSnapshot,
     draw,
     resetAbleToFloodFill,
     floodFillStatus,
@@ -167,7 +167,7 @@ const DrawingScreen = () => {
 
     document.addEventListener("mousemove", draw);
     document.addEventListener("mouseup", resetAbleToFloodFill);
-    // document.addEventListener("mouseup", takeSnapshot);
+    document.addEventListener("mouseup", finishDrawing);
 
     document.documentElement.addEventListener("mouseenter", draw, {
       once: true,
@@ -179,7 +179,7 @@ const DrawingScreen = () => {
     return () => {
       document.removeEventListener("mousemove", draw);
       document.removeEventListener("mouseup", resetAbleToFloodFill);
-      // document.removeEventListener("mouseup", takeSnapshot);
+      document.removeEventListener("mouseup", finishDrawing);
 
       document.documentElement.removeEventListener(
         "mouseenter",
@@ -351,6 +351,9 @@ const DrawingScreen = () => {
     DSCtx.setShowEndOutline(true);
 
     document.removeEventListener("mousemove", draw);
+    document.removeEventListener("mouseup", resetAbleToFloodFill);
+    document.removeEventListener("mouseup", finishDrawing);
+
     document.documentElement.removeEventListener(
       "mouseenter",
 
@@ -666,23 +669,25 @@ const DrawingScreen = () => {
                           "#",
                           ""
                         )}; stroke: ${
-                          DSCtx.currentColor === "#FFFFFF"
-                            ? "%23c4c4c4"
-                            : "none"
+                          DSCtx.currentColor === "#FFFFFF" ? "%23c4c4c4" : ""
                         }; strokeWidth:${
-                          DSCtx.currentColor === "#FFFFFF" ? "1px" : "none"
+                          DSCtx.currentColor === "#FFFFFF" ? "1px" : "0"
                         }; "/></svg>') ${DSCtx.currentCursorSize} ${
                           DSCtx.currentCursorSize
                         }, pointer`,
                   }}
                   onMouseDown={draw}
-                  onMouseUp={() => {
-                    if (mouseInsideOfCanvas) {
-                      finishDrawing();
-                    }
+                  // onMouseUp={() => {
+                  //   if (mouseInsideOfCanvas) {
+                  //     finishDrawing();
+                  //   }
+                  // }}
+                  onMouseEnter={() => {
+                    setMouseInsideOfCanvas(true);
                   }}
-                  onMouseEnter={() => setMouseInsideOfCanvas(true)}
-                  onMouseLeave={() => setMouseInsideOfCanvas(false)}
+                  onMouseLeave={() => {
+                    setMouseInsideOfCanvas(false);
+                  }}
                   ref={canvasRef}
                 />
               </div>
