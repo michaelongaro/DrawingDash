@@ -7,12 +7,20 @@ import FiveMinuteIcon from "../../svgs/FiveMinuteIcon";
 import OneMinuteIcon from "../../svgs/OneMinuteIcon";
 import ThreeMinuteIcon from "../../svgs/ThreeMinuteIcon";
 
-import classes from "./SlideShow.module.css";
 import "./SlideShowStyles.css";
+import classes from "./SlideShow.module.css";
+import baseClasses from "../../index.module.css";
 
-const SlideShow = ({ pinnedDrawings, metadata }) => {
+const SlideShow = ({ pinnedDrawings, pinnedMetadata, username }) => {
+  console.log(pinnedDrawings, pinnedMetadata);
+
   const [currentSlideshowTitle, setCurrentSlideshowTitle] = useState("");
-  const [currentSlideshowDuration, setCurrentSlideshowDuration] = useState("");
+
+  const fallbackBackgroundColors = [
+    "rgba(255, 0, 0, .3)",
+    "rgba(255, 255, 0, .3)",
+    "rgba(0, 255, 0, .3)",
+  ];
 
   const properties = {
     duration: 5000,
@@ -46,15 +54,18 @@ const SlideShow = ({ pinnedDrawings, metadata }) => {
     infinite: true,
     easing: "ease",
     onChange: (previous, next) => {
-      setCurrentSlideshowTitle(metadata[next].title);
-      setCurrentSlideshowDuration(metadata[next].seconds);
+      setCurrentSlideshowTitle(
+        pinnedMetadata[next] === "" ? "" : pinnedMetadata[next].title
+      );
     },
   };
 
-  // should have the duration svg be right to the left of the title
-
   useEffect(() => {
-    setCurrentSlideshowTitle(metadata[0].title);
+    console.log((pinnedDrawings, pinnedMetadata));
+
+    setCurrentSlideshowTitle(
+      pinnedMetadata[0] === "" ? "" : pinnedMetadata[0].title
+    );
   }, []);
 
   return (
@@ -62,11 +73,35 @@ const SlideShow = ({ pinnedDrawings, metadata }) => {
       <Slide {...properties}>
         {pinnedDrawings.map((drawing, index) => (
           <div key={index}>
-            <img draggable="false" src={drawing} alt="Slideshow" />
+            {drawing === "" ? (
+              <div
+                style={{
+                  gap: ".5em",
+
+                  backgroundColor: fallbackBackgroundColors[index],
+                  borderRadius: "1em",
+                  height: "12.0625em",
+                  userSelect: "none",
+                }}
+                className={baseClasses.baseVertFlex}
+              >
+                <div>{username}</div>
+                <div style={{ gap: ".5em" }} className={baseClasses.baseFlex}>
+                  <div>hasn't selected a</div>
+                  {index === 0 && <OneMinuteIcon dimensions={"2.5em"} />}
+                  {index === 1 && <ThreeMinuteIcon dimensions={"2.5em"} />}
+                  {index === 2 && <FiveMinuteIcon dimensions={"2.5em"} />}
+                </div>
+                <div>drawing yet</div>
+              </div>
+            ) : (
+              <img draggable="false" src={drawing} alt="Slideshow" />
+            )}
           </div>
         ))}
       </Slide>
-      <div>{currentSlideshowTitle}</div>
+
+      <div style={{ minHeight: "1.5em" }}>{currentSlideshowTitle}</div>
     </>
   );
 };

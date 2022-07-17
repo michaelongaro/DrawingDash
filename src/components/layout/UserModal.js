@@ -34,11 +34,12 @@ const UserModal = ({ user }) => {
   const [username, setUsername] = useState("");
   const [status, setStatus] = useState("");
 
-  const [isFetchingProfilePicture, setIsFetchingProfilePicture] = useState(true);
-  const [isFetchingPinnedDrawings, setIsFetchingPinnedDrawings] = useState(true);
+  const [isFetchingProfilePicture, setIsFetchingProfilePicture] =
+    useState(true);
+  const [isFetchingPinnedDrawings, setIsFetchingPinnedDrawings] =
+    useState(true);
 
   const [image, setImage] = useState(null);
-  const [pinnedIDs, setPinnedIDs] = useState();
   const [pinnedMetadata, setPinnedMetadata] = useState();
   const [pinnedDrawings, setPinnedDrawings] = useState();
   const [imageFileType, setImageFileType] = useState(null);
@@ -66,8 +67,6 @@ const UserModal = ({ user }) => {
         setDBCropData(snapshot.val()["profileCropMetadata"]);
         get(child(dbRef, `users/${user}/pinnedArt`)).then((snapshot2) => {
           if (snapshot2.exists()) {
-            setPinnedIDs(Object.values(snapshot2.val()));
-
             // for the time being just doing this
             fetchPinnedMetadata(Object.values(snapshot2.val()));
             fetchPinnedDrawings(Object.values(snapshot2.val()));
@@ -93,16 +92,13 @@ const UserModal = ({ user }) => {
           error.code === "storage/unknown"
         ) {
           // defaulting to auth0 image
-          onValue(
-            ref_database(db, `users/${user}/preferences`),
-            (snapshot) => {
-              if (snapshot.exists()) {
-                console.log("found", snapshot.val());
-                setImage(snapshot.val()["defaultProfilePicture"]);
-                setIsFetchingProfilePicture(false);
-              }
+          onValue(ref_database(db, `users/${user}/preferences`), (snapshot) => {
+            if (snapshot.exists()) {
+              console.log("found", snapshot.val());
+              setImage(snapshot.val()["defaultProfilePicture"]);
+              setIsFetchingProfilePicture(false);
             }
-          );
+          });
         }
       });
   }, []);
@@ -118,46 +114,78 @@ const UserModal = ({ user }) => {
   }, [pinnedMetadata, pinnedDrawings]);
 
   function fetchPinnedMetadata(ids) {
-    const tempMetadata = [];
+    const tempMetadata = ["", "", ""];
+
     get(child(dbRef, `drawings/${ids[0]}`))
       .then((snapshot2) => {
-        tempMetadata.push(snapshot2.val());
+        if (snapshot2.exists()) {
+          tempMetadata[0] = snapshot2.val();
+        }
       })
+      .catch((e) => {
+        // ignoring error since we handle it in SlideShow component
+      })
+
       .then(() => {
         get(child(dbRef, `drawings/${ids[1]}`)).then((snapshot2) => {
-          tempMetadata.push(snapshot2.val());
+          if (snapshot2.exists()) {
+            tempMetadata[1] = snapshot2.val();
+          }
         });
       })
+      .catch((e) => {
+        // ignoring error since we handle it in SlideShow component
+      })
+
       .then(() => {
         get(child(dbRef, `drawings/${ids[2]}`)).then((snapshot2) => {
-          tempMetadata.push(snapshot2.val());
+          if (snapshot2.exists()) {
+            tempMetadata[2] = snapshot2.val();
+          }
         });
       })
+      .catch((e) => {
+        // ignoring error since we handle it in SlideShow component
+      })
+
       .then(() => {
         setPinnedMetadata(tempMetadata);
       });
   }
 
   function fetchPinnedDrawings(ids) {
-    const tempDrawings = [];
+    const tempDrawings = ["", "", ""];
+
     getDownloadURL(ref_storage(storage, `drawings/${ids[0]}.jpg`))
       .then((url) => {
-        tempDrawings.push(url);
+        tempDrawings[0] = url;
       })
+      .catch((e) => {
+        // ignoring error since we handle it in SlideShow component
+      })
+
       .then(() => {
         getDownloadURL(ref_storage(storage, `drawings/${ids[1]}.jpg`)).then(
           (url) => {
-            tempDrawings.push(url);
+            tempDrawings[1] = url;
           }
         );
       })
+      .catch((e) => {
+        // ignoring error since we handle it in SlideShow component
+      })
+
       .then(() => {
         getDownloadURL(ref_storage(storage, `drawings/${ids[2]}.jpg`)).then(
           (url) => {
-            tempDrawings.push(url);
+            tempDrawings[2] = url;
           }
         );
       })
+      .catch((e) => {
+        // ignoring error since we handle it in SlideShow component
+      })
+
       .then(() => {
         setPinnedDrawings(tempDrawings);
       });
@@ -204,7 +232,8 @@ const UserModal = ({ user }) => {
           ) : (
             <SlideShow
               pinnedDrawings={pinnedDrawings}
-              metadata={pinnedMetadata}
+              pinnedMetadata={pinnedMetadata}
+              username={username}
             />
           )}
         </div>

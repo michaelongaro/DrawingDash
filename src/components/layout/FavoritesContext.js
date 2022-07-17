@@ -45,9 +45,9 @@ export function FavoritesProvider(props) {
 
           let tempTotalFavorites = 0;
           for (const duration of Object.values(snapshot.val())) {
-              for (const title of Object.values(duration)) {
-                tempTotalFavorites += title["drawingID"].length;
-              }
+            for (const title of Object.values(duration)) {
+              tempTotalFavorites += title["drawingID"].length;
+            }
           }
 
           setTotalFavorites(tempTotalFavorites);
@@ -58,8 +58,6 @@ export function FavoritesProvider(props) {
           let currentPageNumber =
             searchCtx.pageSelectorDetails["currentPageNumber"][2];
 
-          console.log(searchCtx.pageSelectorDetails);
-
           searchCtx.getGallary(
             (currentPageNumber - 1) * 6,
             currentPageNumber * 6,
@@ -67,7 +65,6 @@ export function FavoritesProvider(props) {
             2,
             `users/${user.sub}/likes`
           );
-          console.log("refreshing", searchCtx.pageSelectorDetails);
         }
       });
     }
@@ -94,15 +91,19 @@ export function FavoritesProvider(props) {
             [drawingTitle]: { drawingID: [currDrawingID] },
           };
 
-          // if there are no liked drawings for that duration or if no drawings of that title have been
-          // liked yet
+          // dis shit be overwriting!
+
+          // if there are no liked drawings for that duration
           if (!tempLikes) {
             // populating first drawing in likes
+            console.log("shiet was empty, now has one!");
             tempLikes = newLikedDrawingObject;
-          } else if (!tempLikes?.drawingTitle) {
+          } else if (!tempLikes?.[drawingTitle]) {
+            console.log("adding NEW occurance of title");
             // adding first occurance of title to existing drawings in likes
             tempLikes = { ...tempLikes, ...newLikedDrawingObject };
           } else {
+            console.log("added to exact same title alreayd there");
             // adding to existing drawing title in likes
             tempLikes[drawingTitle]["drawingID"].push(currDrawingID);
           }
@@ -147,8 +148,11 @@ export function FavoritesProvider(props) {
 
           // manually switching to normal rendering flow (switching off of now null duration tab)
           searchCtx.updatePageSelectorDetails("currentPageNumber", 1, 2);
-          searchCtx.updatePageSelectorDetails("durationToManuallyLoad", null, 2);
-
+          searchCtx.updatePageSelectorDetails(
+            "durationToManuallyLoad",
+            null,
+            2
+          );
         }
 
         set(ref(db, `users/${user.sub}/likes/`), tempLikes);
@@ -163,40 +167,20 @@ export function FavoritesProvider(props) {
   }
 
   function itemIsFavorite(currDrawingID, drawingSeconds, drawingTitle) {
-    // if (
-    //   !userFavorites["60"] &&
-    //   !userFavorites["180"] &&
-    //   !userFavorites["300"]
-    // ) {
-    //   return false;
-    // }
-
     if (userFavorites[drawingSeconds]?.[drawingTitle]?.["drawingID"]) {
       if (
         userFavorites[drawingSeconds][drawingTitle]["drawingID"].includes(
           currDrawingID
         ) === true
       ) {
-        // console.log("found");
         return true;
-      } else {
-        // console.log("not found");
-        return false;
       }
-    } else {
-      // console.log("not found");
-
-      return false;
+      // } else {
+      //   return false;
+      // }
     }
 
-    // if (!Object.values(userFavorites[drawingSeconds]).includes(drawingTitle)) {
-    //   console.log("couldn't find the stuff");
-    //   return false;
-    // }
-
-    // return userFavorites[drawingSeconds][drawingTitle]["drawingID"].some(
-    //   (drawingID) => drawingID === currDrawingID
-    // );
+    return false;
   }
 
   const context = {
