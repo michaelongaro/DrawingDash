@@ -120,50 +120,91 @@ const DrawingScreen = () => {
         drawingScreenRef.current.scrollIntoView({ behavior: "smooth" });
       },
     });
-    //   complete: () => {
-    //     anime({
-    //       targets: "#countdownTimer",
-    //       loop: false,
 
-    //       innerText: 3,
-    //       round: 1,
-    //       opacity: [0, 1, 0],
+    // 3-2-1 countdown animation
+    anime({
+      targets: "#threeCountdown",
+      loop: false,
 
-    //       direction: "normal",
-    //       duration: 1000,
-    //       easing: "easeInSine",
-    //       complete: () => {
-    //         anime({
-    //           targets: "#countdownTimer",
-    //           loop: false,
-    //           // delay: 1000,
-    //           opacity: [0, 1, 0],
+      delay: 250,
 
-    //           innerText: 2,
-    //           direction: "normal",
-    //           round: 1,
+      keyframes: [
+        {
+          translateY: ["-100px", 0],
+          opacity: [0, 1],
+          scale: [0, 1],
+          easing: "easeOutElastic(2.5, .6)",
+          duration: 450,
+        },
+        { opacity: 1, scale: 1, duration: 400 },
+        {
+          translateY: [0, "100px"],
+          opacity: [1, 0],
+          scale: [1, 0],
+          easing: "easeInSine",
+          duration: 150,
+        },
+      ],
 
-    //           duration: 1000,
-    //           easing: "easeInSine",
-    //           complete: () => {
-    //             anime({
-    //               targets: "#countdownTimer",
-    //               loop: false,
-    //               // delay: 2000,
-    //               opacity: [0, 1, 0],
-    //               round: 1,
+      direction: "normal",
+      duration: 1000,
+    });
 
-    //               innerText: 1,
-    //               direction: "normal",
-    //               duration: 1000,
-    //               easing: "easeInSine",
-    //             });
-    //           },
-    //         });
-    //       },
-    //     });
-    //   },
-    // });
+    anime({
+      targets: "#twoCountdown",
+      loop: false,
+
+      delay: 1250,
+
+      keyframes: [
+        {
+          translateY: ["-100px", 0],
+          opacity: [0, 1],
+          scale: [0, 1],
+          easing: "easeOutElastic(2.5, .6)",
+          duration: 450,
+        },
+        { opacity: 1, scale: 1, duration: 400 },
+        {
+          translateY: [0, "100px"],
+          opacity: [1, 0],
+          scale: [1, 0],
+          easing: "easeInSine",
+          duration: 150,
+        },
+      ],
+
+      direction: "normal",
+      duration: 1000,
+    });
+
+    anime({
+      targets: "#oneCountdown",
+      loop: false,
+
+      delay: 2250,
+
+      keyframes: [
+        {
+          translateY: ["-100px", 0],
+          opacity: [0, 1],
+          scale: [0, 1],
+          easing: "easeOutElastic(2.5, .6)",
+          duration: 450,
+        },
+        { opacity: 1, scale: 1, duration: 400 },
+        {
+          translateY: [0, "100px"],
+          opacity: [1, 0],
+          scale: [1, 0],
+          easing: "easeInSine",
+          duration: 150,
+        },
+      ],
+
+      direction: "normal",
+      duration: 1000,
+    });
 
     document.addEventListener("mousemove", draw);
     document.addEventListener("mouseup", resetAbleToFloodFill);
@@ -628,7 +669,42 @@ const DrawingScreen = () => {
 
           <div className={classes.sharedContain}>
             <div className={`${showCanvasOutline} ${classes.startScreen}`}>
-              {DSCtx.seconds}
+              {/* {DSCtx.seconds} */}
+              <div style={{ position: "relative" }}>
+                <div
+                  id={"threeCountdown"}
+                  style={{
+                    position: "absolute",
+                    top: "-50px",
+                    opacity: 0,
+                    scale: 0,
+                  }}
+                >
+                  3
+                </div>
+                <div
+                  id={"twoCountdown"}
+                  style={{
+                    position: "absolute",
+                    top: "-50px",
+                    opacity: 0,
+                    scale: 0,
+                  }}
+                >
+                  2
+                </div>
+                <div
+                  id={"oneCountdown"}
+                  style={{
+                    position: "absolute",
+                    top: "-50px",
+                    opacity: 0,
+                    scale: 0,
+                  }}
+                >
+                  1
+                </div>
+              </div>
             </div>
 
             <div
