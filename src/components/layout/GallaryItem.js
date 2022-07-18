@@ -100,6 +100,8 @@ const GallaryItem = ({ drawingID, settings, idx, dbPath }) => {
   const [hoveringOnImage, setHoveringOnImage] = useState(false);
   const [hoveringOnDeleteButton, setHoveringOnDeleteButton] = useState(false);
   const [hoveringOnLikesTooltip, setHoveringOnLikesTooltip] = useState(false);
+  const [hoveringOnProfilePicture, setHoveringOnProfilePicture] =
+    useState(false);
   const [hoveringOnUsernameTooltip, setHoveringOnUsernameTooltip] =
     useState(false);
 
@@ -175,6 +177,15 @@ const GallaryItem = ({ drawingID, settings, idx, dbPath }) => {
   }, [drawingDetails, fetchedDrawing]);
 
   useEffect(() => {
+    console.log(hoveringOnUsernameTooltip);
+    if (hoveringOnProfilePicture || hoveringOnUsernameTooltip) {
+      document.documentElement.style.setProperty("--shimmerPlayState", "true");
+    } else {
+      document.documentElement.style.setProperty("--shimmerPlayState", "false");
+    }
+  }, [hoveringOnProfilePicture, hoveringOnUsernameTooltip]);
+
+  useEffect(() => {
     if (drawingDetails) {
       onValue(
         ref(
@@ -200,11 +211,12 @@ const GallaryItem = ({ drawingID, settings, idx, dbPath }) => {
   }, [drawingDetails]);
 
   useEffect(() => {
-    console.log("deleted hoops", deletionCheckpointsReached);
+    console.log(dbPath, "deleted hoops", deletionCheckpointsReached);
     if (deletionCheckpointsReached === 3) {
       searchCtx.getGallary(0, 6, 6, idx, dbPath);
+      setDeletionCheckpointsReached(0);
     }
-  }, [deletionCheckpointsReached]);
+  }, [dbPath, idx, searchCtx, deletionCheckpointsReached]);
 
   useEffect(() => {
     let handler = (event) => {
@@ -336,9 +348,6 @@ const GallaryItem = ({ drawingID, settings, idx, dbPath }) => {
     const seconds = drawingDetails.seconds;
     const uniqueID = drawingDetails.index;
     const user = drawingDetails.drawnBy;
-
-    console.log(uniqueID);
-    console.log(title, title.length);
 
     // could maybe have it fade out for a second and when that finishes update this to true
     setHideImage(true);
@@ -700,10 +709,11 @@ const GallaryItem = ({ drawingID, settings, idx, dbPath }) => {
                       }
                     }}
                     onMouseEnter={() => {
-                      setHoveringOnUsernameTooltip(true);
+                      setHoveringOnProfilePicture(true);
                     }}
                     onMouseLeave={() => {
-                      setHoveringOnUsernameTooltip(false);
+                      console.log("setting false from outer");
+                      setHoveringOnProfilePicture(false);
                     }}
                   >
                     <ProfilePicture
@@ -719,15 +729,23 @@ const GallaryItem = ({ drawingID, settings, idx, dbPath }) => {
                         setHoveringOnUsernameTooltip(true);
                       }}
                       onMouseLeave={() => {
+                        console.log("setting false from inner");
+
                         setHoveringOnUsernameTooltip(false);
                       }}
                     >
                       <div
                         style={{
-                          opacity: hoveringOnUsernameTooltip ? 1 : 0,
-                          transform: hoveringOnUsernameTooltip
-                            ? "scale(1)"
-                            : "scale(0)",
+                          opacity:
+                            hoveringOnProfilePicture ||
+                            hoveringOnUsernameTooltip
+                              ? 1
+                              : 0,
+                          transform:
+                            hoveringOnProfilePicture ||
+                            hoveringOnUsernameTooltip
+                              ? "scale(1)"
+                              : "scale(0)",
                           cursor: "pointer",
                           left: 0,
                           top: "70px",

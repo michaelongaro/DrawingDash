@@ -6,10 +6,12 @@ import ProfilePicture from "./ProfilePicture";
 import { getDatabase, get, onValue, ref, child } from "firebase/database";
 import { app } from "../../util/init-firebase";
 
-import classes from "./FeaturedLikes.module.css";
 import OneMinuteIcon from "../../svgs/OneMinuteIcon";
 import ThreeMinuteIcon from "../../svgs/ThreeMinuteIcon";
 import FiveMinuteIcon from "../../svgs/FiveMinuteIcon";
+
+import baseClasses from "../../index.module.css";
+import classes from "./FeaturedLikes.module.css";
 
 const FeaturedLikes = () => {
   const [dailyMostLiked, setDailyMostLiked] = useState(false);
@@ -59,7 +61,10 @@ const FeaturedLikes = () => {
         <div className={classes.leftSideContain}>
           {/* --------------- 60 ------------------- */}
           <div
-            style={{ backgroundPosition: selected[0] ? "100px" : "" }}
+            style={{
+              backgroundPosition: selected[0] ? "100px" : "",
+              opacity: selected[0] ? 1 : 0.6,
+            }}
             className={`${classes.durationButton} ${classes.redBackground}`}
             onClick={() => {
               selectTimer(0);
@@ -68,14 +73,22 @@ const FeaturedLikes = () => {
           >
             <ProfilePicture user={dailyMostLiked[0].drawnBy} size="medium" />
 
-            <div className={classes.shadowText}>{dailyMostLiked[0].title}</div>
+            <div
+              className={`${baseClasses.baseVertFlex} ${classes.shadowText}`}
+            >
+              <div>{dailyMostLiked[0].title.split(" ")[0]}</div>
+              <div>{dailyMostLiked[0].title.split(" ")[1]}</div>
+            </div>
 
             <OneMinuteIcon dimensions={"3.5em"} />
           </div>
 
           {/* --------------- 180 ------------------- */}
           <div
-            style={{ backgroundPosition: selected[1] ? "100px" : "" }}
+            style={{
+              backgroundPosition: selected[1] ? "100px" : "",
+              opacity: selected[1] ? 1 : 0.6,
+            }}
             className={`${classes.durationButton} ${classes.yellowBackground}`}
             onClick={() => {
               selectTimer(1);
@@ -84,14 +97,22 @@ const FeaturedLikes = () => {
           >
             <ProfilePicture user={dailyMostLiked[1].drawnBy} size="medium" />
 
-            <div className={classes.shadowText}>{dailyMostLiked[1].title}</div>
+            <div
+              className={`${baseClasses.baseVertFlex} ${classes.shadowText}`}
+            >
+              <div>{dailyMostLiked[1].title.split(" ")[0]}</div>
+              <div>{dailyMostLiked[1].title.split(" ")[1]}</div>
+            </div>
 
             <ThreeMinuteIcon dimensions={"3.5em"} />
           </div>
 
           {/* --------------- 300 ------------------- */}
           <div
-            style={{ backgroundPosition: selected[2] ? "100px" : "" }}
+            style={{
+              backgroundPosition: selected[2] ? "100px" : "",
+              opacity: selected[2] ? 1 : 0.6,
+            }}
             className={`${classes.durationButton} ${classes.greenBackground}`}
             onClick={() => {
               selectTimer(2);
@@ -100,7 +121,12 @@ const FeaturedLikes = () => {
           >
             <ProfilePicture user={dailyMostLiked[2].drawnBy} size="medium" />
 
-            <div className={classes.shadowText}>{dailyMostLiked[2].title}</div>
+            <div
+              className={`${baseClasses.baseVertFlex} ${classes.shadowText}`}
+            >
+              <div>{dailyMostLiked[2].title.split(" ")[0]}</div>
+              <div>{dailyMostLiked[2].title.split(" ")[1]}</div>
+            </div>
 
             <FiveMinuteIcon dimensions={"3.5em"} />
           </div>

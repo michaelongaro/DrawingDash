@@ -1,3 +1,5 @@
+@import "../../index.module.css";
+
 /* small styles */
 
 .shimmerSmall {
@@ -6,6 +8,7 @@
   height: 50px;
   overflow: hidden;
   border-radius: 50%;
+  z-index: 200;
 }
 
 .shimmerSmall:hover:before {
@@ -18,13 +21,15 @@
   background: rgba(255, 255, 255, 0.6);
   transform: skew(45deg);
   /* transition: 0.1s; */
-  animation: shineSmall 0.8s ease;
+  animation: shineSmall 0.6s ease;
+  animation-play-state: var(--shimmerPlayState);
 }
 
 @keyframes shineSmall {
   from {
     left: -100px;
   }
+
   to {
     left: 100px;
   }
@@ -45,6 +50,7 @@
   height: 65px;
   overflow: hidden;
   border-radius: 50%;
+  z-index: 200;
 }
 
 .shimmerMedium:hover:before {
@@ -57,13 +63,15 @@
   background: rgba(255, 255, 255, 0.6);
   transform: skew(45deg);
   /* transition: 0.1s; */
-  animation: shineMedium 0.8s ease;
+  animation: shineMedium 0.6s ease;
+  animation-play-state: var(--shimmerPlayState);
 }
 
 @keyframes shineMedium {
   from {
     left: -100px;
   }
+
   to {
     left: 100px;
   }

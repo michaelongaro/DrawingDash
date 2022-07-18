@@ -24,15 +24,15 @@ import { app } from "../../util/init-firebase";
 import classes from "./ProfilePicture.module.css";
 import baseClasses from "../../index.module.css";
 
-const ProfilePicture = (props) => {
+const ProfilePicture = ({ user, size }) => {
   const db = getDatabase(app);
   const dbRef = ref_database(getDatabase(app));
   const storage = getStorage();
 
   const [isFetching, setIsFetching] = useState(true);
 
-  const [shimmerStyle, setShimmerStyle] = useState(props.size);
-  const [roundedProfileStyle, setRoundedProfileStyle] = useState(props.size);
+  const [shimmerStyle, setShimmerStyle] = useState(size);
+  const [roundedProfileStyle, setRoundedProfileStyle] = useState(size);
 
   // technically should have profile fetching + return cropped image
   // in separate exported function...
@@ -57,14 +57,14 @@ const ProfilePicture = (props) => {
   };
 
   useEffect(() => {
-    get(child(dbRef, `users/${props.user}/preferences`)).then((snapshot) => {
+    get(child(dbRef, `users/${user}/preferences`)).then((snapshot) => {
       setDBCropData(snapshot.val()["profileCropMetadata"]);
     });
 
-    if (props.size === "small") {
+    if (size === "small") {
       setShimmerStyle(classes.shimmerSmall);
       setRoundedProfileStyle(classes.roundedProfileSmall);
-    } else if (props.size === "medium") {
+    } else if (size === "medium") {
       setShimmerStyle(classes.shimmerMedium);
       setRoundedProfileStyle(classes.roundedProfileMedium);
     } else {
@@ -72,9 +72,9 @@ const ProfilePicture = (props) => {
       setRoundedProfileStyle(classes.roundedProfileLarge);
     }
 
-    getDownloadURL(ref_storage(storage, `users/${props.user}/profile`))
+    getDownloadURL(ref_storage(storage, `users/${user}/profile`))
       .then((url) => {
-        getMetadata(ref_storage(storage, `users/${props.user}/profile`))
+        getMetadata(ref_storage(storage, `users/${user}/profile`))
           .then((metadata) => {
             setImageFileType(metadata.contentType);
             setImage(url);
@@ -89,15 +89,12 @@ const ProfilePicture = (props) => {
           error.code === "storage/unknown"
         ) {
           // defaulting to auth0 image
-          onValue(
-            ref_database(db, `users/${props.user}/preferences`),
-            (snapshot) => {
-              if (snapshot.exists()) {
-                setImage(snapshot.val()["defaultProfilePicture"]);
-                setIsFetching(false);
-              }
+          onValue(ref_database(db, `users/${user}/preferences`), (snapshot) => {
+            if (snapshot.exists()) {
+              setImage(snapshot.val()["defaultProfilePicture"]);
+              setIsFetching(false);
             }
-          );
+          });
         }
       });
   }, []);
@@ -113,8 +110,8 @@ const ProfilePicture = (props) => {
       {isFetching ? (
         <div
           style={{
-            width: props.size === "small" ? "50px" : "65px",
-            height: props.size === "small" ? "50px" : "65px",
+            width: size === "small" ? "50px" : "65px",
+            height: size === "small" ? "50px" : "65px",
             borderRadius: "50%",
           }}
           className={baseClasses.skeletonLoading}

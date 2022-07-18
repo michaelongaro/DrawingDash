@@ -1,6 +1,7 @@
 :root {
   --dark-animated-gradient-color: #000;
   --light-animated-gradient-color: #fff;
+  --shimmerPlayState: paused;
 }
 
 *,
