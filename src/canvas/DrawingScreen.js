@@ -76,6 +76,9 @@ const DrawingScreen = () => {
     "January 01, 2030 00:00:00 GMT+03:00"
   );
 
+  const [initAnimationDelayCompleted, setInitAnimationDelayCompleted] =
+    useState(false);
+
   const drawingScreenRef = useRef(null);
 
   const {
@@ -126,7 +129,7 @@ const DrawingScreen = () => {
       targets: "#threeCountdown",
       loop: false,
 
-      delay: 250,
+      delay: 500,
 
       keyframes: [
         {
@@ -134,7 +137,7 @@ const DrawingScreen = () => {
           opacity: [0, 1],
           scale: [0, 1],
           easing: "easeOutElastic(2.5, .6)",
-          duration: 450,
+          duration: 500,
         },
         { opacity: 1, scale: 1, duration: 400 },
         {
@@ -154,7 +157,7 @@ const DrawingScreen = () => {
       targets: "#twoCountdown",
       loop: false,
 
-      delay: 1250,
+      delay: 1500,
 
       keyframes: [
         {
@@ -162,7 +165,7 @@ const DrawingScreen = () => {
           opacity: [0, 1],
           scale: [0, 1],
           easing: "easeOutElastic(2.5, .6)",
-          duration: 450,
+          duration: 500,
         },
         { opacity: 1, scale: 1, duration: 400 },
         {
@@ -182,7 +185,7 @@ const DrawingScreen = () => {
       targets: "#oneCountdown",
       loop: false,
 
-      delay: 2250,
+      delay: 2500,
 
       keyframes: [
         {
@@ -190,7 +193,7 @@ const DrawingScreen = () => {
           opacity: [0, 1],
           scale: [0, 1],
           easing: "easeOutElastic(2.5, .6)",
-          duration: 450,
+          duration: 500,
         },
         { opacity: 1, scale: 1, duration: 400 },
         {
@@ -217,6 +220,10 @@ const DrawingScreen = () => {
     canvasRef.current.addEventListener("wheel", preventScrolling);
     let currentCanvasRef = canvasRef.current;
 
+    let initAnimDelayID = setTimeout(() => {
+      setInitAnimationDelayCompleted(true);
+    }, 500);
+
     return () => {
       document.removeEventListener("mousemove", draw);
       document.removeEventListener("mouseup", resetAbleToFloodFill);
@@ -232,6 +239,8 @@ const DrawingScreen = () => {
       );
 
       currentCanvasRef.removeEventListener("wheel", preventScrolling);
+
+      clearTimeout(initAnimDelayID);
     };
   }, []);
 
@@ -271,20 +280,22 @@ const DrawingScreen = () => {
   }, [DSCtx.showEndOverlay, DSCtx.showEndOutline]);
 
   useEffect(() => {
-    if (DSCtx.seconds > 0) {
-      setTimeout(() => DSCtx.setSeconds(DSCtx.seconds - 1), 1000);
-    } else {
-      setShowCountdownOverlay(classes.hide);
-      setShowCanvasOutline(classes.hide);
+    if (initAnimationDelayCompleted) {
+      if (DSCtx.seconds > 0) {
+        setTimeout(() => DSCtx.setSeconds(DSCtx.seconds - 1), 1000);
+      } else {
+        setShowCountdownOverlay(classes.hide);
+        setShowCanvasOutline(classes.hide);
 
-      clearCanvas();
+        clearCanvas();
 
-      setShowCanvas(true);
+        setShowCanvas(true);
 
-      setCountdownKey((prevKey) => prevKey + 1);
-      setStartTimer(true);
+        setCountdownKey((prevKey) => prevKey + 1);
+        setStartTimer(true);
+      }
     }
-  }, [DSCtx.seconds]);
+  }, [DSCtx.seconds, initAnimationDelayCompleted]);
 
   useEffect(() => {
     let id = null;
@@ -294,11 +305,11 @@ const DrawingScreen = () => {
 
     if (DSCtx.drawingTime !== 0) {
       if (!isLoading && isAuthenticated) {
-        id = setTimeout(sendToDB, DSCtx.drawingTime * 1000 + 3050);
+        id = setTimeout(sendToDB, DSCtx.drawingTime * 1000 + 3600);
       } else if (!isLoading && !isAuthenticated) {
         id = setTimeout(
           updateUserLocalStorage,
-          DSCtx.drawingTime * 1000 + 3050
+          DSCtx.drawingTime * 1000 + 3600
         );
       }
     }
@@ -631,7 +642,7 @@ const DrawingScreen = () => {
       translateX: window.innerWidth * 2,
       opacity: [1, 0],
       direction: "normal",
-      duration: 450,
+      duration: 500,
       easing: "easeInSine",
       complete: function () {
         DSCtx.updatePBStates("resetToSelectBar", true);
@@ -711,7 +722,7 @@ const DrawingScreen = () => {
               className={classes.canvasStyles}
               style={{
                 filter: showCanvas ? "" : "blur(3px)",
-                transition: "all 500ms",
+                transition: showCanvas ? "" : "all 500ms",
               }}
             >
               <div className={classes.timer}>
