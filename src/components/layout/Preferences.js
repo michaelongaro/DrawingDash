@@ -49,7 +49,9 @@ const Preferences = () => {
   // to "onValue" for the firebase Storage side of things...
   const PFPUpdateCtx = useContext(ProfilePictureUpdateContext);
 
-  const { loginWithRedirect, user, isAuthenticated, isLoading } = useAuth0();
+  var axios = require("axios").default;
+
+  const { user, isAuthenticated, isLoading } = useAuth0();
 
   const db = getDatabase(app);
   const dbRef = ref_database(getDatabase(app));
@@ -67,6 +69,8 @@ const Preferences = () => {
   const [userUploadedImage, setUserUploadedImage] = useState(null);
   const [cropReadyImage, setCropReadyImage] = useState(null);
   const [hasChangedPicture, setHasChangedPicture] = useState(false);
+
+  const [showEmailSentTooltip, setShowEmailSentTooltip] = useState(false);
 
   // used to check and see if last
 
@@ -130,6 +134,21 @@ const Preferences = () => {
       clearTimeout(timerID);
     };
   }, []);
+
+  useEffect(() => {
+    let timeoutID = null;
+    if (showEmailSentTooltip) {
+      timeoutID = setTimeout(() => {
+        setShowEmailSentTooltip(false);
+      }, 1500);
+    }
+
+    return () => {
+      if (timeoutID) {
+        clearTimeout(timeoutID);
+      }
+    };
+  }, [showEmailSentTooltip]);
 
   useEffect(() => {
     if ((!isLoading, isAuthenticated)) {
@@ -301,7 +320,10 @@ const Preferences = () => {
               )}
             </div>
 
-            <div style={{ gap: "3em" }} className={baseClasses.baseFlex}>
+            <div
+              style={{ gap: "3em", alignItems: "flex-start" }}
+              className={baseClasses.baseFlex}
+            >
               <div className={classes.inputLabel}>Status</div>
               {editAvailable ? (
                 <>
@@ -350,25 +372,85 @@ const Preferences = () => {
               </>
             </div>
 
-            <button
-              style={{ width: "70%", gap: "1em" }}
-              className={`${classes.resetPasswordButton} ${baseClasses.baseFlex}`}
+            <div
+              style={{
+                opacity: user.sub.substring(0, 5) === "auth0" ? 1 : 0.4,
+              }}
+              className={`${classes.resetPasswordContainer} ${baseClasses.baseVertFlex}`}
               onMouseEnter={() => setHoveringOnResetPassword(true)}
               onMouseLeave={() => setHoveringOnResetPassword(false)}
               onClick={() => {
-                loginWithRedirect();
+                let options = {
+                  method: "POST",
+                  url: "https://dev-lshqttx0.us.auth0.com/dbconnections/change_password",
+                  headers: { "content-type": "application/json" },
+                  data: {
+                    client_id: "HiuFz0Yo30naHcGzk8PbPOYr0qIK6dae",
+                    email: userEmail,
+                    connection: "Username-Password-Authentication",
+                  },
+                };
+
+                if (user.sub.substring(0, 5) === "auth0") {
+                  setShowEmailSentTooltip(true);
+
+                  axios
+                    .request(options)
+                    .then(function (response) {
+                      console.log(response.data);
+                    })
+                    .catch(function (error) {
+                      console.error(error);
+                    });
+                } else {
+                  setShowEmailSentTooltip(true);
+                }
               }}
             >
-              <RedoIcon
-                dimensions={"1em"}
-                color={hoveringOnResetPassword ? "white" : "black"}
-              />
-              <div
-                style={{ color: hoveringOnResetPassword ? "white" : "black" }}
+              <button
+                style={{
+                  width: "100%",
+                  gap: "1em",
+                  cursor:
+                    user.sub.substring(0, 5) === "auth0" ? "pointer" : "auto",
+                }}
+                className={`${classes.resetPasswordButton} ${baseClasses.baseFlex}`}
               >
-                Reset Password
+                <RedoIcon
+                  dimensions={"1em"}
+                  color={hoveringOnResetPassword ? "white" : "black"}
+                />
+                <div
+                  style={{ color: hoveringOnResetPassword ? "white" : "black" }}
+                >
+                  Reset Password
+                </div>
+              </button>
+
+              {/* "email sent" tooltip */}
+              <div
+                style={{ width: "100%" }}
+                className={baseClasses.baseFlex}
+                onMouseEnter={() => setHoveringOnResetPassword(false)}
+                onMouseLeave={() => setHoveringOnResetPassword(false)}
+              >
+                <div
+                  style={{
+                    opacity: showEmailSentTooltip ? 1 : 0,
+                    transform: showEmailSentTooltip ? "scale(1)" : "scale(0)",
+                  }}
+                  className={
+                    user.sub.substring(0, 5) === "auth0"
+                      ? classes.emailSentTooltip
+                      : classes.notAvailableTooltip
+                  }
+                >
+                  {user.sub.substring(0, 5) === "auth0"
+                    ? "Email sent!"
+                    : "only available to users who created an account with us"}
+                </div>
               </div>
-            </button>
+            </div>
           </div>
 
           <div className={baseClasses.baseFlex}>
@@ -471,7 +553,7 @@ const Preferences = () => {
         </div>
 
         <div
-          style={{ position: "absolute", right: "1em", bottom: 0 }}
+          style={{ position: "absolute", right: "1em", top: 0 }}
           className={classes.change}
         >
           {editAvailable ? (
