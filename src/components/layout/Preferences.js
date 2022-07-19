@@ -89,6 +89,9 @@ const Preferences = () => {
   const [croppedImage, setCroppedImage] = useState(null);
 
   const [inputWasChanged, setInputWasChanged] = useState(false);
+  const [ableToPost, setAbleToPost] = useState(false);
+  const [isEditingImage, setIsEditingImage] = useState(false);
+  const [newImageUploaded, setNewImageUploaded] = useState(false);
 
   const [hoveringOnResetPassword, setHoveringOnResetPassword] = useState(false);
 
@@ -111,6 +114,18 @@ const Preferences = () => {
 
       setCroppedImage(croppedImg);
       setShowCropModal(false);
+
+      if (isEditingImage && username.length > 0 && status.length > 0) {
+        // setHasChangedPicture(true);
+        setAbleToPost(true);
+      }
+
+      if (newImageUploaded && username.length > 0 && status.length > 0) {
+        setHasChangedPicture(true);
+        setAbleToPost(true);
+      }
+
+      setNewImageUploaded(false);
 
       if (disableSkeleton) {
         setIsFetching(false);
@@ -201,14 +216,40 @@ const Preferences = () => {
   }, [image, DBCropData]);
 
   useEffect(() => {
-    if (hasChangedPicture) {
+    if (newImageUploaded) {
       setShowCropModal(true);
     }
-  }, [hasChangedPicture]);
+  }, [newImageUploaded]);
+
+  useEffect(() => {
+    if (inputWasChanged) {
+      if (username.length > 0 && status.length > 0) {
+        setAbleToPost(true);
+      } else {
+        setAbleToPost(false);
+      }
+    }
+  }, [inputWasChanged, username, status]);
+
+  useEffect(() => {
+    console.log(inputWasChanged, ableToPost);
+  }, [inputWasChanged, ableToPost]);
 
   // return save to true after pushing to db
   function handleSubmit(event) {
     event.preventDefault();
+
+    if (hasChangedPicture) {
+      console.log("uploading whole image");
+      upload();
+    } else {
+      // continue w/ justACropChange shit.. GODDDD MAN
+      if (isEditingImage) {
+        console.log("uploaded just a crop change");
+        PFPUpdateCtx.setJustACropChange(true);
+        setIsEditingImage(false);
+      }
+    }
 
     set(ref_database(db, `users/${user.sub}/preferences`), {
       username: username,
@@ -217,11 +258,8 @@ const Preferences = () => {
       profileCropMetadata: croppedAreaPixels ? croppedAreaPixels : false,
     });
 
-    if (hasChangedPicture) {
-      upload();
-    }
-
     setInputWasChanged(false);
+    setAbleToPost(false);
     setHasChangedPicture(false);
     setEditAvailable(true);
   }
@@ -241,7 +279,7 @@ const Preferences = () => {
   async function upload() {
     const photoRef = ref_storage(storage, `users/${user.sub}/profile`);
 
-    // probably add a reset button to the crop modal, just show normal image and make profileCropMetadata = false
+    console.log(userUploadedImage, image);
     const snapshot = await uploadBytes(photoRef, userUploadedImage ?? image, {
       contentType: imageFileType,
     });
@@ -252,7 +290,12 @@ const Preferences = () => {
 
     // telling MainNavigation to refetch it's profile picture to the newly uploaded one
     PFPUpdateCtx.setRefreshProfilePicture(true);
+    PFPUpdateCtx.setJustACropChange(false);
   }
+
+  useEffect(() => {
+    console.log(isEditingImage);
+  }, [isEditingImage]);
 
   const handleChange = (e) => {
     // will eventually have to error handle if something other than jpeg/jpg/png is uploaded
@@ -275,7 +318,9 @@ const Preferences = () => {
       // can delete this below if doesn't work
       setCroppedImage(null);
       setCroppedAreaPixels(null);
+      console.log("setting true from wack place");
       setHasChangedPicture(true);
+      setNewImageUploaded(true);
     }
   };
 
@@ -307,16 +352,21 @@ const Preferences = () => {
                   )}
                 </>
               ) : (
-                <input
-                  className={classes.setUsername}
-                  value={username}
-                  minLength={1}
-                  maxLength={25}
-                  onChange={(e) => {
-                    setUsername(e.target.value);
-                    setInputWasChanged(true);
-                  }}
-                ></input>
+                <div style={{ position: "relative" }}>
+                  <input
+                    className={classes.setUsername}
+                    value={username}
+                    minLength={1}
+                    maxLength={25}
+                    onChange={(e) => {
+                      setUsername(e.target.value);
+                      if (e.target.value.length > 0) {
+                        setInputWasChanged(true);
+                      }
+                    }}
+                  ></input>
+                  <div className={classes.maxChars}>Max: 25 chars.</div>
+                </div>
               )}
             </div>
 
@@ -342,16 +392,21 @@ const Preferences = () => {
                   )}
                 </>
               ) : (
-                <input
-                  className={classes.setStatus}
-                  value={status}
-                  minLength={1}
-                  maxLength={40}
-                  onChange={(e) => {
-                    setStatus(e.target.value);
-                    setInputWasChanged(true);
-                  }}
-                ></input>
+                <div style={{ position: "relative" }}>
+                  <input
+                    className={classes.setStatus}
+                    value={status}
+                    minLength={1}
+                    maxLength={40}
+                    onChange={(e) => {
+                      setStatus(e.target.value);
+                      if (e.target.value.length > 0) {
+                        setInputWasChanged(true);
+                      }
+                    }}
+                  ></input>
+                  <div className={classes.maxChars}>Max: 40 chars.</div>
+                </div>
               )}
             </div>
 
@@ -374,7 +429,7 @@ const Preferences = () => {
 
             <div
               style={{
-                opacity: user.sub.substring(0, 5) === "auth0" ? 1 : 0.4,
+                opacity: user?.sub?.substring(0, 5) === "auth0" ? 1 : 0.4,
               }}
               className={`${classes.resetPasswordContainer} ${baseClasses.baseVertFlex}`}
               onMouseEnter={() => setHoveringOnResetPassword(true)}
@@ -391,7 +446,7 @@ const Preferences = () => {
                   },
                 };
 
-                if (user.sub.substring(0, 5) === "auth0") {
+                if (user?.sub?.substring(0, 5) === "auth0") {
                   setShowEmailSentTooltip(true);
 
                   axios
@@ -412,7 +467,7 @@ const Preferences = () => {
                   width: "100%",
                   gap: "1em",
                   cursor:
-                    user.sub.substring(0, 5) === "auth0" ? "pointer" : "auto",
+                    user?.sub?.substring(0, 5) === "auth0" ? "pointer" : "auto",
                 }}
                 className={`${classes.resetPasswordButton} ${baseClasses.baseFlex}`}
               >
@@ -440,12 +495,12 @@ const Preferences = () => {
                     transform: showEmailSentTooltip ? "scale(1)" : "scale(0)",
                   }}
                   className={
-                    user.sub.substring(0, 5) === "auth0"
+                    user?.sub?.substring(0, 5) === "auth0"
                       ? classes.emailSentTooltip
                       : classes.notAvailableTooltip
                   }
                 >
-                  {user.sub.substring(0, 5) === "auth0"
+                  {user?.sub?.substring(0, 5) === "auth0"
                     ? "Email sent!"
                     : "only available to users who created an account with us"}
                 </div>
@@ -475,7 +530,7 @@ const Preferences = () => {
                 style={{
                   position: "relative",
                   borderRadius: "50%",
-                  boxShadow: "0 4px 8px 2px rgba(0,0, 0, .2)",
+                  boxShadow: "rgb(0 0 0 / 30%) 0px 3px 8px 1px",
                 }}
               >
                 <img
@@ -489,6 +544,7 @@ const Preferences = () => {
                     <button
                       className={classes.resizeButton}
                       onClick={() => {
+                        setIsEditingImage(true);
                         setShowCropModal(true);
                       }}
                     >
@@ -501,6 +557,7 @@ const Preferences = () => {
                       style={{ margin: 0 }}
                       className={classes.editButton}
                       onClick={() => {
+                        // setIsEditingImage(true);
                         inputRef.current.click();
                       }}
                     >
@@ -577,6 +634,8 @@ const Preferences = () => {
                 onClick={() => {
                   setEditAvailable(true);
                   fetchUserPreferences();
+                  setInputWasChanged(false);
+                  setAbleToPost(false);
                 }}
               >
                 <ExitIcon />
@@ -593,10 +652,10 @@ const Preferences = () => {
                     left: 0,
                     backgroundImage:
                       "linear-gradient(-180deg, #d3d3d3, #3a3a3a)",
-                    opacity: hasChangedPicture || inputWasChanged ? 0 : 1,
+                    opacity: ableToPost ? 0 : 1,
                     cursor: "auto",
                   }}
-                  disabled={!hasChangedPicture && !inputWasChanged}
+                  disabled={!ableToPost}
                   className={classes.editButton}
                 >
                   Save
@@ -606,16 +665,18 @@ const Preferences = () => {
                     position: "absolute",
                     top: 0,
                     left: 0,
-                    opacity: hasChangedPicture || inputWasChanged ? 1 : 0,
+                    opacity: ableToPost ? 1 : 0,
 
-                    pointerEvents:
-                      hasChangedPicture || inputWasChanged ? "auto" : "none",
-                    cursor:
-                      hasChangedPicture || inputWasChanged ? "pointer" : "auto",
+                    pointerEvents: ableToPost ? "auto" : "none",
+                    cursor: ableToPost ? "pointer" : "auto",
                   }}
-                  disabled={!hasChangedPicture && !inputWasChanged}
+                  disabled={!ableToPost}
                   className={classes.editButton}
-                  onClick={handleSubmit}
+                  onClick={(e) => {
+                    if (ableToPost) {
+                      handleSubmit(e);
+                    }
+                  }}
                 >
                   Save
                 </button>

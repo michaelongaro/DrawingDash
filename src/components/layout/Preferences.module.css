@@ -74,6 +74,16 @@
       rgba(255, 255, 255, 0));
 }
 
+.setStatus {
+  width: 17em;
+}
+
+.maxChars {
+  position: absolute;
+  right: 0;
+  font-size: .7em;
+}
+
 .editButton {
   background-color: initial;
   background-image: linear-gradient(-180deg, #ff7e31, #e62c03);

@@ -60,8 +60,10 @@ function MainNavigation() {
 
   const [profilePicture, setProfilePicture] = useState();
   const [image, setImage] = useState(null);
+  const [prevImage, setPrevImage] = useState(null);
   const [imageFileType, setImageFileType] = useState(null);
-  const [DBCropData, setDBCropData] = useState();
+  const [DBCropData, setDBCropData] = useState(null);
+  const [prevDBCropData, setPrevDBCropData] = useState(null);
   const [cropReadyImage, setCropReadyImage] = useState(null);
   const [imageCroppedAndLoaded, setImageCroppedAndLoaded] = useState(false);
   const [croppedAreaPixels, setCroppedAreaPixels] = useState(null);
@@ -108,7 +110,6 @@ function MainNavigation() {
 
   useEffect(() => {
     if (!isLoading && !isAuthenticated) {
-      console.log("not authenticated or trying to");
       let currentPrompts;
 
       let currentUserInfo = JSON.parse(
@@ -159,10 +160,8 @@ function MainNavigation() {
           }
         });
     }
-
+    // if (!prevDBCropData && !prevImage) {
     if (!isLoading && isAuthenticated) {
-      console.log("authenticated");
-
       // image manipulation -> should ideally be in its own hook
       onValue(ref_database(db, `users/${user.sub}/preferences`), (snapshot) => {
         if (snapshot.exists()) {
@@ -213,6 +212,7 @@ function MainNavigation() {
             );
           }
         });
+      // }
     }
 
     // making sure that user modal can always be opened when visiting page for the first time
@@ -220,10 +220,44 @@ function MainNavigation() {
   }, [isLoading, isAuthenticated]);
 
   useEffect(() => {
-    if (DBCropData && image) {
-      showCroppedImage(true);
+    if (!prevDBCropData && !prevImage && DBCropData && image) {
+      setPrevDBCropData(DBCropData);
+      setPrevImage(image);
     }
-  }, [image, DBCropData]);
+  }, [DBCropData, prevDBCropData, image, prevImage]);
+
+  useEffect(() => {
+    if (prevDBCropData && prevImage) {
+      // init render
+      if (isEqual(prevDBCropData, DBCropData) && isEqual(prevImage, image)) {
+        showCroppedImage(true);
+      }
+      // when profile picture or crop size/location changes
+      else if (
+        !isEqual(prevDBCropData, DBCropData) &&
+        PFPUpdateCtx.justACropChange
+      ) {
+        showCroppedImage(true);
+        setPrevDBCropData(DBCropData);
+        PFPUpdateCtx.setJustACropChange(false);
+      } else if (
+        !isEqual(prevDBCropData, DBCropData) &&
+        !PFPUpdateCtx.justACropChange &&
+        PFPUpdateCtx.refreshProfilePicture
+      ) {
+        showCroppedImage(true);
+        setPrevDBCropData(DBCropData);
+        setPrevImage(image);
+      }
+    }
+  }, [
+    prevImage,
+    image,
+    DBCropData,
+    prevDBCropData,
+    PFPUpdateCtx.refreshProfilePicture,
+    PFPUpdateCtx.justACropChange,
+  ]);
 
   useEffect(() => {
     if (PFPUpdateCtx.refreshProfilePicture) {
@@ -233,6 +267,7 @@ function MainNavigation() {
             .then((metadata) => {
               setImageFileType(metadata.contentType);
               setImage(url);
+              PFPUpdateCtx.setRefreshProfilePicture(false);
             })
             .catch((e) => {
               console.error(e);
@@ -250,6 +285,7 @@ function MainNavigation() {
                 if (snapshot.exists()) {
                   setImage(snapshot.val()["defaultProfilePicture"]);
                   setImageCroppedAndLoaded(true);
+                  PFPUpdateCtx.setRefreshProfilePicture(false);
                 }
               }
             );

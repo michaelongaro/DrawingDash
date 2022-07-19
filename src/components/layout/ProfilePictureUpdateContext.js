@@ -4,10 +4,13 @@ const ProfilePictureUpdateContext = createContext(null);
 
 export function ProfilePictureUpdateProvider(props) {
   const [refreshProfilePicture, setRefreshProfilePicture] = useState(false);
+  const [justACropChange, setJustACropChange] = useState(false);
 
   const context = {
     refreshProfilePicture: refreshProfilePicture,
     setRefreshProfilePicture: setRefreshProfilePicture,
+    justACropChange: justACropChange,
+    setJustACropChange: setJustACropChange,
   };
 
   return (
