@@ -21,42 +21,11 @@ import OneMinuteIcon from "../../svgs/OneMinuteIcon";
 import ThreeMinuteIcon from "../../svgs/ThreeMinuteIcon";
 import FiveMinuteIcon from "../../svgs/FiveMinuteIcon";
 
+import SHADES_OF_GREEN from "../../ui/greenshades";
+
 import classes from "./FocalAnimatedDrawings.module.css";
 
 const FocalAnimatedDrawings = (props) => {
-  const SHADES_OF_GREEN = [
-    "#3de320",
-    "#29a813",
-    "#328a22",
-    "#4aed2d",
-    "#3de320",
-    "#29a813",
-    "#328a22",
-    "#4aed2d",
-    "#3de320",
-    "#29a813",
-    "#328a22",
-    "#4aed2d",
-    "#3de320",
-    "#29a813",
-    "#328a22",
-    "#4aed2d",
-    "#3de320",
-    "#29a813",
-    "#328a22",
-    "#4aed2d",
-    "#3de320",
-    "#29a813",
-    "#328a22",
-    "#4aed2d",
-    "#3de320",
-    "#29a813",
-    "#328a22",
-    "#4aed2d",
-    "#3de320",
-    "#29a813",
-  ];
-
   const [showPrompt, setShowPrompt] = useState([false, false, false]);
   const [randomDrawingIDs60, setRandomDrawingIDs60] = useState(null);
   const [randomDrawingIDs180, setRandomDrawingIDs180] = useState(null);
@@ -118,12 +87,10 @@ const FocalAnimatedDrawings = (props) => {
 
   useEffect(() => {
     getRandomDrawingIDs();
-    // console.log("loaded and started fetch of words");
   }, []);
 
   useEffect(() => {
     if (randomDrawingIDs60 && randomDrawingIDs180 && randomDrawingIDs300) {
-      // console.log("collected all ids & fetching images from ids");
       getImagesFromIDs();
       // setOffsetX(testRef.current.getBoundingClientRect().left);
     }
@@ -131,7 +98,6 @@ const FocalAnimatedDrawings = (props) => {
 
   useEffect(() => {
     if (fetchedDrawings60.length > 0) {
-      // console.log("found 60 and starting interval");
       setShowPrompt([true, false, false]);
       setStartIntervalTimer(true);
     }
@@ -139,10 +105,8 @@ const FocalAnimatedDrawings = (props) => {
 
   useEffect(() => {
     if (startIntervalTimer) {
-      // console.log("starting interval");
       intervalID.current = setInterval(() => {
         setShowPrompt((showPrompt) => {
-          // console.log(showPrompt);
           if (
             isEqual(showPrompt, [false, false, false]) ||
             isEqual(showPrompt, [false, false, true])
@@ -163,10 +127,7 @@ const FocalAnimatedDrawings = (props) => {
   }, [startIntervalTimer]);
 
   useEffect(() => {
-    // console.log("tried to do something");
     if (isEqual(showPrompt, [true, false, false])) {
-      // console.log("tried to do something 60");
-
       anime({
         targets: `#redFocalProgressBar`,
         width: [0, "90%"],
@@ -180,8 +141,6 @@ const FocalAnimatedDrawings = (props) => {
         easing: "linear",
       });
     } else if (isEqual(showPrompt, [false, true, false])) {
-      // console.log("tried to do something 180");
-
       anime({
         targets: `#yellowFocalProgressBar`,
         width: [0, "90%"],
@@ -195,8 +154,6 @@ const FocalAnimatedDrawings = (props) => {
         easing: "linear",
       });
     } else if (isEqual(showPrompt, [false, false, true])) {
-      // console.log("tried to do something 300");
-
       anime({
         targets: `#greenFocalProgressBar`,
         width: [0, "90%"],
@@ -222,7 +179,6 @@ const FocalAnimatedDrawings = (props) => {
       const drawings180 = Object.values(snapshot.val()["180"]);
       const drawings300 = Object.values(snapshot.val()["300"]);
 
-      // const allTitles = drawings60.concat(drawings180, drawings300);
       const tempDrawingIDs60 = [],
         tempDrawingIDs180 = [],
         tempDrawingIDs300 = [];
@@ -248,40 +204,82 @@ const FocalAnimatedDrawings = (props) => {
     });
   }
 
-  // finds random prompt which has at least 15 submitted drawings
+  // finds random prompt which has at least 10 submitted drawings
   function findRandomEligiblePrompt(
     duration,
     sourceTitles,
     sourceArr,
     tempArr
   ) {
-    // uncomment this out below when you actually have 15 or whatever drawings
-    // will need to update becuase it was using Object.values(...) before above
-    // let promptHas15OrMoreDrawings = false;
-    // while (!promptHas15OrMoreDrawings) {
-    //   let randomIndex = Math.floor(Math.random() * sourceArr.length);
-    //   if (sourceArr[randomIndex].length >= 15) {
-    //     for (let i = 0; i < 15; i++) {
-    //       const actualID = sourceArr[randomIndex]["drawingID"][i];
+    let loopComplete = false;
+    let drawingCounts = {};
+    let searchedIndicies = [];
+    let randomIndex;
 
-    //       tempArr.push(actualID);
-    //     }
-    //     promptHas15OrMoreDrawings = true;
-    //   }
-    // }
-    let randomIndex = Math.floor(Math.random() * sourceArr.length);
+    while (!loopComplete) {
+      // if all indicies checked, defaults to true and skips while loop
+      let validIndexFound = searchedIndicies.length === sourceArr.length;
+
+      // finding new random index
+      while (!validIndexFound) {
+        let indexToBeChecked = Math.floor(Math.random() * sourceArr.length);
+        if (!searchedIndicies.includes(indexToBeChecked)) {
+          randomIndex = indexToBeChecked;
+          searchedIndicies.push(randomIndex);
+
+          validIndexFound = true;
+        }
+      }
+
+      // checking if it has >= 10 drawings for that title
+      if (sourceArr[randomIndex]["drawingID"].length >= 10) {
+        for (let i = 0; i < 10; i++) {
+          const actualID = sourceArr[randomIndex]["drawingID"][i];
+
+          tempArr.push(actualID);
+        }
+
+        loopComplete = true;
+      } else {
+        // if all indicies have been searched and none had >= 10 drawings, exit loop
+        drawingCounts[sourceArr[randomIndex]["drawingID"].length] = randomIndex;
+
+        if (searchedIndicies.length === sourceArr.length) {
+          loopComplete = true;
+        }
+      }
+    }
+
+    // if no ideal index has been found yet
+    if (tempArr.length === 0) {
+      // find the drawing index with the most drawings
+      let highestDrawings = Math.max(Object.keys(drawingCounts));
+      randomIndex = drawingCounts[highestDrawings];
+
+      // pushing all available ids from drawings array
+      for (let i = 0; i < highestDrawings; i++) {
+        const actualID = sourceArr[randomIndex]["drawingID"][i];
+
+        tempArr.push(actualID);
+      }
+
+      // selecting random id to fill in the remaining id slots
+      let randomDuplicatedIndicies = Math.floor(
+        Math.random() * highestDrawings
+      );
+
+      for (let i = 0; i < 10 - highestDrawings; i++) {
+        const actualID =
+          sourceArr[randomIndex]["drawingID"][randomDuplicatedIndicies];
+
+        tempArr.push(actualID);
+      }
+    }
 
     // adding the title that corresponds with the images
     if (duration === "60") setDrawingTitle60(sourceTitles[randomIndex]);
     if (duration === "180") setDrawingTitle180(sourceTitles[randomIndex]);
     if (duration === "300") setDrawingTitle300(sourceTitles[randomIndex]);
-
-    for (let i = 0; i < 10; i++) {
-      const actualID = sourceArr[randomIndex]["drawingID"][0];
-
-      tempArr.push(actualID);
-    }
-    // console.log("finished finding ids");
   }
 
   function getImagesFromIDs() {
@@ -325,11 +323,10 @@ const FocalAnimatedDrawings = (props) => {
       }}
       className={classes.fullWidth}
     >
-    {/* for right now, just leave it as is, seems tricky to get a pseudo grid to
+      {/* for right now, just leave it as is, seems tricky to get a pseudo grid to
         be there perma. */}
 
       {/* Drawing Titles */}
-      {/* may have to put into components like below in order to get fade in/fade out effect to work */}
       {showPrompt[0] && drawingTitle60 && (
         <div className={classes.drawingTitleContainer}>
           <div className={classes.durationContainer}>
@@ -409,7 +406,7 @@ const FocalAnimatedDrawings = (props) => {
           <div className={`${classes.searchGridContainer}`}>
             <AnimatedGridContainer
               drawings={fetchedDrawings180}
-              offset={16}
+              offset={31}
               miscSettings={miscSettings.current}
               SHADES_OF_GREEN={SHADES_OF_GREEN}
             />
@@ -431,7 +428,7 @@ const FocalAnimatedDrawings = (props) => {
           <div className={`${classes.searchGridContainer}`}>
             <AnimatedGridContainer
               drawings={fetchedDrawings300}
-              offset={32}
+              offset={62}
               miscSettings={miscSettings.current}
               SHADES_OF_GREEN={SHADES_OF_GREEN}
             />
