@@ -882,7 +882,7 @@ const GallaryItem = ({ drawingID, settings, idx, dbPath }) => {
 
               {/* move to % widths */}
 
-              {/* for homepage dailymostliked gallaryitem */}
+              {/* for homepage daily featured gallaryitem */}
               {settings.forHomepage ? (
                 isFetching ? (
                   <div
@@ -901,10 +901,14 @@ const GallaryItem = ({ drawingID, settings, idx, dbPath }) => {
                     className={classes.skeletonLoading}
                   ></div>
                 ) : (
-                  <div className={classes.download} onClick={downloadDrawing}>
+                  <button
+                    style={{ display: "flex", gap: "0.75em", fontSize: "16px" }}
+                    className={`${baseClasses.nextButton} ${baseClasses.baseFlex}`}
+                    onClick={downloadDrawing}
+                  >
                     <div>Download</div>
-                    <DownloadIcon />
-                  </div>
+                    <DownloadIcon color={"#FFF"} />
+                  </button>
                 )
               ) : null}
 
@@ -917,10 +921,14 @@ const GallaryItem = ({ drawingID, settings, idx, dbPath }) => {
 
               {!settings.forHomepage ? (
                 showDrawingModal ? (
-                  <div className={classes.download} onClick={downloadDrawing}>
+                  <button
+                    style={{ display: "flex", gap: "0.75em", fontSize: "16px" }}
+                    className={`${baseClasses.nextButton} ${baseClasses.baseFlex}`}
+                    onClick={downloadDrawing}
+                  >
                     <div>Download</div>
-                    <DownloadIcon />
-                  </div>
+                    <DownloadIcon color={"#FFF"} />
+                  </button>
                 ) : null
               ) : null}
             </div>
