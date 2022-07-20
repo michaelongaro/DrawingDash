@@ -88,6 +88,32 @@ const FocalBannerMessage = (props) => {
   }, []);
 
   useEffect(() => {
+    if (numUsers !== 0) {
+      anime({
+        targets: `#users`,
+        innerText: [0, numUsers],
+        round: 1,
+        delay: 50,
+        duration: 1500,
+        easing: "easeInOutExpo",
+      });
+    }
+  }, [numUsers]);
+
+  useEffect(() => {
+    if (numDrawings !== 0) {
+      anime({
+        targets: `#drawings`,
+        innerText: [0, numDrawings],
+        round: 1,
+        delay: 50,
+        duration: 1500,
+        easing: "easeInOutExpo",
+      });
+    }
+  }, [numDrawings]);
+
+  useEffect(() => {
     if ((!isLoading, isAuthenticated)) {
       onValue(
         ref(db, `users/${user.sub}/completedDailyPrompts`),
@@ -177,7 +203,9 @@ const FocalBannerMessage = (props) => {
             <FiveMinuteIcon dimensions={"2.5em"} />
           </div>
 
-          <div style={{ opacity: completedExtra ? 0.2 : 1 }}>
+          <div
+            style={{ opacity: completedExtra ? 0.2 : 1, userSelect: "none" }}
+          >
             <RainbowExtraIcon dimensions={"2.5em"} />
           </div>
         </div>
