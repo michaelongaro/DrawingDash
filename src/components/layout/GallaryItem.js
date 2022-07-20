@@ -83,6 +83,8 @@ const GallaryItem = ({ drawingID, settings, idx, dbPath }) => {
   const [drawingDailyLikes, setDrawingDailyLikes] = useState(0);
   const [drawingWidth, setDrawingWidth] = useState(settings.width);
 
+  const [imageElementLoaded, setImageElementLoaded] = useState(false);
+
   const [showDrawingModal, setShowDrawingModal] = useState(false);
 
   const [showUserModal, setShowUserModal] = useState(false);
@@ -163,7 +165,7 @@ const GallaryItem = ({ drawingID, settings, idx, dbPath }) => {
 
     setShowTempBaselineSkeleton(true);
 
-    const timerID = setTimeout(() => setShowTempBaselineSkeleton(false), 750);
+    const timerID = setTimeout(() => setShowTempBaselineSkeleton(false), 400);
 
     return () => {
       clearTimeout(timerID);
@@ -564,7 +566,6 @@ const GallaryItem = ({ drawingID, settings, idx, dbPath }) => {
       </div>
 
       {/* image container */}
-      {/*  make this a vertFlex */}
       <div
         style={{ gap: "1em" }}
         className={baseClasses.baseVertFlex}
@@ -572,82 +573,106 @@ const GallaryItem = ({ drawingID, settings, idx, dbPath }) => {
       >
         <Card>
           {/* ------ imageinfo -------- */}
-          {isFetching || showTempBaselineSkeleton ? (
+
+          {/* image loading skeleton */}
+          <div
+            style={{
+              display:
+                isFetching || showTempBaselineSkeleton || !imageElementLoaded
+                  ? "block"
+                  : "none",
+              width: window.innerWidth / settings.widthRatio,
+              height: window.innerHeight / settings.heightRatio,
+              borderRadius: "1em 1em 0 0",
+            }}
+            className={classes.skeletonLoading}
+          ></div>
+
+          {/* actual image */}
+          <div
+            className={classes.glossOver}
+            style={{ position: "relative" }}
+            onClick={() => {
+              if (
+                !settings.forHomepage &&
+                !settings.forPinnedShowcase &&
+                !settings.forPinnedItem &&
+                // needed so that when clicking on delete button drawing modal doesn't show
+                !hoveringOnDeleteButton
+              )
+                showFullscreenModal("drawingID");
+            }}
+          >
+            <img
+              style={{
+                display:
+                  !isFetching && !showTempBaselineSkeleton && imageElementLoaded
+                    ? "block"
+                    : "none",
+                cursor: settings.forHomepage ? "auto" : "pointer",
+                borderRadius: settings.forPinnedShowcase
+                  ? "1em"
+                  : "1em 1em 0 0",
+                minWidth: "100%",
+                minHeight: "100%",
+              }}
+              src={fetchedDrawing}
+              alt={drawingDetails?.title ?? "drawing title"}
+              onLoad={() => {
+                console.log("image has loaded!");
+                setImageElementLoaded(true);
+              }}
+            />
+
+            {/* delete drawing button */}
+            <button
+              className={classes.deleteButton}
+              style={{
+                display:
+                  !isFetching && !showTempBaselineSkeleton && imageElementLoaded
+                    ? "flex"
+                    : "none",
+                backgroundColor: hoveringOnDeleteButton ? "red" : "transparent",
+                opacity:
+                  location.pathname === "/profile/gallery" && hoveringOnImage
+                    ? 1
+                    : 0,
+                pointerEvents:
+                  location.pathname === "/profile/gallery" && hoveringOnImage
+                    ? "auto"
+                    : "none",
+              }}
+              onMouseEnter={() => {
+                setHoveringOnDeleteButton(true);
+              }}
+              onMouseLeave={() => {
+                setHoveringOnDeleteButton(false);
+              }}
+              onClick={() => setShowConfirmDeleteModal(true)}
+            >
+              <GarbageIcon dimensions={"1.25em"} />
+            </button>
+
             <div
               style={{
-                width: window.innerWidth / settings.widthRatio,
-                height: window.innerHeight / settings.heightRatio,
-                borderRadius: "1em 1em 0 0",
+                display:
+                  !isFetching && !showTempBaselineSkeleton && imageElementLoaded
+                    ? "flex"
+                    : "none",
               }}
-              className={classes.skeletonLoading}
-            ></div>
-          ) : (
-            <div
-              className={classes.glossOver}
-              style={{ position: "relative" }}
-              onClick={() => {
-                if (
-                  !settings.forHomepage &&
-                  !settings.forPinnedShowcase &&
-                  !settings.forPinnedItem &&
-                  // needed so that when clicking on delete button drawing modal doesn't show
-                  !hoveringOnDeleteButton
-                )
-                  showFullscreenModal("drawingID");
-              }}
+              className={`${drawingTotalLikes > 0 ? classes.likes : ""}`}
             >
-              <img
-                style={{
-                  cursor: settings.forHomepage ? "auto" : "pointer",
-                  borderRadius: settings.forPinnedShowcase
-                    ? "1em"
-                    : "1em 1em 0 0",
-                  minWidth: "100%",
-                  minHeight: "100%",
-                }}
-                src={fetchedDrawing}
-                alt={drawingDetails.title}
-              />
-
-              {/* delete drawing button */}
-              <button
-                className={classes.deleteButton}
-                style={{
-                  backgroundColor: hoveringOnDeleteButton
-                    ? "red"
-                    : "transparent",
-                  opacity:
-                    location.pathname === "/profile/gallery" && hoveringOnImage
-                      ? 1
-                      : 0,
-                  pointerEvents:
-                    location.pathname === "/profile/gallery" && hoveringOnImage
-                      ? "auto"
-                      : "none",
-                }}
-                onMouseEnter={() => {
-                  setHoveringOnDeleteButton(true);
-                }}
-                onMouseLeave={() => {
-                  setHoveringOnDeleteButton(false);
-                }}
-                onClick={() => setShowConfirmDeleteModal(true)}
-              >
-                <GarbageIcon dimensions={"1.25em"} />
-              </button>
-
-              <div className={`${drawingTotalLikes > 0 ? classes.likes : ""}`}>
-                {drawingTotalLikes > 0 ? (
-                  <div style={{ gap: ".5em" }} className={baseClasses.baseFlex}>
-                    <HeartFilledIcon dimensions={"1em"} />{" "}
-                    <div>{drawingTotalLikes}</div>
-                  </div>
-                ) : (
-                  ""
-                )}
-              </div>
+              {drawingTotalLikes > 0 ? (
+                <div style={{ gap: ".5em" }} className={baseClasses.baseFlex}>
+                  <HeartFilledIcon dimensions={"1em"} />{" "}
+                  <div>{drawingTotalLikes}</div>
+                </div>
+              ) : (
+                ""
+              )}
             </div>
-          )}
+          </div>
+          {/* )} */}
 
           {/* -------- metainfo --------- */}
           {settings.forPinnedShowcase ? null : (
@@ -668,7 +693,7 @@ const GallaryItem = ({ drawingID, settings, idx, dbPath }) => {
                                         \n
                                         rgb(${drawingDetails["averageColor"]["r"]}, 
                                             ${drawingDetails["averageColor"]["g"]}, 
-                                            ${drawingDetails["averageColor"]["b"]}) 125%
+                                            ${drawingDetails["averageColor"]["b"]})
                                       )`
                     : "linear-gradient(\n    145deg,\n    rgb(255, 255, 255) 0%,\n    #c2c2c2 125%\n  )",
               }}
