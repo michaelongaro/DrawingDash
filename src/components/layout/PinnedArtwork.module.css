@@ -34,6 +34,7 @@
   margin: 1em;
   padding: 1em;
   background-color: rgb(185, 185, 185);
+  border-radius: 1em;
 }
 
 .modal {
@@ -50,15 +51,6 @@
 }
 
 .topControlsContainer {
-  /* display: grid;
-  grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
-  grid-template-rows: 1fr;
-  gap: 0px 0px;
-  grid-auto-flow: row;
-  grid-template-areas: "save . . . title title title title title title . . . exit";
-  background-color: rgb(167, 167, 167);
-  border-radius: 1em;
-  margin: 1em; */
   position: relative;
   background-color: rgb(167, 167, 167);
   border-radius: 1em;

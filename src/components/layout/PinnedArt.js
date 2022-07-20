@@ -22,24 +22,25 @@ const PinnedArt = (props) => {
   }, []);
 
   function updateContext() {
+    pinnedCtx.setManuallyChangedSelectedDrawing(true);
     pinnedCtx.resetAllAndHighlightNew(`${props.seconds}`, props.idx);
-    pinnedCtx.updateSelectedPinnedDrawings(
-      props.drawingID,
-      props.seconds
-    );
+    pinnedCtx.updateSelectedPinnedDrawings(props.drawingID, props.seconds);
   }
 
   useEffect(() => {
-    if (pinnedCtx.highlightedDrawings[props.seconds].length !== 0) {
+    if (pinnedCtx.highlightedDrawingIDs[props.seconds].length !== 0) {
       setShowHighlighted(
-        pinnedCtx.highlightedDrawings[props.seconds][props.idx]
+        pinnedCtx.highlightedDrawingIDs[props.seconds][props.idx]
       );
     }
-  }, [pinnedCtx.highlightedDrawings]);
+  }, [pinnedCtx.highlightedDrawingIDs]);
 
   return (
     <div ref={pinRef}>
-      <div style={{ cursor: "pointer" }} className={`${classes.baseHoverHighlight} ${showHighlighted}`}>
+      <div
+        style={{ cursor: "pointer" }}
+        className={`${classes.baseHoverHighlight} ${showHighlighted}`}
+      >
         <GallaryItem
           drawingID={props.drawingID}
           settings={{

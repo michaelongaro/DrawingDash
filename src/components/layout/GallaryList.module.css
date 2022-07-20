@@ -4,7 +4,7 @@
   grid-template-rows: 1fr 1fr 1fr;
   gap: 2em;
   grid-auto-flow: row;
-  overflow-y: scroll;
+  overflow-y: auto;
   height: 65vh;
   background-color: rgb(185, 185, 185);
   padding: 1em;

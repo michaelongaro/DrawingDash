@@ -27,83 +27,89 @@ export function PinnedProvider(props) {
   const db = getDatabase(app);
   const dbRef = ref(getDatabase(app));
 
-  // change all variable names with drawing to drawingIDs...
+  // change all variable names with drawingID to drawingIDIDs...
 
   // deal with this later, turn into one obj
   const [show60, setShow60] = useState({ display: "none" });
   const [show180, setShow180] = useState({ display: "none" });
   const [show300, setShow300] = useState({ display: "none" });
 
-  const [user60Drawings, setUser60Drawings] = useState([]);
-  const [user180Drawings, setUser180Drawings] = useState([]);
-  const [user300Drawings, setUser300Drawings] = useState([]);
+  const [user60DrawingIDs, setUser60DrawingIDs] = useState([]);
+  const [user180DrawingIDs, setUser180DrawingIDs] = useState([]);
+  const [user300DrawingIDs, setUser300DrawingIDs] = useState([]);
 
-  const [selectedPinnedDrawings, setSelectedPinnedDrawings] = useState({
+  const [selectedPinnedDrawingIDs, setSelectedPinnedDrawingIDs] = useState({
     60: "",
     180: "",
     300: "",
   });
 
-  const [pinnedDrawings, setPinnedDrawings] = useState({
+  const [pinnedDrawingIDs, setPinnedDrawingIDs] = useState({
     60: "",
     180: "",
     300: "",
   });
 
-  const [highlightedDrawings, setHighlightedDrawings] = useState({
+  const [highlightedDrawingIDs, setHighlightedDrawingIDs] = useState({
     60: [],
     180: [],
     300: [],
   });
 
-  const [userDrawings, setUserDrawings] = useState({
+  const [userDrawingIDs, setUserDrawingIDs] = useState({
     60: [],
     180: [],
     300: [],
   });
 
-  function updateSelectedPinnedDrawings(drawing, seconds) {
-    let tempPinned = { ...selectedPinnedDrawings };
-    tempPinned[seconds] = drawing;
-    setSelectedPinnedDrawings(tempPinned);
+  const [manuallyChangedSelectedDrawing, setManuallyChangedSelectedDrawing] =
+    useState(false);
+
+  function updateSelectedPinnedDrawingIDs(drawingID, seconds) {
+    let tempPinned = { ...selectedPinnedDrawingIDs };
+    tempPinned[seconds] = drawingID;
+    setSelectedPinnedDrawingIDs(tempPinned);
   }
 
-  function updateDatabase(updatedPinnedDrawings) {
-    set(ref(db, `users/${user.sub}/pinnedArt`), updatedPinnedDrawings);
+  function updateDatabase(updatedPinnedDrawingIDs) {
+    set(ref(db, `users/${user.sub}/pinnedArt`), updatedPinnedDrawingIDs);
   }
 
-  function searchIndexOfPinned(drawingsArray, seconds) {
-    for (const idx in drawingsArray) {
-      if (isEqual(pinnedDrawings[seconds], drawingsArray[idx])) {
+  function searchIndexOfPinned(drawingIDsArray, seconds) {
+    for (const idx in drawingIDsArray) {
+      if (isEqual(pinnedDrawingIDs[seconds], drawingIDsArray[idx])) {
         return idx;
       }
     }
   }
 
   function resetAllAndHighlightNew(seconds, idx) {
-    let tempHighlighted = Array(highlightedDrawings[seconds].length).fill("");
+    let tempHighlighted = Array(highlightedDrawingIDs[seconds].length).fill("");
 
     tempHighlighted[idx] = classes.highlighted;
 
-    let tempHighlightedDrawings = { ...highlightedDrawings };
-    tempHighlightedDrawings[seconds] = tempHighlighted;
-    setHighlightedDrawings(tempHighlightedDrawings);
+    let tempHighlightedDrawingIDs = { ...highlightedDrawingIDs };
+    tempHighlightedDrawingIDs[seconds] = tempHighlighted;
+    setHighlightedDrawingIDs(tempHighlightedDrawingIDs);
   }
 
   function resetAllAndHighlightNewInit() {
-    let tempHighlightedDrawings = { ...highlightedDrawings };
+    let tempHighlightedDrawingIDs = { ...highlightedDrawingIDs };
     let seconds = [60, 180, 300];
     for (const duration of seconds) {
-      let tempHighlighted = Array(highlightedDrawings[duration].length).fill(
+      let tempHighlighted = Array(highlightedDrawingIDs[duration].length).fill(
         ""
       );
 
-      tempHighlighted[searchIndexOfPinned(userDrawings[duration], duration)] =
-        classes.highlighted;
+      if (tempHighlighted.length > 0) {
+        tempHighlighted[
+          searchIndexOfPinned(userDrawingIDs[duration], duration)
+        ] = classes.highlighted;
+      }
 
-      tempHighlightedDrawings[duration] = tempHighlighted;
+      tempHighlightedDrawingIDs[duration] = tempHighlighted;
     }
-    setHighlightedDrawings(tempHighlightedDrawings);
+    setHighlightedDrawingIDs(tempHighlightedDrawingIDs);
   }
 
   function hideAllModals() {
@@ -114,49 +120,48 @@ export function PinnedProvider(props) {
   }
 
   useEffect(() => {
-    if (!isEmpty(userDrawings)) {
+    if (!isEmpty(userDrawingIDs)) {
       if (
-        !isEmpty(userDrawings["60"]) &&
-        !isEmpty(pinnedDrawings["60"]) &&
-        !isEmpty(userDrawings["180"]) &&
-        !isEmpty(pinnedDrawings["180"]) &&
-        !isEmpty(userDrawings["300"]) &&
-        !isEmpty(pinnedDrawings["300"])
+        (!isEmpty(userDrawingIDs["60"]) && !isEmpty(pinnedDrawingIDs["60"])) ||
+        (!isEmpty(userDrawingIDs["180"]) &&
+          !isEmpty(pinnedDrawingIDs["180"])) ||
+        (!isEmpty(userDrawingIDs["300"]) && !isEmpty(pinnedDrawingIDs["300"]))
       ) {
         resetAllAndHighlightNewInit();
       }
     }
-  }, [userDrawings, pinnedDrawings]);
+  }, [userDrawingIDs, pinnedDrawingIDs]);
 
   useEffect(() => {
+    // if at least one duration has drawingIDs
     if (
-      !isEmpty(user60Drawings) &&
-      !isEmpty(user180Drawings) &&
-      !isEmpty(user300Drawings)
+      !isEmpty(user60DrawingIDs) ||
+      !isEmpty(user180DrawingIDs) ||
+      !isEmpty(user300DrawingIDs)
     ) {
-      setHighlightedDrawings({
-        60: user60Drawings,
-        180: user180Drawings,
-        300: user300Drawings,
+      setHighlightedDrawingIDs({
+        60: user60DrawingIDs,
+        180: user180DrawingIDs,
+        300: user300DrawingIDs,
       });
-      setUserDrawings({
-        60: user60Drawings,
-        180: user180Drawings,
-        300: user300Drawings,
+      setUserDrawingIDs({
+        60: user60DrawingIDs,
+        180: user180DrawingIDs,
+        300: user300DrawingIDs,
       });
     }
-  }, [user60Drawings, user180Drawings, user300Drawings]);
+  }, [user60DrawingIDs, user180DrawingIDs, user300DrawingIDs]);
 
   useEffect(() => {
     if ((!isLoading, isAuthenticated)) {
       // look into just changing this to onValue, (didn't want to deal with potential side effects
       // with logic that is already there)
       get(child(dbRef, `users/${user.sub}/pinnedArt`)).then((snapshot) => {
-        if (snapshot.exists() && !isEqual(snapshot.val(), pinnedDrawings)) {
-          setPinnedDrawings(snapshot.val());
-          // need to set this if not all duration's pinned drawings
+        if (snapshot.exists() && !isEqual(snapshot.val(), pinnedDrawingIDs)) {
+          setPinnedDrawingIDs(snapshot.val());
+          // need to set this if not all duration's pinned drawingIDs
           // are changed before posting to db
-          setSelectedPinnedDrawings(snapshot.val());
+          setSelectedPinnedDrawingIDs(snapshot.val());
         }
       });
     }
@@ -166,19 +171,21 @@ export function PinnedProvider(props) {
     show60: show60,
     show180: show180,
     show300: show300,
-    userDrawings: userDrawings,
-    pinnedDrawings: pinnedDrawings,
-    highlightedDrawings: highlightedDrawings,
-    selectedPinnedDrawings: selectedPinnedDrawings,
+    userDrawingIDs: userDrawingIDs,
+    pinnedDrawingIDs: pinnedDrawingIDs,
+    highlightedDrawingIDs: highlightedDrawingIDs,
+    selectedPinnedDrawingIDs: selectedPinnedDrawingIDs,
+    manuallyChangedSelectedDrawing: manuallyChangedSelectedDrawing,
+    setManuallyChangedSelectedDrawing: setManuallyChangedSelectedDrawing,
     setShow60: setShow60,
     setShow180: setShow180,
     setShow300: setShow300,
-    setUser60Drawings: setUser60Drawings,
-    setUser180Drawings: setUser180Drawings,
-    setUser300Drawings: setUser300Drawings,
-    setUserDrawings: setUserDrawings,
-    setPinnedDrawings: setPinnedDrawings,
-    updateSelectedPinnedDrawings: updateSelectedPinnedDrawings,
+    setUser60DrawingIDs: setUser60DrawingIDs,
+    setUser180DrawingIDs: setUser180DrawingIDs,
+    setUser300DrawingIDs: setUser300DrawingIDs,
+    setUserDrawingIDs: setUserDrawingIDs,
+    setPinnedDrawingIDs: setPinnedDrawingIDs,
+    updateSelectedPinnedDrawingIDs: updateSelectedPinnedDrawingIDs,
     updateDatabase: updateDatabase,
     resetAllAndHighlightNew: resetAllAndHighlightNew,
     resetAllAndHighlightNewInit: resetAllAndHighlightNewInit,

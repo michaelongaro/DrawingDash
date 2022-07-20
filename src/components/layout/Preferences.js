@@ -11,6 +11,7 @@ import ImageCropModal from "./ImageCropModal";
 import getCroppedImg from "../../util/cropImage";
 
 import ProfilePictureUpdateContext from "./ProfilePictureUpdateContext";
+import PinnedContext from "./PinnedContext";
 
 import PinnedArtwork from "./PinnedArtwork";
 import ProfileHeader from "./ProfileHeader";
@@ -48,6 +49,7 @@ const Preferences = () => {
   // only doing it this way because there doesn't seem to be an eqivalent
   // to "onValue" for the firebase Storage side of things...
   const PFPUpdateCtx = useContext(ProfilePictureUpdateContext);
+  const pinnedCtx = useContext(PinnedContext);
 
   var axios = require("axios").default;
 
@@ -147,6 +149,10 @@ const Preferences = () => {
 
     return () => {
       clearTimeout(timerID);
+
+      pinnedCtx.setShow60({ display: "none" });
+      pinnedCtx.setShow180({ display: "none" });
+      pinnedCtx.setShow300({ display: "none" });
     };
   }, []);
 

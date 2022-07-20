@@ -26,6 +26,8 @@ const PinnedModal = React.forwardRef((props, modalRef) => {
     const dbRef = ref(getDatabase(app));
     const fetchedDrawingIDs = [];
 
+    pinnedCtx.setManuallyChangedSelectedDrawing(false);
+
     // should fetch all user profile titles and save their vals (ids) in an array,
     // then loop through it down here and fetch the drawings from main /drawings/id
 
@@ -45,29 +47,36 @@ const PinnedModal = React.forwardRef((props, modalRef) => {
 
         if (props.seconds === 60) {
           setDurationIcon(<OneMinuteIcon dimensions="3em" />);
-          pinnedCtx.setUser60Drawings(fetchedDrawingIDs.flat());
+          pinnedCtx.setUser60DrawingIDs(fetchedDrawingIDs.flat());
         } else if (props.seconds === 180) {
           setDurationIcon(<ThreeMinuteIcon dimensions="3em" />);
-          pinnedCtx.setUser180Drawings(fetchedDrawingIDs.flat());
+          pinnedCtx.setUser180DrawingIDs(fetchedDrawingIDs.flat());
         } else if (props.seconds === 300) {
           setDurationIcon(<FiveMinuteIcon dimensions="3em" />);
-          pinnedCtx.setUser300Drawings(fetchedDrawingIDs.flat());
+          pinnedCtx.setUser300DrawingIDs(fetchedDrawingIDs.flat());
         }
       }
     );
   }, []);
 
   return (
-    <div style={{ width: "80%" }} classname={classes.card} ref={modalRef}>
+    // change the 80% to 50% if loadedDrawingIDs === 0
+    <div
+      style={{
+        width: loadedDrawingIDs.length === 0 ? "50%" : "80%",
+      }}
+      classname={classes.card}
+      ref={modalRef}
+    >
       <div className={classes.innerModal}>
         <div className={classes.topControlsContainer}>
           <div className={classes.save}>
             <button
               className={classes.activeButton}
+              disabled={!pinnedCtx.manuallyChangedSelectedDrawing}
               onClick={() => {
-                console.log("was clicked", pinnedCtx.selectedPinnedDrawings);
                 pinnedCtx.updateDatabase(pinnedCtx.selectedPinnedDrawings);
-                pinnedCtx.setPinnedDrawings(pinnedCtx.selectedPinnedDrawings);
+                pinnedCtx.setPinnedDrawingIDs(pinnedCtx.selectedPinnedDrawings);
                 pinnedCtx.setShow60({ display: "none" });
                 pinnedCtx.setShow180({ display: "none" });
                 pinnedCtx.setShow300({ display: "none" });
@@ -85,7 +94,6 @@ const PinnedModal = React.forwardRef((props, modalRef) => {
             <div
               className={baseClasses.close}
               onClick={() => {
-                console.log("close was clicked");
                 pinnedCtx.setShow60({ display: "none" });
                 pinnedCtx.setShow180({ display: "none" });
                 pinnedCtx.setShow300({ display: "none" });

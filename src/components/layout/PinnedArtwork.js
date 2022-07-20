@@ -101,7 +101,7 @@ const PinnedArtwork = () => {
 
           <div style={show60Showcase}>
             <PinnedShowcaseItem
-              drawingID={pinnedCtx.pinnedDrawings["60"]}
+              drawingID={pinnedCtx.pinnedDrawingIDs["60"]}
               timer={"One Minute"}
             />
           </div>
@@ -121,7 +121,7 @@ const PinnedArtwork = () => {
           </div>
           <div style={show180Showcase}>
             <PinnedShowcaseItem
-              drawingID={pinnedCtx.pinnedDrawings["180"]}
+              drawingID={pinnedCtx.pinnedDrawingIDs["180"]}
               timer={"Three Minutes"}
             />
           </div>
@@ -141,7 +141,7 @@ const PinnedArtwork = () => {
           </div>
           <div style={show300Showcase}>
             <PinnedShowcaseItem
-              drawingID={pinnedCtx.pinnedDrawings["300"]}
+              drawingID={pinnedCtx.pinnedDrawingIDs["300"]}
               timer={"Five Minutes"}
             />
           </div>
