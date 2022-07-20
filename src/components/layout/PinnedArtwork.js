@@ -7,7 +7,12 @@ import PinnedContext from "./PinnedContext";
 import PinnedModal from "./PinnedModal";
 import PinnedShowcaseItem from "./PinnedShowcaseItem";
 
+import OneMinuteIcon from "../../svgs/OneMinuteIcon";
+import ThreeMinuteIcon from "../../svgs/ThreeMinuteIcon";
+import FiveMinuteIcon from "../../svgs/FiveMinuteIcon";
+
 import classes from "./PinnedArtwork.module.css";
+import baseClasses from "../../index.module.css";
 
 const PinnedArtwork = () => {
   const pinnedCtx = useContext(PinnedContext);
@@ -77,73 +82,77 @@ const PinnedArtwork = () => {
     };
   });
 
-  function hideShowcaseDrawings() {
-    setShow60Showcase({ display: "none" });
-    setShow180Showcase({ display: "none" });
-    setShow300Showcase({ display: "none" });
-  }
-
   return (
     <div className={classes.parentContain}>
       <div className={classes.pinnedContain}>
-        <div
-          onClick={() => {
-            if (show60["display"] === "none") {
-              pinnedCtx.setShow60(showModal);
-            }
-          }}
-        >
-          <div style={show60}>
-            {isEqual(show60, showModal) && (
-              <PinnedModal seconds={60} ref={ref60} />
-            )}
-          </div>
+        <div style={{ gap: "1em" }} className={baseClasses.baseVertFlex}>
+          <OneMinuteIcon dimensions={"3.5em"} />
+          <div
+            onClick={() => {
+              if (show60["display"] === "none") {
+                pinnedCtx.setShow60(showModal);
+              }
+            }}
+          >
+            <div style={show60}>
+              {isEqual(show60, showModal) && (
+                <PinnedModal seconds={60} ref={ref60} />
+              )}
+            </div>
 
-          <div style={show60Showcase}>
-            <PinnedShowcaseItem
-              drawingID={pinnedCtx.pinnedDrawingIDs["60"]}
-              timer={"One Minute"}
-            />
+            <div style={show60Showcase}>
+              <PinnedShowcaseItem
+                drawingID={pinnedCtx.pinnedDrawingIDs["60"]}
+                timer={"One Minute"}
+              />
+            </div>
           </div>
         </div>
 
-        <div
-          onClick={() => {
-            if (show180["display"] === "none") {
-              pinnedCtx.setShow180(showModal);
-            }
-          }}
-        >
-          <div style={show180}>
-            {isEqual(show180, showModal) && (
-              <PinnedModal seconds={180} ref={ref180} />
-            )}
-          </div>
-          <div style={show180Showcase}>
-            <PinnedShowcaseItem
-              drawingID={pinnedCtx.pinnedDrawingIDs["180"]}
-              timer={"Three Minutes"}
-            />
+        <div style={{ gap: "1em" }} className={baseClasses.baseVertFlex}>
+          <ThreeMinuteIcon dimensions={"3.5em"} />
+          <div
+            onClick={() => {
+              if (show180["display"] === "none") {
+                pinnedCtx.setShow180(showModal);
+              }
+            }}
+          >
+            <div style={show180}>
+              {isEqual(show180, showModal) && (
+                <PinnedModal seconds={180} ref={ref180} />
+              )}
+            </div>
+            <div style={show180Showcase}>
+              <PinnedShowcaseItem
+                drawingID={pinnedCtx.pinnedDrawingIDs["180"]}
+                timer={"Three Minutes"}
+              />
+            </div>
           </div>
         </div>
 
-        <div
-          onClick={() => {
-            if (show300["display"] === "none") {
-              pinnedCtx.setShow300(showModal);
-            }
-          }}
-        >
-          <div style={show300}>
-            {isEqual(show300, showModal) && (
-              <PinnedModal seconds={300} ref={ref300} />
-            )}
-          </div>
-          <div style={show300Showcase}>
-            <PinnedShowcaseItem
-              drawingID={pinnedCtx.pinnedDrawingIDs["300"]}
-              timer={"Five Minutes"}
-            />
+        <div style={{ gap: "1em" }} className={baseClasses.baseVertFlex}>
+          <FiveMinuteIcon dimensions={"3.5em"} />
+
+          <div
+            onClick={() => {
+              if (show300["display"] === "none") {
+                pinnedCtx.setShow300(showModal);
+              }
+            }}
+          >
+            <div style={show300}>
+              {isEqual(show300, showModal) && (
+                <PinnedModal seconds={300} ref={ref300} />
+              )}
+            </div>
+            <div style={show300Showcase}>
+              <PinnedShowcaseItem
+                drawingID={pinnedCtx.pinnedDrawingIDs["300"]}
+                timer={"Five Minutes"}
+              />
+            </div>
           </div>
         </div>
       </div>

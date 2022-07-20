@@ -145,7 +145,7 @@ const Preferences = () => {
   }, []);
 
   useEffect(() => {
-    const timerID = setTimeout(() => setShowTempBaselineSkeleton(false), 750);
+    const timerID = setTimeout(() => setShowTempBaselineSkeleton(false), 400);
 
     return () => {
       clearTimeout(timerID);

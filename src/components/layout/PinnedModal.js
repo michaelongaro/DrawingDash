@@ -63,7 +63,7 @@ const PinnedModal = React.forwardRef((props, modalRef) => {
     // change the 80% to 50% if loadedDrawingIDs === 0
     <div
       style={{
-        width: loadedDrawingIDs.length === 0 ? "50%" : "80%",
+        width: loadedDrawingIDs.length === 0 ? "" : "80%",
       }}
       classname={classes.card}
       ref={modalRef}

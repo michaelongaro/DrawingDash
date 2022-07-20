@@ -40,7 +40,7 @@ const PinnedArtList = ({ drawingIDs, seconds }) => {
               <div style={{ gap: ".5em" }} className={baseClasses.baseFlex}>
                 <div>Start A</div>
                 <div>{durationSVG}</div>
-                <div>Drawing!</div>
+                <div>Drawing</div>
               </div>
             </Link>
           </div>

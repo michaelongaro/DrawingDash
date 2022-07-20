@@ -1,9 +1,7 @@
 import React, { useState, useEffect } from "react";
 
 import GallaryItem from "./GallaryItem";
-import OneMinuteIcon from "../../svgs/OneMinuteIcon";
-import ThreeMinuteIcon from "../../svgs/ThreeMinuteIcon";
-import FiveMinuteIcon from "../../svgs/FiveMinuteIcon";
+
 import EditPreferencesIcon from "../../svgs/EditPreferencesIcon";
 
 import classes from "./PinnedArt.module.css";
@@ -17,7 +15,7 @@ const PinnedShowcaseItem = ({ drawingID, timer }) => {
     useState(true);
 
   useEffect(() => {
-    const timerID = setTimeout(() => setShowTempBaselineSkeleton(false), 1500);
+    const timerID = setTimeout(() => setShowTempBaselineSkeleton(false), 400);
 
     return () => {
       clearTimeout(timerID);
@@ -43,10 +41,6 @@ const PinnedShowcaseItem = ({ drawingID, timer }) => {
         gap: "1em",
       }}
     >
-      {timer === "One Minute" && <OneMinuteIcon dimensions={"3.5em"} />}
-      {timer === "Three Minutes" && <ThreeMinuteIcon dimensions={"3.5em"} />}
-      {timer === "Five Minutes" && <FiveMinuteIcon dimensions={"3.5em"} />}
-
       {showTempBaselineSkeleton ? (
         <div style={{ gap: ".75em" }} className={baseClasses.baseVertFlex}>
           <div
