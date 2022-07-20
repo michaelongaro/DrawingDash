@@ -128,89 +128,97 @@ const Controls = () => {
   }, [currentCursorSize, floodFillStatus]);
 
   function updateSelectedColor(brushID, updateCurrentlySelectedTool) {
-    let tempArr = buttonStyles;
+    if (DSCtx.seconds === 0) {
+      let tempArr = buttonStyles;
 
-    tempArr[prevClickedColor] = classes.hide;
-    tempArr[brushID] = classes.show;
+      tempArr[prevClickedColor] = classes.hide;
+      tempArr[brushID] = classes.show;
 
-    setButtonStyles(tempArr);
+      setButtonStyles(tempArr);
 
-    // reselecting the pencil icon when directly clicking on a color while on eraser tool
-    if (updateCurrentlySelectedTool && currToolIdx !== 1) {
-      updateSelectedTool(0);
+      // reselecting the pencil icon when directly clicking on a color while on eraser tool
+      if (updateCurrentlySelectedTool && currToolIdx !== 1) {
+        updateSelectedTool(0);
 
-      setCurrToolIdx(0);
+        setCurrToolIdx(0);
+      }
+
+      if (brushID !== 5) {
+        document.documentElement.style.setProperty(
+          "--dark-animated-gradient-color",
+          hexToRgbA(DSCtx.paletteColors[brushID], 0.9)
+        );
+        document.documentElement.style.setProperty(
+          "--light-animated-gradient-color",
+          hexToRgbA(DSCtx.paletteColors[brushID], 0.5)
+        );
+      } else if (brushID === 5) {
+        setColorIdToReselect(prevClickedColor);
+        document.documentElement.style.setProperty(
+          "--dark-animated-gradient-color",
+          "rgba(230, 230, 230, .9)"
+        );
+        document.documentElement.style.setProperty(
+          "--light-animated-gradient-color",
+          "rgba(230, 230, 230, .5)"
+        );
+        return;
+      }
+      setPrevClickedColor(brushID);
     }
-
-    if (brushID !== 5) {
-      document.documentElement.style.setProperty(
-        "--dark-animated-gradient-color",
-        hexToRgbA(DSCtx.paletteColors[brushID], 0.9)
-      );
-      document.documentElement.style.setProperty(
-        "--light-animated-gradient-color",
-        hexToRgbA(DSCtx.paletteColors[brushID], 0.5)
-      );
-    } else if (brushID === 5) {
-      setColorIdToReselect(prevClickedColor);
-      document.documentElement.style.setProperty(
-        "--dark-animated-gradient-color",
-        "rgba(230, 230, 230, .9)"
-      );
-      document.documentElement.style.setProperty(
-        "--light-animated-gradient-color",
-        "rgba(230, 230, 230, .5)"
-      );
-      return;
-    }
-    setPrevClickedColor(brushID);
   }
 
   function updateSelectedBrushSize(brushID) {
-    let tempArr = brushSizeStyles;
+    if (DSCtx.seconds === 0) {
+      let tempArr = brushSizeStyles;
 
-    tempArr[prevBrushSize] = classes.hide;
-    tempArr[brushID] = classes.show;
+      tempArr[prevBrushSize] = classes.hide;
+      tempArr[brushID] = classes.show;
 
-    setBrushSizeStyles(tempArr);
-    setPrevBrushSize(brushID);
+      setBrushSizeStyles(tempArr);
+      setPrevBrushSize(brushID);
+    }
   }
 
   function changeTool(idx) {
-    if (idx !== currToolIdx) {
-      // going from eraser to draw/paint bucket
-      if ((idx === 0 || idx === 1) && currToolIdx === 2) {
-        changeColor(DSCtx.paletteColors[colorIdToReselect]);
-        DSCtx.setCurrentColor(DSCtx.paletteColors[colorIdToReselect]);
-        updateSelectedColor(colorIdToReselect, false);
+    if (DSCtx.seconds === 0) {
+      if (idx !== currToolIdx) {
+        // going from eraser to draw/paint bucket
+        if ((idx === 0 || idx === 1) && currToolIdx === 2) {
+          changeColor(DSCtx.paletteColors[colorIdToReselect]);
+          DSCtx.setCurrentColor(DSCtx.paletteColors[colorIdToReselect]);
+          updateSelectedColor(colorIdToReselect, false);
+        }
+
+        // going to or from paint bucket
+        if (idx === 1 || currToolIdx === 1) toggleFloodFill();
+
+        // going to draw
+        if (idx === 0) {
+          changeColor(DSCtx.paletteColors[prevClickedColor]);
+          DSCtx.setCurrentColor(DSCtx.paletteColors[prevClickedColor]);
+        }
+
+        // going to eraser
+        if (idx === 2) {
+          changeColor(DSCtx.paletteColors[5]);
+          DSCtx.setCurrentColor(DSCtx.paletteColors[5]);
+          updateSelectedColor(5);
+        }
+
+        updateSelectedTool(idx);
+
+        setCurrToolIdx(idx);
       }
-
-      // going to or from paint bucket
-      if (idx === 1 || currToolIdx === 1) toggleFloodFill();
-
-      // going to draw
-      if (idx === 0) {
-        changeColor(DSCtx.paletteColors[prevClickedColor]);
-        DSCtx.setCurrentColor(DSCtx.paletteColors[prevClickedColor]);
-      }
-
-      // going to eraser
-      if (idx === 2) {
-        changeColor(DSCtx.paletteColors[5]);
-        DSCtx.setCurrentColor(DSCtx.paletteColors[5]);
-        updateSelectedColor(5);
-      }
-
-      updateSelectedTool(idx);
-
-      setCurrToolIdx(idx);
     }
   }
 
   function updateSelectedTool(idx) {
-    let tempToolStatuses = [false, false, false];
-    tempToolStatuses[idx] = true;
-    setToolStatuses(tempToolStatuses);
+    if (DSCtx.seconds === 0) {
+      let tempToolStatuses = [false, false, false];
+      tempToolStatuses[idx] = true;
+      setToolStatuses(tempToolStatuses);
+    }
   }
 
   function hexToRgbA(hex, a) {

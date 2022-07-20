@@ -209,20 +209,30 @@ const DrawingScreen = () => {
       duration: 1000,
     });
 
-    document.addEventListener("mousemove", draw);
-    document.addEventListener("mouseup", resetAbleToFloodFill);
-    document.addEventListener("mouseup", finishDrawing);
-
-    document.documentElement.addEventListener("mouseenter", draw, {
-      once: true,
-    });
-
-    canvasRef.current.addEventListener("wheel", preventScrolling);
-    let currentCanvasRef = canvasRef.current;
-
     let initAnimDelayID = setTimeout(() => {
       setInitAnimationDelayCompleted(true);
     }, 500);
+
+    return () => {
+      clearTimeout(initAnimDelayID);
+    };
+  }, []);
+
+  useEffect(() => {
+    // adding eventlisteners only when canvas is available to be interacted with
+    let currentCanvasRef = null;
+    if (initAnimationDelayCompleted && DSCtx.seconds === 0) {
+      document.addEventListener("mousemove", draw);
+      document.addEventListener("mouseup", resetAbleToFloodFill);
+      document.addEventListener("mouseup", finishDrawing);
+
+      document.documentElement.addEventListener("mouseenter", draw, {
+        once: true,
+      });
+
+      canvasRef.current.addEventListener("wheel", preventScrolling);
+      currentCanvasRef = canvasRef.current;
+    }
 
     return () => {
       document.removeEventListener("mousemove", draw);
@@ -238,11 +248,11 @@ const DrawingScreen = () => {
         }
       );
 
-      currentCanvasRef.removeEventListener("wheel", preventScrolling);
-
-      clearTimeout(initAnimDelayID);
+      if (currentCanvasRef) {
+        currentCanvasRef.removeEventListener("wheel", preventScrolling);
+      }
     };
-  }, []);
+  }, [DSCtx.seconds, initAnimationDelayCompleted]);
 
   const [showCanvas, setShowCanvas] = useState(false);
 
@@ -679,7 +689,10 @@ const DrawingScreen = () => {
           </div>
 
           <div className={classes.sharedContain}>
-            <div className={`${showCanvasOutline} ${classes.startScreen}`}>
+            <div
+              style={{ zIndex: showCanvasOutline ? 500 : -1 }}
+              className={`${showCanvasOutline} ${classes.startScreen}`}
+            >
               {/* {DSCtx.seconds} */}
               <div style={{ position: "relative" }}>
                 <div
@@ -944,7 +957,7 @@ const DrawingScreen = () => {
                             onClick={downloadDrawing}
                           >
                             <div>Download</div>
-                            <DownloadIcon />
+                            <DownloadIcon color={"#000"} />
                           </div>
                           <div
                             style={{

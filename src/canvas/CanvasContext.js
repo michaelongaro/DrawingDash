@@ -1,11 +1,15 @@
 import React, { useState, useContext, useEffect, useRef } from "react";
 
+import floodFill from "../util/floodfill";
+
 const CanvasContext = React.createContext();
 
 export const CanvasProvider = ({ children }) => {
   let isDrawing = useRef(false);
 
   let lastEvent;
+
+  const previousFillStyle = useRef("#FFFFFF");
 
   const [mouseInsideOfCanvas, setMouseInsideOfCanvas] = useState(false);
   const [currentColor, setCurrentColor] = useState("#FFFFFF");
@@ -37,7 +41,8 @@ export const CanvasProvider = ({ children }) => {
     context.lineCap = "round";
     context.lineJoin = "round";
     context.lineWidth = 8;
-    context.imageSmoothingEnabled = true;
+    // context.imageSmoothingEnabled = false;
+
     contextRef.current = context;
   }
 
@@ -45,6 +50,9 @@ export const CanvasProvider = ({ children }) => {
     const canvas = canvasRef.current;
     const context = canvas.getContext("2d");
     context.strokeStyle = color;
+    context.fillStyle = color;
+    previousFillStyle.current = color;
+    console.log("fill and stroke got changed to", color);
     contextRef.current = context;
     setCurrentColor(color);
   }
@@ -79,87 +87,8 @@ export const CanvasProvider = ({ children }) => {
     };
   }
 
-  function setColorAtPixel(imageData, color, x, y) {
-    const { width, data } = imageData;
-
-    data[4 * (width * y + x) + 0] = color.r & 0xff;
-    data[4 * (width * y + x) + 1] = color.g & 0xff;
-    data[4 * (width * y + x) + 2] = color.b & 0xff;
-    data[4 * (width * y + x) + 3] = color.a & 0xff;
-  }
-
   function colorMatch(a, b) {
     return a.r === b.r && a.g === b.g && a.b === b.b && a.a === b.a;
-  }
-
-  function floodFill(imageData, newColor, x, y) {
-    const { width, height, data } = imageData;
-    const stack = [];
-    const baseColor = getColorAtPixel(imageData, x, y);
-    let operator = { x, y };
-
-    // Add the clicked location to stack
-    stack.push({ x: operator.x, y: operator.y });
-
-    while (stack.length) {
-      operator = stack.pop();
-      let contiguousDown = true; // Vertical is assumed to be true
-      let contiguousUp = true; // Vertical is assumed to be true
-      let contiguousLeft = false;
-      let contiguousRight = false;
-
-      // Move to top most contiguousDown pixel
-      while (contiguousUp && operator.y >= 0) {
-        operator.y--;
-        contiguousUp = colorMatch(
-          getColorAtPixel(imageData, operator.x, operator.y),
-          baseColor
-        );
-      }
-
-      // Move downward
-      while (contiguousDown && operator.y < height) {
-        setColorAtPixel(imageData, newColor, operator.x, operator.y);
-
-        // Check left
-        if (
-          operator.x - 1 >= 0 &&
-          colorMatch(
-            getColorAtPixel(imageData, operator.x - 1, operator.y),
-            baseColor
-          )
-        ) {
-          if (!contiguousLeft) {
-            contiguousLeft = true;
-            stack.push({ x: operator.x - 1, y: operator.y });
-          }
-        } else {
-          contiguousLeft = false;
-        }
-
-        // Check right
-        if (
-          operator.x + 1 < width &&
-          colorMatch(
-            getColorAtPixel(imageData, operator.x + 1, operator.y),
-            baseColor
-          )
-        ) {
-          if (!contiguousRight) {
-            stack.push({ x: operator.x + 1, y: operator.y });
-            contiguousRight = true;
-          }
-        } else {
-          contiguousRight = false;
-        }
-
-        operator.y++;
-        contiguousDown = colorMatch(
-          getColorAtPixel(imageData, operator.x, operator.y),
-          baseColor
-        );
-      }
-    }
   }
 
   const hexToRGB = (hex) =>
@@ -171,6 +100,25 @@ export const CanvasProvider = ({ children }) => {
       .substring(1)
       .match(/.{2}/g)
       .map((x) => parseInt(x, 16));
+
+  function luminance(r, g, b) {
+    var a = [r, g, b].map(function (v) {
+      v /= 255;
+      return v <= 0.03928 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4);
+    });
+    return a[0] * 0.2126 + a[1] * 0.7152 + a[2] * 0.0722;
+  }
+
+  function contrast(rgb1, rgb2) {
+    let adjRGB1 = [rgb1["r"], rgb1["g"], rgb1["b"]];
+    let adjRGB2 = [rgb2["r"], rgb2["g"], rgb2["b"]];
+
+    var lum1 = luminance(adjRGB1[0], adjRGB1[1], adjRGB1[2]);
+    var lum2 = luminance(adjRGB2[0], adjRGB2[1], adjRGB2[2]);
+    var brightest = Math.max(lum1, lum2);
+    var darkest = Math.min(lum1, lum2);
+    return (brightest + 0.05) / (darkest + 0.05);
+  }
 
   function floodFillHandler(event) {
     const canvas = canvasRef.current;
@@ -196,8 +144,15 @@ export const CanvasProvider = ({ children }) => {
       !colorMatch(getColorAtPixel(imageData, x, y), col) &&
       !newFloodFillAdded.current
     ) {
-      floodFill(imageData, col, x, y);
-      ctx.putImageData(imageData, 0, 0);
+      let tolerance = 50;
+
+      // if contrast between fill color and color to be filled is <= 3,
+      // lower tolerance so that the filled in color won't bleed out of
+      // where it's supposed to fill
+      if (contrast(getColorAtPixel(imageData, x, y), col) <= 3.0) {
+        tolerance = 10;
+      }
+      floodFill.fill(x, y, tolerance, ctx, null, null, null);
       contextRef.current = ctx;
       newFloodFillAdded.current = true;
     }
@@ -311,6 +266,8 @@ export const CanvasProvider = ({ children }) => {
   }
 
   function draw(ev) {
+    const canvas = canvasRef.current;
+
     const previous_evt = lastEvent || {};
     const was_offscreen = previous_evt.offscreen;
 
@@ -389,6 +346,7 @@ export const CanvasProvider = ({ children }) => {
       else {
         if (ev.buttons === 1 && !isDrawing.current) {
           contextRef.current.moveTo(point.x, point.y);
+          // contextRef.current.clearRect(0, 0, canvas.width, canvas.height);
           contextRef.current.beginPath();
           isDrawing.current = true;
         }
@@ -407,6 +365,9 @@ export const CanvasProvider = ({ children }) => {
     const context = canvas.getContext("2d");
     context.fillStyle = "white";
     context.fillRect(0, 0, canvas.width, canvas.height);
+
+    // resetting previous fillStyle post clear
+    context.fillStyle = previousFillStyle.current;
 
     if (snapshot) {
       takeSnapshot();
