@@ -42,6 +42,12 @@ const PromptSelection = () => {
   const db = getDatabase(app);
   const dbRef = ref_database(getDatabase(app));
 
+  const placeHolderText = {
+    60: ["Marching", "Orangutang"],
+    180: ["Swiftly", "Champagne"],
+    300: ["Bearish", "Swindle"],
+  };
+
   // classes.hide
   const [showExtraPrompt, setShowExtraPrompt] = useState(false);
   const [formattedSeconds, setFormattedSeconds] = useState("");
@@ -55,6 +61,8 @@ const PromptSelection = () => {
     classes.disabled,
     classes.disabled,
   ]);
+
+  const [hidePlaceholderText, setHidePlaceholderText] = useState(false);
 
   const [durationOptions, setDurationOptions] = useState();
   const [adjectiveOptions, setAdjectiveOptions] = useState();
@@ -188,8 +196,6 @@ const PromptSelection = () => {
         DSCtx.drawingStatuses["extra"]
       ) {
         setShowCountdownTimer(true);
-        // ideally have all progressbar logic inside that component, have it look for these exact
-        // conditions (drop the extra if user isn't logged in)
       }
 
       if (
@@ -491,6 +497,42 @@ const PromptSelection = () => {
         resetToSelectBar: false,
       })
     ) {
+      // if some prompts are still not done when daily drawings reset,
+      // manually reset PromptRefreshes and start animation of selectCircle
+      if (
+        DSCtx.promptRefreshes === 2 &&
+        DSCtx.drawingStatusRefreshes > 0 &&
+        DSCtx.drawingStatusRefreshes < 6
+      ) {
+        if (!isLoading && isAuthenticated) {
+          if (
+            !DSCtx.drawingStatuses["60"] ||
+            !DSCtx.drawingStatuses["180"] ||
+            !DSCtx.drawingStatuses["300"] ||
+            !DSCtx.drawingStatuses["extra"]
+          ) {
+            setHidePlaceholderText(true);
+            console.log("resetting dis shiii");
+            DSCtx.updatePBStates("selectCircle", true);
+            DSCtx.setPromptRefreshes(1);
+            DSCtx.setDrawingStatusRefreshes(1);
+          }
+        } else if (!isLoading && !isAuthenticated) {
+          if (
+            !DSCtx.drawingStatuses["60"] ||
+            !DSCtx.drawingStatuses["180"] ||
+            !DSCtx.drawingStatuses["300"]
+          ) {
+            setHidePlaceholderText(true);
+            DSCtx.updatePBStates("selectCircle", true);
+            DSCtx.setPromptRefreshes(1);
+            DSCtx.setDrawingStatusRefreshes(1);
+          }
+        }
+      }
+
+      // regular flow (drawings init loaded + not all prompts have been completed)
+      // -> start animation of selectCircle
       if (
         DSCtx.promptRefreshes === 1 &&
         DSCtx.drawingStatusRefreshes > 0 &&
@@ -503,6 +545,7 @@ const PromptSelection = () => {
             !DSCtx.drawingStatuses["300"] ||
             !DSCtx.drawingStatuses["extra"]
           ) {
+            setHidePlaceholderText(true);
             DSCtx.updatePBStates("selectCircle", true);
           }
         } else if (!isLoading && !isAuthenticated) {
@@ -511,6 +554,7 @@ const PromptSelection = () => {
             !DSCtx.drawingStatuses["180"] ||
             !DSCtx.drawingStatuses["300"]
           ) {
+            setHidePlaceholderText(true);
             DSCtx.updatePBStates("selectCircle", true);
           }
         }
@@ -700,10 +744,22 @@ const PromptSelection = () => {
                 <div className={classes.timeBorder}>1 Minute</div>
 
                 <div
+                  style={{
+                    filter: hidePlaceholderText ? "" : "blur(5px)",
+                    transition: "all 200ms",
+                  }}
                   className={`${classes.promptTextMargin} ${baseClasses.baseVertFlex}`}
                 >
-                  <div>{DSCtx.dailyPrompts["60"].split(" ")[0]}</div>
-                  <div>{DSCtx.dailyPrompts["60"].split(" ")[1]}</div>
+                  <div>
+                    {!hidePlaceholderText
+                      ? placeHolderText[60][0]
+                      : DSCtx.dailyPrompts["60"].split(" ")[0]}
+                  </div>
+                  <div>
+                    {!hidePlaceholderText
+                      ? placeHolderText[60][1]
+                      : DSCtx.dailyPrompts["60"].split(" ")[1]}
+                  </div>
                 </div>
               </div>
               <div
@@ -720,10 +776,22 @@ const PromptSelection = () => {
                 <div className={classes.timeBorder}>3 Minutes</div>
 
                 <div
+                  style={{
+                    filter: hidePlaceholderText ? "" : "blur(5px)",
+                    transition: "all 200ms",
+                  }}
                   className={`${classes.promptTextMargin} ${baseClasses.baseVertFlex}`}
                 >
-                  <div>{DSCtx.dailyPrompts["180"].split(" ")[0]}</div>
-                  <div>{DSCtx.dailyPrompts["180"].split(" ")[1]}</div>
+                  <div>
+                    {!hidePlaceholderText
+                      ? placeHolderText[180][0]
+                      : DSCtx.dailyPrompts["180"].split(" ")[0]}
+                  </div>
+                  <div>
+                    {!hidePlaceholderText
+                      ? placeHolderText[180][1]
+                      : DSCtx.dailyPrompts["180"].split(" ")[1]}
+                  </div>
                 </div>
               </div>
               <div
@@ -740,10 +808,22 @@ const PromptSelection = () => {
                 <div className={classes.timeBorder}>5 Minutes</div>
 
                 <div
+                  style={{
+                    filter: hidePlaceholderText ? "" : "blur(5px)",
+                    transition: "all 200ms",
+                  }}
                   className={`${classes.promptTextMargin} ${baseClasses.baseVertFlex}`}
                 >
-                  <div>{DSCtx.dailyPrompts["300"].split(" ")[0]}</div>
-                  <div>{DSCtx.dailyPrompts["300"].split(" ")[1]}</div>
+                  <div>
+                    {!hidePlaceholderText
+                      ? placeHolderText[300][0]
+                      : DSCtx.dailyPrompts["300"].split(" ")[0]}
+                  </div>
+                  <div>
+                    {!hidePlaceholderText
+                      ? placeHolderText[300][1]
+                      : DSCtx.dailyPrompts["300"].split(" ")[1]}
+                  </div>
                 </div>
               </div>
             </div>
