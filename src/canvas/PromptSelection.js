@@ -62,7 +62,9 @@ const PromptSelection = () => {
     classes.disabled,
   ]);
 
-  const [hidePlaceholderText, setHidePlaceholderText] = useState(false);
+  const [hidePlaceholderText, setHidePlaceholderText] = useState(
+    !DSCtx.startFromLeft
+  );
 
   const [durationOptions, setDurationOptions] = useState();
   const [adjectiveOptions, setAdjectiveOptions] = useState();
@@ -353,15 +355,15 @@ const PromptSelection = () => {
       if (DSCtx.extraPrompt.seconds === 60) {
         setFormattedSeconds("1 Minute");
         setAdaptiveBackground(classes.redBackground);
-        setExtraDurationIcon(<OneMinuteIcon dimensions={"3.5em"} />);
+        setExtraDurationIcon(<OneMinuteIcon dimensions={"3em"} />);
       } else if (DSCtx.extraPrompt.seconds === 180) {
         setFormattedSeconds("3 Minutes");
         setAdaptiveBackground(classes.yellowBackground);
-        setExtraDurationIcon(<ThreeMinuteIcon dimensions={"3.5em"} />);
+        setExtraDurationIcon(<ThreeMinuteIcon dimensions={"3em"} />);
       } else {
         setFormattedSeconds("5 Minutes");
         setAdaptiveBackground(classes.greenBackground);
-        setExtraDurationIcon(<FiveMinuteIcon dimensions={"3.5em"} />);
+        setExtraDurationIcon(<FiveMinuteIcon dimensions={"3em"} />);
       }
 
       if (DSCtx.startFromLeft) {
@@ -739,7 +741,7 @@ const PromptSelection = () => {
                   );
                 }}
               >
-                <OneMinuteIcon dimensions={"3.5em"} />
+                <OneMinuteIcon dimensions={"3em"} />
 
                 <div className={classes.timeBorder}>1 Minute</div>
 
@@ -771,7 +773,7 @@ const PromptSelection = () => {
                   );
                 }}
               >
-                <ThreeMinuteIcon dimensions={"3.5em"} />
+                <ThreeMinuteIcon dimensions={"3em"} />
 
                 <div className={classes.timeBorder}>3 Minutes</div>
 
@@ -803,7 +805,7 @@ const PromptSelection = () => {
                   );
                 }}
               >
-                <FiveMinuteIcon dimensions={"3.5em"} />
+                <FiveMinuteIcon dimensions={"3em"} />
 
                 <div className={classes.timeBorder}>5 Minutes</div>
 

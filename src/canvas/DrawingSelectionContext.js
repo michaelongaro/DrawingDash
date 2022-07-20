@@ -264,6 +264,7 @@ export function DrawingSelectionProvider(props) {
     setStartNewDailyWordsAnimation: setStartNewDailyWordsAnimation,
 
     promptRefreshes: promptRefreshes,
+    setPromptRefreshes: setPromptRefreshes,
     drawingStatusRefreshes: drawingStatusRefreshes,
     setDrawingStatusRefreshes: setDrawingStatusRefreshes,
 
