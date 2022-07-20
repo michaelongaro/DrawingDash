@@ -91,7 +91,6 @@ export function SearchProvider(props) {
     let flattenedIDs = [];
 
     for (const titles of Object.values(fullTitles)) {
-      // console.log(titles["drawingID"]);
       flattenedIDs.push(titles["drawingID"]);
     }
     return flattenedIDs.flat();
@@ -106,10 +105,6 @@ export function SearchProvider(props) {
     console.log("updated pageselectorDetails with", value);
     setPageSelectorDetails(tempValues);
   }
-
-  // shiet idk think of clean way to distinguish between regular honestly
-  // probably just strip the last 5 chars and see if it is equal to "likes" or whatever ahhhhhhhhh
-  // because the idx shiet is everywhere honestly probably just keep it
 
   function getGallary(startIdx, endIdx, maxAllowed, idx, dbPath) {
     const dbRef = ref(getDatabase(app));

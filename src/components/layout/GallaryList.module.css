@@ -71,15 +71,15 @@
 }
 
 .hoverRed {
-  background: linear-gradient(to bottom, #ffffff, rgb(255 0 0 / 40%));
+  background: linear-gradient(170deg, #ffffff, rgb(255 0 0 / 90%));
 }
 
 .hoverYellow {
-  background: linear-gradient(to bottom, #ffffff, rgb(255 255 0 / 40%));
+  background: linear-gradient(170deg, #ffffff, rgb(255 255 0 / 90%));
 }
 
 .hoverGreen {
-  background: linear-gradient(to bottom, #ffffff, rgb(0 255 0 / 40%));
+  background: linear-gradient(170deg, #ffffff, rgb(0 255 0 / 90%));
 }
 
 .darken {

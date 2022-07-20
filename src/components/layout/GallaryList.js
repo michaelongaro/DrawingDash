@@ -187,9 +187,9 @@ const GallaryList = ({
                 position: "relative",
 
                 background:
-                  !redOpacity && durationStates[0]
-                    ? "linear-gradient(to bottom, #FFFFFF, rgb(255 0 0 / 40%))"
-                    : "linear-gradient(to bottom, rgb(194 194 194 / 40%), #FFFFFF)",
+                  redOpacity === 0 && durationStates[0]
+                    ? "linear-gradient(to bottom, #FFFFFF, rgb(255 0 0 / 70%))"
+                    : "linear-gradient(to bottom, rgb(194 194 194 / 70%), #FFFFFF)",
 
                 border: "solid red",
 
@@ -252,9 +252,9 @@ const GallaryList = ({
                 position: "relative",
 
                 background:
-                  !yellowOpacity && durationStates[1]
-                    ? "linear-gradient(to bottom, #FFFFFF, rgb(255 255 0 / 40%))"
-                    : "linear-gradient(to bottom, rgb(194 194 194 / 40%), #FFFFFF)",
+                  yellowOpacity === 0 && durationStates[1]
+                    ? "linear-gradient(to bottom, #FFFFFF, rgb(255 255 0 / 70%))"
+                    : "linear-gradient(to bottom, rgb(194 194 194 / 70%), #FFFFFF)",
 
                 border: "solid yellow",
 
@@ -315,9 +315,9 @@ const GallaryList = ({
                 position: "relative",
 
                 background:
-                  !greenOpacity && durationStates[2]
-                    ? "linear-gradient(to bottom, #FFFFFF, rgb(0 255 0 / 40%))"
-                    : "linear-gradient(to bottom, rgb(194 194 194 / 40%), #FFFFFF)",
+                  greenOpacity === 0 && durationStates[2]
+                    ? "linear-gradient(to bottom, #FFFFFF, rgb(0 255 0 / 70%))"
+                    : "linear-gradient(to bottom, rgb(194 194 194 / 70%), #FFFFFF)",
 
                 border: "solid green",
                 borderWidth: "2px 2px 0 2px",
