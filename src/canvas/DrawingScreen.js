@@ -631,7 +631,7 @@ const DrawingScreen = () => {
 
     // if user is completing a (now) old prompt, then don't update
     // their drawingStatuses
-    if (Object.values(DSCtx.dailyPrompts).includes(DSCtx.currentPrompt)) {
+    if (!Object.values(DSCtx.dailyPrompts).includes(DSCtx.currentPrompt)) {
       let tempUpdatedStatuses = DSCtx.drawingStatuses;
       if (
         tempUpdatedStatuses["60"] &&
