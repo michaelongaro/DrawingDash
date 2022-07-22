@@ -56,7 +56,7 @@ function MainNavigation() {
 
   // user profile info states
   const [username, setUsername] = useState();
-  const [firstTimeVisiting, setFirstTimeVisiting] = useState();
+  const [firstTimeVisiting, setFirstTimeVisiting] = useState(true);
 
   const [profilePicture, setProfilePicture] = useState();
   const [image, setImage] = useState(null);
@@ -170,15 +170,16 @@ function MainNavigation() {
         }
       });
 
-      get(child(dbRef, `users/${user.sub}/firstTimeVisting`)).then(
+      get(child(dbRef, `users/${user.sub}/firstTimeVisiting`)).then(
         (snapshot) => {
           if (snapshot.exists()) {
             if (snapshot.val()) {
-              setFirstTimeVisiting(true);
               set(
                 ref_database(db, `users/${user.sub}/firstTimeVisiting`),
                 false
               );
+            } else {
+              setFirstTimeVisiting(false);
             }
           }
         }
