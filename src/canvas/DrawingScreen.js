@@ -393,15 +393,19 @@ const DrawingScreen = () => {
       index: uniqueID,
     };
 
-    let tempUpdatedStatuses = DSCtx.drawingStatuses;
+    // if user is completing a (now) old prompt, then don't update
+    // their drawingStatuses
+    if (!Object.values(DSCtx.dailyPrompts).includes(DSCtx.currentPrompt)) {
+      let tempUpdatedStatuses = DSCtx.drawingStatuses;
 
-    tempUpdatedStatuses[DSCtx.drawingTime] = true;
+      tempUpdatedStatuses[DSCtx.drawingTime] = true;
 
-    // updating daily completed prompts in localStorage
-    currentStorageValues["dailyCompletedPrompts"] = tempUpdatedStatuses;
-    // updating daily completed prompts in context
-    DSCtx.setDrawingStatuses(tempUpdatedStatuses);
-    DSCtx.setDrawingStatusRefreshes((refreshes) => refreshes + 1);
+      // updating daily completed prompts in localStorage
+      currentStorageValues["dailyCompletedPrompts"] = tempUpdatedStatuses;
+      // updating daily completed prompts in context
+      DSCtx.setDrawingStatuses(tempUpdatedStatuses);
+      DSCtx.setDrawingStatusRefreshes((refreshes) => refreshes + 1);
+    }
 
     // actually setting user localstorage with all updated values
     localStorage.setItem(
@@ -625,20 +629,24 @@ const DrawingScreen = () => {
       }
     );
 
-    let tempUpdatedStatuses = DSCtx.drawingStatuses;
-    if (
-      tempUpdatedStatuses["60"] &&
-      tempUpdatedStatuses["180"] &&
-      tempUpdatedStatuses["300"]
-    ) {
-      tempUpdatedStatuses["extra"] = true;
-    } else {
-      tempUpdatedStatuses[DSCtx.drawingTime] = true;
+    // if user is completing a (now) old prompt, then don't update
+    // their drawingStatuses
+    if (Object.values(DSCtx.dailyPrompts).includes(DSCtx.currentPrompt)) {
+      let tempUpdatedStatuses = DSCtx.drawingStatuses;
+      if (
+        tempUpdatedStatuses["60"] &&
+        tempUpdatedStatuses["180"] &&
+        tempUpdatedStatuses["300"]
+      ) {
+        tempUpdatedStatuses["extra"] = true;
+      } else {
+        tempUpdatedStatuses[DSCtx.drawingTime] = true;
+      }
+      set(
+        ref(db, `users/${user.sub}/completedDailyPrompts`),
+        tempUpdatedStatuses
+      );
     }
-    set(
-      ref(db, `users/${user.sub}/completedDailyPrompts`),
-      tempUpdatedStatuses
-    );
 
     setStartTimer(false);
   };
@@ -952,13 +960,18 @@ const DrawingScreen = () => {
                         }}
                       >
                         <div style={{ position: "relative" }}>
-                          <div
-                            className={classes.download}
+                          <button
+                            style={{
+                              display: "flex",
+                              gap: "0.75em",
+                              fontSize: "16px",
+                            }}
+                            className={`${baseClasses.nextButton} ${baseClasses.baseFlex}`}
                             onClick={downloadDrawing}
                           >
                             <div>Download</div>
-                            <DownloadIcon color={"#000"} />
-                          </div>
+                            <DownloadIcon color={"#FFF"} />
+                          </button>
                           <div
                             style={{
                               opacity:

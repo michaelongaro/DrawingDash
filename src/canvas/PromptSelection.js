@@ -43,13 +43,16 @@ const PromptSelection = () => {
   const dbRef = ref_database(getDatabase(app));
 
   const placeHolderText = {
-    60: ["Marching", "Orangutang"],
+    60: ["Marching", "Orangutan"],
     180: ["Swiftly", "Champagne"],
     300: ["Bearish", "Swindle"],
   };
 
   // classes.hide
   const [showExtraPrompt, setShowExtraPrompt] = useState(false);
+  const [extraPromptHasBeenAnimated, setExtraPromptHasBeenAnimated] =
+    useState(false);
+
   const [formattedSeconds, setFormattedSeconds] = useState("");
   const [adaptiveBackground, setAdaptiveBackground] = useState("");
   const [customAdaptiveBackground, setCustomAdaptiveBackground] = useState(
@@ -57,6 +60,7 @@ const PromptSelection = () => {
   ); // temporary
   const [extraDurationIcon, setExtraDurationIcon] = useState();
   const [stylingButtonClasses, setStylingButtonClasses] = useState([
+    classes.disabled,
     classes.disabled,
     classes.disabled,
     classes.disabled,
@@ -92,9 +96,50 @@ const PromptSelection = () => {
   const [customAdjectiveClicked, setCustomAdjectiveClicked] = useState(false);
   const [customNounClicked, setCustomNounClicked] = useState(false);
 
-  const [postCountdown, setPostCountdown] = useState(false);
+  const [comingShortlyTimeoutComplete, setComingShortlyTimeoutComplete] =
+    useState(false);
 
-  // maybe just have special case for unregistered users, since seeing f f f will trigger "log in" stuff
+  const [
+    showPromptsComingShortlyContainer,
+    setShowPromptsComingShortlyContainer,
+  ] = useState(false);
+
+  useEffect(() => {
+    if (comingShortlyTimeoutComplete)
+      if (
+        !DSCtx.resetComplete &&
+        !showCountdownTimer &&
+        DSCtx.drawingStatusRefreshes > 0
+      ) {
+        // making sure to get up to date values of context
+        setShowPromptsComingShortlyContainer(true);
+      }
+  }, [
+    DSCtx.resetComplete,
+    showCountdownTimer,
+    DSCtx.drawingStatusRefreshes,
+    comingShortlyTimeoutComplete,
+  ]);
+
+  useEffect(() => {
+    let comingShortlyTimeoutID;
+    if (
+      !DSCtx.resetComplete &&
+      !showCountdownTimer &&
+      DSCtx.drawingStatusRefreshes > 0
+    ) {
+      setTimeout(() => {
+        setComingShortlyTimeoutComplete(true);
+      }, 1500);
+    }
+
+    return () => {
+      if (comingShortlyTimeoutID) {
+        clearTimeout(comingShortlyTimeoutID);
+      }
+    };
+  }, [DSCtx.resetComplete, showCountdownTimer, DSCtx.drawingStatusRefreshes]);
+
   const [adjustedDrawingStatuses, setAdjustedDrawingStatuses] = useState({
     60: true,
     180: true,
@@ -107,14 +152,39 @@ const PromptSelection = () => {
       DSCtx.drawingStatusRefreshes,
       DSCtx.promptRefreshes
     );
-    // adjust prompt statuses when both prompts + drawings statuses have been fully fetched
-    if (DSCtx.drawingStatusRefreshes > 0 && DSCtx.promptRefreshes === 1) {
-      setAdjustedDrawingStatuses(DSCtx.drawingStatuses);
+    if (!isLoading) {
+      if (
+        DSCtx.resetComplete &&
+        DSCtx.promptRefreshes === 1 &&
+        DSCtx.drawingStatusRefreshes > 0
+      ) {
+        console.log("FINISHED INSIDE OTHER PLACE");
+        setAdjustedDrawingStatuses(DSCtx.drawingStatuses);
+      } else if (!DSCtx.resetComplete) {
+        console.log("manually disabling allz");
+        if (isAuthenticated) {
+          setAdjustedDrawingStatuses({
+            60: true,
+            180: true,
+            300: true,
+            extra: true,
+          });
+        } else if (!isAuthenticated) {
+          setAdjustedDrawingStatuses({
+            60: true,
+            180: true,
+            300: true,
+          });
+        }
+      }
     }
   }, [
+    isLoading,
+    isAuthenticated,
     DSCtx.drawingStatuses,
     DSCtx.drawingStatusRefreshes,
     DSCtx.promptRefreshes,
+    DSCtx.resetComplete,
   ]);
 
   // for custom prompt dropdown
@@ -133,59 +203,187 @@ const PromptSelection = () => {
   }, [customDurationClicked, customAdjectiveClicked, customNounClicked]);
 
   useEffect(() => {
+    if (showPromptsComingShortlyContainer || showCountdownTimer) {
+      if (
+        !isEqual(DSCtx.PBStates, {
+          selectCircle: false,
+          chooseCircle: false,
+          drawCircle: false,
+          selectToChooseBar: false,
+          chooseToDrawBar: false,
+          resetToSelectBar: false,
+        })
+      ) {
+        // change to all being false/default
+        DSCtx.setPBStates({
+          selectCircle: false,
+          chooseCircle: false,
+          drawCircle: false,
+          selectToChooseBar: false,
+          chooseToDrawBar: false,
+          resetToSelectBar: false,
+        });
+
+        DSCtx.setRevertSelectCircle(true);
+
+        // should be reverse values below
+        anime({
+          targets: "#regularPromptText",
+          top: [0, "-25px"],
+          opacity: [1, 0],
+          scale: [1, 0],
+          pointerEvents: ["none", "auto"],
+          direction: "normal",
+          duration: 500,
+
+          loop: false,
+          easing: "linear",
+        });
+      }
+    }
+  }, [DSCtx.PBStates, showCountdownTimer, showPromptsComingShortlyContainer]);
+
+  useEffect(() => {
     if (DSCtx.startNewDailyWordsAnimation) {
       console.log("STAHTED");
-      setBlur(false);
 
-      // animate signup/login container down into view
-      anime({
-        targets: "#registerContainer",
-        opacity: [1, 0],
-        scale: [1, 0],
-        direction: "normal",
-        duration: 400,
-        easing: "linear",
+      DSCtx.setPromptRefreshes(1);
+      DSCtx.setDrawingStatusRefreshes(1);
+
+      console.log("reset adj 0");
+      setAdjustedDrawingStatuses({
+        60: true,
+        180: true,
+        300: true,
       });
 
-      // animate progress bar + select text to active state
-      DSCtx.updatePBStates("selectCircle", true);
+      // animate signup/login container down out of view if it is showing
+      if (showPromptsComingShortlyContainer) {
+        console.log("FINISHED IN STAHTED");
 
-      // animate "a drawing Prompt" into view
-      anime({
-        targets: "#regularPromptText",
-        // translateY: [0, "25px"],
-        opacity: [0, 1],
-        scale: [0, 1],
-        pointerEvents: ["auto", "none"],
-        direction: "normal",
-        duration: 500,
-        // delay: 350,
+        if (blur) {
+          anime({
+            targets: "#registerContainer",
+            opacity: [1, 0],
+            scale: [1, 0],
+            direction: "normal",
+            duration: 400,
+            easing: "linear",
+          });
 
-        loop: false,
-        easing: "linear",
-      });
-      // animate countdown container out of view
+          setBlur(false);
+        }
 
-      anime({
-        targets: "#countdownContainer",
-        translateY: [0, "25px"],
-        opacity: [1, 0],
-        scale: [1, 0],
-        pointerEvents: ["auto", "none"],
-        direction: "normal",
-        duration: 500,
-        // delay: 350,
+        setHidePlaceholderText(true);
 
-        loop: false,
-        easing: "linear",
-        complete: () => {
-          setShowCountdownTimer(false);
-        },
-      });
+        // animate progress bar + select text to active state
+        DSCtx.updatePBStates("selectCircle", true);
 
+        // animate "a drawing Prompt" into view
+        anime({
+          targets: "#regularPromptText",
+          top: ["-25px", 0],
+          opacity: [0, 1],
+          scale: [0, 1],
+          pointerEvents: ["auto", "none"],
+          direction: "normal",
+          duration: 500,
+          // delay: 350,
+
+          loop: false,
+          easing: "linear",
+        });
+
+        setShowPromptsComingShortlyContainer(false);
+      }
+
+      // fading extra container and showing regular container
+      if (showExtraPrompt && extraPromptHasBeenAnimated) {
+        console.log(
+          "db was reset and we were prev showing extraPrompts",
+          showExtraPrompt
+        );
+        // animate "An Extra Drawing Prompt" out of view
+        anime({
+          targets: "#extraPromptText",
+          // translateY: [0, "25px"],
+          opacity: [1, 0],
+          // scale: [0, 1],
+          pointerEvents: ["auto", "none"],
+          direction: "normal",
+          // delay: 500,
+          loop: false,
+          duration: 1000,
+          easing: "linear",
+        });
+
+        // animate "A Drawing Prompt" into view
+        anime({
+          targets: "#regularPromptText",
+          translateY: 0,
+          top: 0,
+          opacity: [0, 1],
+          scale: 1,
+          pointerEvents: "auto",
+          direction: "normal",
+          duration: 1000,
+          // delay: 350,
+
+          loop: false,
+          easing: "linear",
+        });
+
+        // animate extra drawing prompts container out of view
+        anime({
+          targets: "#extraPromptContainer",
+          // translateY: ["-225px", 0],
+          // delay: 200,
+          opacity: [1, 0],
+          // scale: [0, 1],
+          // delay: 500,
+
+          pointerEvents: "none",
+          direction: "normal",
+          loop: false,
+
+          duration: 1000,
+          easing: "linear",
+        });
+
+        // animate normal drawing prompts container into view
+        anime({
+          targets: "#normalPromptContainer",
+          translateY: 0,
+          scale: 1,
+          top: 0,
+          opacity: [0, 1],
+          // delay: 350,
+
+          pointerEvents: "auto",
+          direction: "normal",
+          duration: 1000,
+          loop: false,
+
+          easing: "linear",
+        });
+
+        anime({
+          targets: "#nextButton",
+          // translateY: "1300px",
+          // height: [0, "100%"],
+
+          loop: false,
+          opacity: [1, 0],
+          direction: "normal",
+          duration: 1000,
+          easing: "linear",
+        });
+      }
+
+      // DSCtx.setExtraPromptsShown(false);
       DSCtx.setStartNewDailyWordsAnimation(false);
     }
-  }, [DSCtx.startNewDailyWordsAnimation]);
+  }, [DSCtx.startNewDailyWordsAnimation, showExtraPrompt]);
 
   useEffect(() => {
     if (!isLoading && isAuthenticated) {
@@ -209,11 +407,14 @@ const PromptSelection = () => {
         setShowExtraPrompt(true);
       }
 
-      setStylingButtonClasses([
-        adjustedDrawingStatuses["60"] ? classes.disabled : classes.pointer,
-        adjustedDrawingStatuses["180"] ? classes.disabled : classes.pointer,
-        adjustedDrawingStatuses["300"] ? classes.disabled : classes.pointer,
-      ]);
+      if (DSCtx.drawingStatuses?.["extra"] !== undefined) {
+        setStylingButtonClasses([
+          adjustedDrawingStatuses["60"] ? classes.disabled : classes.pointer,
+          adjustedDrawingStatuses["180"] ? classes.disabled : classes.pointer,
+          adjustedDrawingStatuses["300"] ? classes.disabled : classes.pointer,
+          adjustedDrawingStatuses["extra"] ? classes.disabled : classes.pointer,
+        ]);
+      }
 
       setDurationOptions([
         {
@@ -309,10 +510,11 @@ const PromptSelection = () => {
         setShowCountdownTimer(true);
       }
 
+      // move below to adjusted?
       setStylingButtonClasses([
-        DSCtx.drawingStatuses["60"] ? classes.disabled : classes.pointer,
-        DSCtx.drawingStatuses["180"] ? classes.disabled : classes.pointer,
-        DSCtx.drawingStatuses["300"] ? classes.disabled : classes.pointer,
+        adjustedDrawingStatuses["60"] ? classes.disabled : classes.pointer,
+        adjustedDrawingStatuses["180"] ? classes.disabled : classes.pointer,
+        adjustedDrawingStatuses["300"] ? classes.disabled : classes.pointer,
       ]);
     }
   }, [
@@ -348,6 +550,7 @@ const PromptSelection = () => {
   useEffect(() => {
     if (
       showExtraPrompt &&
+      !extraPromptHasBeenAnimated &&
       DSCtx.extraPrompt.title !== "" &&
       !DSCtx.drawingStatuses["extra"]
     ) {
@@ -367,6 +570,8 @@ const PromptSelection = () => {
       }
 
       if (DSCtx.startFromLeft) {
+        console.log("doing init extraPrompts animation");
+
         // animate "A Drawing Prompt" down out of view
         anime({
           targets: "#regularPromptText",
@@ -430,7 +635,7 @@ const PromptSelection = () => {
 
         anime({
           targets: "#nextButton",
-          // translateY: "1312px",
+          // translateY: "1300px",
           // height: [0, "100%"],
 
           loop: false,
@@ -439,8 +644,13 @@ const PromptSelection = () => {
           direction: "normal",
           duration: 1500,
           easing: "linear",
+          complete: () => {
+            setExtraPromptHasBeenAnimated(true);
+          },
         });
       }
+
+      // DSCtx.setExtraPromptsShown(true);
     } else {
       if (
         DSCtx.drawingStatuses["60"] &&
@@ -448,6 +658,8 @@ const PromptSelection = () => {
         DSCtx.drawingStatuses["300"] &&
         Object.keys(DSCtx.drawingStatuses).length === 3
       ) {
+        console.log("unjustly set blur to true", DSCtx.drawingStatuses);
+
         // blurring out the regular prompts
         setBlur(true);
 
@@ -497,48 +709,50 @@ const PromptSelection = () => {
         selectToChooseBar: false,
         chooseToDrawBar: false,
         resetToSelectBar: false,
-      })
+      }) &&
+      DSCtx.resetComplete
     ) {
       // if some prompts are still not done when daily drawings reset,
       // manually reset PromptRefreshes and start animation of selectCircle
-      if (
-        DSCtx.promptRefreshes === 2 &&
-        DSCtx.drawingStatusRefreshes > 0 &&
-        DSCtx.drawingStatusRefreshes < 6
-      ) {
-        if (!isLoading && isAuthenticated) {
-          if (
-            !DSCtx.drawingStatuses["60"] ||
-            !DSCtx.drawingStatuses["180"] ||
-            !DSCtx.drawingStatuses["300"] ||
-            !DSCtx.drawingStatuses["extra"]
-          ) {
-            setHidePlaceholderText(true);
-            console.log("resetting dis shiii");
-            DSCtx.updatePBStates("selectCircle", true);
-            DSCtx.setPromptRefreshes(1);
-            DSCtx.setDrawingStatusRefreshes(1);
-          }
-        } else if (!isLoading && !isAuthenticated) {
-          if (
-            !DSCtx.drawingStatuses["60"] ||
-            !DSCtx.drawingStatuses["180"] ||
-            !DSCtx.drawingStatuses["300"]
-          ) {
-            setHidePlaceholderText(true);
-            DSCtx.updatePBStates("selectCircle", true);
-            DSCtx.setPromptRefreshes(1);
-            DSCtx.setDrawingStatusRefreshes(1);
-          }
-        }
-      }
+      // if (
+      //   DSCtx.promptRefreshes === 2 &&
+      //   DSCtx.drawingStatusRefreshes > 0 &&
+      //   DSCtx.drawingStatusRefreshes < 6
+      // ) {
+      //   if (!isLoading && isAuthenticated) {
+      //     if (
+      //       !DSCtx.drawingStatuses["60"] ||
+      //       !DSCtx.drawingStatuses["180"] ||
+      //       !DSCtx.drawingStatuses["300"] ||
+      //       !DSCtx.drawingStatuses["extra"]
+      //     ) {
+      //       setHidePlaceholderText(true);
+      //       console.log("resetting dis shiii");
+      //       DSCtx.updatePBStates("selectCircle", true);
+      //       DSCtx.setPromptRefreshes(1);
+      //       DSCtx.setDrawingStatusRefreshes(1);
+      //     }
+      //   } else if (!isLoading && !isAuthenticated) {
+      //     if (
+      //       !DSCtx.drawingStatuses["60"] ||
+      //       !DSCtx.drawingStatuses["180"] ||
+      //       !DSCtx.drawingStatuses["300"]
+      //     ) {
+      //       setHidePlaceholderText(true);
+      //       DSCtx.updatePBStates("selectCircle", true);
+      //       DSCtx.setPromptRefreshes(1);
+      //       DSCtx.setDrawingStatusRefreshes(1);
+      //     }
+      //   }
+      // }
 
       // regular flow (drawings init loaded + not all prompts have been completed)
       // -> start animation of selectCircle
       if (
         DSCtx.promptRefreshes === 1 &&
-        DSCtx.drawingStatusRefreshes > 0 &&
-        DSCtx.drawingStatusRefreshes < 6
+        DSCtx.drawingStatusRefreshes > 0
+        // &&
+        // DSCtx.drawingStatusRefreshes < 6
       ) {
         if (!isLoading && isAuthenticated) {
           if (
@@ -565,6 +779,7 @@ const PromptSelection = () => {
   }, [
     isLoading,
     isAuthenticated,
+    DSCtx.resetComplete,
     DSCtx.PBStates,
     DSCtx.drawingStatuses,
     DSCtx.promptRefreshes,
@@ -673,6 +888,7 @@ const PromptSelection = () => {
       <div className={classes.timerSelectionsModal}>
         <div
           style={{
+            marginBottom: "2em",
             position: "relative",
             width: "300px",
             height: "25px",
@@ -710,9 +926,11 @@ const PromptSelection = () => {
 
         <div
           style={{
+            // marginTop: "2em",
+            // marginBottom: "2em",
             position: "relative",
             width: "675px",
-            height: "312px",
+            height: "300px",
           }}
         >
           <div
@@ -721,7 +939,7 @@ const PromptSelection = () => {
               position: "absolute",
               top: 0,
               width: "675px",
-              height: "312px",
+              height: "300px",
               opacity: !DSCtx.startFromLeft && showExtraPrompt ? 0 : 1,
             }}
           >
@@ -838,7 +1056,7 @@ const PromptSelection = () => {
               position: "absolute",
               top: 0,
               width: "675px",
-              height: "312px",
+              height: "300px",
               opacity: 1,
               pointerEvents: showExtraPrompt ? "auto" : "none",
             }}
@@ -846,7 +1064,7 @@ const PromptSelection = () => {
             <div className={classes.horizContain}>
               {/* daily extra prompt */}
               <div
-                className={`${classes.durationButton} ${adaptiveBackground}`}
+                className={`${classes.durationButton} ${adaptiveBackground} ${stylingButtonClasses[3]}`}
                 style={{
                   height: "100%",
                   cursor: "pointer",
@@ -872,9 +1090,9 @@ const PromptSelection = () => {
 
               {/* custom prompt */}
               <div
-                className={`${classes.durationButton} ${customAdaptiveBackground}`}
+                className={`${classes.durationButton} ${customAdaptiveBackground} ${stylingButtonClasses[3]}`}
                 style={{
-                  height: "312px",
+                  height: "300px",
                   padding: "1.5em",
                   cursor: "pointer",
                   gap: "1.5em",
@@ -1029,29 +1247,68 @@ const PromptSelection = () => {
           </div>
         </div>
 
-        {showCountdownTimer && (
+        <div
+          style={{
+            marginTop:
+              showCountdownTimer || showPromptsComingShortlyContainer
+                ? "2em"
+                : 0,
+            position: "relative",
+            width:
+              showCountdownTimer || showPromptsComingShortlyContainer
+                ? "450px"
+                : 0,
+            height:
+              showCountdownTimer || showPromptsComingShortlyContainer
+                ? "150px"
+                : 0,
+            opacity:
+              showCountdownTimer || showPromptsComingShortlyContainer ? 1 : 0,
+
+            transition: "all 500ms",
+          }}
+          className={baseClasses.baseFlex}
+        >
           <div
             id={"countdownContainer"}
+            style={{
+              position: "absolute",
+              width: "100%",
+              height: "100%",
+              opacity: showCountdownTimer ? 1 : 0,
+              userSelect: showCountdownTimer ? "auto" : "none",
+              transition: "all 500ms",
+            }}
             className={`${classes.promptRefreshTimer} ${baseClasses.baseVertFlex}`}
           >
-            <div style={{ gap: ".5em" }} className={baseClasses.baseVertFlex}>
-              <div>{`New prompts refresh${postCountdown ? "" : " in"}`}</div>
-              <div>{postCountdown && "soon"}</div>
-            </div>
+            <div className={baseClasses.baseFlex}>New prompts refresh in</div>
 
-            {!postCountdown && (
+            {showCountdownTimer && (
               <Countdown
                 date={resetAtDate}
                 renderer={formatTime}
                 onComplete={() => {
-                  // changes text to "soon" since there will be a delay from when firebase function
-                  // fires (at midnight cst) and when it completes
-                  setPostCountdown(true);
+                  setShowCountdownTimer(false);
                 }}
               />
             )}
           </div>
-        )}
+
+          <div
+            id={"promptsRefreshingShortlyContainer"}
+            style={{
+              position: "absolute",
+              width: "100%",
+              height: "100%",
+              opacity: showPromptsComingShortlyContainer ? 1 : 0,
+              userSelect: showPromptsComingShortlyContainer ? "auto" : "none",
+              transition: "all 500ms",
+            }}
+            className={`${classes.promptRefreshTimer} ${baseClasses.baseFlex}`}
+          >
+            <div>New prompts coming shortly...</div>
+          </div>
+        </div>
       </div>
     </div>
   );

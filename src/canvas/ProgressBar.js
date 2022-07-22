@@ -302,9 +302,61 @@ const ProgressBar = () => {
         }
       }
     } else {
+      // check if isEqual(localPBStates, {
+      //   selectCircle: true,
+      //   chooseCircle: false,
+      //   drawCircle: false,
+      //   selectToChooseBar: false,
+      //   chooseToDrawBar: false,
+      //   resetToSelectBar: false,
+      // })
+
+      // and if THAT is true, then create anime snippets to revert those back to basic shiet
+      // circle not filled and select text back in basic form at top
+      // THEN you should be able to set local PB states below as it is
+
+      if (DSCtx.revertSelectCircle) {
+        console.log(
+          "resetting PB since shortly/timer is showing now",
+          DSCtx.PBStates
+        );
+
+        // resetting states to init
+        anime({
+          targets: "#select",
+          loop: false,
+          width: ["28px", 0],
+          minHeight: ["28px", 0],
+          direction: "normal",
+          duration: 300,
+          easing: "easeInSine",
+        });
+
+        anime({
+          targets: "#selectText",
+          loop: false,
+          direction: "normal",
+          delay: 150,
+          duration: 500,
+          translateX: ["265px", 0],
+          translateY: ["170px", 0],
+          fontSize: ["1.5em", "1.25em"],
+          fontWeight: [600, 400],
+          color: ["rgb(0, 0, 0)", "rgb(100, 100, 100)"],
+          easing: "easeInSine",
+        });
+
+        DSCtx.setRevertSelectCircle(false);
+      }
       setLocalPBStates(DSCtx.PBStates);
     }
-  }, [isLoading, isAuthenticated, DSCtx.PBStates, localPBStates]);
+  }, [
+    isLoading,
+    isAuthenticated,
+    DSCtx.revertSelectCircle,
+    DSCtx.PBStates,
+    localPBStates,
+  ]);
 
   return (
     <div className={classes.rectangle}>

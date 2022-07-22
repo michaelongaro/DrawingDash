@@ -54,16 +54,7 @@ const PaletteChooser = () => {
       direction: "normal",
       duration: 500,
       easing: "easeInSine",
-      // complete: () => {
-      //   DSCtx.updatePBStates("resetToSelectBar", true);
-      // },
     });
-
-    return () => {
-      // ahh idk have to move this maybe into start of other components,
-      // don't want it to override the slideinfromleft(false) below
-      // DSCtx.setStartFromLeft(true);
-    };
   }, []);
 
   function updatePaletteAndCheckmarkStates(event, idx) {
@@ -136,7 +127,6 @@ const PaletteChooser = () => {
             }}
           />
           <div className={visibilityOfOverlays[0]}>?</div>
-          {/* {statusOfCheckmarks[0] && ( */}
           <div
             className={classes.circle}
             style={{
@@ -156,7 +146,6 @@ const PaletteChooser = () => {
               className={`${statusOfCheckmarks[0]} ${classes.checkmark}`}
             ></div>
           </div>
-          {/* )} */}
         </div>
 
         <div
@@ -173,7 +162,6 @@ const PaletteChooser = () => {
             }}
           />
           <div className={visibilityOfOverlays[1]}>?</div>
-          {/* {statusOfCheckmarks[1] && ( */}
           <div
             className={classes.circle}
             style={{
@@ -193,7 +181,6 @@ const PaletteChooser = () => {
               className={`${statusOfCheckmarks[1]} ${classes.checkmark}`}
             ></div>
           </div>
-          {/* )} */}
         </div>
 
         <div
@@ -210,7 +197,6 @@ const PaletteChooser = () => {
             }}
           />
           <div className={visibilityOfOverlays[2]}>?</div>
-          {/* {statusOfCheckmarks[2] && ( */}
           <div
             className={classes.circle}
             style={{
@@ -230,7 +216,6 @@ const PaletteChooser = () => {
               className={`${statusOfCheckmarks[2]} ${classes.checkmark}`}
             ></div>
           </div>
-          {/* )} */}
         </div>
       </div>
       <div className={classes.horizContain}>
@@ -250,7 +235,6 @@ const PaletteChooser = () => {
 
           <div className={visibilityOfOverlays[3]}>?</div>
 
-          {/* {statusOfCheckmarks[3] && ( */}
           <div
             className={classes.circle}
             style={{
@@ -270,7 +254,6 @@ const PaletteChooser = () => {
               className={`${statusOfCheckmarks[3]} ${classes.checkmark}`}
             ></div>
           </div>
-          {/* )} */}
         </div>
 
         <div
@@ -287,7 +270,6 @@ const PaletteChooser = () => {
             }}
           />
           <div className={visibilityOfOverlays[4]}>?</div>
-          {/* {statusOfCheckmarks[4] && ( */}
           <div
             className={classes.circle}
             style={{
@@ -307,7 +289,6 @@ const PaletteChooser = () => {
               className={`${statusOfCheckmarks[4]} ${classes.checkmark}`}
             ></div>
           </div>
-          {/* )} */}
         </div>
       </div>
       <div className={classes.flexContainer}>

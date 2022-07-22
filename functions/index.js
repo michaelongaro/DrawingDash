@@ -32,16 +32,38 @@ exports.dailyRefreshAndReset = functions.pubsub
   .schedule("every day 00:00")
   .timeZone("America/Chicago")
   .onRun((context) => {
+    // starting reset process, resetting complete status to false
+    database.ref(`resetComplete`).set(false);
+
+    let promptsSet,
+      statusesSet,
+      resetComplete = false;
+
     // setting new daily prompts
     fetchDailyWords().then((response) => {
       const data = response.map((res) => res.data);
       const flattenedData = data.flat();
 
-      database.ref("dailyPrompts/").set({
-        60: `${capitalize(flattenedData[0])} ${capitalize(flattenedData[1])}`,
-        180: `${capitalize(flattenedData[2])} ${capitalize(flattenedData[3])}`,
-        300: `${capitalize(flattenedData[4])} ${capitalize(flattenedData[5])}`,
-      });
+      database
+        .ref("dailyPrompts")
+        .set({
+          60: `${capitalize(flattenedData[0])} ${capitalize(flattenedData[1])}`,
+          180: `${capitalize(flattenedData[2])} ${capitalize(
+            flattenedData[3]
+          )}`,
+          300: `${capitalize(flattenedData[4])} ${capitalize(
+            flattenedData[5]
+          )}`,
+        })
+        .then(() => {
+          if (!resetComplete) {
+            promptsSet = true;
+            if (statusesSet) {
+              database.ref(`resetComplete`).set(true);
+              resetComplete = true;
+            }
+          }
+        });
     });
 
     // this date is used as a reference to count down to inside of
@@ -78,12 +100,24 @@ exports.dailyRefreshAndReset = functions.pubsub
             });
           });
 
-          database.ref(`users/${user}/completedDailyPrompts`).set({
-            60: false,
-            180: false,
-            300: false,
-            extra: false,
-          });
+          database
+            .ref(`users/${user}/completedDailyPrompts`)
+            .set({
+              60: false,
+              180: false,
+              300: false,
+              extra: false,
+            })
+            .then(() => {
+              if (!resetComplete) {
+                statusesSet = true;
+
+                if (promptsSet) {
+                  database.ref(`resetComplete`).set(true);
+                  resetComplete = true;
+                }
+              }
+            });
         }
       });
 
