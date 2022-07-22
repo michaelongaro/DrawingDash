@@ -61,6 +61,9 @@ export const CanvasProvider = ({ children }) => {
     const canvas = canvasRef.current;
     const context = canvas.getContext("2d");
     context.lineWidth = brushSize;
+    contextRef.current.closePath();
+    isDrawing.current = false;
+
     contextRef.current = context;
   }
 
