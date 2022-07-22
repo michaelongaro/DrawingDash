@@ -107,9 +107,6 @@ const GallaryItem = ({ drawingID, settings, idx, dbPath }) => {
   const [hoveringOnUsernameTooltip, setHoveringOnUsernameTooltip] =
     useState(false);
 
-  // used when image is deleted (just for ui purposes)
-  const [hideImage, setHideImage] = useState(false);
-
   const [ableToShowProfilePicture, setAbleToShowProfilePicture] =
     useState(false);
 
@@ -119,8 +116,8 @@ const GallaryItem = ({ drawingID, settings, idx, dbPath }) => {
   const [showTempBaselineSkeleton, setShowTempBaselineSkeleton] =
     useState(true);
 
-  const [deletionCheckpointsReached, setDeletionCheckpointsReached] =
-    useState(0);
+  const [deletionCheckpointReached, setDeletionCheckpointReached] =
+    useState(false);
 
   useEffect(() => {
     if (showDrawingModal || (!isLoading && !isAuthenticated)) {
@@ -213,12 +210,12 @@ const GallaryItem = ({ drawingID, settings, idx, dbPath }) => {
   }, [drawingDetails]);
 
   useEffect(() => {
-    console.log(dbPath, "deleted hoops", deletionCheckpointsReached);
-    if (deletionCheckpointsReached === 3) {
+    if (deletionCheckpointReached) {
       searchCtx.getGallary(0, 6, 6, idx, dbPath);
-      setDeletionCheckpointsReached(0);
+      console.log("called getGallary with", idx, dbPath, "066");
+      setDeletionCheckpointReached(false);
     }
-  }, [dbPath, idx, searchCtx, deletionCheckpointsReached]);
+  }, [dbPath, idx, deletionCheckpointReached]);
 
   useEffect(() => {
     let handler = (event) => {
@@ -351,9 +348,6 @@ const GallaryItem = ({ drawingID, settings, idx, dbPath }) => {
     const uniqueID = drawingDetails.index;
     const user = drawingDetails.drawnBy;
 
-    // could maybe have it fade out for a second and when that finishes update this to true
-    setHideImage(true);
-
     setShowConfirmDeleteModal(false);
 
     // Removing From /drawingLikes
@@ -363,9 +357,7 @@ const GallaryItem = ({ drawingID, settings, idx, dbPath }) => {
     remove(ref(db, `drawings/${uniqueID}`));
 
     // Removing from storage
-    deleteObject(ref_storage(storage, `drawings/${drawingID}.jpg`)).then(() => {
-      setDeletionCheckpointsReached((currNum) => currNum + 1);
-    });
+    deleteObject(ref_storage(storage, `drawings/${drawingID}.jpg`));
 
     // Removing from /titles
     get(child(dbRef, `titles/${seconds}/${title}`)).then((snapshot) => {
@@ -384,8 +376,6 @@ const GallaryItem = ({ drawingID, settings, idx, dbPath }) => {
             drawingID: drawingIDs,
           });
         }
-
-        setDeletionCheckpointsReached((currNum) => currNum + 1);
       }
     });
 
@@ -400,15 +390,20 @@ const GallaryItem = ({ drawingID, settings, idx, dbPath }) => {
           if (drawingIDs.length === 0) {
             console.log("removing whole reg titles of", title);
 
-            remove(ref(db, `users/${user}/titles/${seconds}/${title}`));
+            remove(ref(db, `users/${user}/titles/${seconds}/${title}`)).then(
+              () => {
+                setDeletionCheckpointReached(true);
+              }
+            );
           } else {
             console.log("updating reg titles of", title);
 
             update(ref(db, `users/${user}/titles/${seconds}/${title}`), {
               drawingID: drawingIDs,
+            }).then(() => {
+              setDeletionCheckpointReached(true);
             });
           }
-          setDeletionCheckpointsReached((currNum) => currNum + 1);
         }
       }
     );
@@ -477,7 +472,6 @@ const GallaryItem = ({ drawingID, settings, idx, dbPath }) => {
       style={{
         minWidth: showDrawingModal ? "100vw" : "100%",
         minHeight: showDrawingModal ? "100vh" : "100%",
-        display: hideImage ? "none" : "flex",
       }}
     >
       {/* confirm delete modal */}
