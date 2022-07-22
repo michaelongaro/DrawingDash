@@ -9,7 +9,8 @@
   max-height: 95vh;
   overflow-y: scroll;
 
-  background-color: rgb(235, 235, 235);
+  /* background-color: rgb(235, 235, 235); */
+  background-color: rgb(245, 245, 245);
   padding: 3em;
   border-radius: 1em;
 }
@@ -21,7 +22,8 @@
   align-items: center;
   gap: 1em;
 
-  background-color: rgb(235, 235, 235);
+  /* background-color: rgb(235, 235, 235); */
+  background-color: rgb(245, 245, 245);
   padding: 3em;
   border-radius: 1em;
 }

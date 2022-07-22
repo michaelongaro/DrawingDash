@@ -8,6 +8,7 @@ import OneMinuteIcon from "../../svgs/OneMinuteIcon";
 import ThreeMinuteIcon from "../../svgs/ThreeMinuteIcon";
 
 import "./SlideShowStyles.css";
+
 import classes from "./SlideShow.module.css";
 import baseClasses from "../../index.module.css";
 
@@ -15,6 +16,17 @@ const SlideShow = ({ pinnedDrawings, pinnedMetadata, username }) => {
   console.log(pinnedDrawings, pinnedMetadata);
 
   const [currentSlideshowTitle, setCurrentSlideshowTitle] = useState("");
+
+  const [showTempBaselineSkeleton, setShowTempBaselineSkeleton] =
+    useState(true);
+
+  useEffect(() => {
+    const timerID = setTimeout(() => setShowTempBaselineSkeleton(false), 500);
+
+    return () => {
+      clearTimeout(timerID);
+    };
+  }, []);
 
   const fallbackBackgroundColors = [
     "rgba(255, 0, 0, .3)",
@@ -70,38 +82,92 @@ const SlideShow = ({ pinnedDrawings, pinnedMetadata, username }) => {
 
   return (
     <>
-      <Slide {...properties}>
-        {pinnedDrawings.map((drawing, index) => (
-          <div key={index}>
-            {drawing === "" ? (
-              <div
-                style={{
-                  gap: ".5em",
+      {showTempBaselineSkeleton ? (
+        <div style={{ gap: "1.5em" }} className={baseClasses.baseVertFlex}>
+          <div
+            style={{
+              width: "400px",
+              height: "193px",
+              borderRadius: "1em",
+            }}
+            className={baseClasses.skeletonLoading}
+          ></div>
 
-                  backgroundColor: fallbackBackgroundColors[index],
-                  borderRadius: "1em",
-                  height: "12.0625em",
-                  userSelect: "none",
-                }}
-                className={baseClasses.baseVertFlex}
-              >
-                <div>{username}</div>
-                <div style={{ gap: ".5em" }} className={baseClasses.baseFlex}>
-                  <div>hasn't selected a</div>
-                  {index === 0 && <OneMinuteIcon dimensions={"2.5em"} />}
-                  {index === 1 && <ThreeMinuteIcon dimensions={"2.5em"} />}
-                  {index === 2 && <FiveMinuteIcon dimensions={"2.5em"} />}
-                </div>
-                <div>drawing yet</div>
-              </div>
-            ) : (
-              <img draggable="false" src={drawing} alt="Slideshow" />
-            )}
+          <div style={{ gap: "1em" }} className={baseClasses.baseFlex}>
+            <div
+              style={{
+                width: "2.25em",
+                height: "2.25em",
+                borderRadius: "50%",
+              }}
+              className={baseClasses.skeletonLoading}
+            ></div>
+
+            <div
+              style={{
+                width: "2.25em",
+                height: "2.25em",
+                borderRadius: "50%",
+              }}
+              className={baseClasses.skeletonLoading}
+            ></div>
+
+            <div
+              style={{
+                width: "2.25em",
+                height: "2.25em",
+                borderRadius: "50%",
+              }}
+              className={baseClasses.skeletonLoading}
+            ></div>
           </div>
-        ))}
-      </Slide>
+        </div>
+      ) : (
+        <Slide {...properties}>
+          {pinnedDrawings.map((drawing, index) => (
+            <div key={index}>
+              {drawing === "" ? (
+                <div
+                  style={{
+                    gap: ".5em",
 
-      <div style={{ minHeight: "1.5em" }}>{currentSlideshowTitle}</div>
+                    backgroundColor: fallbackBackgroundColors[index],
+                    borderRadius: "1em",
+                    height: "12.0625em",
+                    userSelect: "none",
+                  }}
+                  className={baseClasses.baseVertFlex}
+                >
+                  <div>{username}</div>
+                  <div style={{ gap: ".5em" }} className={baseClasses.baseFlex}>
+                    <div>hasn't pinned a</div>
+                    {index === 0 && <OneMinuteIcon dimensions={"2.5em"} />}
+                    {index === 1 && <ThreeMinuteIcon dimensions={"2.5em"} />}
+                    {index === 2 && <FiveMinuteIcon dimensions={"2.5em"} />}
+                  </div>
+                  <div>drawing yet</div>
+                </div>
+              ) : (
+                <img draggable="false" src={drawing} alt="Slideshow" />
+              )}
+            </div>
+          ))}
+        </Slide>
+      )}
+
+      {showTempBaselineSkeleton && pinnedDrawings[0] !== "" ? (
+        <div
+          style={{
+            margin: "1em auto 0 auto",
+            width: "200px",
+            height: "1em",
+            borderRadius: "1em",
+          }}
+          className={`${baseClasses.skeletonLoading} ${baseClasses.baseFlex}`}
+        ></div>
+      ) : (
+        <div style={{ minHeight: "1.5em" }}>{currentSlideshowTitle}</div>
+      )}
     </>
   );
 };
