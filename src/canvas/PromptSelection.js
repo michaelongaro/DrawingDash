@@ -1130,7 +1130,9 @@ const PromptSelection = () => {
                         <div
                           style={{
                             opacity: option.disabled ? 0.5 : 1,
+                            padding: ".25em 0",
                           }}
+                          className={baseClasses.baseFlex}
                         >
                           <OneMinuteIcon dimensions={"1.5em"} />
                         </div>
@@ -1139,7 +1141,9 @@ const PromptSelection = () => {
                         <div
                           style={{
                             opacity: option.disabled ? 0.5 : 1,
+                            padding: ".25em 0",
                           }}
+                          className={baseClasses.baseFlex}
                         >
                           <ThreeMinuteIcon dimensions={"1.5em"} />
                         </div>
@@ -1149,7 +1153,9 @@ const PromptSelection = () => {
                         <div
                           style={{
                             opacity: option.disabled ? 0.5 : 1,
+                            padding: ".25em 0",
                           }}
+                          className={baseClasses.baseFlex}
                         >
                           <FiveMinuteIcon dimensions={"1.5em"} />
                         </div>

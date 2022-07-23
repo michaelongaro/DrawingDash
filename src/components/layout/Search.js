@@ -25,17 +25,6 @@ const Search = ({ dbPath, margin, idx, forModal }) => {
 
   const [dbTitles, setDBTitles] = useState(null);
 
-  useEffect(() => {
-    // if we are searching through a user's gallary/likes
-    if (idx !== 0) {
-      searchCtx.getGallary(0, 6, 6, idx, dbPath);
-    }
-
-    return () => {
-      searchCtx.resetAllValues(idx);
-    };
-  }, []);
-
   const [showAdjResults, setShowAdjResults] = useState(false);
   const [showNounResults, setShowNounResults] = useState(false);
 
@@ -50,6 +39,7 @@ const Search = ({ dbPath, margin, idx, forModal }) => {
   const refreshAdjSearch = (event) => {
     searchCtx.updateSearchValues("adjSearch", event.target.value.trim(), idx);
 
+    searchCtx.updateSearchValues("adjKeyboardNavigationIndex", -1, idx);
     setShowAdjResults(true);
 
     if (event.target.value === "") {
@@ -60,12 +50,158 @@ const Search = ({ dbPath, margin, idx, forModal }) => {
   const refreshNounSearch = (event) => {
     searchCtx.updateSearchValues("nounSearch", event.target.value.trim(), idx);
 
+    searchCtx.updateSearchValues("nounKeyboardNavigationIndex", -1, idx);
     setShowNounResults(true);
 
     if (event.target.value === "") {
       setShowNounResults(false);
     }
   };
+
+  useEffect(() => {
+    // if we are searching through a user's gallary/likes
+    if (idx !== 0) {
+      searchCtx.getGallary(0, 6, 6, idx, dbPath);
+    }
+
+    return () => {
+      searchCtx.resetAllValues(idx);
+    };
+  }, []);
+
+  useEffect(() => {
+    // arrowup/down event autofillHandlers
+
+    function arrowKeyHandler(e) {
+      console.log("top func called");
+      // have cases for OOO need to also ahhh see what happens to input when you move it aroun
+
+      // copying context values into smaller, more managable variable names
+
+      let adjIdx = searchCtx.searchValues["adjKeyboardNavigationIndex"][idx];
+      let nounIdx = searchCtx.searchValues["nounKeyboardNavigationIndex"][idx];
+
+      let adjResults = searchCtx.searchValues["requestedAdjectives"][idx];
+      let nounResults = searchCtx.searchValues["requestedNouns"][idx];
+
+      if (e.key === "ArrowDown") {
+        if (showAdjResults) {
+          e.preventDefault();
+          if (adjIdx < adjResults.length - 1) {
+            if (adjResults[adjIdx + 1] === "related") {
+              searchCtx.updateSearchValues(
+                "adjKeyboardNavigationIndex",
+                adjIdx + 2,
+                idx
+              );
+            } else {
+              searchCtx.updateSearchValues(
+                "adjKeyboardNavigationIndex",
+                adjIdx + 1,
+                idx
+              );
+            }
+          }
+        } else if (showNounResults) {
+          e.preventDefault();
+
+          if (nounIdx < nounResults.length - 1) {
+            if (nounResults[nounIdx + 1] === "related") {
+              searchCtx.updateSearchValues(
+                "nounKeyboardNavigationIndex",
+                nounIdx + 2,
+                idx
+              );
+            } else {
+              searchCtx.updateSearchValues(
+                "nounKeyboardNavigationIndex",
+                nounIdx + 1,
+                idx
+              );
+            }
+          }
+        }
+      } else if (e.key === "ArrowUp") {
+        console.log("up");
+        if (showAdjResults) {
+          e.preventDefault();
+
+          if (adjIdx > 0 && adjIdx < adjResults.length) {
+            console.log("up - adj showing");
+
+            if (adjResults[adjIdx - 1] === "related") {
+              searchCtx.updateSearchValues(
+                "adjKeyboardNavigationIndex",
+                adjIdx - 2,
+                idx
+              );
+            } else {
+              searchCtx.updateSearchValues(
+                "adjKeyboardNavigationIndex",
+                adjIdx - 1,
+                idx
+              );
+            }
+          }
+        } else if (showNounResults) {
+          e.preventDefault();
+
+          if (nounIdx > 0 && nounIdx < nounResults.length) {
+            if (nounResults[nounIdx - 1] === "related") {
+              searchCtx.updateSearchValues(
+                "nounKeyboardNavigationIndex",
+                nounIdx - 2,
+                idx
+              );
+            } else {
+              searchCtx.updateSearchValues(
+                "nounKeyboardNavigationIndex",
+                nounIdx - 1,
+                idx
+              );
+            }
+          }
+        }
+      }
+
+      if (e.key === "Enter") {
+        if (showAdjResults) {
+          e.preventDefault();
+
+          setShowAdjResults(false);
+
+          searchCtx.updateSearchValues(
+            "autofilledAdjectiveInput",
+            adjResults[adjIdx],
+            idx
+          );
+        } else if (showNounResults) {
+          e.preventDefault();
+
+          setShowNounResults(false);
+
+          searchCtx.updateSearchValues(
+            "autofilledNounInput",
+            nounResults[nounIdx],
+            idx
+          );
+        }
+      }
+
+      if (e.key === "Escape") {
+        e.preventDefault();
+
+        setShowAdjResults(false);
+        setShowNounResults(false);
+      }
+    }
+
+    document.addEventListener("keydown", arrowKeyHandler);
+
+    return () => {
+      document.removeEventListener("keydown", arrowKeyHandler);
+    };
+  }, [showAdjResults, showNounResults, searchCtx.searchValues]);
 
   useEffect(() => {
     onValue(ref(db, dbPath), (snapshot) => {
@@ -119,21 +255,40 @@ const Search = ({ dbPath, margin, idx, forModal }) => {
     console.log(showAdjResults);
   }, [showAdjResults]);
 
-  useEffect(() => {
-    let handler = (event) => {
-      // adjective handling
-      if (!adjectiveInputRef.current.contains(event.target)) {
-        setShowAdjResults(false);
-        setCheckAdjPair(false);
-      } else if (
-        adjectiveInputRef.current.contains(event.target) &&
+  let autofillHandler = (event, isFocusing = null, forAdj = null) => {
+    let focusedInsideAdjInput, focusedInsideNounInput;
+
+    if (isFocusing) {
+      if (forAdj) {
+        focusedInsideAdjInput = true;
+      } else {
+        focusedInsideNounInput = true;
+      }
+    } else if (isFocusing === false) {
+      if (forAdj) {
+        focusedInsideAdjInput = false;
+      } else {
+        focusedInsideNounInput = false;
+      }
+    } else {
+      focusedInsideAdjInput = adjectiveInputRef.current.contains(event.target);
+      focusedInsideNounInput = nounInputRef.current.contains(event.target);
+    }
+    // adjective handling
+
+    // hiding results and resetting context
+    if (!focusedInsideAdjInput) {
+      setShowAdjResults(false);
+      setCheckAdjPair(false);
+      searchCtx.updateSearchValues("adjKeyboardNavigationIndex", -1, idx);
+    } else {
+      if (
         adjectiveInputRef.current.value.trim().length === 0 &&
         nounInputRef.current.value.trim().length !== 0
       ) {
         setCheckAdjPair(true);
         setShowAdjResults(true);
       } else if (
-        adjectiveInputRef.current.contains(event.target) &&
         adjectiveInputRef.current.value.trim().length !== 0 &&
         nounInputRef.current.value.trim().length === 0
       ) {
@@ -148,21 +303,23 @@ const Search = ({ dbPath, margin, idx, forModal }) => {
           setShowAdjResults(true);
         }
       }
+    }
 
-      // noun handling
-      if (!nounInputRef.current.contains(event.target)) {
-        setShowNounResults(false);
-        setCheckNounPair(false);
-      } else if (
-        nounInputRef.current.contains(event.target) &&
+    // noun handling
+
+    // hiding results and resetting context
+    if (!focusedInsideNounInput) {
+      setShowNounResults(false);
+      setCheckNounPair(false);
+      searchCtx.updateSearchValues("nounKeyboardNavigationIndex", -1, idx);
+    } else {
+      if (
         nounInputRef.current.value.trim().length === 0 &&
         adjectiveInputRef.current.value.trim().length !== 0
       ) {
         setCheckNounPair(true);
-
         setShowNounResults(true);
       } else if (
-        nounInputRef.current.contains(event.target) &&
         nounInputRef.current.value.trim().length !== 0 &&
         adjectiveInputRef.current.value.trim().length === 0
       ) {
@@ -175,11 +332,13 @@ const Search = ({ dbPath, margin, idx, forModal }) => {
           setShowNounResults(true);
         }
       }
-    };
+    }
+  };
 
-    document.addEventListener("mousedown", handler);
+  useEffect(() => {
+    document.addEventListener("mousedown", autofillHandler);
     return () => {
-      document.removeEventListener("mousedown", handler);
+      document.removeEventListener("mousedown", autofillHandler);
     };
   }, []);
 
@@ -223,6 +382,8 @@ const Search = ({ dbPath, margin, idx, forModal }) => {
             className={classes.searchInput}
             id="adj"
             ref={adjectiveInputRef}
+            onFocus={(e) => autofillHandler(e, true, true)}
+            onBlur={(e) => autofillHandler(e, false, true)}
             autoComplete="off"
             required
           ></input>
@@ -240,6 +401,8 @@ const Search = ({ dbPath, margin, idx, forModal }) => {
             className={classes.searchInput}
             id="noun"
             ref={nounInputRef}
+            onFocus={(e) => autofillHandler(e, true, false)}
+            onBlur={(e) => autofillHandler(e, false, false)}
             autoComplete="off"
             required
           ></input>

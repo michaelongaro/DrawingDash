@@ -13,6 +13,8 @@ export function SearchProvider(props) {
     autofilledNounInput: ["", "", ""],
     requestedAdjectives: [[], [], []],
     requestedNouns: [[], [], []],
+    adjKeyboardNavigationIndex: [-1, -1, -1],
+    nounKeyboardNavigationIndex: [-1, -1, -1],
     gallary: [null, null, null],
   });
 
@@ -68,6 +70,8 @@ export function SearchProvider(props) {
     updateSearchValues("autofilledNounInput", "", idx);
     updateSearchValues("requestedAdjectives", [], idx);
     updateSearchValues("requestedNouns", [], idx);
+    updateSearchValues("adjKeyboardNavigationIndex", -1, idx);
+    updateSearchValues("nounKeyboardNavigationIndex", -1, idx);
     updateSearchValues("gallary", null, idx);
   }
 
@@ -87,15 +91,6 @@ export function SearchProvider(props) {
     updatePageSelectorDetails("durationToManuallyLoad", null, idx);
   }
 
-  function getFlattenedIDs(fullTitles) {
-    let flattenedIDs = [];
-
-    for (const titles of Object.values(fullTitles)) {
-      flattenedIDs.push(titles["drawingID"]);
-    }
-    return flattenedIDs.flat();
-  }
-
   function updatePageSelectorDetails(key, value, idx) {
     let tempValues = { ...pageSelectorDetails };
     let newValue = tempValues[key];
@@ -104,6 +99,15 @@ export function SearchProvider(props) {
     tempValues[key] = newValue;
     console.log("updated pageselectorDetails with", value);
     setPageSelectorDetails(tempValues);
+  }
+
+  function getFlattenedIDs(fullTitles) {
+    let flattenedIDs = [];
+
+    for (const titles of Object.values(fullTitles)) {
+      flattenedIDs.push(titles["drawingID"]);
+    }
+    return flattenedIDs.flat();
   }
 
   function getGallary(startIdx, endIdx, maxAllowed, idx, dbPath) {

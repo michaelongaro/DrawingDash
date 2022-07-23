@@ -11,9 +11,17 @@ const AutofillResult = (props) => {
 
   const resultRef = useRef();
 
+  const [hovering, setHovering] = useState(false);
+
   const [preHighlightedText, setPreHighlightedText] = useState("");
   const [highlightedText, setHighlightedText] = useState("");
   const [postHighlightedText, setPostHighlightedText] = useState("");
+
+  const [localAdjIdx, setLocalAdjIdx] = useState(0);
+  const [localNounIdx, setLocalNounIdx] = useState(0);
+
+  const [localAdjectives, setLocalAdjectives] = useState([]);
+  const [localNouns, setLocalNouns] = useState([]);
 
   useEffect(() => {
     if (props.word !== "related") {
@@ -27,6 +35,21 @@ const AutofillResult = (props) => {
       }
     };
   }, []);
+
+  useEffect(() => {
+    setLocalAdjIdx(
+      searchCtx.searchValues["adjKeyboardNavigationIndex"][props.idx]
+    );
+    setLocalNounIdx(
+      searchCtx.searchValues["nounKeyboardNavigationIndex"][props.idx]
+    );
+
+    setLocalAdjectives(
+      searchCtx.searchValues["requestedAdjectives"][props.idx]
+    );
+
+    setLocalNouns(searchCtx.searchValues["requestedNouns"][props.idx]);
+  }, [props, searchCtx.searchValues]);
 
   useEffect(() => {
     let highlightedAdjIndex = props.word
@@ -89,7 +112,6 @@ const AutofillResult = (props) => {
       setHighlightedText(props.word);
       setPostHighlightedText("");
     }
-    
   }, [searchCtx.searchValues, props, idx]);
 
   function fillText() {
@@ -109,7 +131,22 @@ const AutofillResult = (props) => {
           <div className={classes.trailingLine}></div>
         </div>
       ) : (
-        <div className={classes.autofillResult} ref={resultRef}>
+        <div
+          style={{
+            backgroundColor:
+              props.type === "adj"
+                ? localAdjectives[localAdjIdx] === props.word || hovering
+                  ? "#d7d7d7"
+                  : "#eeeeee"
+                : localNouns[localNounIdx] === props.word || hovering
+                ? "#d7d7d7"
+                : "#eeeeee",
+          }}
+          onMouseEnter={() => setHovering(true)}
+          onMouseLeave={() => setHovering(false)}
+          className={classes.autofillResult}
+          ref={resultRef}
+        >
           <div className={classes.autofillFormatting}>
             <div style={{ color: "#6b6b6b" }}>{preHighlightedText}</div>
             <div style={{ color: "#000000" }}>{highlightedText}</div>
