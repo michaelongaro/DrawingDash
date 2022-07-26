@@ -129,11 +129,14 @@ h6 {
 }
 
 .close {
+  display: "flex";
   position: absolute;
   width: 2em;
   height: 2em;
   top: 1em;
   right: 1.75em;
+  border: none;
+  background-color: transparent;
   opacity: 0.3;
   cursor: pointer;
 }

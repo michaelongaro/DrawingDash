@@ -2,6 +2,7 @@ import React from "react";
 import { useState, useEffect, useCallback, useContext, useRef } from "react";
 import { useLocation } from "react-router-dom";
 import { useAuth0 } from "@auth0/auth0-react";
+import { isEqual } from "lodash";
 
 import ProfilePicture from "./ProfilePicture";
 import downloadDrawing from "../../util/downloadDrawing";
@@ -46,10 +47,6 @@ import { app } from "../../util/init-firebase";
 
 import classes from "./GallaryItem.module.css";
 import baseClasses from "../../index.module.css";
-import { isEqual } from "lodash";
-
-// set defualt param vals + only render when all are not default vals
-// + only do useeffects and functions or whatever when not equal to default
 
 const DrawingModal = ({
   drawingID = "",
@@ -59,6 +56,7 @@ const DrawingModal = ({
   artistUsername = "",
   idx = -1,
   dbPath = "",
+  showDrawingModal = null,
   openedFromUserModal = null,
 }) => {
   const location = useLocation();
@@ -76,6 +74,9 @@ const DrawingModal = ({
   const confirmDeleteModalRef = useRef();
 
   const [fullyFinishedLoading, setFullyFinishedLoading] = useState(false);
+
+  const [showUserModal, setShowUserModal] = useState(false);
+  const [closeButtonClicked, setCloseButtonClicked] = useState(false);
 
   const [drawingTotalLikes, setDrawingTotalLikes] = useState(0);
   const [drawingDailyLikes, setDrawingDailyLikes] = useState(0);
@@ -109,6 +110,7 @@ const DrawingModal = ({
       artistUsername !== "" &&
       idx !== -1 &&
       dbPath !== "" &&
+      showDrawingModal !== null &&
       openedFromUserModal !== null
     ) {
       setFullyFinishedLoading(true);
@@ -121,11 +123,18 @@ const DrawingModal = ({
     artistUsername,
     idx,
     dbPath,
+    showDrawingModal,
     openedFromUserModal,
   ]);
 
   useEffect(() => {
-    console.log(hoveringOnUsernameTooltip);
+    if (!modalCtx.userModalOpened) {
+      setShowUserModal(false);
+      setLoadUserModal(false);
+    }
+  }, [modalCtx.userModalOpened]);
+
+  useEffect(() => {
     if (hoveringOnProfilePicture || hoveringOnUsernameTooltip) {
       document.documentElement.style.setProperty("--shimmerPlayState", "true");
     } else {
@@ -170,51 +179,62 @@ const DrawingModal = ({
 
   useEffect(() => {
     function modalHandler(event) {
-      console.log(event.target);
-
-      if (fullyFinishedLoading) {
-        // when drawing modal was opened from user modal
-        if (modalCtx.drawingModalFromUserOpened && openedFromUserModal) {
-          if (!drawingModalRef.current.contains(event.target)) {
-            modalCtx.setDrawingModalFromUserOpened(false);
-          }
-        }
-
-        // when drawing modal is opened and user modal is closed
-        else if (modalCtx.drawingModalOpened && !modalCtx.userModalOpened) {
-          if (!drawingModalRef.current.contains(event.target)) {
-            modalCtx.setDrawingModalOpened(false);
-          }
-        }
-
-        // else if (modalCtx.userModalOpened) {
-        //   if (!userModalRef.current.contains(event.target)) {
-        //     setShowUserModal(false);
-        //     setLoadUserModal(false);
-
-        //     // updating context to reflect modal closing
-        //     modalCtx.setModalOpened(false);
-        //   }
-        // }
-        else if (showConfirmDeleteModal) {
+      if (fullyFinishedLoading && !hoveringOnDeleteButton && showDrawingModal) {
+        if (showConfirmDeleteModal) {
           if (!confirmDeleteModalRef.current.contains(event.target)) {
             setShowConfirmDeleteModal(false);
+          }
+          return;
+        }
+
+        if (openedFromUserModal) {
+          // when drawing modal was opened from user modal
+          if (modalCtx.drawingModalFromUserOpened && modalCtx.userModalOpened) {
+            if (!drawingModalRef.current.contains(event.target)) {
+              modalCtx.setDrawingModalFromUserOpened(false);
+            }
+          }
+        } else if (!openedFromUserModal) {
+          // when drawing modal is opened and user modal is closed
+          if (modalCtx.drawingModalOpened && !modalCtx.userModalOpened) {
+            if (!drawingModalRef.current.contains(event.target)) {
+              modalCtx.setDrawingModalOpened(false);
+            }
           }
         }
       }
     }
 
-    document.addEventListener("mousedown", modalHandler);
+    document.addEventListener("click", modalHandler);
     return () => {
-      document.removeEventListener("mousedown", modalHandler);
+      document.removeEventListener("click", modalHandler);
     };
   }, [
     fullyFinishedLoading,
     openedFromUserModal,
     modalCtx.drawingModalOpened,
+    modalCtx.drawingModalFromUserOpened,
     modalCtx.userModalOpened,
     showConfirmDeleteModal,
+    showDrawingModal,
+    hoveringOnDeleteButton,
   ]);
+
+  useEffect(() => {
+    console.log(hoveringOnDeleteButton);
+  }, [hoveringOnDeleteButton]);
+
+  useEffect(() => {
+    if (closeButtonClicked) {
+      if (openedFromUserModal) {
+        modalCtx.setDrawingModalFromUserOpened(false);
+      } else if (!openedFromUserModal) {
+        console.log("setting drawing modal false");
+        modalCtx.setDrawingModalOpened(false);
+      }
+      setCloseButtonClicked(false);
+    }
+  }, [closeButtonClicked]);
 
   function toggleFavoriteStatusHandler() {
     if (
@@ -248,6 +268,8 @@ const DrawingModal = ({
     const uniqueID = drawingMetadata.index;
     const user = drawingMetadata.drawnBy;
 
+    console.log("deleting the FK out of this drawing ");
+    modalCtx.setDrawingModalOpened(false);
     setShowConfirmDeleteModal(false);
 
     // Removing From /drawingLikes
@@ -367,8 +389,7 @@ const DrawingModal = ({
   return (
     <div
       ref={drawingModalRef}
-      style={{ width: "80vw" }}
-      // className={classes.modal}
+      style={{ width: "75vw" }}
       onMouseEnter={() => {
         setHoveringOnImage(true);
       }}
@@ -383,9 +404,8 @@ const DrawingModal = ({
           pointerEvents: showConfirmDeleteModal ? "auto" : "none",
         }}
         className={classes.modal}
-        ref={confirmDeleteModalRef}
       >
-        <div className={classes.confirmDeleteText}>
+        <div className={classes.confirmDeleteText} ref={confirmDeleteModalRef}>
           <div>
             <GarbageIcon dimensions={"3em"} />
           </div>
@@ -423,42 +443,14 @@ const DrawingModal = ({
       {/* ----- user modal ------- */}
       <div
         style={{
-          opacity: modalCtx.userModalOpened ? 1 : 0,
-          pointerEvents: modalCtx.userModalOpened ? "auto" : "none",
-          // maybe need userSelect?
+          opacity: showUserModal && modalCtx.userModalOpened ? 1 : 0,
+          pointerEvents:
+            showUserModal && modalCtx.userModalOpened ? "auto" : "none",
           transition: "all 200ms",
         }}
         className={classes.modal}
       >
-        {loadUserModal && (
-          <div>
-            <div style={{ position: "relative" }}>
-              {modalCtx.drawingModalOpened && (
-                <button
-                  className={classes.goBackButton}
-                  onClick={() => {
-                    // closing user modal
-                    modalCtx.setUserModalOpened(false);
-                    setLoadUserModal(false);
-                  }}
-                >
-                  Return to image
-                </button>
-              )}
-              <div
-                className={baseClasses.close}
-                onClick={() => {
-                  // closing all modals
-                  modalCtx.setDrawingModalOpened(false);
-                  modalCtx.setUserModalOpened(false);
-                  setLoadUserModal(false);
-                }}
-              ></div>
-            </div>
-
-            <UserModal user={drawingMetadata.drawnBy} />
-          </div>
-        )}
+        {loadUserModal && <UserModal user={drawingMetadata.drawnBy} />}
       </div>
 
       {/* image container */}
@@ -482,23 +474,10 @@ const DrawingModal = ({
           ></div>
 
           {/* actual image */}
-          <div
-            className={classes.glossOver}
-            style={{ position: "relative" }}
-            onClick={() => {
-              if (
-                location.pathname !== "/" &&
-                location.pathname !== "/profile/preferences" &&
-                // needed so that when clicking on delete button drawing modal doesn't show
-                !hoveringOnDeleteButton
-              )
-                modalCtx.setDrawingModalOpened(true);
-            }}
-          >
+          <div className={classes.glossOver} style={{ position: "relative" }}>
             <img
               style={{
                 display: imageElementLoaded ? "block" : "none",
-                cursor: location.pathname === "/" ? "auto" : "pointer",
                 borderRadius: settings.forPinnedShowcase
                   ? "1em"
                   : "1em 1em 0 0",
@@ -517,13 +496,19 @@ const DrawingModal = ({
                 display: imageElementLoaded ? "flex" : "none",
                 backgroundColor: hoveringOnDeleteButton ? "red" : "transparent",
                 opacity:
-                  location.pathname === "/profile/gallery" && hoveringOnImage
+                  location.pathname === "/profile/gallery" &&
+                  hoveringOnImage &&
+                  !modalCtx.userModalOpened
                     ? 1
                     : 0,
                 pointerEvents:
-                  location.pathname === "/profile/gallery" && hoveringOnImage
+                  location.pathname === "/profile/gallery" &&
+                  hoveringOnImage &&
+                  !modalCtx.userModalOpened
                     ? "auto"
                     : "none",
+                top: "1em",
+                left: "1em",
               }}
               onMouseEnter={() => {
                 setHoveringOnDeleteButton(true);
@@ -531,7 +516,10 @@ const DrawingModal = ({
               onMouseLeave={() => {
                 setHoveringOnDeleteButton(false);
               }}
-              onClick={() => setShowConfirmDeleteModal(true)}
+              onClick={() => {
+                setHoveringOnDeleteButton(false);
+                setShowConfirmDeleteModal(true);
+              }}
             >
               <GarbageIcon dimensions={"1.25em"} />
             </button>
@@ -539,6 +527,21 @@ const DrawingModal = ({
             <div
               style={{
                 display: imageElementLoaded ? "flex" : "none",
+                top: openedFromUserModal
+                  ? modalCtx.drawingModalFromUserOpened
+                    ? "1em"
+                    : ".5em"
+                  : modalCtx.drawingModalOpened
+                  ? "1em"
+                  : ".5em",
+                right: openedFromUserModal
+                  ? modalCtx.drawingModalFromUserOpened
+                    ? "4.5em"
+                    : ".5em"
+                  : modalCtx.drawingModalOpened
+                  ? "4.5em"
+                  : ".5em",
+                transition: "all 200ms",
               }}
               className={`${drawingTotalLikes > 0 ? classes.likes : ""}`}
             >
@@ -549,6 +552,17 @@ const DrawingModal = ({
                 </div>
               )}
             </div>
+
+            <button
+              style={{
+                display: imageElementLoaded ? "flex" : "none",
+                right: "1em",
+              }}
+              className={baseClasses.close}
+              onClick={() => {
+                setCloseButtonClicked(true);
+              }}
+            ></button>
           </div>
 
           {/* -------- metainfo --------- */}
@@ -576,17 +590,7 @@ const DrawingModal = ({
               className={classes.bottomContain}
             >
               {/* profile image */}
-              {/* {ableToShowProfilePicture ? (
-                showTempBaselineSkeleton || isFetching ? (
-                  <div
-                    style={{
-                      width: "3.3em",
-                      height: "81%",
-                      borderRadius: "50%",
-                    }}
-                    className={classes.skeletonLoading}
-                  ></div>
-                ) : ( */}
+
               <div
                 style={{
                   position: "relative",
@@ -596,13 +600,14 @@ const DrawingModal = ({
                 }}
                 onClick={() => {
                   if (!modalCtx.userModalOpened) {
+                    setShowUserModal(true);
                     modalCtx.setUserModalOpened(true);
                     setLoadUserModal(true);
                   } else {
                     // closing drawing modal and taking user back to original user modal
                     // done to save bandwidth and also for user clarity so they can't go
                     // multiple layers deep
-                    modalCtx.setDrawingModalOpened(false);
+                    modalCtx.setDrawingModalFromUserOpened(false);
                   }
                 }}
                 onMouseEnter={() => {
@@ -646,35 +651,16 @@ const DrawingModal = ({
                   </div>
                 </div>
               </div>
-              ){/* ) : null} */}
+
               {/* ----- drawingID data ----- */}
               {/* title */}
-              {/* {showTempBaselineSkeleton || isFetching ? (
-                <div
-                  style={{ width: settings.skeleTitleWidth, height: "40%" }}
-                  className={classes.skeletonLoading}
-                ></div>
-              ) : ( */}
               <div style={{ textAlign: "center" }}>{drawingMetadata.title}</div>
-              {/* )} */}
+
               {/* date */}
-              {/* {showTempBaselineSkeleton || isFetching ? (
-                <div
-                  style={{ width: "6em", height: "40%" }}
-                  className={classes.skeletonLoading}
-                ></div>
-              ) : ( */}
               <div>{drawingMetadata.date}</div>
-              {/* )} */}
+
               {/* seconds */}
               {(location.pathname === "/" || modalCtx.drawingModalOpened) && (
-                /* showTempBaselineSkeleton || isFetching ? (
-                  <div
-                    style={{ width: "3em", height: "3em", borderRadius: "50%" }}
-                    className={classes.skeletonLoading}
-                  ></div>
-                ) : ( */
-
                 <div style={{ width: "3em", height: "3em" }}>
                   {drawingMetadata.seconds === 60 && (
                     <OneMinuteIcon dimensions={"3em"} />
@@ -687,16 +673,8 @@ const DrawingModal = ({
                   )}
                 </div>
               )}
-              {/* ) : null} */}
-              {/* like toggle */}
+
               {settings.forPinnedItem ? null : (
-                /* showTempBaselineSkeleton ||
-                isFetching ? (
-                <div
-                  style={{ width: "3em", height: "40%" }}
-                  className={classes.skeletonLoading}
-                ></div>
-              ) : ( */
                 <div
                   style={{
                     position: "relative",
@@ -761,45 +739,9 @@ const DrawingModal = ({
                   </div>
                 </div>
               )}
-              {/* move to % widths */}
-              {/* for homepage daily featured gallaryitem */}
-              {/* {settings.forHomepage ? (
-                isFetching ? (
-                  <div
-                    style={{ width: "4em", height: "50%" }}
-                    className={classes.skeletonLoading}
-                  ></div>
-                ) : (
-                  <CopyToClipboard url={fetchedDrawing} />
-                )
-              ) : null}
-              {settings.forHomepage ? (
-                isFetching ? (
-                  <div
-                    style={{ width: "4em", height: "50%" }}
-                    className={classes.skeletonLoading}
-                  ></div>
-                ) : (
-                  <button
-                    style={{ display: "flex", gap: "0.75em", fontSize: "16px" }}
-                    className={`${baseClasses.nextButton} ${baseClasses.baseFlex}`}
-                    onClick={() =>
-                      downloadDrawing(fetchedDrawing, drawingMetadata.title)
-                    }
-                  >
-                    <div>Download</div>
-                    <DownloadIcon color={"#FFF"} />
-                  </button>
-                )
-              ) : null} */}
-              {/* for regular gallaryitem */}
-              {/* {!settings.forHomepage ? (
-                showDrawingModal ? ( */}
+
               <CopyToClipboard url={drawing} />
-              {/* ) : null
-              ) : null} */}
-              {/* {!settings.forHomepage ? (
-                showDrawingModal ? ( */}
+
               <button
                 style={{ display: "flex", gap: "0.75em", fontSize: "16px" }}
                 className={`${baseClasses.nextButton} ${baseClasses.baseFlex}`}
@@ -808,22 +750,9 @@ const DrawingModal = ({
                 <div>Download</div>
                 <DownloadIcon color={"#FFF"} />
               </button>
-              {/* ) : null
-              ) : null} */}
             </div>
           )}
         </Card>
-
-        {/* {settings.forPinnedShowcase ? (
-          showTempBaselineSkeleton || isFetching ? (
-            <div
-              style={{ width: "4em", height: "1em" }}
-              className={classes.skeletonLoading}
-            ></div>
-          ) : (
-            <div>{drawingMetadata.title}</div>
-          )
-        ) : null} */}
       </div>
     </div>
   );

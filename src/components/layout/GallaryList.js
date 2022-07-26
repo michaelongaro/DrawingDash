@@ -395,6 +395,7 @@ const GallaryList = ({
                       }}
                       idx={idx}
                       dbPath={databasePath}
+                      openedFromUserModal={forModal}
                     />
                   ))}
               </div>
@@ -421,6 +422,7 @@ const GallaryList = ({
                       }}
                       idx={idx}
                       dbPath={databasePath}
+                      openedFromUserModal={forModal}
                     />
                   ))}
               </div>
@@ -447,6 +449,7 @@ const GallaryList = ({
                       }}
                       idx={idx}
                       dbPath={databasePath}
+                      openedFromUserModal={forModal}
                     />
                   ))}
               </div>

@@ -7,6 +7,7 @@ import { FavoritesProvider } from "./components/layout/FavoritesContext";
 import { PinnedProvider } from "./components/layout/PinnedContext";
 import { DrawingSelectionProvider } from "./canvas/DrawingSelectionContext";
 import { ProfilePictureUpdateProvider } from "./components/layout/ProfilePictureUpdateContext";
+import { ModalProvider } from "./components/layout/ModalContext";
 import App from "./App";
 
 import "./fonts/VisbyRoundCF-Light.otf";
@@ -22,17 +23,19 @@ ReactDOM.render(
       clientId="HiuFz0Yo30naHcGzk8PbPOYr0qIK6dae"
       redirectUri={window.location.origin}
     >
-      <ProfilePictureUpdateProvider>
-        <PinnedProvider>
-          <SearchProvider>
-            <FavoritesProvider>
-              <DrawingSelectionProvider>
-                <App />
-              </DrawingSelectionProvider>
-            </FavoritesProvider>
-          </SearchProvider>
-        </PinnedProvider>
-      </ProfilePictureUpdateProvider>
+      <ModalProvider>
+        <ProfilePictureUpdateProvider>
+          <PinnedProvider>
+            <SearchProvider>
+              <FavoritesProvider>
+                <DrawingSelectionProvider>
+                  <App />
+                </DrawingSelectionProvider>
+              </FavoritesProvider>
+            </SearchProvider>
+          </PinnedProvider>
+        </ProfilePictureUpdateProvider>
+      </ModalProvider>
     </Auth0Provider>
   </BrowserRouter>,
   document.getElementById("root")

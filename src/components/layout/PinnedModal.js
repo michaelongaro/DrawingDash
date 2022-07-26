@@ -91,7 +91,7 @@ const PinnedModal = React.forwardRef((props, modalRef) => {
             <h3>{`${props.seconds / 60} Minute Drawings`}</h3>
           </div>
           <div className={classes.exit}>
-            <div
+            <button
               className={baseClasses.close}
               onClick={() => {
                 pinnedCtx.setShow60({ display: "none" });
@@ -99,7 +99,7 @@ const PinnedModal = React.forwardRef((props, modalRef) => {
                 pinnedCtx.setShow300({ display: "none" });
                 pinnedCtx.resetAllAndHighlightNewInit();
               }}
-            ></div>
+            ></button>
           </div>
         </div>
 

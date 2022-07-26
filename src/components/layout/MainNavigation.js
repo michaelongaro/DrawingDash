@@ -217,7 +217,7 @@ function MainNavigation() {
     }
 
     // making sure that user modal can always be opened when visiting page for the first time
-    localStorage.setItem("baseUserModalOpened", "false");
+    // localStorage.setItem("baseUserModalOpened", "false");
   }, [isLoading, isAuthenticated]);
 
   useEffect(() => {

@@ -1,9 +1,11 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef, useContext } from "react";
 
 import getCroppedImg from "../../util/cropImage";
 import SlideShow from "./SlideShow";
 
 import Search from "./Search";
+
+import ModalContext from "./ModalContext";
 
 import {
   getDatabase,
@@ -26,10 +28,14 @@ import classes from "./UserModal.module.css";
 import baseClasses from "../../index.module.css";
 
 const UserModal = ({ user }) => {
+  const modalCtx = useContext(ModalContext);
+
   const db = getDatabase(app);
   const dbRef = ref_database(getDatabase(app));
 
   const storage = getStorage();
+
+  const userModalRef = useRef();
 
   const [username, setUsername] = useState("");
   const [status, setStatus] = useState("");
@@ -56,6 +62,21 @@ const UserModal = ({ user }) => {
       console.log(e);
     }
   };
+
+  useEffect(() => {
+    function modalHandler(event) {
+      if (modalCtx.userModalOpened) {
+        if (!userModalRef.current.contains(event.target)) {
+          modalCtx.setUserModalOpened(false);
+        }
+      }
+    }
+
+    document.addEventListener("click", modalHandler);
+    return () => {
+      document.removeEventListener("click", modalHandler);
+    };
+  }, [modalCtx.userModalOpened]);
 
   useEffect(() => {
     // fetch data from db if it is present
@@ -192,7 +213,32 @@ const UserModal = ({ user }) => {
   }
 
   return (
-    <div className={classes.horizContain}>
+    <div ref={userModalRef} className={classes.horizContain}>
+      <div style={{ position: "relative", width: "100%" }}>
+        {modalCtx.drawingModalOpened && (
+          <button
+            style={{ top: "-1em", left: "-1em" }}
+            className={classes.goBackButton}
+            onClick={() => {
+              // closing user modal
+              modalCtx.setUserModalOpened(false);
+            }}
+          >
+            Return to image
+          </button>
+        )}
+        <button
+          style={{ top: "-1em", right: "-1.25em" }}
+          className={baseClasses.close}
+          onClick={() => {
+            // closing all modals
+            modalCtx.setDrawingModalFromUserOpened(false);
+            modalCtx.setDrawingModalOpened(false);
+            modalCtx.setUserModalOpened(false);
+          }}
+        ></button>
+      </div>
+
       <div className={`${classes.container} ${classes.prefCard}`}>
         <div className={classes.leftSide}>
           {isFetchingProfilePicture ? (
