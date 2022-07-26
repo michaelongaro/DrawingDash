@@ -40,10 +40,6 @@ export function SearchProvider(props) {
     durationToManuallyLoad: [null, null, null],
   });
 
-  useEffect(() => {
-    console.log("changed to", pageSelectorDetails);
-  }, [pageSelectorDetails]);
-
   function manuallyLoadDurations(idx) {
     if (pageSelectorDetails["durationToManuallyLoad"][idx] === "60") {
       return [true, false, false];
@@ -76,8 +72,6 @@ export function SearchProvider(props) {
   }
 
   function resetPageSelectorDetails(idx) {
-    console.log("resetting Vals");
-
     updatePageSelectorDetails("currentPageNumber", 1, idx);
     updatePageSelectorDetails(
       "totalDrawingsByDuration",

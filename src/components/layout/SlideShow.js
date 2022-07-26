@@ -13,8 +13,6 @@ import classes from "./SlideShow.module.css";
 import baseClasses from "../../index.module.css";
 
 const SlideShow = ({ pinnedDrawings, pinnedMetadata, username }) => {
-  console.log(pinnedDrawings, pinnedMetadata);
-
   const [currentSlideshowTitle, setCurrentSlideshowTitle] = useState("");
 
   const [showTempBaselineSkeleton, setShowTempBaselineSkeleton] =
