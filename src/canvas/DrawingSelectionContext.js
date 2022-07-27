@@ -21,7 +21,6 @@ const DrawingSelectionContext = createContext(null);
 export function DrawingSelectionProvider(props) {
   const { user, isAuthenticated, isLoading } = useAuth0();
   const db = getDatabase(app);
-  const dbRef = ref(getDatabase(app));
 
   const [seconds, setSeconds] = useState(0);
   const [chosenPrompt, setChosenPrompt] = useState("");
@@ -99,10 +98,6 @@ export function DrawingSelectionProvider(props) {
       );
     }
   }, [currentColor]);
-
-  useEffect(() => {
-    console.log(drawingStatuses);
-  }, [drawingStatuses]);
 
   const [promptRefreshes, setPromptRefreshes] = useState(0);
   const [drawingStatusRefreshes, setDrawingStatusRefreshes] = useState(0);

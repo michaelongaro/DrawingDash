@@ -30,7 +30,8 @@ const ProgressBar = () => {
     }
   }, [cleanupAllStates]);
 
-  // EXTREMELY MESSY, would love to refactor one day
+  // easiest way to refactor, store all of these anime js functions
+  // in their own files and then call them here (with same structure)
 
   useEffect(() => {
     // only check for states if context (current) values are populated
@@ -95,8 +96,6 @@ const ProgressBar = () => {
                       duration: 200,
                       easing: "easeInSine",
                       complete: () => {
-                        console.log("totally finished and resetting");
-
                         setCleanupAllStates(true);
                         return;
                       },
@@ -140,8 +139,6 @@ const ProgressBar = () => {
           DSCtx.PBStates["selectToChooseBar"] &&
           !localPBStates["selectToChooseBar"]
         ) {
-          console.log("2");
-
           anime({
             targets: "#selectText",
             loop: false,
@@ -187,8 +184,6 @@ const ProgressBar = () => {
               });
             },
           });
-
-          // DSCtx.updatePBStates("chooseCircle", true)
         }
 
         // going back to select prompt screen
@@ -196,8 +191,6 @@ const ProgressBar = () => {
           !DSCtx.PBStates["selectToChooseBar"] &&
           localPBStates["selectToChooseBar"]
         ) {
-          console.log("3");
-
           anime({
             targets: "#choose",
             loop: false,
@@ -251,8 +244,6 @@ const ProgressBar = () => {
           DSCtx.PBStates["chooseToDrawBar"] &&
           !localPBStates["chooseToDrawBar"]
         ) {
-          console.log("4");
-
           anime({
             targets: "#animatedGreenPB",
             loop: false,
@@ -302,25 +293,9 @@ const ProgressBar = () => {
         }
       }
     } else {
-      // check if isEqual(localPBStates, {
-      //   selectCircle: true,
-      //   chooseCircle: false,
-      //   drawCircle: false,
-      //   selectToChooseBar: false,
-      //   chooseToDrawBar: false,
-      //   resetToSelectBar: false,
-      // })
-
-      // and if THAT is true, then create anime snippets to revert those back to basic shiet
-      // circle not filled and select text back in basic form at top
-      // THEN you should be able to set local PB states below as it is
-
+      // go back to default PB state when "prompts coming soon"
+      // container is showing
       if (DSCtx.revertSelectCircle) {
-        console.log(
-          "resetting PB since shortly/timer is showing now",
-          DSCtx.PBStates
-        );
-
         // resetting states to init
         anime({
           targets: "#select",
@@ -336,8 +311,7 @@ const ProgressBar = () => {
           targets: "#selectText",
           loop: false,
           direction: "normal",
-          delay: 150,
-          duration: 500,
+          duration: 350,
           translateX: ["265px", 0],
           translateY: ["170px", 0],
           fontSize: ["1.5em", "1.25em"],
