@@ -360,8 +360,8 @@ function MainNavigation() {
 
           {!isLoading && !isAuthenticated ? (
             <div className={classes.signInButtons}>
-              <LogInButton forceShow={true} />
-              <LogInButton forceShow={false} />
+              <LogInButton forceShowSignUp={true} />
+              <LogInButton forceShowSignUp={false} />
             </div>
           ) : (
             <div className={classes.baseFlex}>

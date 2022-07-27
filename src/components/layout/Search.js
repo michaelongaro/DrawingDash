@@ -18,6 +18,7 @@ import {
 import { app } from "../../util/init-firebase";
 
 import classes from "./Search.module.css";
+import baseClasses from "../../index.module.css";
 
 const Search = ({ dbPath, margin, idx, forModal }) => {
   const searchCtx = useContext(SearchContext);
@@ -59,14 +60,12 @@ const Search = ({ dbPath, margin, idx, forModal }) => {
   };
 
   useEffect(() => {
-    // if we are searching through a user's gallary/likes
+    searchCtx.resetAllValues(idx);
+
+    // if searching through a user's gallary/likes
     if (idx !== 0) {
       searchCtx.getGallary(0, 6, 6, idx, dbPath);
     }
-
-    return () => {
-      searchCtx.resetAllValues(idx);
-    };
   }, []);
 
   useEffect(() => {
@@ -345,16 +344,6 @@ const Search = ({ dbPath, margin, idx, forModal }) => {
   function prepGallarySearch(event) {
     event.preventDefault();
 
-    // why does this have an '&& idx === 0' ? feel like it should apply to both scenarios
-    // if (
-    //   searchCtx.searchValues["adjSearch"][idx].length === 0 &&
-    //   searchCtx.searchValues["nounSearch"][idx].length === 0 &&
-    //   idx === 0
-    // ) {
-    //   searchCtx.updateSearchValues("gallary", null, idx);
-    //   return;
-    // }
-
     searchCtx.updatePageSelectorDetails("durationToManuallyLoad", null, idx);
 
     if (idx !== 0) {
@@ -415,7 +404,7 @@ const Search = ({ dbPath, margin, idx, forModal }) => {
             />
           </div>
         </div>
-        <button className={classes.searchButton}>Search</button>
+        <button className={baseClasses.activeButton}>Search</button>
       </form>
 
       <GallaryList

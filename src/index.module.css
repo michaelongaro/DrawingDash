@@ -79,15 +79,40 @@ h6 {
   }
 }
 
-.nextButton {
+.closeButton {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  cursor: pointer;
+  border: 0;
+
+  background-image: linear-gradient(-180deg, #ebebeb, #c4c4c4);
+  border-radius: 6px;
+  box-shadow: rgba(0, 0, 0, 0.1) 0 2px 4px;
+  padding: 0.75em 1em;
+  margin-right: 0.5em;
+  filter: brightness(1);
+  transition-duration: 0.2s, 0.1s;
+  transition-property: box-shadow, filter;
+}
+
+.closeButton:hover:enabled {
+  box-shadow: rgba(117, 117, 117, 0.5) 0 3px 5px;
+}
+
+.closeButton:active:enabled {
+  filter: brightness(.7);
+  box-shadow: none;
+}
+
+.activeButton {
   background-color: initial;
   background-image: linear-gradient(-180deg, #ff7e31, #e62c03);
-  border-radius: 6px;
+  border-radius: 1em;
   box-shadow: rgba(0, 0, 0, 0.1) 0 2px 4px;
   color: #ffffff;
   cursor: pointer;
-  /* display: inline-block; */
-  font-size: 16pt;
   height: 40px;
   line-height: 40px;
   outline: 0;
@@ -103,16 +128,23 @@ h6 {
   white-space: nowrap;
   z-index: 9;
   border: 0;
-  transition: all 0.2s;
+  filter: brightness(1);
+  transition-duration: 0.2s, 0.1s;
+  transition-property: box-shadow, filter;
 }
 
-.nextButton:disabled {
+.activeButton:disabled {
   background-image: linear-gradient(-180deg, #d3d3d3, #3a3a3a);
   cursor: default;
 }
 
-.nextButton:hover:enabled {
+.activeButton:hover:enabled {
   box-shadow: rgba(253, 76, 0, 0.5) 0 3px 8px;
+}
+
+.activeButton:active:enabled {
+  filter: brightness(.7);
+  box-shadow: none;
 }
 
 .baseFlex {
@@ -129,7 +161,7 @@ h6 {
 }
 
 .close {
-  display: "flex";
+  display: flex;
   position: absolute;
   width: 2em;
   height: 2em;
@@ -166,11 +198,11 @@ h6 {
 
 .animatedRainbow a {
   position: absolute;
-  top: 5px;
-  bottom: 5px;
+  top: 6px;
+  bottom: 6px;
   left: 5px;
   right: 5px;
-  border-radius: 3px;
+  border-radius: 1em;
   background-color: white;
   text-decoration: none;
   color: black;
@@ -183,7 +215,7 @@ h6 {
   width: 10em;
   height: 75px;
   margin: 0 1em 0 1em;
-  border-radius: 6px;
+  border-radius: 1em;
   cursor: pointer;
   background-color: yellow;
   background-image: repeating-linear-gradient(-45deg,

@@ -95,7 +95,8 @@ const Preferences = () => {
   const [isEditingImage, setIsEditingImage] = useState(false);
   const [newImageUploaded, setNewImageUploaded] = useState(false);
 
-  const [hoveringOnResetPassword, setHoveringOnResetPassword] = useState(false);
+  const [mouseDownOnResetPassword, setMouseDownOnResetPassword] =
+    useState(false);
 
   const [showTempBaselineSkeleton, setShowTempBaselineSkeleton] =
     useState(true);
@@ -438,35 +439,6 @@ const Preferences = () => {
                 opacity: user?.sub?.substring(0, 5) === "auth0" ? 1 : 0.4,
               }}
               className={`${classes.resetPasswordContainer} ${baseClasses.baseVertFlex}`}
-              onMouseEnter={() => setHoveringOnResetPassword(true)}
-              onMouseLeave={() => setHoveringOnResetPassword(false)}
-              onClick={() => {
-                let options = {
-                  method: "POST",
-                  url: "https://dev-lshqttx0.us.auth0.com/dbconnections/change_password",
-                  headers: { "content-type": "application/json" },
-                  data: {
-                    client_id: "HiuFz0Yo30naHcGzk8PbPOYr0qIK6dae",
-                    email: userEmail,
-                    connection: "Username-Password-Authentication",
-                  },
-                };
-
-                if (user?.sub?.substring(0, 5) === "auth0") {
-                  setShowEmailSentTooltip(true);
-
-                  axios
-                    .request(options)
-                    .then(function (response) {
-                      console.log(response.data);
-                    })
-                    .catch(function (error) {
-                      console.error(error);
-                    });
-                } else {
-                  setShowEmailSentTooltip(true);
-                }
-              }}
             >
               <button
                 style={{
@@ -474,27 +446,65 @@ const Preferences = () => {
                   gap: "1em",
                   cursor:
                     user?.sub?.substring(0, 5) === "auth0" ? "pointer" : "auto",
+                  backgroundColor: mouseDownOnResetPassword
+                    ? "#8d8d8d"
+                    : "#e0e0e0",
+                  transition: "all 200ms",
                 }}
                 className={`${classes.resetPasswordButton} ${baseClasses.baseFlex}`}
+                onMouseDown={() => {
+                  setMouseDownOnResetPassword(true);
+                }}
+                onMouseUp={() => {
+                  setMouseDownOnResetPassword(false);
+                }}
+                onMouseLeave={() => {
+                  setMouseDownOnResetPassword(false);
+                }}
+                onClick={() => {
+                  let options = {
+                    method: "POST",
+                    url: "https://dev-lshqttx0.us.auth0.com/dbconnections/change_password",
+                    headers: { "content-type": "application/json" },
+                    data: {
+                      client_id: "HiuFz0Yo30naHcGzk8PbPOYr0qIK6dae",
+                      email: userEmail,
+                      connection: "Username-Password-Authentication",
+                    },
+                  };
+
+                  if (user?.sub?.substring(0, 5) === "auth0") {
+                    setShowEmailSentTooltip(true);
+
+                    axios
+                      .request(options)
+                      .then(function (response) {
+                        console.log(response.data);
+                      })
+                      .catch(function (error) {
+                        console.error(error);
+                      });
+                  } else {
+                    setShowEmailSentTooltip(true);
+                  }
+                }}
               >
                 <RedoIcon
                   dimensions={"1em"}
-                  color={hoveringOnResetPassword ? "white" : "black"}
+                  color={mouseDownOnResetPassword ? "white" : "black"}
                 />
                 <div
-                  style={{ color: hoveringOnResetPassword ? "white" : "black" }}
+                  style={{
+                    color: mouseDownOnResetPassword ? "white" : "black",
+                    transition: "all 200ms",
+                  }}
                 >
                   Reset Password
                 </div>
               </button>
 
               {/* "email sent" tooltip */}
-              <div
-                style={{ width: "100%" }}
-                className={baseClasses.baseFlex}
-                onMouseEnter={() => setHoveringOnResetPassword(false)}
-                onMouseLeave={() => setHoveringOnResetPassword(false)}
-              >
+              <div style={{ width: "100%" }} className={baseClasses.baseFlex}>
                 <div
                   style={{
                     opacity: showEmailSentTooltip ? 1 : 0,
@@ -548,7 +558,8 @@ const Preferences = () => {
                 <div style={{ display: `${!editAvailable ? "" : "none"}` }}>
                   <div className={classes.uploadOverlay}>
                     <button
-                      className={classes.resizeButton}
+                      style={{ padding: "0.35em 0.6em", margin: 0 }}
+                      className={baseClasses.closeButton}
                       onClick={() => {
                         setIsEditingImage(true);
                         setShowCropModal(true);
@@ -561,7 +572,7 @@ const Preferences = () => {
                     </button>
                     <button
                       style={{ margin: 0 }}
-                      className={classes.editButton}
+                      className={baseClasses.activeButton}
                       onClick={() => {
                         // setIsEditingImage(true);
                         inputRef.current.click();
@@ -621,7 +632,7 @@ const Preferences = () => {
         >
           {editAvailable ? (
             <button
-              className={classes.editButton}
+              className={baseClasses.activeButton}
               onClick={() => setEditAvailable(false)}
             >
               <div className={classes.baseHorizFlex}>
@@ -636,7 +647,7 @@ const Preferences = () => {
           ) : (
             <div className={classes.updateButtons}>
               <button
-                className={classes.closeButton}
+                className={baseClasses.closeButton}
                 onClick={() => {
                   setEditAvailable(true);
                   fetchUserPreferences();
@@ -662,7 +673,7 @@ const Preferences = () => {
                     cursor: "auto",
                   }}
                   disabled={!ableToPost}
-                  className={classes.editButton}
+                  className={baseClasses.activeButton}
                 >
                   Save
                 </button>
@@ -677,7 +688,7 @@ const Preferences = () => {
                     cursor: ableToPost ? "pointer" : "auto",
                   }}
                   disabled={!ableToPost}
-                  className={classes.editButton}
+                  className={baseClasses.activeButton}
                   onClick={(e) => {
                     if (ableToPost) {
                       handleSubmit(e);

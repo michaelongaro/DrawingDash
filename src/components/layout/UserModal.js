@@ -218,7 +218,7 @@ const UserModal = ({ user }) => {
         {modalCtx.drawingModalOpened && (
           <button
             style={{ top: "-1em", left: "-1em" }}
-            className={classes.goBackButton}
+            className={baseClasses.activeButton}
             onClick={() => {
               // closing user modal
               modalCtx.setUserModalOpened(false);
@@ -257,13 +257,16 @@ const UserModal = ({ user }) => {
                 height: "165px",
                 objectFit: "cover",
                 borderRadius: "50%",
+                boxShadow: "rgb(0 0 0 / 30%) 0px 3px 8px 1px",
               }}
               src={croppedImage ? croppedImage : image}
               alt="Profile"
             />
           )}
 
-          <div className={classes.showUsername}>{username}</div>
+          <div style={{ marginTop: "1em" }} className={classes.showUsername}>
+            {username}
+          </div>
           <div className={classes.showStatus}>
             <i>{status}</i>
           </div>

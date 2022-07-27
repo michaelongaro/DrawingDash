@@ -1170,7 +1170,8 @@ const PromptSelection = () => {
             }}
           >
             <button
-              className={baseClasses.nextButton}
+              style={{ fontSize: "16px" }}
+              className={baseClasses.activeButton}
               disabled={nextDisabled}
               onClick={() => {
                 const seconds =
@@ -1205,9 +1206,9 @@ const PromptSelection = () => {
               className={classes.registerPromoContainer}
             >
               <div className={classes.baseFlex}>
-                <LogInButton forceShow={true} />
+                <LogInButton forceShowSignUp={true} />
                 <div>or</div>
-                <LogInButton forceShow={false} />
+                <LogInButton forceShowSignUp={false} />
               </div>
 
               <div style={{ width: "60%", textAlign: "center" }}>

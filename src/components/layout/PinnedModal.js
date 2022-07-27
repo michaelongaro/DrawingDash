@@ -72,7 +72,7 @@ const PinnedModal = React.forwardRef((props, modalRef) => {
         <div className={classes.topControlsContainer}>
           <div className={classes.save}>
             <button
-              className={classes.activeButton}
+              className={baseClasses.activeButton}
               disabled={!pinnedCtx.manuallyChangedSelectedDrawing}
               onClick={() => {
                 pinnedCtx.updateDatabase(pinnedCtx.selectedPinnedDrawings);

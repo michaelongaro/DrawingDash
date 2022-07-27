@@ -52,7 +52,7 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  gap: 1em;
+  gap: 1.5em;
   margin-left: 2em;
 }
 
@@ -63,7 +63,7 @@
   width: 250px;
   height: 60px;
   margin: 10px;
-  border-radius: 6px;
+  border-radius: 1em;
   border-color: #e2e2e2;
   border-width: 0.25em;
   border-style: solid;
@@ -87,7 +87,7 @@
 
   width: 85%;
   height: 85%;
-  background-color: tranparent;
+  background-color: transparent;
   transition: all 200ms;
 }
 
@@ -98,7 +98,7 @@
   width: 170px;
   height: 60px;
   margin: 10px;
-  border-radius: 6px;
+  border-radius: 1em;
   border-color: #e2e2e2;
   border-width: 0.25em;
   border-style: solid;
@@ -106,12 +106,12 @@
 }
 
 .exploreButton:hover {
-  background-color: hsl(67deg 100% 45%);
+  background-color: hsl(67deg 100% 47%);
 }
 
 /* last defined class has higher precedence */
 .activeExplore {
-  background-color: hsl(67deg 100% 45%);
+  background-color: hsl(67deg 100% 47%);
 }
 
 .profilePicture {
@@ -154,13 +154,19 @@
   border-radius: 1em 1em 0 0;
   outline: none;
   border: none;
-  transition: all 200ms;
+  filter: brightness(1);
+  transition-duration: 0.2s, 0.2s, 0.1s;
+  transition-property: color, background-color, filter;
 }
 
 .profileButton:hover {
   color: white;
   background-color: #ff7e31;
   cursor: pointer;
+}
+
+.profileButton:active {
+  filter: brightness(.7);
 }
 
 .profileDropdown {

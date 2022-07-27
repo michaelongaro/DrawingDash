@@ -5,6 +5,7 @@ import DrawingSelectionContext from "./DrawingSelectionContext";
 import BackupPaletteIcon from "../svgs/BackupPaletteIcon";
 
 import classes from "./PaletteChooser.module.css";
+import baseClasses from "../index.module.css";
 
 const PaletteChooser = () => {
   const DSCtx = useContext(DrawingSelectionContext);
@@ -110,6 +111,44 @@ const PaletteChooser = () => {
 
       <div className={classes.paletteIconContainer}>
         <BackupPaletteIcon />
+
+        <div
+          style={{ gap: "1.5em", marginTop: "3em" }}
+          className={baseClasses.baseFlex}
+        >
+          <button
+            className={baseClasses.activeButton}
+            onClick={() => {
+              DSCtx.updatePBStates("selectToChooseBar", false);
+              DSCtx.setStartFromLeft(false);
+
+              anime({
+                targets: "#paletteChooser",
+                loop: false,
+                translateX: -1 * window.innerWidth,
+                opacity: [1, 0],
+                direction: "normal",
+                duration: 500,
+                easing: "easeInSine",
+                complete: () => {
+                  DSCtx.goBackToPromptSelection();
+                },
+              });
+            }}
+          >
+            Prev
+          </button>
+          <button
+            className={baseClasses.activeButton}
+            disabled={nextDisabled}
+            onClick={() => {
+              DSCtx.updatePBStates("chooseToDrawBar", true);
+              moveOntoDrawScreen();
+            }}
+          >
+            Next
+          </button>
+        </div>
       </div>
 
       <div className={classes.horizContain}>
@@ -290,40 +329,6 @@ const PaletteChooser = () => {
             ></div>
           </div>
         </div>
-      </div>
-      <div className={classes.flexContainer}>
-        <button
-          className={classes.activeButton}
-          onClick={() => {
-            DSCtx.updatePBStates("selectToChooseBar", false);
-            DSCtx.setStartFromLeft(false);
-
-            anime({
-              targets: "#paletteChooser",
-              loop: false,
-              translateX: -1 * window.innerWidth,
-              opacity: [1, 0],
-              direction: "normal",
-              duration: 500,
-              easing: "easeInSine",
-              complete: () => {
-                DSCtx.goBackToPromptSelection();
-              },
-            });
-          }}
-        >
-          Prev
-        </button>
-        <button
-          className={classes.activeButton}
-          disabled={nextDisabled}
-          onClick={() => {
-            DSCtx.updatePBStates("chooseToDrawBar", true);
-            moveOntoDrawScreen();
-          }}
-        >
-          Next
-        </button>
       </div>
     </div>
   );

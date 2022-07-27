@@ -881,7 +881,7 @@ const GallaryItem = ({
                 ) : (
                   <button
                     style={{ display: "flex", gap: "0.75em", fontSize: "16px" }}
-                    className={`${baseClasses.nextButton} ${baseClasses.baseFlex}`}
+                    className={`${baseClasses.activeButton} ${baseClasses.baseFlex}`}
                     onClick={() =>
                       downloadDrawing(fetchedDrawing, drawingDetails.title)
                     }
@@ -891,28 +891,6 @@ const GallaryItem = ({
                   </button>
                 )
               ) : null}
-
-              {/* for regular gallaryitem */}
-              {/* {!settings.forHomepage ? (
-                modalCtx.drawingModalOpened ? (
-                  <CopyToClipboard url={fetchedDrawing} />
-                ) : null
-              ) : null} */}
-
-              {/* {!settings.forHomepage ? (
-                modalCtx.drawingModalOpened ? (
-                  <button
-                    style={{ display: "flex", gap: "0.75em", fontSize: "16px" }}
-                    className={`${baseClasses.nextButton} ${baseClasses.baseFlex}`}
-                    onClick={() =>
-                      downloadDrawing(fetchedDrawing, drawingDetails.title)
-                    }
-                  >
-                    <div>Download</div>
-                    <DownloadIcon color={"#FFF"} />
-                  </button>
-                ) : null
-              ) : null} */}
             </div>
           )}
         </Card>

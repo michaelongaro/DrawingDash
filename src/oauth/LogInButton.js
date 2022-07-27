@@ -1,19 +1,28 @@
 import { useAuth0 } from "@auth0/auth0-react";
 
-import classes from "./LogInButton.module.css";
+import baseClasses from "../index.module.css";
 
-function LogInButton(props) {
+function LogInButton({ forceShowSignUp }) {
   const { loginWithRedirect, isAuthenticated } = useAuth0();
 
   return (
-    (!isAuthenticated || props.forceShow) && (
+    (!isAuthenticated || forceShowSignUp) && (
       <button
-        className={`${props.forceShow ? classes.signUp : classes.logIn}`}
+        style={{
+          width: "7.5em",
+          height: "3em",
+
+          backgroundImage: forceShowSignUp
+            ? "linear-gradient(-180deg, #ff7e31, #ff2600)"
+            : "none",
+          backgroundColor: !forceShowSignUp ? "hsl(22deg 100% 60%)" : "",
+        }}
+        className={baseClasses.activeButton}
         onClick={() => {
           loginWithRedirect();
         }}
       >
-        {props.forceShow ? "Sign Up" : "Log In"}
+        {forceShowSignUp ? "Sign Up" : "Log In"}
       </button>
     )
   );

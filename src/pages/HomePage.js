@@ -74,8 +74,8 @@ function HomePage() {
                     className={classes.flexContainColumn}
                   >
                     <div className={classes.flexContainColumn}>
-                      <LogInButton forceShow={true} />
-                      <LogInButton forceShow={false} />
+                      <LogInButton forceShowSignUp={true} />
+                      <LogInButton forceShowSignUp={false} />
                     </div>
 
                     <div className={classes.fadingOrContainer}>

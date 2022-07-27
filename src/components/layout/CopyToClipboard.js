@@ -27,7 +27,7 @@ const CopyToClipboard = (props) => {
         CopyToClipboard();
       }}
       style={{ gap: "0.75em", fontSize: "16px" }}
-      className={`${baseClasses.nextButton} ${baseClasses.baseFlex}`}
+      className={`${baseClasses.activeButton} ${baseClasses.baseFlex}`}
     >
       Copy Link
       <div

@@ -876,9 +876,9 @@ const DrawingScreen = () => {
                 {!isLoading && !isAuthenticated ? (
                   <button className={classes.registerPromoContainer}>
                     <div className={classes.baseFlex}>
-                      <LogInButton forceShow={true} />
+                      <LogInButton forceShowSignUp={true} />
                       <div>or</div>
-                      <LogInButton forceShow={false} />
+                      <LogInButton forceShowSignUp={false} />
                     </div>
 
                     <div style={{ width: "60%" }}>
@@ -966,7 +966,7 @@ const DrawingScreen = () => {
                               gap: "0.75em",
                               fontSize: "16px",
                             }}
-                            className={`${baseClasses.nextButton} ${baseClasses.baseFlex}`}
+                            className={`${baseClasses.activeButton} ${baseClasses.baseFlex}`}
                             onClick={downloadDrawing}
                           >
                             <div>Download</div>
