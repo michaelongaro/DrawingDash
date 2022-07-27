@@ -34,14 +34,9 @@
   gap: 1em;
 }
 
-/* .header li {
-  margin-left: 3rem;
-} */
-
 .header a {
   text-align: center;
   text-decoration: none;
-  /* font-size: 1.5rem; */
   color: black;
 }
 
@@ -52,25 +47,6 @@
   padding: 0 1rem;
   margin-left: 0.5rem;
 }
-
-/* .signInButtons button {
-  display: inline-block;
-  padding: 0.35em 1.2em;
-  border: 0.1em solid #ffffff;
-  margin: 0 0.3em 0.3em 0;
-  border-radius: 0.12em;
-  box-sizing: border-box;
-  text-decoration: none;
-  font-family: "Roboto", sans-serif;
-  font-weight: 300;
-  color: #000000;
-  text-align: center;
-  transition: all 0.2s;
-}
-.signInButtons button:hover {
-  color: #000000;
-  background-color: #23c50d;
-} */
 
 .signInButtons {
   display: flex;
@@ -95,13 +71,11 @@
 }
 
 .dailyDrawButton:hover {
-  /* border-color: hsl(348deg 100% 44%); */
   background-color: hsl(348deg 100% 44%);
 }
 
-/* hoping that classes defined later take higher precendence */
+/* last defined class has higher precedence */
 .activeDailyDraw {
-  /* border-color: hsl(348deg 100% 44%); */
   background-color: hsl(348deg 100% 44%);
 }
 
@@ -132,19 +106,15 @@
 }
 
 .exploreButton:hover {
-  /* border-color: hsl(67deg 100% 45%); */
   background-color: hsl(67deg 100% 45%);
 }
 
+/* last defined class has higher precedence */
 .activeExplore {
-  /* border-color: hsl(67deg 100% 45%); */
   background-color: hsl(67deg 100% 45%);
 }
 
 .profilePicture {
-  /* position: absolute;
-  top: 0;
-  left: 0; */
   border-radius: 50%;
   object-fit: cover;
   width: 3em;
@@ -240,29 +210,30 @@
   box-shadow: 0 20px 35px rgba(0, 0, 0, 0.3);
   overflow: hidden;
 }
+
 .rainbow:before {
   content: "";
   height: 150%;
   width: 150%;
   position: absolute;
-  background: conic-gradient(
-    #fd004c,
-    #fe9000,
-    #fff020,
-    #3edf4b,
-    #3363ff,
-    #b102b7,
-    #fd004c
-  );
+  background: conic-gradient(#fd004c,
+      #fe9000,
+      #fff020,
+      #3edf4b,
+      #3363ff,
+      #b102b7,
+      #fd004c);
   left: -25%;
   top: -25%;
   animation: spin 1.5s infinite linear;
 }
+
 @keyframes spin {
   100% {
     transform: rotate(-360deg);
   }
 }
+
 .rainbow:after {
   content: "RAINBOW";
   position: absolute;
