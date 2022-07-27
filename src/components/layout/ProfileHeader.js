@@ -10,9 +10,9 @@ const ProfileHeader = ({ title }) => {
   return (
     <div className={classes.profileHeader}>
       <div className={classes.leadingLine}></div>
-      {title === "Preferences" && <PreferencesIcon />}
-      {title === "Gallery" && <GalleryIcon />}
-      {title === "Likes" && <LikesIcon />}
+      {title === "Preferences" && <PreferencesIcon dimensions={"1.75em"} />}
+      {title === "Gallery" && <GalleryIcon dimensions={"1.75em"} />}
+      {title === "Likes" && <LikesIcon dimensions={"1.75em"} />}
       {title}
       <div className={classes.trailingLine}></div>
     </div>

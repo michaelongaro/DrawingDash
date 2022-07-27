@@ -11,13 +11,12 @@
   gap: 0.25em;
 }
 
-li > div > a {
+li>div>a {
   display: flex;
   align-items: center;
   gap: 0.5em;
 
   text-decoration: none;
-  color: rgb(212, 212, 212);
 
   width: 100%;
   height: 100%;
@@ -26,11 +25,9 @@ li > div > a {
   transition: all 0.3s;
 }
 
-li > div > a:hover {
+li>div>a:hover {
   color: rgb(250, 250, 250);
 }
-
-/* make these dynamic by creating DOM element <style> inside component(?) */
 
 .vertContain {
   display: block;
@@ -44,7 +41,7 @@ li > div > a:hover {
   position: relative;
   overflow: hidden;
   z-index: 1;
-  width: 10em;
+  width: 10.5em;
 }
 
 .greenNavlink:hover:before {
@@ -62,6 +59,7 @@ li > div > a:hover {
   border-radius: 10rem;
   z-index: -2;
 }
+
 .greenNavlink:before {
   content: "";
   position: absolute;
@@ -79,20 +77,17 @@ li > div > a:hover {
   background-color: hsl(128deg 100% 42%);
 }
 
-.greenActive div {
-  color: rgb(250, 250, 250);
-}
 /* /////////////////////////////////////////////////////// */
 
 .yellowNavlink {
   border-radius: 10rem;
-  color: #fff;
+  width: 10.5em;
+  /* color: #fff; */
   font-size: 1rem;
-  transition: all 0.3s;
   position: relative;
   overflow: hidden;
   z-index: 1;
-  width: 10em;
+  transition: all 0.3s;
 }
 
 .yellowNavlink:hover:before {
@@ -111,6 +106,7 @@ li > div > a:hover {
   border-radius: 10rem;
   z-index: -2;
 }
+
 .yellowNavlink:before {
   content: "";
   position: absolute;
@@ -128,9 +124,6 @@ li > div > a:hover {
   background-color: hsl(60deg 95% 39%);
 }
 
-.yellowActive div {
-  color: rgb(250, 250, 250);
-}
 /* /////////////////////////////////////////////////////// */
 
 .redNavlink {
@@ -141,7 +134,7 @@ li > div > a:hover {
   position: relative;
   overflow: hidden;
   z-index: 1;
-  width: 10em;
+  width: 10.5em;
 }
 
 .redNavlink:hover:before {
@@ -155,10 +148,11 @@ li > div > a:hover {
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: hsl(356deg 89% 18%);
+  background-color: hsl(356deg 89% 24%);
   border-radius: 10rem;
   z-index: -2;
 }
+
 .redNavlink:before {
   content: "";
   position: absolute;
@@ -171,10 +165,7 @@ li > div > a:hover {
   border-radius: 10rem;
   z-index: -1;
 }
+
 .redActive {
   background-color: hsl(357deg 100% 37%);
-}
-
-.redActive div {
-  color: rgb(250, 250, 250);
 }

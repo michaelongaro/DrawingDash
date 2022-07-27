@@ -7,65 +7,107 @@ import PreferencesIcon from "../../svgs/PreferencesIcon";
 import classes from "./ProfileNavigation.module.css";
 
 const ProfileNavigation = () => {
-  const selectedBackgroundColors = [
-    "hsl(128deg 100% 42%)",
-    "hsl(60deg 95% 39%)",
-    "hsl(357deg 100% 37%)",
-  ];
-  const [navBackgrounds, setNavBackgrounds] = useState([
-    "hsl(128deg 100% 42%)",
-    "hsl(61deg 85% 27%)",
-    "hsl(356deg 89% 18%)",
-  ]);
-
-  function updateBackgroundColor(idx) {
-    let newBackgroundColors = [
-      "hsl(136deg 95% 24%)",
-      "hsl(61deg 85% 27%)",
-      "hsl(356deg 89% 18%)",
-    ];
-
-    newBackgroundColors[idx] = selectedBackgroundColors[idx];
-    setNavBackgrounds(newBackgroundColors);
-  }
+  const [greenActive, setGreenActive] = useState(false);
+  const [yellowActive, setYellowActive] = useState(false);
+  const [redActive, setRedActive] = useState(false);
 
   return (
     <nav className={classes.sidebar}>
       <ul className={classes.vertContain}>
         <li className={classes.sideContain}>
-          <div className={classes.greenNavlink}>
+          <div
+            className={classes.greenNavlink}
+            onMouseEnter={() => setGreenActive(true)}
+            onMouseLeave={() => setGreenActive(false)}
+          >
             <NavLink
               to="/profile/preferences"
-              className={({ isActive }) =>
-                isActive ? classes.greenActive : ""
+              style={({ isActive }) =>
+                isActive
+                  ? { backgroundColor: "hsl(128deg 100% 42%)" }
+                  : undefined
               }
             >
-              <PreferencesIcon />
-              <div>Preferences</div>
+              {({ isActive }) => (
+                <>
+                  <PreferencesIcon
+                    dimensions={"1.75em"}
+                    color={isActive || greenActive ? "#fafafa" : "black"}
+                  />
+                  <div
+                    style={{
+                      color: isActive || greenActive ? "#fafafa" : "black",
+                      transition: "all 300ms",
+                    }}
+                  >
+                    Preferences
+                  </div>
+                </>
+              )}
             </NavLink>
           </div>
         </li>
         <li className={classes.sideContain}>
-          <div className={classes.yellowNavlink}>
+          <div
+            className={classes.yellowNavlink}
+            onMouseEnter={() => setYellowActive(true)}
+            onMouseLeave={() => setYellowActive(false)}
+          >
             <NavLink
               to="/profile/gallery"
-              className={({ isActive }) =>
-                isActive ? classes.yellowActive : ""
+              style={({ isActive }) =>
+                isActive ? { backgroundColor: "hsl(60deg 95% 39%)" } : undefined
               }
             >
-              <GalleryIcon />
-              <div>Gallery</div>
+              {({ isActive }) => (
+                <>
+                  <GalleryIcon
+                    dimensions={"1.75em"}
+                    color={isActive || yellowActive ? "#fafafa" : "black"}
+                  />
+                  <div
+                    style={{
+                      color: isActive || yellowActive ? "#fafafa" : "black",
+                      transition: "all 300ms",
+                    }}
+                  >
+                    Gallery
+                  </div>
+                </>
+              )}
             </NavLink>
           </div>
         </li>
         <li className={classes.sideContain}>
-          <div className={classes.redNavlink}>
+          <div
+            className={classes.redNavlink}
+            onMouseEnter={() => setRedActive(true)}
+            onMouseLeave={() => setRedActive(false)}
+          >
             <NavLink
               to="/profile/likes"
-              className={({ isActive }) => (isActive ? classes.redActive : "")}
+              style={({ isActive }) =>
+                isActive
+                  ? { backgroundColor: "hsl(357deg 100% 37%)" }
+                  : undefined
+              }
             >
-              <LikesIcon />
-              <div>Likes</div>
+              {({ isActive }) => (
+                <>
+                  <LikesIcon
+                    dimensions={"1.75em"}
+                    color={isActive || redActive ? "#fafafa" : "black"}
+                  />
+                  <div
+                    style={{
+                      color: isActive || redActive ? "#fafafa" : "black",
+                      transition: "all 300ms",
+                    }}
+                  >
+                    Likes
+                  </div>
+                </>
+              )}
             </NavLink>
           </div>
         </li>
