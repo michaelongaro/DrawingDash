@@ -1,10 +1,10 @@
 import React, {
   useContext,
   useEffect,
-  useLayoutEffect,
+  // useLayoutEffect,
   useState,
-  useRef,
 } from "react";
+
 import anime from "animejs/lib/anime.es.js";
 import Select from "react-select";
 import Countdown from "react-countdown";
@@ -40,15 +40,14 @@ const PromptSelection = () => {
   const DSCtx = useContext(DrawingSelectionContext);
 
   const db = getDatabase(app);
-  const dbRef = ref_database(getDatabase(app));
 
   const placeHolderText = {
     60: ["Marching", "Orangutan"],
     180: ["Swiftly", "Champagne"],
     300: ["Bearish", "Swindle"],
+    extra: ["Goulish", "Werewolf"],
   };
 
-  // classes.hide
   const [showExtraPrompt, setShowExtraPrompt] = useState(false);
   const [extraPromptHasBeenAnimated, setExtraPromptHasBeenAnimated] =
     useState(false);
@@ -57,7 +56,7 @@ const PromptSelection = () => {
   const [adaptiveBackground, setAdaptiveBackground] = useState("");
   const [customAdaptiveBackground, setCustomAdaptiveBackground] = useState(
     classes.yellowBackground
-  ); // temporary
+  );
   const [extraDurationIcon, setExtraDurationIcon] = useState();
   const [stylingButtonClasses, setStylingButtonClasses] = useState([
     classes.disabled,
@@ -67,7 +66,7 @@ const PromptSelection = () => {
   ]);
 
   const [hidePlaceholderText, setHidePlaceholderText] = useState(
-    !DSCtx.startFromLeft
+    DSCtx.startFromLeft
   );
 
   const [durationOptions, setDurationOptions] = useState();
@@ -104,6 +103,23 @@ const PromptSelection = () => {
     setShowPromptsComingShortlyContainer,
   ] = useState(false);
 
+  const [adjustedDrawingStatuses, setAdjustedDrawingStatuses] = useState({
+    60: true,
+    180: true,
+    300: true,
+  });
+
+  // for custom prompt dropdown
+  const styles = {
+    menu: ({ width, ...css }) => ({
+      ...css,
+      width: "max-content",
+      minWidth: "75%",
+    }),
+  };
+
+  // could probably make resetComplete initialized with null and then
+  // check if it is !== false and you could eliminate this extra useEffect
   useEffect(() => {
     if (comingShortlyTimeoutComplete)
       if (
@@ -140,28 +156,16 @@ const PromptSelection = () => {
     };
   }, [DSCtx.resetComplete, showCountdownTimer, DSCtx.drawingStatusRefreshes]);
 
-  const [adjustedDrawingStatuses, setAdjustedDrawingStatuses] = useState({
-    60: true,
-    180: true,
-    300: true,
-  });
-
   useEffect(() => {
-    console.log(
-      DSCtx.drawingStatuses,
-      DSCtx.drawingStatusRefreshes,
-      DSCtx.promptRefreshes
-    );
     if (!isLoading) {
       if (
         DSCtx.resetComplete &&
         DSCtx.promptRefreshes === 1 &&
         DSCtx.drawingStatusRefreshes > 0
       ) {
-        console.log("FINISHED INSIDE OTHER PLACE");
+        setTimeout(() => setHidePlaceholderText(false), 800);
         setAdjustedDrawingStatuses(DSCtx.drawingStatuses);
       } else if (!DSCtx.resetComplete) {
-        console.log("manually disabling allz");
         if (isAuthenticated) {
           setAdjustedDrawingStatuses({
             60: true,
@@ -187,15 +191,6 @@ const PromptSelection = () => {
     DSCtx.resetComplete,
   ]);
 
-  // for custom prompt dropdown
-  const styles = {
-    menu: ({ width, ...css }) => ({
-      ...css,
-      width: "max-content",
-      minWidth: "75%",
-    }),
-  };
-
   useEffect(() => {
     if (customDurationClicked && customAdjectiveClicked && customNounClicked) {
       setNextDisabled(false);
@@ -203,45 +198,79 @@ const PromptSelection = () => {
   }, [customDurationClicked, customAdjectiveClicked, customNounClicked]);
 
   useEffect(() => {
-    if (showPromptsComingShortlyContainer || showCountdownTimer) {
-      if (
-        !isEqual(DSCtx.PBStates, {
-          selectCircle: false,
-          chooseCircle: false,
-          drawCircle: false,
-          selectToChooseBar: false,
-          chooseToDrawBar: false,
-          resetToSelectBar: false,
-        })
-      ) {
-        // change to all being false/default
-        DSCtx.setPBStates({
-          selectCircle: false,
-          chooseCircle: false,
-          drawCircle: false,
-          selectToChooseBar: false,
-          chooseToDrawBar: false,
-          resetToSelectBar: false,
-        });
+    if (!isLoading) {
+      if (showPromptsComingShortlyContainer || showCountdownTimer) {
+        if (
+          !isEqual(DSCtx.PBStates, {
+            selectCircle: false,
+            chooseCircle: false,
+            drawCircle: false,
+            selectToChooseBar: false,
+            chooseToDrawBar: false,
+            resetToSelectBar: false,
+          })
+        ) {
+          // change to all being false/default
+          DSCtx.setPBStates({
+            selectCircle: false,
+            chooseCircle: false,
+            drawCircle: false,
+            selectToChooseBar: false,
+            chooseToDrawBar: false,
+            resetToSelectBar: false,
+          });
 
-        DSCtx.setRevertSelectCircle(true);
+          DSCtx.setRevertSelectCircle(true);
 
-        // should be reverse values below
-        anime({
-          targets: "#regularPromptText",
-          top: [0, "-25px"],
-          opacity: [1, 0],
-          scale: [1, 0],
-          pointerEvents: ["none", "auto"],
-          direction: "normal",
-          duration: 500,
+          setHidePlaceholderText(true);
 
-          loop: false,
-          easing: "linear",
-        });
+          if (isAuthenticated && !DSCtx.drawingStatuses["extra"]) {
+            anime({
+              targets: "#extraPromptText",
+              top: [0, "-25px"],
+              opacity: [1, 0],
+              scale: [1, 0],
+              pointerEvents: ["none", "auto"],
+              direction: "normal",
+              duration: 500,
+
+              loop: false,
+              easing: "easeInSine",
+            });
+
+            anime({
+              targets: "#nextButton",
+              loop: false,
+              opacity: [1, 0],
+              direction: "normal",
+              duration: 500,
+              easing: "easeInSine",
+            });
+          } else {
+            anime({
+              targets: "#regularPromptText",
+              top: [0, "-25px"],
+              opacity: [1, 0],
+              scale: [1, 0],
+              pointerEvents: ["none", "auto"],
+              direction: "normal",
+              duration: 500,
+
+              loop: false,
+              easing: "linear",
+            });
+          }
+        }
       }
     }
-  }, [DSCtx.PBStates, showCountdownTimer, showPromptsComingShortlyContainer]);
+  }, [
+    isLoading,
+    isAuthenticated,
+    DSCtx.drawingStatuses,
+    DSCtx.PBStates,
+    showCountdownTimer,
+    showPromptsComingShortlyContainer,
+  ]);
 
   useEffect(() => {
     if (DSCtx.startNewDailyWordsAnimation) {
@@ -250,7 +279,6 @@ const PromptSelection = () => {
       DSCtx.setPromptRefreshes(1);
       DSCtx.setDrawingStatusRefreshes(1);
 
-      console.log("reset adj 0");
       setAdjustedDrawingStatuses({
         60: true,
         180: true,
@@ -259,8 +287,6 @@ const PromptSelection = () => {
 
       // animate signup/login container down out of view if it is showing
       if (showPromptsComingShortlyContainer) {
-        console.log("FINISHED IN STAHTED");
-
         if (blur) {
           anime({
             targets: "#registerContainer",
@@ -273,11 +299,6 @@ const PromptSelection = () => {
 
           setBlur(false);
         }
-
-        setHidePlaceholderText(true);
-
-        // animate progress bar + select text to active state
-        DSCtx.updatePBStates("selectCircle", true);
 
         // animate "a drawing Prompt" into view
         anime({
@@ -299,24 +320,6 @@ const PromptSelection = () => {
 
       // fading extra container and showing regular container
       if (showExtraPrompt && extraPromptHasBeenAnimated) {
-        console.log(
-          "db was reset and we were prev showing extraPrompts",
-          showExtraPrompt
-        );
-        // animate "An Extra Drawing Prompt" out of view
-        anime({
-          targets: "#extraPromptText",
-          // translateY: [0, "25px"],
-          opacity: [1, 0],
-          // scale: [0, 1],
-          pointerEvents: ["auto", "none"],
-          direction: "normal",
-          // delay: 500,
-          loop: false,
-          duration: 1000,
-          easing: "linear",
-        });
-
         // animate "A Drawing Prompt" into view
         anime({
           targets: "#regularPromptText",
@@ -348,6 +351,9 @@ const PromptSelection = () => {
 
           duration: 1000,
           easing: "linear",
+          complete: () => {
+            setShowExtraPrompt(false);
+          },
         });
 
         // animate normal drawing prompts container into view
@@ -366,21 +372,8 @@ const PromptSelection = () => {
 
           easing: "linear",
         });
-
-        anime({
-          targets: "#nextButton",
-          // translateY: "1300px",
-          // height: [0, "100%"],
-
-          loop: false,
-          opacity: [1, 0],
-          direction: "normal",
-          duration: 1000,
-          easing: "linear",
-        });
       }
 
-      // DSCtx.setExtraPromptsShown(false);
       DSCtx.setStartNewDailyWordsAnimation(false);
     }
   }, [DSCtx.startNewDailyWordsAnimation, showExtraPrompt]);
@@ -499,9 +492,9 @@ const PromptSelection = () => {
         value: 300,
         label: DSCtx.dailyPrompts["300"].split(" ")[1],
       });
-    } else if (!isLoading && !isAuthenticated) {
-      // for unregistered users
-
+    }
+    // for unregistered users
+    else if (!isLoading && !isAuthenticated) {
       if (
         DSCtx.drawingStatuses["60"] &&
         DSCtx.drawingStatuses["180"] &&
@@ -510,7 +503,6 @@ const PromptSelection = () => {
         setShowCountdownTimer(true);
       }
 
-      // move below to adjusted?
       setStylingButtonClasses([
         adjustedDrawingStatuses["60"] ? classes.disabled : classes.pointer,
         adjustedDrawingStatuses["180"] ? classes.disabled : classes.pointer,
@@ -537,7 +529,6 @@ const PromptSelection = () => {
       );
     }
     if (selectedDurationOption) {
-      console.log(selectedDurationOption);
       if (selectedDurationOption.value === 60)
         setCustomAdaptiveBackground(classes.redBackground);
       else if (selectedDurationOption.value === 180)
@@ -570,12 +561,10 @@ const PromptSelection = () => {
       }
 
       if (DSCtx.startFromLeft) {
-        console.log("doing init extraPrompts animation");
-
         // animate "A Drawing Prompt" down out of view
         anime({
           targets: "#regularPromptText",
-          translateY: [0, "25px"],
+          top: [0, "25px"],
           opacity: [1, 0],
           scale: [1, 0],
           pointerEvents: ["auto", "none"],
@@ -589,7 +578,7 @@ const PromptSelection = () => {
         // animate "An Extra Drawing Prompt" down into view
         anime({
           targets: "#extraPromptText",
-          translateY: [0, "25px"],
+          top: ["-25px", 0],
           opacity: [0, 1],
           scale: [0, 1],
           pointerEvents: ["auto", "none"],
@@ -625,7 +614,7 @@ const PromptSelection = () => {
           scale: [0, 1],
           delay: 500,
 
-          pointerEvents: ["none", "auto"],
+          pointerEvents: "auto",
           direction: "normal",
           loop: false,
 
@@ -683,7 +672,9 @@ const PromptSelection = () => {
         setResetAtDate(snapshot.val());
       }
     });
-    console.log("inner width", window.innerWidth);
+
+    console.log("init/coming back", DSCtx.startFromLeft);
+
     anime({
       targets: "#promptSelection",
       loop: false,
@@ -695,7 +686,7 @@ const PromptSelection = () => {
       duration: 500,
       easing: "easeInSine",
     });
-  }, []);
+  }, [DSCtx.startFromLeft]);
 
   useEffect(() => {
     // only set selectCircle to true if PBStates is default state
@@ -712,48 +703,9 @@ const PromptSelection = () => {
       }) &&
       DSCtx.resetComplete
     ) {
-      // if some prompts are still not done when daily drawings reset,
-      // manually reset PromptRefreshes and start animation of selectCircle
-      // if (
-      //   DSCtx.promptRefreshes === 2 &&
-      //   DSCtx.drawingStatusRefreshes > 0 &&
-      //   DSCtx.drawingStatusRefreshes < 6
-      // ) {
-      //   if (!isLoading && isAuthenticated) {
-      //     if (
-      //       !DSCtx.drawingStatuses["60"] ||
-      //       !DSCtx.drawingStatuses["180"] ||
-      //       !DSCtx.drawingStatuses["300"] ||
-      //       !DSCtx.drawingStatuses["extra"]
-      //     ) {
-      //       setHidePlaceholderText(true);
-      //       console.log("resetting dis shiii");
-      //       DSCtx.updatePBStates("selectCircle", true);
-      //       DSCtx.setPromptRefreshes(1);
-      //       DSCtx.setDrawingStatusRefreshes(1);
-      //     }
-      //   } else if (!isLoading && !isAuthenticated) {
-      //     if (
-      //       !DSCtx.drawingStatuses["60"] ||
-      //       !DSCtx.drawingStatuses["180"] ||
-      //       !DSCtx.drawingStatuses["300"]
-      //     ) {
-      //       setHidePlaceholderText(true);
-      //       DSCtx.updatePBStates("selectCircle", true);
-      //       DSCtx.setPromptRefreshes(1);
-      //       DSCtx.setDrawingStatusRefreshes(1);
-      //     }
-      //   }
-      // }
-
       // regular flow (drawings init loaded + not all prompts have been completed)
       // -> start animation of selectCircle
-      if (
-        DSCtx.promptRefreshes === 1 &&
-        DSCtx.drawingStatusRefreshes > 0
-        // &&
-        // DSCtx.drawingStatusRefreshes < 6
-      ) {
+      if (DSCtx.promptRefreshes === 1 && DSCtx.drawingStatusRefreshes > 0) {
         if (!isLoading && isAuthenticated) {
           if (
             !DSCtx.drawingStatuses["60"] ||
@@ -761,7 +713,7 @@ const PromptSelection = () => {
             !DSCtx.drawingStatuses["300"] ||
             !DSCtx.drawingStatuses["extra"]
           ) {
-            setHidePlaceholderText(true);
+            // setHidePlaceholderText(false);
             DSCtx.updatePBStates("selectCircle", true);
           }
         } else if (!isLoading && !isAuthenticated) {
@@ -770,7 +722,7 @@ const PromptSelection = () => {
             !DSCtx.drawingStatuses["180"] ||
             !DSCtx.drawingStatuses["300"]
           ) {
-            setHidePlaceholderText(true);
+            // setHidePlaceholderText(false);
             DSCtx.updatePBStates("selectCircle", true);
           }
         }
@@ -853,13 +805,15 @@ const PromptSelection = () => {
 
     DSCtx.updatePBStates("selectToChooseBar", true);
 
+    console.log("going to paletteChooser");
+
     anime({
       targets: "#promptSelection",
       loop: false,
-      translateX: window.innerWidth * 2,
+      translateX: DSCtx.startFromLeft ? window.innerWidth * 2 : 0,
       opacity: [1, 0],
       direction: "normal",
-      duration: 450,
+      duration: 500,
       easing: "easeInSine",
       complete: function () {
         DSCtx.setDrawingTime(seconds);
@@ -902,9 +856,7 @@ const PromptSelection = () => {
               height: "25px",
               top: 0,
               textAlign: "center",
-              opacity: !showCountdownTimer ? 1 : 0,
-              display:
-                showExtraPrompt && !DSCtx.startFromLeft ? "none" : "block",
+              opacity: !showCountdownTimer && !showExtraPrompt ? 1 : 0,
             }}
           >
             A Drawing Prompt
@@ -915,7 +867,7 @@ const PromptSelection = () => {
               position: "absolute",
               width: "300px",
               height: "25px",
-              top: showExtraPrompt && !DSCtx.startFromLeft ? 0 : "-25px",
+              top: 0,
               textAlign: "center",
               opacity: !showCountdownTimer && showExtraPrompt ? 1 : 0,
             }}
@@ -965,18 +917,18 @@ const PromptSelection = () => {
 
                 <div
                   style={{
-                    filter: hidePlaceholderText ? "" : "blur(5px)",
+                    filter: hidePlaceholderText ? "blur(5px)" : "",
                     transition: "all 200ms",
                   }}
                   className={`${classes.promptTextMargin} ${baseClasses.baseVertFlex}`}
                 >
                   <div>
-                    {!hidePlaceholderText
+                    {hidePlaceholderText
                       ? placeHolderText[60][0]
                       : DSCtx.dailyPrompts["60"].split(" ")[0]}
                   </div>
                   <div>
-                    {!hidePlaceholderText
+                    {hidePlaceholderText
                       ? placeHolderText[60][1]
                       : DSCtx.dailyPrompts["60"].split(" ")[1]}
                   </div>
@@ -997,18 +949,18 @@ const PromptSelection = () => {
 
                 <div
                   style={{
-                    filter: hidePlaceholderText ? "" : "blur(5px)",
+                    filter: hidePlaceholderText ? "blur(5px)" : "",
                     transition: "all 200ms",
                   }}
                   className={`${classes.promptTextMargin} ${baseClasses.baseVertFlex}`}
                 >
                   <div>
-                    {!hidePlaceholderText
+                    {hidePlaceholderText
                       ? placeHolderText[180][0]
                       : DSCtx.dailyPrompts["180"].split(" ")[0]}
                   </div>
                   <div>
-                    {!hidePlaceholderText
+                    {hidePlaceholderText
                       ? placeHolderText[180][1]
                       : DSCtx.dailyPrompts["180"].split(" ")[1]}
                   </div>
@@ -1029,18 +981,18 @@ const PromptSelection = () => {
 
                 <div
                   style={{
-                    filter: hidePlaceholderText ? "" : "blur(5px)",
+                    filter: hidePlaceholderText ? "blur(5px)" : "",
                     transition: "all 200ms",
                   }}
                   className={`${classes.promptTextMargin} ${baseClasses.baseVertFlex}`}
                 >
                   <div>
-                    {!hidePlaceholderText
+                    {hidePlaceholderText
                       ? placeHolderText[300][0]
                       : DSCtx.dailyPrompts["300"].split(" ")[0]}
                   </div>
                   <div>
-                    {!hidePlaceholderText
+                    {hidePlaceholderText
                       ? placeHolderText[300][1]
                       : DSCtx.dailyPrompts["300"].split(" ")[1]}
                   </div>
@@ -1069,10 +1021,10 @@ const PromptSelection = () => {
                   height: "100%",
                   cursor: "pointer",
                   backgroundPosition:
-                    selectedExtraPrompt === "regular" ? "200px" : "",
+                    selectedExtraPrompt === "normal" ? "200px" : "",
                 }}
                 onClick={() => {
-                  setSelectedExtraPrompt("regular");
+                  setSelectedExtraPrompt("normal");
                   setNextDisabled(false);
                 }}
               >
@@ -1081,10 +1033,23 @@ const PromptSelection = () => {
                 <div className={classes.timeBorder}>{formattedSeconds}</div>
 
                 <div
+                  style={{
+                    filter:
+                      hidePlaceholderText && showExtraPrompt ? "blur(5px)" : "",
+                    transition: "all 50ms",
+                  }}
                   className={`${classes.promptTextMargin} ${baseClasses.baseVertFlex}`}
                 >
-                  <div>{DSCtx.extraPrompt.title.split(" ")[0]}</div>
-                  <div>{DSCtx.extraPrompt.title.split(" ")[1]}</div>
+                  <div>
+                    {hidePlaceholderText
+                      ? placeHolderText["extra"][0]
+                      : DSCtx.extraPrompt.title.split(" ")[0]}
+                  </div>
+                  <div>
+                    {hidePlaceholderText
+                      ? placeHolderText["extra"][1]
+                      : DSCtx.extraPrompt.title.split(" ")[1]}
+                  </div>
                 </div>
               </div>
 
@@ -1306,13 +1271,33 @@ const PromptSelection = () => {
               position: "absolute",
               width: "100%",
               height: "100%",
+              gap: "1em",
               opacity: showPromptsComingShortlyContainer ? 1 : 0,
               userSelect: showPromptsComingShortlyContainer ? "auto" : "none",
               transition: "all 500ms",
             }}
             className={`${classes.promptRefreshTimer} ${baseClasses.baseFlex}`}
           >
-            <div>New prompts coming shortly...</div>
+            <div style={{ fontSize: ".85em", color: "#EEEEEE" }}>
+              New prompts coming shortly
+            </div>
+
+            {/* animated loading circle svg */}
+            <div className={classes.mainLoader}>
+              <div className={classes.loader}>
+                <svg className={classes.circularLoader} viewBox="25 25 50 50">
+                  <circle
+                    className={classes.loaderPath}
+                    cx="50"
+                    cy="50"
+                    r="20"
+                    fill="none"
+                    stroke="#EEEEEE"
+                    strokeWidth="2"
+                  />
+                </svg>
+              </div>
+            </div>
           </div>
         </div>
       </div>

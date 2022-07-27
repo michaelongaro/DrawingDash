@@ -80,7 +80,7 @@ const PaletteChooser = () => {
       translateX: window.innerWidth * 2,
       opacity: [1, 0],
       direction: "normal",
-      duration: 450,
+      duration: 500,
       easing: "easeInSine",
       complete: function () {
         DSCtx.setPaletteColors(paletteColors);
@@ -295,9 +295,21 @@ const PaletteChooser = () => {
         <button
           className={classes.activeButton}
           onClick={() => {
-            DSCtx.setStartFromLeft(false);
             DSCtx.updatePBStates("selectToChooseBar", false);
-            DSCtx.goBackToPromptSelection();
+            DSCtx.setStartFromLeft(false);
+
+            anime({
+              targets: "#paletteChooser",
+              loop: false,
+              translateX: -1 * window.innerWidth,
+              opacity: [1, 0],
+              direction: "normal",
+              duration: 500,
+              easing: "easeInSine",
+              complete: () => {
+                DSCtx.goBackToPromptSelection();
+              },
+            });
           }}
         >
           Prev
