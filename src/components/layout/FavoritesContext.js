@@ -2,6 +2,7 @@ import React, { createContext, useContext, useEffect, useState } from "react";
 
 import { isEqual } from "lodash";
 import { useAuth0 } from "@auth0/auth0-react";
+import { useLocation } from "react-router-dom";
 
 import SearchContext from "./SearchContext";
 
@@ -19,6 +20,8 @@ import { app } from "../../util/init-firebase";
 const FavoritesContext = createContext(null);
 
 export function FavoritesProvider(props) {
+  const location = useLocation();
+
   // cannot access context from another context
   const searchCtx = useContext(SearchContext);
 
@@ -37,8 +40,7 @@ export function FavoritesProvider(props) {
 
   useEffect(() => {
     if (!isLoading && isAuthenticated) {
-      // honestly not even sure that we need this below, doesn't this happen already
-      // when you setUserFavorites?
+      // could have clause for only doing this if on /profile/likes for sure
       onValue(ref(db, `users/${user.sub}/likes`), (snapshot) => {
         if (snapshot.exists()) {
           setUserFavorites(snapshot.val());
@@ -54,17 +56,18 @@ export function FavoritesProvider(props) {
 
           // set manuallyLoad[2] to null and currentPagenumber to be 1 if empty
           // [1,0,2]
+          if (location.pathname === "/profile/likes") {
+            let currentPageNumber =
+              searchCtx.pageSelectorDetails["currentPageNumber"][2];
 
-          let currentPageNumber =
-            searchCtx.pageSelectorDetails["currentPageNumber"][2];
-
-          searchCtx.getGallary(
-            (currentPageNumber - 1) * 6,
-            currentPageNumber * 6,
-            6,
-            2,
-            `users/${user.sub}/likes`
-          );
+            searchCtx.getGallary(
+              (currentPageNumber - 1) * 6,
+              currentPageNumber * 6,
+              6,
+              2,
+              `users/${user.sub}/likes`
+            );
+          }
         }
       });
     }
@@ -91,19 +94,14 @@ export function FavoritesProvider(props) {
             [drawingTitle]: { drawingID: [currDrawingID] },
           };
 
-          // dis shit be overwriting!
-
           // if there are no liked drawings for that duration
           if (!tempLikes) {
             // populating first drawing in likes
-            console.log("shiet was empty, now has one!");
             tempLikes = newLikedDrawingObject;
           } else if (!tempLikes?.[drawingTitle]) {
-            console.log("adding NEW occurance of title");
             // adding first occurance of title to existing drawings in likes
             tempLikes = { ...tempLikes, ...newLikedDrawingObject };
           } else {
-            console.log("added to exact same title alreayd there");
             // adding to existing drawing title in likes
             tempLikes[drawingTitle]["drawingID"].push(currDrawingID);
           }
@@ -175,9 +173,6 @@ export function FavoritesProvider(props) {
       ) {
         return true;
       }
-      // } else {
-      //   return false;
-      // }
     }
 
     return false;

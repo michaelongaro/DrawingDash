@@ -60,15 +60,19 @@ export function SearchProvider(props) {
   }
 
   function resetAllValues(idx) {
-    updateSearchValues("adjSearch", "", idx);
-    updateSearchValues("nounSearch", "", idx);
-    updateSearchValues("autofilledAdjectiveInput", "", idx);
-    updateSearchValues("autofilledNounInput", "", idx);
-    updateSearchValues("requestedAdjectives", [], idx);
-    updateSearchValues("requestedNouns", [], idx);
-    updateSearchValues("adjKeyboardNavigationIndex", -1, idx);
-    updateSearchValues("nounKeyboardNavigationIndex", -1, idx);
-    updateSearchValues("gallary", null, idx);
+    let tempSearchValues = { ...searchValues };
+
+    tempSearchValues["adjSearch"][idx] = "";
+    tempSearchValues["nounSearch"][idx] = "";
+    tempSearchValues["autofilledAdjectiveInput"][idx] = "";
+    tempSearchValues["autofilledNounInput"][idx] = "";
+    tempSearchValues["requestedAdjectives"][idx] = [];
+    tempSearchValues["requestedNouns"][idx] = [];
+    tempSearchValues["adjKeyboardNavigationIndex"][idx] = -1;
+    tempSearchValues["nounKeyboardNavigationIndex"][idx] = -1;
+    tempSearchValues["gallary"][idx] = null;
+
+    setSearchValues(tempSearchValues);
   }
 
   function resetPageSelectorDetails(idx) {
@@ -91,7 +95,6 @@ export function SearchProvider(props) {
     newValue[idx] = value;
 
     tempValues[key] = newValue;
-    console.log("updated pageselectorDetails with", value);
     setPageSelectorDetails(tempValues);
   }
 

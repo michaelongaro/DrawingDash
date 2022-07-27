@@ -221,15 +221,10 @@ const DrawingModal = ({
   ]);
 
   useEffect(() => {
-    console.log(hoveringOnDeleteButton);
-  }, [hoveringOnDeleteButton]);
-
-  useEffect(() => {
     if (closeButtonClicked) {
       if (openedFromUserModal) {
         modalCtx.setDrawingModalFromUserOpened(false);
       } else if (!openedFromUserModal) {
-        console.log("setting drawing modal false");
         modalCtx.setDrawingModalOpened(false);
       }
       setCloseButtonClicked(false);
@@ -268,7 +263,6 @@ const DrawingModal = ({
     const uniqueID = drawingMetadata.index;
     const user = drawingMetadata.drawnBy;
 
-    console.log("deleting the FK out of this drawing ");
     modalCtx.setDrawingModalOpened(false);
     setShowConfirmDeleteModal(false);
 
@@ -285,15 +279,11 @@ const DrawingModal = ({
     get(child(dbRef, `titles/${seconds}/${title}`)).then((snapshot) => {
       if (snapshot.exists()) {
         let drawingIDs = snapshot.val()["drawingID"];
-        console.log("total Ids", drawingIDs);
         // removing the index that has the corresponding drawingID
         drawingIDs.splice(drawingIDs.indexOf(uniqueID), 1);
         if (drawingIDs.length === 0) {
-          console.log("removing whole reg titles of", title);
           remove(ref(db, `titles/${seconds}/${title}`));
         } else {
-          console.log("updating reg titles of", title);
-
           update(ref(db, `titles/${seconds}/${title}`), {
             drawingID: drawingIDs,
           });
@@ -310,16 +300,12 @@ const DrawingModal = ({
           // removing the index that has the corresponding drawingID
           drawingIDs.splice(drawingIDs.indexOf(uniqueID), 1);
           if (drawingIDs.length === 0) {
-            console.log("removing whole reg titles of", title);
-
             remove(ref(db, `users/${user}/titles/${seconds}/${title}`)).then(
               () => {
                 setDeletionCheckpointReached(true);
               }
             );
           } else {
-            console.log("updating reg titles of", title);
-
             update(ref(db, `users/${user}/titles/${seconds}/${title}`), {
               drawingID: drawingIDs,
             }).then(() => {
@@ -744,7 +730,7 @@ const DrawingModal = ({
 
               <button
                 style={{ display: "flex", gap: "0.75em", fontSize: "16px" }}
-                className={`${baseClasses.nextButton} ${baseClasses.baseFlex}`}
+                className={`${baseClasses.activeButton} ${baseClasses.baseFlex}`}
                 onClick={() => downloadDrawing(drawing, drawingMetadata.title)}
               >
                 <div>Download</div>

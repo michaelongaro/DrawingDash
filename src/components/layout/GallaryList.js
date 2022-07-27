@@ -515,6 +515,7 @@ const GallaryList = ({
                 .fill("")
                 .map((val, i) => (
                   <button
+                    key={i}
                     style={{
                       backgroundColor:
                         searchCtx.pageSelectorDetails["currentPageNumber"][
