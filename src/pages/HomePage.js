@@ -94,10 +94,7 @@ function HomePage() {
             )}
           </div>
           <CardContainer />
-
           <FeaturedLikes />
-
-          <Footer />
         </section>
       )}
     </motion.div>

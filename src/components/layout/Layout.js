@@ -1,25 +1,31 @@
-import MainNavigation from "./MainNavigation";
-import classes from "./Layout.module.css";
-import { useContext, useEffect } from "react";
+import { useLocation } from "react-router-dom";
 
-import { useAuth0 } from "@auth0/auth0-react";
-import FavoritesContext from "./FavoritesContext";
+import Footer from "../../ui/Footer";
+import MainNavigation from "./MainNavigation";
 
 function Layout(props) {
-  // const { user } = useAuth0();
-  // const favCtx = useContext(FavoritesContext);
-
-  // useEffect(() => {
-  //   if (user.sub) {
-  //     favCtx.setClientID(user.sub);
-  //   }
-  // }, [user.sub]);
+  const location = useLocation();
 
   return (
-    <div>
+    <>
       <MainNavigation />
-      <main className={classes.main}>{props.children}</main>
-    </div>
+      <main
+        style={{
+          // position: "relative",
+          minHeight:
+            location.pathname === "/profile/gallery" ||
+            location.pathname === "/profile/likes"
+              ? "100vh"
+              : "82vh",
+          width: "100%",
+          margin: "3rem 0 0 0",
+          // flex: "1 0 auto",
+        }}
+      >
+        {props.children}
+      </main>
+      <Footer />
+    </>
   );
 }
 

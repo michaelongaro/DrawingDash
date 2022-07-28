@@ -1,6 +1,8 @@
 import React from "react";
 import { motion } from "framer-motion";
 
+import Footer from "../ui/Footer";
+
 import NotFoundIcon from "../svgs/NotFoundIcon";
 
 import baseClasses from "../index.module.css";

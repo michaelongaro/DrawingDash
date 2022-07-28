@@ -5,7 +5,6 @@ import SearchContext from "../components/layout/SearchContext";
 
 import Search from "../components/layout/Search";
 import FocalAnimatedDrawings from "../components/layout/FocalAnimatedDrawings";
-import Footer from "../ui/Footer";
 
 import classes from "./Explore.module.css";
 
@@ -38,11 +37,9 @@ function Explore() {
       transition={{ duration: 0.2 }}
     >
       <div style={{ height: dynamicHeight }} className={classes.exploreContain}>
-        <div styles={{ marginTop: "3em" }}></div>
         <FocalAnimatedDrawings forHomepage={false} forSearch={true} />
         <Search dbPath={"titles"} forModal={false} idx={0} />
       </div>
-      <Footer />
     </motion.div>
   );
 }
