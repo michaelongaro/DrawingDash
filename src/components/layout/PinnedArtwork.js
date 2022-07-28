@@ -21,10 +21,6 @@ const PinnedArtwork = () => {
   const [show180, setShow180] = useState({ display: "none" });
   const [show300, setShow300] = useState({ display: "none" });
 
-  const [show60Showcase, setShow60Showcase] = useState();
-  const [show180Showcase, setShow180Showcase] = useState();
-  const [show300Showcase, setShow300Showcase] = useState();
-
   const ref60 = useRef(null);
   const ref180 = useRef(null);
   const ref300 = useRef(null);
@@ -86,7 +82,7 @@ const PinnedArtwork = () => {
     <div className={classes.parentContain}>
       <div className={classes.pinnedContain}>
         <div style={{ gap: "1em" }} className={baseClasses.baseVertFlex}>
-          <OneMinuteIcon dimensions={"3.5em"} />
+          <OneMinuteIcon dimensions={"3em"} />
           <div
             onClick={() => {
               if (show60["display"] === "none") {
@@ -100,7 +96,7 @@ const PinnedArtwork = () => {
               )}
             </div>
 
-            <div style={show60Showcase}>
+            <div>
               <PinnedShowcaseItem
                 drawingID={pinnedCtx.pinnedDrawingIDs["60"]}
                 timer={"One Minute"}
@@ -110,7 +106,7 @@ const PinnedArtwork = () => {
         </div>
 
         <div style={{ gap: "1em" }} className={baseClasses.baseVertFlex}>
-          <ThreeMinuteIcon dimensions={"3.5em"} />
+          <ThreeMinuteIcon dimensions={"3em"} />
           <div
             onClick={() => {
               if (show180["display"] === "none") {
@@ -123,7 +119,7 @@ const PinnedArtwork = () => {
                 <PinnedModal seconds={180} ref={ref180} />
               )}
             </div>
-            <div style={show180Showcase}>
+            <div>
               <PinnedShowcaseItem
                 drawingID={pinnedCtx.pinnedDrawingIDs["180"]}
                 timer={"Three Minutes"}
@@ -133,7 +129,7 @@ const PinnedArtwork = () => {
         </div>
 
         <div style={{ gap: "1em" }} className={baseClasses.baseVertFlex}>
-          <FiveMinuteIcon dimensions={"3.5em"} />
+          <FiveMinuteIcon dimensions={"3em"} />
 
           <div
             onClick={() => {
@@ -147,7 +143,7 @@ const PinnedArtwork = () => {
                 <PinnedModal seconds={300} ref={ref300} />
               )}
             </div>
-            <div style={show300Showcase}>
+            <div>
               <PinnedShowcaseItem
                 drawingID={pinnedCtx.pinnedDrawingIDs["300"]}
                 timer={"Five Minutes"}

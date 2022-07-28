@@ -7,10 +7,6 @@ const createImage = (url) =>
     image.src = url;
   });
 
-function getRadianAngle(degreeValue) {
-  return (degreeValue * Math.PI) / 180;
-}
-
 /**
  * This function was adapted from the one in the ReadMe of https://github.com/DominicTobias/react-image-crop
  * @param {File} image - Image File url
@@ -52,11 +48,7 @@ export default async function getCroppedImg(imageSrc, pixelCrop, fileType) {
     Math.round(0 - safeArea / 2 + image.height * 0.5 - pixelCrop.y)
   );
 
-  // As Base64 string
-  // console.log(fileType);
-  // return canvas.toDataURL(fileType);
-
-  // As a blob
+  // return image as a blob
   return new Promise((resolve) => {
     canvas.toBlob((file) => {
       resolve(URL.createObjectURL(file));

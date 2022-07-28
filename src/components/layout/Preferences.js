@@ -6,7 +6,9 @@ import React, {
   useCallback,
 } from "react";
 import { useAuth0 } from "@auth0/auth0-react";
+import { isEqual } from "lodash";
 
+import getBase64Image from "../../util/getBase64Image";
 import ImageCropModal from "./ImageCropModal";
 import getCroppedImg from "../../util/cropImage";
 
@@ -45,9 +47,6 @@ import classes from "./Preferences.module.css";
 import baseClasses from "../../index.module.css";
 
 const Preferences = () => {
-  // context to set when profile picture needs to be refetched
-  // only doing it this way because there doesn't seem to be an eqivalent
-  // to "onValue" for the firebase Storage side of things...
   const PFPUpdateCtx = useContext(ProfilePictureUpdateContext);
   const pinnedCtx = useContext(PinnedContext);
 
@@ -81,11 +80,10 @@ const Preferences = () => {
   const inputRef = useRef();
 
   // crop states
-  const [DBCropData, setDBCropData] = useState();
+  const [DBCropData, setDBCropData] = useState(null);
 
   const [showCropModal, setShowCropModal] = useState(false);
   const [crop, setCrop] = useState({ x: 0, y: 0 });
-  const [rotation, setRotation] = useState(0);
   const [zoom, setZoom] = useState(1);
   const [croppedAreaPixels, setCroppedAreaPixels] = useState(null);
   const [croppedImage, setCroppedImage] = useState(null);
@@ -105,9 +103,14 @@ const Preferences = () => {
     setCroppedAreaPixels(croppedAreaPixels);
   }, []);
 
-  const showCroppedImage = async (disableSkeleton = false) => {
+  const showCroppedImage = async (disableSkeleton = false, useDBCropData) => {
     try {
-      let currentCropAreaPixels = croppedAreaPixels ?? DBCropData;
+      // using last saved value of crop values or last cropped values
+      let currentCropAreaPixels = useDBCropData
+        ? DBCropData
+        : croppedAreaPixels;
+
+      let prevCroppedImage = croppedImage;
 
       const croppedImg = await getCroppedImg(
         cropReadyImage ?? image,
@@ -118,9 +121,14 @@ const Preferences = () => {
       setCroppedImage(croppedImg);
       setShowCropModal(false);
 
-      if (isEditingImage && username.length > 0 && status.length > 0) {
-        // setHasChangedPicture(true);
-        setAbleToPost(true);
+      if (isEditingImage) {
+        if (
+          getBase64Image(prevCroppedImage) !== getBase64Image(croppedImg) &&
+          username.length > 0 &&
+          status.length > 0
+        ) {
+          setAbleToPost(true);
+        }
       }
 
       if (newImageUploaded && username.length > 0 && status.length > 0) {
@@ -139,11 +147,16 @@ const Preferences = () => {
     }
   };
 
-  const onClose = useCallback(() => {
+  function onClose() {
+    setIsEditingImage(false);
+
+    // resetting crop position/size to where it was before discarded changes
+    fetchUserPreferences();
+
     setShowCropModal(false);
     setUserUploadedImage(null);
     setCropReadyImage(null);
-  }, []);
+  }
 
   useEffect(() => {
     const timerID = setTimeout(() => setShowTempBaselineSkeleton(false), 400);
@@ -179,7 +192,14 @@ const Preferences = () => {
         if (snapshot.exists()) {
           setUsername(snapshot.val()["username"]);
           setStatus(snapshot.val()["status"]);
-          setDBCropData(snapshot.val()["profileCropMetadata"]);
+          setDBCropData(
+            snapshot.val()["profileCropMetadata"]["croppedAreaPixels"]
+          );
+          setCrop(snapshot.val()["profileCropMetadata"]["crop"]);
+          setZoom(snapshot.val()["profileCropMetadata"]["zoom"]);
+          setCroppedAreaPixels(
+            snapshot.val()["profileCropMetadata"]["croppedAreaPixels"]
+          );
         }
       });
       setUserEmail(user.email);
@@ -218,7 +238,8 @@ const Preferences = () => {
 
   useEffect(() => {
     if (DBCropData && image) {
-      showCroppedImage(true);
+      console.log("242 called", DBCropData);
+      showCroppedImage(true, true);
     }
   }, [image, DBCropData]);
 
@@ -247,10 +268,8 @@ const Preferences = () => {
     event.preventDefault();
 
     if (hasChangedPicture) {
-      console.log("uploading whole image");
       upload();
     } else {
-      // continue w/ justACropChange shit.. GODDDD MAN
       if (isEditingImage) {
         console.log("uploaded just a crop change");
         PFPUpdateCtx.setJustACropChange(true);
@@ -258,11 +277,17 @@ const Preferences = () => {
       }
     }
 
+    let cropMetadata = {
+      croppedAreaPixels: croppedAreaPixels,
+      crop: crop,
+      zoom: zoom,
+    };
+
     set(ref_database(db, `users/${user.sub}/preferences`), {
       username: username,
       status: status,
       defaultProfilePicture: user.picture,
-      profileCropMetadata: croppedAreaPixels ? croppedAreaPixels : false,
+      profileCropMetadata: croppedAreaPixels ? cropMetadata : false,
     });
 
     setInputWasChanged(false);
@@ -274,9 +299,17 @@ const Preferences = () => {
   function fetchUserPreferences() {
     get(child(dbRef, `users/${user.sub}/preferences`)).then((snapshot) => {
       if (snapshot.exists()) {
+        // check if !isEqual for all of these below
         setUsername(snapshot.val()["username"]);
         setStatus(snapshot.val()["status"]);
-        setDBCropData(snapshot.val()["profileCropMetadata"]);
+        setDBCropData(
+          snapshot.val()["profileCropMetadata"]["croppedAreaPixels"]
+        );
+        setCrop(snapshot.val()["profileCropMetadata"]["crop"]);
+        setZoom(snapshot.val()["profileCropMetadata"]["zoom"]);
+        setCroppedAreaPixels(
+          snapshot.val()["profileCropMetadata"]["croppedAreaPixels"]
+        );
       }
     });
     setHasChangedPicture(false);
@@ -690,6 +723,7 @@ const Preferences = () => {
                   disabled={!ableToPost}
                   className={baseClasses.activeButton}
                   onClick={(e) => {
+                    console.log("clicked");
                     if (ableToPost) {
                       handleSubmit(e);
                     }
@@ -728,7 +762,6 @@ const Preferences = () => {
               cropInit={crop}
               zoomInit={zoom}
               onCropChange={setCrop}
-              onRotationChange={setRotation}
               onCropComplete={onCropComplete}
               onZoomChange={setZoom}
               applyChanges={showCroppedImage}

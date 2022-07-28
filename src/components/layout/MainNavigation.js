@@ -166,7 +166,9 @@ function MainNavigation() {
       onValue(ref_database(db, `users/${user.sub}/preferences`), (snapshot) => {
         if (snapshot.exists()) {
           setUsername(snapshot.val()["username"]);
-          setDBCropData(snapshot.val()["profileCropMetadata"]);
+          setDBCropData(
+            snapshot.val()["profileCropMetadata"]["croppedAreaPixels"]
+          );
         }
       });
 

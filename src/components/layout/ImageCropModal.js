@@ -18,13 +18,13 @@ const ImageCropModal = ({
   discardChanges,
   applyChanges,
 }) => {
-  if (zoomInit == null) {
+  if (zoomInit === null) {
     zoomInit = 1;
   }
-  if (cropInit == null) {
+  if (cropInit === null) {
     cropInit = { x: 0, y: 0 };
   }
-  if (aspectInit == null) {
+  if (aspectInit === null) {
     aspectInit = { value: 1 / 1, text: "1/1" };
   }
 
