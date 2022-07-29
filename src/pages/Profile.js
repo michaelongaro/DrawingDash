@@ -1,12 +1,13 @@
+import { useLocation } from "react-router-dom";
 import { Outlet } from "react-router";
 import { motion } from "framer-motion";
 
 import ProfileNavigation from "../components/layout/ProfileNavigation";
-import Footer from "../ui/Footer";
 
 import classes from "../components/layout/ProfileLayout.module.css";
 
 const Profile = () => {
+  const location = useLocation();
   const profileCardStyles = {
     width: "55%",
     display: "flex",
@@ -20,8 +21,13 @@ const Profile = () => {
       exit={{ opacity: 0 }}
       transition={{ duration: 0.2 }}
     >
-      {/* style={{ height: "100%" }} */}
-      <div style={{ height: "82vh" }} className={classes.horizontalContain}>
+      <div
+        style={{
+          minHeight:
+            location.pathname === "/profile/preferences" ? "82vh" : "100vh",
+        }}
+        className={classes.horizontalContain}
+      >
         <ProfileNavigation />
         <div style={profileCardStyles}>
           <Outlet />

@@ -6,8 +6,9 @@
   gap: 2em;
   margin: 3rem auto;
   width: 100%;
+  overflow: hidden;
 }
 
-.containWidth > div {
+.containWidth>div {
   width: 80%;
 }

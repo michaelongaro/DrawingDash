@@ -29,12 +29,22 @@ body {
   line-height: 1.5;
   -webkit-font-smoothing: antialiased;
   overflow-x: hidden;
-  display: flex;
-  flex-direction: column;
+  /* display: flex;
+  flex-direction: column; */
   max-width: 100vw;
   /* no clue why this below was necessary to get rid of extra space below
          profile <Outlet /> */
-  flex-direction: column-reverse;
+  /* flex-direction: column-reverse; */
+}
+
+body {
+  padding: 0;
+  margin: 0;
+
+}
+
+#root {
+  min-height: 100vh;
 }
 
 @font-face {
