@@ -1,11 +1,9 @@
 import React, { useState, useEffect } from "react";
-import anime from "animejs/lib/anime.es.js";
 
 import AnimatedDrawing from "./AnimatedDrawing";
 
-import classes from "./AnimatedGridContainer.module.css";
-
 const AnimatedGridContainer = ({
+  displayDrawings,
   drawings,
   offset,
   miscSettings,
@@ -15,36 +13,14 @@ const AnimatedGridContainer = ({
     10, 1000, 2000, 3000, 4000, 5000, 6000, 7000, 8000, 9000,
   ];
 
-  // const SHADES_OF_GREEN = ["#3de320", "#29a813", "#328a22", "#4aed2d"];
-
   const [randomDrawingIndicies, setRandomDrawingIndicies] = useState([]);
   const [randomExtraTileIndicies, setRandomExtraTileIndicies] = useState([]);
 
-  // can manually add an extra (context) variable so that the useEffect cleanup can properly
-  // fade this out with a complete: (() => {}) that says it's okay to transition to next duration
   useEffect(() => {
-    getRandomIndicies();
-
-    anime({
-      targets: `#container${offset}`,
-      opacity: [0, 1],
-      loop: false,
-      direction: "normal",
-      duration: 500,
-      easing: "linear",
-    });
-
-    return () => {
-      anime({
-        targets: `#container${offset}`,
-        opacity: [1, 0],
-        loop: false,
-        direction: "normal",
-        duration: 500,
-        easing: "linear",
-      });
-    };
-  }, []);
+    if (displayDrawings) {
+      getRandomIndicies();
+    }
+  }, [displayDrawings]);
 
   function getRandomIndicies() {
     let tempRandomDrawingIndicies = [];
@@ -66,14 +42,13 @@ const AnimatedGridContainer = ({
         tempRandomExtraTileIndicies.push(i);
     }
 
-    // console.log(tempRandomDrawingIndicies, tempRandomExtraTileIndicies);
     setRandomDrawingIndicies(tempRandomDrawingIndicies);
     setRandomExtraTileIndicies(tempRandomExtraTileIndicies);
   }
 
   return (
     <>
-      {randomDrawingIndicies && randomExtraTileIndicies && (
+      {displayDrawings && randomDrawingIndicies && randomExtraTileIndicies && (
         <>
           {drawings.map((image, i) => (
             <div

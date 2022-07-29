@@ -35,6 +35,7 @@
   padding: 1em;
   background-color: white;
   z-index: 600;
+  transition: all 200ms;
 }
 
 .durationContainer {
@@ -53,6 +54,10 @@
 }
 
 .searchGridContainer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
   height: 100%;
   display: grid;
   grid-template-columns: repeat(10, 1fr);
@@ -63,6 +68,7 @@
     "drawing0 drawing1 drawing2 drawing3 drawing4 drawing5 drawing6 drawing7 drawing8 drawing9"
     "drawing10 drawing11 drawing12 drawing13 drawing14 drawing15 drawing16 drawing17 drawing18 drawing19"
     "drawing20 drawing21 drawing22 drawing23 drawing24 drawing25 drawing26 drawing27 drawing28 drawing29";
+  transition: all 200ms;
 }
 
 /* start of first row */
@@ -199,31 +205,39 @@
   0% {
     background-position: 0% 51%;
   }
+
   50% {
     background-position: 100% 50%;
   }
+
   100% {
     background-position: 0% 51%;
   }
 }
+
 @-moz-keyframes backgroundFade {
   0% {
     background-position: 0% 51%;
   }
+
   50% {
     background-position: 100% 50%;
   }
+
   100% {
     background-position: 0% 51%;
   }
 }
+
 @keyframes backgroundFade {
   0% {
     background-position: 0% 51%;
   }
+
   50% {
     background-position: 100% 50%;
   }
+
   100% {
     background-position: 0% 51%;
   }

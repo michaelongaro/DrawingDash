@@ -323,118 +323,96 @@ const FocalAnimatedDrawings = (props) => {
       }}
       className={classes.fullWidth}
     >
-      {/* for right now, just leave it as is, seems tricky to get a pseudo grid to
-        be there perma. */}
-
-      {/* Drawing Titles */}
-      {showPrompt[0] && drawingTitle60 && (
-        <div className={classes.drawingTitleContainer}>
-          <div className={classes.durationContainer}>
-            <OneMinuteIcon dimensions={"3em"} />
-            <div>{drawingTitle60}</div>
-          </div>
-          <div
-            style={{ backgroundColor: "red" }}
-            className={classes.focalProgressBar}
-            id={"redFocalProgressBar"}
-          ></div>
+      <div
+        style={{ opacity: showPrompt[0] && drawingTitle60 ? 1 : 0 }}
+        className={classes.drawingTitleContainer}
+      >
+        <div className={classes.durationContainer}>
+          <OneMinuteIcon dimensions={"3em"} />
+          <div>{drawingTitle60}</div>
         </div>
-      )}
+        <div
+          style={{ backgroundColor: "red" }}
+          className={classes.focalProgressBar}
+          id={"redFocalProgressBar"}
+        ></div>
+      </div>
 
-      {showPrompt[1] && drawingTitle180 && (
-        <div className={classes.drawingTitleContainer}>
-          <div className={classes.durationContainer}>
-            <ThreeMinuteIcon dimensions={"3em"} />
-            <div>{drawingTitle180}</div>
-          </div>
-          <div
-            style={{ backgroundColor: "yellow" }}
-            className={classes.focalProgressBar}
-            id={"yellowFocalProgressBar"}
-          ></div>
+      <div
+        style={{ opacity: showPrompt[1] && drawingTitle180 ? 1 : 0 }}
+        className={classes.drawingTitleContainer}
+      >
+        <div className={classes.durationContainer}>
+          <ThreeMinuteIcon dimensions={"3em"} />
+          <div>{drawingTitle180}</div>
         </div>
-      )}
+        <div
+          style={{ backgroundColor: "yellow" }}
+          className={classes.focalProgressBar}
+          id={"yellowFocalProgressBar"}
+        ></div>
+      </div>
 
-      {showPrompt[2] && drawingTitle300 && (
-        <div className={classes.drawingTitleContainer}>
-          <div className={classes.durationContainer}>
-            <FiveMinuteIcon dimensions={"3em"} />
-            <div>{drawingTitle300}</div>
-          </div>
-          <div
-            style={{ backgroundColor: "green" }}
-            className={classes.focalProgressBar}
-            id={"greenFocalProgressBar"}
-          ></div>
+      <div
+        style={{ opacity: showPrompt[2] && drawingTitle300 ? 1 : 0 }}
+        className={classes.drawingTitleContainer}
+      >
+        <div className={classes.durationContainer}>
+          <FiveMinuteIcon dimensions={"3em"} />
+          <div>{drawingTitle300}</div>
         </div>
-      )}
+        <div
+          style={{ backgroundColor: "green" }}
+          className={classes.focalProgressBar}
+          id={"greenFocalProgressBar"}
+        ></div>
+      </div>
 
       {/* Drawings */}
-      {showPrompt[0] && fetchedDrawings60.length > 0 && (
-        <div
-          id={"container0"}
-          style={{
-            position: "absolute",
-            left: 0,
-            top: 0,
-            width: "100%",
-            height: "100%",
-          }}
-        >
-          <div className={`${classes.searchGridContainer}`}>
-            <AnimatedGridContainer
-              drawings={fetchedDrawings60}
-              offset={0}
-              miscSettings={miscSettings.current}
-              SHADES_OF_GREEN={SHADES_OF_GREEN}
-            />
-          </div>
-        </div>
-      )}
+      <div
+        style={{
+          opacity: showPrompt[0] && fetchedDrawings60.length > 0 ? 1 : 0,
+        }}
+        className={`${classes.searchGridContainer}`}
+      >
+        <AnimatedGridContainer
+          displayDrawings={showPrompt[0] && fetchedDrawings60.length > 0}
+          drawings={fetchedDrawings60}
+          offset={0}
+          miscSettings={miscSettings.current}
+          SHADES_OF_GREEN={SHADES_OF_GREEN}
+        />
+      </div>
 
-      {showPrompt[1] && fetchedDrawings180.length > 0 && (
-        <div
-          id={"container16"}
-          style={{
-            position: "absolute",
-            left: 0,
-            top: 0,
-            width: "100%",
-            height: "100%",
-          }}
-        >
-          <div className={`${classes.searchGridContainer}`}>
-            <AnimatedGridContainer
-              drawings={fetchedDrawings180}
-              offset={31}
-              miscSettings={miscSettings.current}
-              SHADES_OF_GREEN={SHADES_OF_GREEN}
-            />
-          </div>
-        </div>
-      )}
+      <div
+        style={{
+          opacity: showPrompt[1] && fetchedDrawings180.length > 0 ? 1 : 0,
+        }}
+        className={`${classes.searchGridContainer}`}
+      >
+        <AnimatedGridContainer
+          displayDrawings={showPrompt[1] && fetchedDrawings180.length > 0}
+          drawings={fetchedDrawings180}
+          offset={31}
+          miscSettings={miscSettings.current}
+          SHADES_OF_GREEN={SHADES_OF_GREEN}
+        />
+      </div>
 
-      {showPrompt[2] && fetchedDrawings300.length > 0 && (
-        <div
-          id={"container32"}
-          style={{
-            position: "absolute",
-            left: 0,
-            top: 0,
-            width: "100%",
-            height: "100%",
-          }}
-        >
-          <div className={`${classes.searchGridContainer}`}>
-            <AnimatedGridContainer
-              drawings={fetchedDrawings300}
-              offset={62}
-              miscSettings={miscSettings.current}
-              SHADES_OF_GREEN={SHADES_OF_GREEN}
-            />
-          </div>
-        </div>
-      )}
+      <div
+        style={{
+          opacity: showPrompt[2] && fetchedDrawings300.length > 0 ? 1 : 0,
+        }}
+        className={`${classes.searchGridContainer}`}
+      >
+        <AnimatedGridContainer
+          displayDrawings={showPrompt[2] && fetchedDrawings300.length > 0}
+          drawings={fetchedDrawings300}
+          offset={62}
+          miscSettings={miscSettings.current}
+          SHADES_OF_GREEN={SHADES_OF_GREEN}
+        />
+      </div>
 
       <FocalBannerMessage
         forHomepage={props.forHomepage}
