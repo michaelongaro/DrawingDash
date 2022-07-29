@@ -15,6 +15,7 @@ export function SearchProvider(props) {
     requestedNouns: [[], [], []],
     adjKeyboardNavigationIndex: [-1, -1, -1],
     nounKeyboardNavigationIndex: [-1, -1, -1],
+    anInputIsFocused: [false, false, false],
     gallary: [null, null, null],
   });
 
@@ -70,6 +71,7 @@ export function SearchProvider(props) {
     tempSearchValues["requestedNouns"][idx] = [];
     tempSearchValues["adjKeyboardNavigationIndex"][idx] = -1;
     tempSearchValues["nounKeyboardNavigationIndex"][idx] = -1;
+    tempSearchValues["anInputIsFocused"][idx] = false;
     tempSearchValues["gallary"][idx] = null;
 
     setSearchValues(tempSearchValues);

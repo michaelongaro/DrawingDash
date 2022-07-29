@@ -37,6 +37,9 @@ const Search = ({ dbPath, margin, idx, forModal }) => {
   const adjectiveInputRef = useRef();
   const nounInputRef = useRef();
 
+  const [adjInputFocused, setAdjInputFocused] = useState(false);
+  const [nounInputFocused, setNounInputFocused] = useState(false);
+
   const refreshAdjSearch = (event) => {
     searchCtx.updateSearchValues("adjSearch", event.target.value.trim(), idx);
 
@@ -69,14 +72,18 @@ const Search = ({ dbPath, margin, idx, forModal }) => {
   }, []);
 
   useEffect(() => {
+    searchCtx.updateSearchValues(
+      "anInputIsFocused",
+      adjInputFocused || nounInputFocused,
+      idx
+    );
+  }, [adjInputFocused, nounInputFocused, idx]);
+
+  useEffect(() => {
     // arrowup/down event autofillHandlers
 
     function arrowKeyHandler(e) {
-      console.log("top func called");
-      // have cases for OOO need to also ahhh see what happens to input when you move it aroun
-
       // copying context values into smaller, more managable variable names
-
       let adjIdx = searchCtx.searchValues["adjKeyboardNavigationIndex"][idx];
       let nounIdx = searchCtx.searchValues["nounKeyboardNavigationIndex"][idx];
 
@@ -371,8 +378,14 @@ const Search = ({ dbPath, margin, idx, forModal }) => {
             className={classes.searchInput}
             id="adj"
             ref={adjectiveInputRef}
-            onFocus={(e) => autofillHandler(e, true, true)}
-            onBlur={(e) => autofillHandler(e, false, true)}
+            onFocus={(e) => {
+              setAdjInputFocused(true);
+              autofillHandler(e, true, true);
+            }}
+            onBlur={(e) => {
+              setAdjInputFocused(false);
+              autofillHandler(e, false, true);
+            }}
             autoComplete="off"
             required
           ></input>
@@ -390,8 +403,14 @@ const Search = ({ dbPath, margin, idx, forModal }) => {
             className={classes.searchInput}
             id="noun"
             ref={nounInputRef}
-            onFocus={(e) => autofillHandler(e, true, false)}
-            onBlur={(e) => autofillHandler(e, false, false)}
+            onFocus={(e) => {
+              setNounInputFocused(true);
+              autofillHandler(e, true, false);
+            }}
+            onBlur={(e) => {
+              setNounInputFocused(false);
+              autofillHandler(e, false, false);
+            }}
             autoComplete="off"
             required
           ></input>

@@ -6,6 +6,7 @@ import SlideShow from "./SlideShow";
 import Search from "./Search";
 
 import ModalContext from "./ModalContext";
+import SearchContext from "./SearchContext";
 
 import {
   getDatabase,
@@ -29,6 +30,7 @@ import baseClasses from "../../index.module.css";
 
 const UserModal = ({ user }) => {
   const modalCtx = useContext(ModalContext);
+  const searchCtx = useContext(SearchContext);
 
   const db = getDatabase(app);
   const dbRef = ref_database(getDatabase(app));
@@ -36,6 +38,8 @@ const UserModal = ({ user }) => {
   const storage = getStorage();
 
   const userModalRef = useRef();
+
+  const [autofillResultsCleared, setAutofillResultsCleared] = useState(true);
 
   const [username, setUsername] = useState("");
   const [status, setStatus] = useState("");
@@ -72,11 +76,45 @@ const UserModal = ({ user }) => {
       }
     }
 
+    function escapeHandler(e) {
+      if (e.key === "Escape") {
+        e.preventDefault();
+
+        if (autofillResultsCleared) {
+          if (
+            modalCtx.userModalOpened &&
+            !modalCtx.drawingModalFromUserOpened
+          ) {
+            modalCtx.setUserModalOpened(false);
+          }
+        }
+      }
+    }
+
     document.addEventListener("click", modalHandler);
+    document.addEventListener("keydown", escapeHandler);
+
     return () => {
       document.removeEventListener("click", modalHandler);
+      document.removeEventListener("keydown", escapeHandler);
     };
-  }, [modalCtx.userModalOpened]);
+  }, [
+    modalCtx.userModalOpened,
+    modalCtx.drawingModalFromUserOpened,
+    searchCtx.searchValues,
+    autofillResultsCleared,
+  ]);
+
+  useEffect(() => {
+    if (searchCtx.searchValues["anInputIsFocused"][1]) {
+      setAutofillResultsCleared(false);
+    } else if (
+      !searchCtx.searchValues["anInputIsFocused"][1] &&
+      !autofillResultsCleared
+    ) {
+      setAutofillResultsCleared(true);
+    }
+  }, [searchCtx.searchValues, autofillResultsCleared]);
 
   useEffect(() => {
     // fetch data from db if it is present
@@ -85,7 +123,12 @@ const UserModal = ({ user }) => {
       if (snapshot.exists()) {
         setUsername(snapshot.val()["username"]);
         setStatus(snapshot.val()["status"]);
-        setDBCropData(snapshot.val()["profileCropMetadata"]);
+        if (snapshot.val()["profileCropMetadata"]) {
+          setDBCropData(
+            snapshot.val()["profileCropMetadata"]["croppedAreaPixels"]
+          );
+        }
+
         get(child(dbRef, `users/${user}/pinnedArt`)).then((snapshot2) => {
           if (snapshot2.exists()) {
             // for the time being just doing this
@@ -213,11 +256,11 @@ const UserModal = ({ user }) => {
   }
 
   return (
-    <div ref={userModalRef} className={classes.horizContain}>
-      <div style={{ position: "relative", width: "100%" }}>
+    <div ref={userModalRef} className={classes.userModalContain}>
+      <div style={{ position: "relative", width: "100%", height: "10px" }}>
         {modalCtx.drawingModalOpened && (
           <button
-            style={{ top: "-1em", left: "-1em" }}
+            style={{ top: "-2.45em", left: "1.5em" }}
             className={baseClasses.activeButton}
             onClick={() => {
               // closing user modal
@@ -228,7 +271,9 @@ const UserModal = ({ user }) => {
           </button>
         )}
         <button
-          style={{ top: "-1em", right: "-1.25em" }}
+          // style={{ top: "-1em", right: "-1.25em" }}
+
+          style={{ top: "-2.5rem", right: "1.5rem" }}
           className={baseClasses.close}
           onClick={() => {
             // closing all modals
@@ -238,57 +283,83 @@ const UserModal = ({ user }) => {
           }}
         ></button>
       </div>
-
-      <div className={`${classes.container} ${classes.prefCard}`}>
-        <div className={classes.leftSide}>
-          {isFetchingProfilePicture ? (
-            <div
-              style={{
-                width: "165px",
-                height: "165px",
-                borderRadius: "50%",
+      <div className={classes.userModal}>
+        {/* <div style={{ position: "relative", width: "100%" }}>
+          {modalCtx.drawingModalOpened && (
+            <button
+              style={{ top: "-1em", left: "-1em" }}
+              className={baseClasses.activeButton}
+              onClick={() => {
+                // closing user modal
+                modalCtx.setUserModalOpened(false);
               }}
-              className={baseClasses.skeletonLoading}
-            ></div>
-          ) : (
-            <img
-              style={{
-                width: "165px",
-                height: "165px",
-                objectFit: "cover",
-                borderRadius: "50%",
-                boxShadow: "rgb(0 0 0 / 30%) 0px 3px 8px 1px",
-              }}
-              src={croppedImage ? croppedImage : image}
-              alt="Profile"
-            />
+            >
+              Return to image
+            </button>
           )}
+          <button
+            style={{ top: "-1em", right: "-1.25em" }}
+            className={baseClasses.close}
+            onClick={() => {
+              // closing all modals
+              modalCtx.setDrawingModalFromUserOpened(false);
+              modalCtx.setDrawingModalOpened(false);
+              modalCtx.setUserModalOpened(false);
+            }}
+          ></button>
+        </div> */}
 
-          <div style={{ marginTop: "1em" }} className={classes.showUsername}>
-            {username}
+        <div className={`${classes.container} ${classes.prefCard}`}>
+          <div className={classes.leftSide}>
+            {isFetchingProfilePicture ? (
+              <div
+                style={{
+                  width: "165px",
+                  height: "165px",
+                  borderRadius: "50%",
+                }}
+                className={baseClasses.skeletonLoading}
+              ></div>
+            ) : (
+              <img
+                style={{
+                  width: "165px",
+                  height: "165px",
+                  objectFit: "cover",
+                  borderRadius: "50%",
+                  boxShadow: "rgb(0 0 0 / 30%) 0px 3px 8px 1px",
+                }}
+                src={croppedImage ? croppedImage : image}
+                alt="Profile"
+              />
+            )}
+
+            <div style={{ marginTop: "1em" }} className={classes.showUsername}>
+              {username}
+            </div>
+            <div className={classes.showStatus}>
+              <i>{status}</i>
+            </div>
           </div>
-          <div className={classes.showStatus}>
-            <i>{status}</i>
+
+          <div className={classes.rightSide}>
+            {isFetchingPinnedDrawings ? (
+              <div
+                style={{ width: "5em", height: "50%" }}
+                className={classes.skeletonLoading}
+              ></div>
+            ) : (
+              <SlideShow
+                pinnedDrawings={pinnedDrawings}
+                pinnedMetadata={pinnedMetadata}
+                username={username}
+              />
+            )}
           </div>
         </div>
 
-        <div className={classes.rightSide}>
-          {isFetchingPinnedDrawings ? (
-            <div
-              style={{ width: "5em", height: "50%" }}
-              className={classes.skeletonLoading}
-            ></div>
-          ) : (
-            <SlideShow
-              pinnedDrawings={pinnedDrawings}
-              pinnedMetadata={pinnedMetadata}
-              username={username}
-            />
-          )}
-        </div>
+        <Search dbPath={`users/${user}/titles`} idx={1} forModal={true} />
       </div>
-
-      <Search dbPath={`users/${user}/titles`} idx={1} forModal={true} />
     </div>
   );
 };

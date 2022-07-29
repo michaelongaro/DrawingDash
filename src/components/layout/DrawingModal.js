@@ -205,9 +205,33 @@ const DrawingModal = ({
       }
     }
 
+    function escapeHandler(e) {
+      if (e.key === "Escape") {
+        e.preventDefault();
+
+        // only care about listening to 'esc' when a drawing modal is open
+        if (
+          modalCtx.drawingModalOpened ||
+          modalCtx.drawingModalFromUserOpened
+        ) {
+          if (openedFromUserModal) {
+            modalCtx.setDrawingModalFromUserOpened(false);
+          } else if (
+            openedFromUserModal === false &&
+            !modalCtx.userModalOpened
+          ) {
+            modalCtx.setDrawingModalOpened(false);
+          }
+        }
+      }
+    }
+
     document.addEventListener("click", modalHandler);
+    document.addEventListener("keydown", escapeHandler);
+
     return () => {
       document.removeEventListener("click", modalHandler);
+      document.removeEventListener("keydown", escapeHandler);
     };
   }, [
     fullyFinishedLoading,

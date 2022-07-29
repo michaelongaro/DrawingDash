@@ -1,17 +1,31 @@
-.horizContain {
-  display: flex;
+.userModalContain {
+  /* display: flex;
   flex-direction: column;
   justify-content: flex-start;
-  align-items: center;
+  align-items: center; */
   gap: 1em;
 
   width: 80vw;
   max-height: 95vh;
-  overflow-y: scroll;
+  /* overflow-y: scroll; */
 
   background-color: white;
-  padding: 3em;
+  padding: 4em 0 3em 0;
   border-radius: 1em;
+}
+
+.userModal {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+
+  height: 100%;
+  width: 100%;
+
+  padding: 1em 3em 1em 3em;
+  overflow-y: scroll;
+  overflow-x: hidden;
 }
 
 .leftSide {
