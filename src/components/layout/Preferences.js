@@ -192,14 +192,16 @@ const Preferences = () => {
         if (snapshot.exists()) {
           setUsername(snapshot.val()["username"]);
           setStatus(snapshot.val()["status"]);
-          setDBCropData(
-            snapshot.val()["profileCropMetadata"]["croppedAreaPixels"]
-          );
-          setCrop(snapshot.val()["profileCropMetadata"]["crop"]);
-          setZoom(snapshot.val()["profileCropMetadata"]["zoom"]);
-          setCroppedAreaPixels(
-            snapshot.val()["profileCropMetadata"]["croppedAreaPixels"]
-          );
+          if (snapshot.val()["profileCropMetadata"]) {
+            setDBCropData(
+              snapshot.val()["profileCropMetadata"]["croppedAreaPixels"]
+            );
+            setCrop(snapshot.val()["profileCropMetadata"]["crop"]);
+            setZoom(snapshot.val()["profileCropMetadata"]["zoom"]);
+            setCroppedAreaPixels(
+              snapshot.val()["profileCropMetadata"]["croppedAreaPixels"]
+            );
+          }
         }
       });
       setUserEmail(user.email);
@@ -302,14 +304,16 @@ const Preferences = () => {
         // check if !isEqual for all of these below
         setUsername(snapshot.val()["username"]);
         setStatus(snapshot.val()["status"]);
-        setDBCropData(
-          snapshot.val()["profileCropMetadata"]["croppedAreaPixels"]
-        );
-        setCrop(snapshot.val()["profileCropMetadata"]["crop"]);
-        setZoom(snapshot.val()["profileCropMetadata"]["zoom"]);
-        setCroppedAreaPixels(
-          snapshot.val()["profileCropMetadata"]["croppedAreaPixels"]
-        );
+        if (snapshot.val()["profileCropMetadata"]) {
+          setDBCropData(
+            snapshot.val()["profileCropMetadata"]["croppedAreaPixels"]
+          );
+          setCrop(snapshot.val()["profileCropMetadata"]["crop"]);
+          setZoom(snapshot.val()["profileCropMetadata"]["zoom"]);
+          setCroppedAreaPixels(
+            snapshot.val()["profileCropMetadata"]["croppedAreaPixels"]
+          );
+        }
       }
     });
     setHasChangedPicture(false);

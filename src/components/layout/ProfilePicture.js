@@ -58,7 +58,12 @@ const ProfilePicture = ({ user, size }) => {
 
   useEffect(() => {
     get(child(dbRef, `users/${user}/preferences`)).then((snapshot) => {
-      setDBCropData(snapshot.val()["profileCropMetadata"]["croppedAreaPixels"]);
+      console.log(user);
+      if (user && snapshot.val()["profileCropMetadata"]) {
+        setDBCropData(
+          snapshot.val()["profileCropMetadata"]["croppedAreaPixels"]
+        );
+      }
     });
 
     if (size === "small") {
