@@ -38,6 +38,32 @@ const SlideShow = ({ pinnedDrawings, pinnedMetadata, username }) => {
     transitionDuration: 500,
     pauseOnHover: true,
     arrows: true,
+
+    prevArrow: (
+      <button
+        style={{ marginRight: "-35px", borderRight: 0, borderTop: 0 }}
+        className={classes.nav}
+        data-type="prev"
+        aria-label="Previous Slide"
+      >
+        <svg width="18" height="18" viewBox="0 0 24 24">
+          <path d="M16.67 0l2.83 2.829-9.339 9.175 9.339 9.167-2.83 2.829-12.17-11.996z"></path>
+        </svg>
+      </button>
+    ),
+    nextArrow: (
+      <button
+        style={{ marginLeft: "-35px" }}
+        className={classes.nav}
+        data-type="next"
+        aria-label="Next Slide"
+      >
+        <svg width="18" height="18" viewBox="0 0 24 24">
+          <path d="M5 3l3.057-3 11.943 12-11.943 12-3.057-3 9-9z"></path>
+        </svg>
+      </button>
+    ),
+
     indicators: (i) => {
       if (i === 0) {
         return (

@@ -6,3 +6,26 @@ ul {
   margin: 0.85em 0.85em 0.25em 0.85em;
   padding: 0;
 }
+
+.nav {
+  height: 30px;
+  background: rgba(255, 255, 255, 0.6);
+  width: 30px;
+  border: 0;
+  text-align: center;
+  cursor: pointer;
+  color: #fff;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 100ms;
+}
+
+.nav:hover {
+  filter: brightness(.7);
+}
+
+.nav:active {
+  filter: brightness(.5);
+}
