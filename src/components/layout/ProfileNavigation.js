@@ -22,6 +22,7 @@ const ProfileNavigation = () => {
           >
             <NavLink
               to="/profile/preferences"
+              className={classes.navlink}
               style={({ isActive }) =>
                 isActive
                   ? { backgroundColor: "hsl(128deg 100% 42%)" }
@@ -55,6 +56,7 @@ const ProfileNavigation = () => {
           >
             <NavLink
               to="/profile/gallery"
+              className={classes.navlink}
               style={({ isActive }) =>
                 isActive ? { backgroundColor: "hsl(60deg 95% 39%)" } : undefined
               }
@@ -86,6 +88,7 @@ const ProfileNavigation = () => {
           >
             <NavLink
               to="/profile/likes"
+              className={classes.navlink}
               style={({ isActive }) =>
                 isActive
                   ? { backgroundColor: "hsl(357deg 100% 37%)" }

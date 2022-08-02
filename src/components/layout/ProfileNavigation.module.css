@@ -11,7 +11,8 @@
   gap: 0.25em;
 }
 
-li>div>a {
+/* make this into a class */
+.navlink {
   display: flex;
   align-items: center;
   gap: 0.5em;
@@ -25,7 +26,7 @@ li>div>a {
   transition: all 0.3s;
 }
 
-li>div>a:hover {
+.navlink:hover {
   color: rgb(250, 250, 250);
 }
 

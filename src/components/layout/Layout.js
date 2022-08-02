@@ -11,7 +11,6 @@ function Layout(props) {
       <MainNavigation />
       <main
         style={{
-          // position: "relative",
           minHeight:
             location.pathname === "/profile/gallery" ||
             location.pathname === "/profile/likes"
@@ -19,7 +18,6 @@ function Layout(props) {
               : "82vh",
           width: "100%",
           margin: "3rem 0 0 0",
-          // flex: "1 0 auto",
         }}
       >
         {props.children}

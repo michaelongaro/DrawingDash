@@ -19,14 +19,13 @@ import { app } from "../../util/init-firebase";
 import OneMinuteIcon from "../../svgs/OneMinuteIcon";
 import ThreeMinuteIcon from "../../svgs/ThreeMinuteIcon";
 import FiveMinuteIcon from "../../svgs/FiveMinuteIcon";
-
 import MagnifyingGlassIcon from "../../svgs/MagnifyingGlassIcon";
-
-import classes from "./FocalBannerMessage.module.css";
-import baseClasses from "../../index.module.css";
 import LogoIcon from "../../svgs/LogoIcon";
 import Logo from "../../svgs/Logo.png";
 import RainbowExtraIcon from "../../svgs/RainbowExtraIcon";
+
+import classes from "./FocalBannerMessage.module.css";
+import baseClasses from "../../index.module.css";
 
 const FocalBannerMessage = (props) => {
   const { user, isAuthenticated, isLoading } = useAuth0();
@@ -139,6 +138,7 @@ const FocalBannerMessage = (props) => {
 
               <img
                 src={Logo}
+                className={classes.bannerLogo}
                 style={{ maxWidth: "200px", marginTop: ".25em" }}
                 alt="Logo"
               />

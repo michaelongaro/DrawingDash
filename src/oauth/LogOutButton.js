@@ -16,7 +16,7 @@ import LogOutIcon from "../svgs/LogOutIcon";
 
 import classes from "./LogInButton.module.css";
 
-const LogoutButton = () => {
+const LogOutButton = ({ borderRadius = "0 0 1em 1em", gap = ".5em" }) => {
   const { logout, user, isLoading, isAuthenticated } = useAuth0();
 
   const db = getDatabase(app);
@@ -232,7 +232,9 @@ const LogoutButton = () => {
         style={{
           backgroundColor: buttonIsClicked ? "#c2c2c2" : "#eeeeee",
           color: buttonIsClicked ? "white" : "black",
-          borderColor: buttonIsHovered ? "#c2c2c2" : "#eeeeee"
+          borderColor: buttonIsHovered ? "#c2c2c2" : "#eeeeee",
+          borderRadius: borderRadius,
+          gap: gap,
         }}
         className={classes.logOut}
         onMouseDown={() => {
@@ -261,4 +263,4 @@ const LogoutButton = () => {
   );
 };
 
-export default LogoutButton;
+export default LogOutButton;

@@ -1,0 +1,227 @@
+import React, { useState, useEffect, useRef } from "react";
+
+import { useAuth0 } from "@auth0/auth0-react";
+import { useLocation } from "react-router-dom";
+import { Link } from "react-router-dom";
+import { slide as Menu } from "react-burger-menu";
+import Hamburger from "hamburger-react";
+
+import LogOutButton from "../../oauth/LogOutButton";
+
+import GalleryIcon from "../../svgs/GalleryIcon";
+import LikesIcon from "../../svgs/LikesIcon";
+import PreferencesIcon from "../../svgs/PreferencesIcon";
+
+import classes from "./Sidebar.module.css";
+import profileClasses from "./ProfileNavigation.module.css";
+import baseClasses from "../../index.module.css";
+
+const Sidebar = ({ pageWrapId, outerContainerId }) => {
+  const { isLoading, isAuthenticated } = useAuth0();
+  const location = useLocation();
+
+  const sidebarRef = useRef(null);
+  const burgerRef = useRef(null);
+
+  const [sidebarOpened, setSidebarOpened] = useState(false);
+  const [sidebarWidth, setSidebarWidth] = useState("50%");
+
+  const [greenActive, setGreenActive] = useState(false);
+  const [yellowActive, setYellowActive] = useState(false);
+  const [redActive, setRedActive] = useState(false);
+
+  useEffect(() => {
+    // just for initial render
+    if (window.innerWidth < 750) {
+      setSidebarWidth("100%");
+    } else {
+      setSidebarWidth("50%");
+    }
+
+    function touchHandler(e) {
+      if (
+        !burgerRef.current.contains(e.target) &&
+        !sidebarRef.current.contains(e.target)
+      ) {
+        console.log("sidebar closed");
+        setSidebarOpened(false);
+      }
+    }
+
+    function resizeHandler(e) {
+      if (window.innerWidth < 750) {
+        setSidebarWidth("100%");
+      } else {
+        setSidebarWidth("50%");
+      }
+    }
+
+    document.addEventListener("touchend", touchHandler);
+    window.addEventListener("resize", resizeHandler);
+    return () => {
+      document.removeEventListener("touchend", touchHandler);
+      window.removeEventListener("resize", resizeHandler);
+    };
+  }, []);
+
+  useEffect(() => {
+    if (
+      location.pathname !== "/profile/preferences" &&
+      location.pathname !== "/profile/gallery" &&
+      location.pathname !== "/profile/likes"
+    ) {
+      setGreenActive(false);
+      setYellowActive(false);
+      setRedActive(false);
+    }
+  }, [location.pathname]);
+
+  function changeSelectedTab(idx) {
+    if (idx === 0) {
+      setGreenActive(true);
+      setYellowActive(false);
+      setRedActive(false);
+    } else if (idx === 1) {
+      setGreenActive(false);
+      setYellowActive(true);
+      setRedActive(false);
+    } else if (idx === 2) {
+      setGreenActive(false);
+      setYellowActive(false);
+      setRedActive(true);
+    }
+  }
+
+  return (
+    <>
+      <div ref={burgerRef} className={classes.burgerIconContainer}>
+        <Hamburger
+          color={"#e2e2e2"}
+          onToggle={(toggled) => {
+            if (toggled) {
+              setSidebarOpened(true);
+            } else {
+              setSidebarOpened(false);
+            }
+          }}
+          toggled={sidebarOpened}
+          toggle={setSidebarOpened}
+        />
+      </div>
+
+      <div
+        style={{
+          width: sidebarOpened ? sidebarWidth : 0,
+          opacity: sidebarOpened ? 1 : 0,
+        }}
+        ref={sidebarRef}
+        className={classes.sidebarBody}
+      >
+        <div
+          style={{ display: sidebarOpened ? "flex" : "none" }}
+          className={`${baseClasses.baseVertFlex} ${classes.sidebarLinks}`}
+        >
+          <ul className={profileClasses.vertContain}>
+            <li style={{ width: "75%" }} className={profileClasses.sideContain}>
+              <div
+                style={{ width: "100%" }}
+                className={profileClasses.greenNavlink}
+                onClick={() => changeSelectedTab(0)}
+              >
+                <Link
+                  to="/profile/preferences"
+                  className={profileClasses.navlink}
+                  onClick={() => setSidebarOpened(false)}
+                >
+                  <div
+                    className={`${baseClasses.baseFlex} ${classes.linkFlexContainer}`}
+                  >
+                    <PreferencesIcon
+                      dimensions={"1.75em"}
+                      color={greenActive ? "#fafafa" : "black"}
+                    />
+                    <div
+                      style={{
+                        color: greenActive ? "#fafafa" : "black",
+                        transition: "all 300ms",
+                      }}
+                    >
+                      Preferences
+                    </div>
+                  </div>
+                </Link>
+              </div>
+            </li>
+
+            <li style={{ width: "75%" }} className={profileClasses.sideContain}>
+              <div
+                style={{ width: "100%" }}
+                className={profileClasses.yellowNavlink}
+                onClick={() => changeSelectedTab(1)}
+              >
+                <Link
+                  to="/profile/gallery"
+                  className={profileClasses.navlink}
+                  onClick={() => setSidebarOpened(false)}
+                >
+                  <div
+                    className={`${baseClasses.baseFlex} ${classes.linkFlexContainer}`}
+                  >
+                    <GalleryIcon
+                      dimensions={"1.75em"}
+                      color={yellowActive ? "#fafafa" : "black"}
+                    />
+                    <div
+                      style={{
+                        color: yellowActive ? "#fafafa" : "black",
+                        transition: "all 300ms",
+                      }}
+                    >
+                      Gallery
+                    </div>
+                  </div>
+                </Link>
+              </div>
+            </li>
+
+            <li style={{ width: "75%" }} className={profileClasses.sideContain}>
+              <div
+                style={{ width: "100%" }}
+                className={profileClasses.redNavlink}
+                onClick={() => changeSelectedTab(2)}
+              >
+                <Link
+                  to="/profile/likes"
+                  className={profileClasses.navlink}
+                  onClick={() => setSidebarOpened(false)}
+                >
+                  <div
+                    className={`${baseClasses.baseFlex} ${classes.linkFlexContainer}`}
+                  >
+                    <LikesIcon
+                      dimensions={"1.75em"}
+                      color={redActive ? "#fafafa" : "black"}
+                    />
+                    <div
+                      style={{
+                        color: redActive ? "#fafafa" : "black",
+                        transition: "all 300ms",
+                      }}
+                    >
+                      Likes
+                    </div>
+                  </div>
+                </Link>
+              </div>
+            </li>
+            <div style={{ width: "75%", height: "25%" }}>
+              <LogOutButton borderRadius={"1em"} gap={"1em"} />
+            </div>
+          </ul>
+        </div>
+      </div>
+    </>
+  );
+};
+
+export default Sidebar;

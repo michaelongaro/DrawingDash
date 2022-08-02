@@ -1,16 +1,12 @@
 import DailyIcon from "../../svgs/DailyIcon";
 import LinkIcon from "../../svgs/LinkIcon";
 import OptionsIcon from "../../svgs/OptionsIcon";
-import classes from "./CardContainer.module.css";
-import Description from "./Description";
 
-// will have to make like a Description group or something like that to be able to
-// FULLY abstract this code, only putting in a ref to <DescriptionGroup /> in HomePage.js
+import classes from "./CardContainer.module.css";
 
 function CardContainer() {
   return (
     <div className={classes.container}>
-      {/* HELLLL no just keep it in here lmfaoooo?!??!? */}
       <div className={classes.card}>
         <div
           style={{ backgroundColor: "#90ee90" }}
@@ -18,7 +14,9 @@ function CardContainer() {
         >
           <OptionsIcon />
         </div>
-        <div style={{ height: "5em" }}>Choose from 3+ unique prompts</div>
+        <div style={{ height: "5em", textAlign: "center" }}>
+          Choose from 3+ unique prompts
+        </div>
       </div>
 
       <div className={classes.card}>
@@ -28,7 +26,9 @@ function CardContainer() {
         >
           <DailyIcon />
         </div>
-        <div style={{ height: "5em" }}>New prompts refresh every day</div>
+        <div style={{ height: "5em", textAlign: "center" }}>
+          New prompts refresh every day
+        </div>
       </div>
       <div className={classes.card}>
         <div
@@ -37,14 +37,10 @@ function CardContainer() {
         >
           <LinkIcon />
         </div>
-        <div style={{ height: "5em" }}>
+        <div style={{ height: "5em", textAlign: "center" }}>
           Share your drawings with your friends
         </div>
       </div>
-
-      {/* <Description title="First" description="Choose between three different drawing timers"/>
-        <Description title="Second" description="New titles every day"/>
-        <Description title="Third" description="Share your doodles with your friends"/> */}
     </div>
   );
 }

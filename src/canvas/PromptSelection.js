@@ -1202,13 +1202,16 @@ const PromptSelection = () => {
             }}
           >
             <div
-              style={{ height: "10em", marginTop: "1em" }}
+              style={{
+                height: "10em",
+                marginTop: "1em",
+              }}
               className={classes.registerPromoContainer}
             >
               <div className={classes.baseFlex}>
-                <LogInButton forceShowSignUp={true} />
+                {blur && <LogInButton forceShowSignUp={true} />}
                 <div>or</div>
-                <LogInButton forceShowSignUp={false} />
+                {blur && <LogInButton forceShowSignUp={false} />}
               </div>
 
               <div style={{ width: "60%", textAlign: "center" }}>

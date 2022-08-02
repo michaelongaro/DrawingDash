@@ -8,11 +8,9 @@ import isEqual from "lodash/isEqual";
 
 import ProfilePictureUpdateContext from "./ProfilePictureUpdateContext";
 
-import NavbarProfile from "./NavbarProfile";
 import LogInButton from "../../oauth/LogInButton";
 import LogOutButton from "../../oauth/LogOutButton";
 import Logo from "../../svgs/Logo.png";
-import Sidebar from "./Sidebar";
 
 import EaselIcon from "../../svgs/EaselIcon";
 import MagnifyingGlassIcon from "../../svgs/MagnifyingGlassIcon";
@@ -42,9 +40,7 @@ import { app } from "../../util/init-firebase";
 import classes from "./MainNavigation.module.css";
 import baseClasses from "../../index.module.css";
 
-function MainNavigation() {
-  // const touchDevice = matchMedia("(hover: none), (pointer: coarse)").matches;
-
+function NavbarProfile() {
   // context to determine whether profile picture needs to be refetched
   const PFPUpdateCtx = useContext(ProfilePictureUpdateContext);
 
@@ -320,98 +316,122 @@ function MainNavigation() {
   }, [username]);
 
   return (
-    <header className={classes.header}>
-      <div className={classes.logo}>
-        <Link to="/">
-          <img
-            id={classes.logoImg}
-            src={Logo}
-            style={{ maxWidth: "115px", marginTop: ".25em" }}
-            alt="Logo"
-          />
-        </Link>
-      </div>
-      <nav className={classes.navbar}>
-        <ul
+    <div
+      style={{
+        alignItems: "flex-end",
+        gap: "1em",
+        marginLeft: "2em",
+      }}
+      className={baseClasses.baseFlex}
+    >
+      {username ? (
+        <div
+          id={"welcometext"}
           style={{
-            position: "relative ",
-            justifyContent: "space-between",
-            paddingLeft: "1em",
-            paddingRight: "1em",
+            overflow: "hidden",
+            display: "inline-block",
+          }}
+        >{`Welcome ${firstTimeVisiting ? "" : "back"},${
+          username ? ` ${username}!` : "!"
+        }`}</div>
+      ) : null}
+      <div
+        style={{
+          cursor: "pointer",
+        }}
+        className={classes.profileDropdownContainer}
+        onMouseEnter={() => {
+          setHoveringOnProfilePicture(true);
+        }}
+        onMouseLeave={() => {
+          setHoveringOnProfilePicture(false);
+        }}
+        onClick={() => {
+          // only using this because I couldn't lift up z-index to be able to click link
+          // without hover malfunctioning
+          if (!hoveringOnLogOutButton) {
+            profilePictureRef.current.click();
+          }
+        }}
+      >
+        {/* zIndex just to be able to click on the <Link> */}
+        <div
+          style={{
+            position: "absolute",
           }}
         >
-          <div className={`${baseClasses.baseFlex} ${classes.mainLinkButtons}`}>
-            <li>
-              <NavLink
-                className={({ isActive }) =>
-                  `${classes.dailyDrawButton} ${
-                    isActive ? classes.activeDailyDraw : ""
-                  }`
-                }
-                to="/daily-drawings"
-              >
-                <div className={classes.drawButtonBackground}>
-                  <EaselIcon dimensions={"2.75em"} />
-                  <div
-                    style={{ fontSize: "1.25em", color: "#f6f6f6" }}
-                    className={classes.navButton}
-                  >
-                    Daily Drawings
-                  </div>
-                </div>
-              </NavLink>
-            </li>
-
-            <li>
-              <NavLink
-                to="/explore"
-                className={({ isActive }) =>
-                  `${classes.exploreButton} ${
-                    isActive ? classes.activeExplore : ""
-                  }`
-                }
-              >
-                <div className={classes.drawButtonBackground}>
-                  <MagnifyingGlassIcon dimensions={"1.75em"} color={"white"} />
-                  <div
-                    style={{ fontSize: "1.25em", color: "#fff" }}
-                    className={classes.navButton}
-                  >
-                    Explore
-                  </div>
-                </div>
-              </NavLink>
-            </li>
-          </div>
-          {/* 
-          {matchMedia("(hover: none), (pointer: coarse)").matches && (
-            <div style={{ width: "48px", height: "48px" }}></div>
-          )} */}
-
-          {!isLoading && !isAuthenticated ? (
-            <>
-              {matchMedia("(hover: none), (pointer: coarse)").matches ? (
-                <Sidebar />
-              ) : (
-                <div className={classes.signInButtons}>
-                  <LogInButton forceShowSignUp={true} />
-                  <LogInButton forceShowSignUp={false} />
-                </div>
-              )}
-            </>
+          {isFetching ? (
+            <div
+              style={{
+                width: "3em",
+                height: "3em",
+                borderRadius: "50%",
+              }}
+              className={baseClasses.skeletonLoading}
+            ></div>
           ) : (
-            <>
-              {matchMedia("(hover: none), (pointer: coarse)").matches ? (
-                <Sidebar />
-              ) : (
-                <NavbarProfile />
-              )}
-            </>
+            <Link to="/profile/preferences" ref={profilePictureRef}>
+              <img
+                className={classes.profilePicture}
+                src={croppedImage ? croppedImage : image}
+                alt={"cropped profile"}
+              />
+            </Link>
           )}
-        </ul>
-      </nav>
-    </header>
+        </div>
+
+        <div
+          className={classes.dropdownContainer}
+          onMouseEnter={() => {
+            setHoveringOnProfilePicture(true);
+          }}
+          onMouseLeave={() => {
+            setHoveringOnProfilePicture(false);
+          }}
+        >
+          <div
+            style={{
+              opacity: hoveringOnProfilePicture ? 1 : 0,
+              pointerEvents: hoveringOnProfilePicture ? "auto" : "none",
+            }}
+            className={classes.profileDropdown}
+          >
+            <Link
+              className={classes.profileButton}
+              onMouseEnter={() => {
+                setHoveringOnProfileButton(true);
+              }}
+              onMouseLeave={() => {
+                setHoveringOnProfileButton(false);
+              }}
+              to="/profile/preferences"
+            >
+              <DefaultUserIcon
+                dimensions={"1.5em"}
+                color={hoveringOnProfileButton ? "white" : "black"}
+              />
+              <div>Profile</div>
+            </Link>
+
+            <div
+              style={{
+                width: "100%",
+                height: "100%",
+              }}
+              onMouseEnter={() => {
+                setHoveringOnLogOutButton(true);
+              }}
+              onMouseLeave={() => {
+                setHoveringOnLogOutButton(false);
+              }}
+            >
+              <LogOutButton />
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   );
 }
 
-export default MainNavigation;
+export default NavbarProfile;

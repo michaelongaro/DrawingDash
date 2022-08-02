@@ -77,14 +77,6 @@ const FocalAnimatedDrawings = (props) => {
     };
   }
 
-  //  useEffect(() => {
-  //   function handleResize() {
-  //     setOffsetX(testRef.current.getBoundingClientRect().left);
-  //   }
-  //   window.addEventListener("resize", handleResize);
-  //   return () => window.removeEventListener("resize", handleResize);
-  // }, []);
-
   useEffect(() => {
     getRandomDrawingIDs();
   }, []);
@@ -92,7 +84,6 @@ const FocalAnimatedDrawings = (props) => {
   useEffect(() => {
     if (randomDrawingIDs60 && randomDrawingIDs180 && randomDrawingIDs300) {
       getImagesFromIDs();
-      // setOffsetX(testRef.current.getBoundingClientRect().left);
     }
   }, [randomDrawingIDs60, randomDrawingIDs180, randomDrawingIDs300]);
 
@@ -318,7 +309,7 @@ const FocalAnimatedDrawings = (props) => {
       style={{
         position: "relative",
         height: miscSettings.current.fullHeight,
-        width: miscSettings.current.fullWidth,
+        // width: miscSettings.current.fullWidth,
         borderRadius: miscSettings.current.radius,
       }}
       className={classes.fullWidth}
@@ -328,7 +319,9 @@ const FocalAnimatedDrawings = (props) => {
         className={classes.drawingTitleContainer}
       >
         <div className={classes.durationContainer}>
-          <OneMinuteIcon dimensions={"3em"} />
+          <OneMinuteIcon
+            dimensions={window.innerWidth <= 900 ? "2.25em" : "3em"}
+          />
           <div>{drawingTitle60}</div>
         </div>
         <div
@@ -343,7 +336,9 @@ const FocalAnimatedDrawings = (props) => {
         className={classes.drawingTitleContainer}
       >
         <div className={classes.durationContainer}>
-          <ThreeMinuteIcon dimensions={"3em"} />
+          <ThreeMinuteIcon
+            dimensions={window.innerWidth <= 900 ? "2.25em" : "3em"}
+          />
           <div>{drawingTitle180}</div>
         </div>
         <div
@@ -358,7 +353,9 @@ const FocalAnimatedDrawings = (props) => {
         className={classes.drawingTitleContainer}
       >
         <div className={classes.durationContainer}>
-          <FiveMinuteIcon dimensions={"3em"} />
+          <FiveMinuteIcon
+            dimensions={window.innerWidth <= 900 ? "2.25em" : "3em"}
+          />
           <div>{drawingTitle300}</div>
         </div>
         <div

@@ -1,12 +1,3 @@
-.baseFlex {
-  display: flex;
-  justify-content: center;
-  align-items: flex-end;
-  gap: 1em;
-
-  margin-left: 2em;
-}
-
 .header {
   width: 100%;
   height: 5rem;
@@ -14,15 +5,28 @@
   align-items: center;
   justify-content: space-between;
   background-color: #18d638;
-  padding: 0 10%;
+  /* padding: 0 4%; */
+}
+
+.navbar {
+  width: 40%;
+}
+
+.mainLinkButtons {
+  gap: 3em;
 }
 
 .logo {
+  padding-left: 6em;
   transition: all 200ms;
 }
 
+/* #logoImg {
+  border: 1px solid black;
+} */
+
 .logo:hover {
-  filter: brightness(1.9);
+  filter: brightness(1.5);
 }
 
 .header ul {
@@ -31,7 +35,7 @@
   padding: 0;
   display: flex;
   align-items: center;
-  gap: 1em;
+  gap: 1.5em;
 }
 
 .header a {
@@ -62,13 +66,29 @@
   align-items: center;
   width: 250px;
   height: 60px;
-  margin: 10px;
   border-radius: 1em;
   border-color: #e2e2e2;
   border-width: 0.25em;
   border-style: solid;
   transition: all 200ms;
 }
+
+
+
+/* @media (max-width: 1920px) {
+  .dailyDrawButton {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 250px;
+    height: 60px;
+    border-radius: 1em;
+    border-color: #e2e2e2;
+    border-width: 0.25em;
+    border-style: solid;
+    transition: all 200ms;
+  }
+} */
 
 .dailyDrawButton:hover {
   background-color: hsl(348deg 100% 44%);
@@ -166,7 +186,7 @@
 }
 
 .profileButton:active {
-  filter: brightness(.7);
+  filter: brightness(0.7);
 }
 
 .profileDropdown {
@@ -255,4 +275,144 @@
   letter-spacing: 6px;
   display: grid;
   place-items: center;
+}
+
+@media (max-width: 1500px) {
+  .navbar {
+    width: 50%;
+  }
+}
+
+/* equal to or smaller than {1150} */
+@media (max-width: 1200px) {
+  .navbar {
+    width: 60%;
+  }
+}
+
+
+@media (max-width: 1200px) {
+  /* .header ul {
+    gap: 3.75em;
+  }
+
+  .dailyDrawButton {
+    width: 200%;
+  }
+
+  .exploreButton {
+    width: 170%;
+  } */
+
+  /* .navButton {
+    display: none;
+  } */
+}
+
+@media (max-width: 1000px) {
+  .navbar {
+    width: 70%;
+  }
+}
+
+@media (max-width: 850px) {
+  .navbar {
+    width: 75%;
+  }
+
+  .logo {
+    padding-left: 1.55em;
+  }
+
+  .mainLinkButtons {
+    gap: 1.5em;
+  }
+
+  /*
+  .header ul {
+    gap: 4.5em;
+  }
+
+*/
+}
+
+@media (max-width: 760px) {
+  .navbar {
+    width: 60%;
+  }
+
+  .mainLinkButtons {
+    gap: 5.5em;
+  }
+
+  .dailyDrawButton {
+    width: 250%;
+  }
+
+  .exploreButton {
+    width: 230%;
+  }
+
+  .navButton {
+    display: none;
+  }
+
+
+}
+
+@media (max-width: 600px) {
+  .navbar {
+    width: 70%;
+  }
+
+  #logoImg {
+    width: 80%;
+  }
+
+  .mainLinkButtons {
+    gap: 3.5em;
+  }
+
+  .dailyDrawButton {
+    width: 200%;
+  }
+
+  .exploreButton {
+    width: 180%;
+  }
+
+  /* .header ul {
+    gap: 3.5em;
+  } */
+}
+
+
+@media (max-width: 450px) {
+  .navbar {
+    width: 80%;
+  }
+
+  .logo {
+    padding-left: .5em;
+  }
+
+  .mainLinkButtons {
+    gap: 1em;
+  }
+
+  .header ul {
+    gap: 2em;
+  }
+
+  .dailyDrawButton {
+    width: 110%;
+  }
+
+  .exploreButton {
+    width: 100%;
+  }
+
+  .navButton {
+    display: none;
+  }
 }
