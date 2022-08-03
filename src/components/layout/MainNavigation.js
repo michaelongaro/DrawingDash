@@ -56,6 +56,8 @@ function MainNavigation() {
   const dbRef = ref_database(getDatabase(app));
   const storage = getStorage();
 
+  const [minDesktopWidthReached, setMinDesktopWidthReached] = useState(false);
+
   const profilePictureRef = useRef(null);
 
   // user profile info states
@@ -319,6 +321,35 @@ function MainNavigation() {
     }
   }, [username]);
 
+  useEffect(() => {
+    // just for initial render
+    if (
+      window.innerWidth > 900 &&
+      window.innerWidth <= 1075 &&
+      matchMedia("(hover: hover), (pointer: pointer)").matches
+    ) {
+      setMinDesktopWidthReached(true);
+    } else {
+      setMinDesktopWidthReached(false);
+    }
+
+    function resizeHandler() {
+      if (
+        window.innerWidth > 900 &&
+        window.innerWidth <= 1075 &&
+        matchMedia("(hover: hover), (pointer: pointer)").matches
+      ) {
+        setMinDesktopWidthReached(true);
+      } else {
+        setMinDesktopWidthReached(false);
+      }
+    }
+    window.addEventListener("resize", resizeHandler);
+    return () => {
+      window.removeEventListener("resize", resizeHandler);
+    };
+  }, []);
+
   return (
     <header className={classes.header}>
       <div className={classes.logo}>
@@ -331,11 +362,21 @@ function MainNavigation() {
           />
         </Link>
       </div>
-      <nav className={classes.navbar}>
+      <nav
+        style={
+          !isAuthenticated && minDesktopWidthReached
+            ? {
+                width: "90%",
+              }
+            : {}
+        }
+        className={classes.navbar}
+      >
         <ul
           style={{
             position: "relative ",
             justifyContent: "space-between",
+            flexWrap: "nowrap",
             paddingLeft: "1em",
             paddingRight: "1em",
           }}

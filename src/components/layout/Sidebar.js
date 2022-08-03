@@ -15,6 +15,7 @@ import PreferencesIcon from "../../svgs/PreferencesIcon";
 import classes from "./Sidebar.module.css";
 import profileClasses from "./ProfileNavigation.module.css";
 import baseClasses from "../../index.module.css";
+import LogInButton from "../../oauth/LogInButton";
 
 const Sidebar = ({ pageWrapId, outerContainerId }) => {
   const { isLoading, isAuthenticated } = useAuth0();
@@ -43,12 +44,11 @@ const Sidebar = ({ pageWrapId, outerContainerId }) => {
         !burgerRef.current.contains(e.target) &&
         !sidebarRef.current.contains(e.target)
       ) {
-        console.log("sidebar closed");
         setSidebarOpened(false);
       }
     }
 
-    function resizeHandler(e) {
+    function resizeHandler() {
       if (window.innerWidth < 750) {
         setSidebarWidth("100%");
       } else {
@@ -121,103 +121,135 @@ const Sidebar = ({ pageWrapId, outerContainerId }) => {
           style={{ display: sidebarOpened ? "flex" : "none" }}
           className={`${baseClasses.baseVertFlex} ${classes.sidebarLinks}`}
         >
-          <ul className={profileClasses.vertContain}>
-            <li style={{ width: "75%" }} className={profileClasses.sideContain}>
-              <div
-                style={{ width: "100%" }}
-                className={profileClasses.greenNavlink}
-                onClick={() => changeSelectedTab(0)}
-              >
-                <Link
-                  to="/profile/preferences"
-                  className={profileClasses.navlink}
-                  onClick={() => setSidebarOpened(false)}
-                >
-                  <div
-                    className={`${baseClasses.baseFlex} ${classes.linkFlexContainer}`}
-                  >
-                    <PreferencesIcon
-                      dimensions={"1.75em"}
-                      color={greenActive ? "#fafafa" : "black"}
-                    />
-                    <div
-                      style={{
-                        color: greenActive ? "#fafafa" : "black",
-                        transition: "all 300ms",
-                      }}
-                    >
-                      Preferences
-                    </div>
-                  </div>
-                </Link>
-              </div>
-            </li>
+          {!isLoading && !isAuthenticated ? (
+            <div
+              className={`${classes.unregisteredContainer} ${profileClasses.vertContain}`}
+            >
+              <div style={{ gap: "1em" }} className={baseClasses.baseVertFlex}>
+                <LogInButton forceShowSignUp={true} />
+                <div style={{ transform: "scale(.85)" }}>OR</div>
+                <LogInButton forceShowSignUp={false} />
 
-            <li style={{ width: "75%" }} className={profileClasses.sideContain}>
-              <div
-                style={{ width: "100%" }}
-                className={profileClasses.yellowNavlink}
-                onClick={() => changeSelectedTab(1)}
-              >
-                <Link
-                  to="/profile/gallery"
-                  className={profileClasses.navlink}
-                  onClick={() => setSidebarOpened(false)}
-                >
-                  <div
-                    className={`${baseClasses.baseFlex} ${classes.linkFlexContainer}`}
-                  >
-                    <GalleryIcon
-                      dimensions={"1.75em"}
-                      color={yellowActive ? "#fafafa" : "black"}
-                    />
-                    <div
-                      style={{
-                        color: yellowActive ? "#fafafa" : "black",
-                        transition: "all 300ms",
-                      }}
-                    >
-                      Gallery
-                    </div>
-                  </div>
-                </Link>
+                <div style={{ marginTop: "1em" }}>to be able to:</div>
+                <ul className={classes.unregisteredUL}>
+                  <li>publish your drawings</li>
+                  <li>customize your profile</li>
+                  <li>like drawings from other users</li>
+                </ul>
+                <div>and more!</div>
               </div>
-            </li>
-
-            <li style={{ width: "75%" }} className={profileClasses.sideContain}>
-              <div
-                style={{ width: "100%" }}
-                className={profileClasses.redNavlink}
-                onClick={() => changeSelectedTab(2)}
-              >
-                <Link
-                  to="/profile/likes"
-                  className={profileClasses.navlink}
-                  onClick={() => setSidebarOpened(false)}
-                >
-                  <div
-                    className={`${baseClasses.baseFlex} ${classes.linkFlexContainer}`}
-                  >
-                    <LikesIcon
-                      dimensions={"1.75em"}
-                      color={redActive ? "#fafafa" : "black"}
-                    />
-                    <div
-                      style={{
-                        color: redActive ? "#fafafa" : "black",
-                        transition: "all 300ms",
-                      }}
-                    >
-                      Likes
-                    </div>
-                  </div>
-                </Link>
-              </div>
-            </li>
-            <div style={{ width: "75%", height: "25%" }}>
-              <LogOutButton borderRadius={"1em"} gap={"1em"} />
             </div>
-          </ul>
+          ) : (
+            <ul className={profileClasses.vertContain}>
+              <li
+                style={{ width: "75%" }}
+                className={profileClasses.sideContain}
+              >
+                <div
+                  style={{ width: "100%" }}
+                  className={profileClasses.greenNavlink}
+                  onClick={() => changeSelectedTab(0)}
+                >
+                  <Link
+                    to="/profile/preferences"
+                    className={profileClasses.navlink}
+                    onClick={() => setSidebarOpened(false)}
+                  >
+                    <div
+                      className={`${baseClasses.baseFlex} ${classes.linkFlexContainer}`}
+                    >
+                      <PreferencesIcon
+                        dimensions={"1.75em"}
+                        color={greenActive ? "#fafafa" : "black"}
+                      />
+                      <div
+                        style={{
+                          color: greenActive ? "#fafafa" : "black",
+                          transition: "all 300ms",
+                        }}
+                      >
+                        Preferences
+                      </div>
+                    </div>
+                  </Link>
+                </div>
+              </li>
+
+              <li
+                style={{ width: "75%" }}
+                className={profileClasses.sideContain}
+              >
+                <div
+                  style={{ width: "100%" }}
+                  className={profileClasses.yellowNavlink}
+                  onClick={() => changeSelectedTab(1)}
+                >
+                  <Link
+                    to="/profile/gallery"
+                    className={profileClasses.navlink}
+                    onClick={() => setSidebarOpened(false)}
+                  >
+                    <div
+                      className={`${baseClasses.baseFlex} ${classes.linkFlexContainer}`}
+                    >
+                      <GalleryIcon
+                        dimensions={"1.75em"}
+                        color={yellowActive ? "#fafafa" : "black"}
+                      />
+                      <div
+                        style={{
+                          color: yellowActive ? "#fafafa" : "black",
+                          transition: "all 300ms",
+                        }}
+                      >
+                        Gallery
+                      </div>
+                    </div>
+                  </Link>
+                </div>
+              </li>
+
+              <li
+                style={{ width: "75%" }}
+                className={profileClasses.sideContain}
+              >
+                <div
+                  style={{ width: "100%" }}
+                  className={profileClasses.redNavlink}
+                  onClick={() => changeSelectedTab(2)}
+                >
+                  <Link
+                    to="/profile/likes"
+                    className={profileClasses.navlink}
+                    onClick={() => setSidebarOpened(false)}
+                  >
+                    <div
+                      className={`${baseClasses.baseFlex} ${classes.linkFlexContainer}`}
+                    >
+                      <LikesIcon
+                        dimensions={"1.75em"}
+                        color={redActive ? "#fafafa" : "black"}
+                      />
+                      <div
+                        style={{
+                          color: redActive ? "#fafafa" : "black",
+                          transition: "all 300ms",
+                        }}
+                      >
+                        Likes
+                      </div>
+                    </div>
+                  </Link>
+                </div>
+              </li>
+              <div
+                style={{ width: "50%", height: "15%" }}
+                className={profileClasses.sideContain}
+              >
+                <LogOutButton borderRadius={"1em"} gap={"1em"} />
+              </div>
+            </ul>
+          )}
         </div>
       </div>
     </>

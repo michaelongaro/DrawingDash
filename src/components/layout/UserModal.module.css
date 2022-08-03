@@ -1,13 +1,8 @@
 .userModalContain {
-  /* display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-  align-items: center; */
   gap: 1em;
 
   width: 80vw;
   max-height: 95vh;
-  /* overflow-y: scroll; */
 
   background-color: white;
   padding: 4em 0 3em 0;
@@ -115,4 +110,29 @@
 
 .goBackButton:hover {
   box-shadow: rgba(253, 76, 0, 0.5) 0 3px 8px;
+}
+
+@media (max-width: 1250px) {
+  .userModalContain {
+    width: 95vw;
+
+  }
+
+  .container {
+    flex-direction: column;
+    padding: 1em;
+    margin-bottom: 3em;
+    gap: 2em;
+    width: auto;
+  }
+
+  .leftSide {
+    padding: 0;
+  }
+}
+
+@media (max-width: 600px) {
+  .container {
+    width: 100%;
+  }
 }

@@ -73,6 +73,9 @@ const DrawingModal = ({
   const drawingModalRef = useRef(null);
   const confirmDeleteModalRef = useRef();
 
+  const mobileCopyToClipboardRef = useRef(null);
+  const mobileDownloadRef = useRef(null);
+
   const [fullyFinishedLoading, setFullyFinishedLoading] = useState(false);
 
   const [showUserModal, setShowUserModal] = useState(false);
@@ -99,6 +102,11 @@ const DrawingModal = ({
   const [showTooltip, setShowTooltip] = useState(false);
 
   const [deletionCheckpointReached, setDeletionCheckpointReached] =
+    useState(false);
+
+  const [modalWidth, setModalWidth] = useState("75vw");
+  const [showMobileButtons, setShowMobileButtons] = useState(false);
+  const [ableToClickActionButtons, setAbleToClickAcionButtons] =
     useState(false);
 
   useEffect(() => {
@@ -178,6 +186,20 @@ const DrawingModal = ({
   }, [drawingMetadata]);
 
   useEffect(() => {
+    // just for initial render
+    if (window.innerWidth > 1000) {
+      setModalWidth("80vw");
+    } else if (window.innerWidth > 775 && window.innerWidth < 1000) {
+      setModalWidth("95vw");
+    } else if (
+      matchMedia("(hover: none), (pointer: coarse)").matches &&
+      window.innerWidth < 775
+    ) {
+      setShowMobileButtons(true);
+    } else {
+      setShowMobileButtons(false);
+    }
+
     function modalHandler(event) {
       if (fullyFinishedLoading && !hoveringOnDeleteButton && showDrawingModal) {
         if (showConfirmDeleteModal) {
@@ -191,14 +213,35 @@ const DrawingModal = ({
           // when drawing modal was opened from user modal
           if (modalCtx.drawingModalFromUserOpened && modalCtx.userModalOpened) {
             if (!drawingModalRef.current.contains(event.target)) {
-              modalCtx.setDrawingModalFromUserOpened(false);
+              // checking if mobile action buttons were pressed
+              if (
+                !mobileCopyToClipboardRef.current.contains(event.target) &&
+                !mobileDownloadRef.current.contains(event.target)
+              ) {
+                console.log("outsidemodal");
+                modalCtx.setDrawingModalFromUserOpened(false);
+              } else {
+                console.log("normal close");
+                modalCtx.setDrawingModalFromUserOpened(false);
+              }
             }
           }
         } else if (!openedFromUserModal) {
           // when drawing modal is opened and user modal is closed
           if (modalCtx.drawingModalOpened && !modalCtx.userModalOpened) {
             if (!drawingModalRef.current.contains(event.target)) {
-              modalCtx.setDrawingModalOpened(false);
+              // checking if mobile action buttons were pressed
+              if (
+                !mobileCopyToClipboardRef.current.contains(event.target) &&
+                !mobileDownloadRef.current.contains(event.target)
+              ) {
+                console.log("outsidemodal", event.target);
+
+                modalCtx.setDrawingModalOpened(false);
+              } else {
+                console.log("normal close");
+                modalCtx.setDrawingModalOpened(false);
+              }
             }
           }
         }
@@ -226,12 +269,29 @@ const DrawingModal = ({
       }
     }
 
+    function resizeHandler() {
+      if (window.innerWidth > 1000) {
+        setModalWidth("80vw");
+      } else if (window.innerWidth > 775 && window.innerWidth < 1000) {
+        setModalWidth("95vw");
+      } else if (
+        matchMedia("(hover: none), (pointer: coarse)").matches &&
+        window.innerWidth < 775
+      ) {
+        setShowMobileButtons(true);
+      } else {
+        setShowMobileButtons(false);
+      }
+    }
+
     document.addEventListener("click", modalHandler);
     document.addEventListener("keydown", escapeHandler);
+    window.addEventListener("resize", resizeHandler);
 
     return () => {
       document.removeEventListener("click", modalHandler);
       document.removeEventListener("keydown", escapeHandler);
+      window.removeEventListener("resize", resizeHandler);
     };
   }, [
     fullyFinishedLoading,
@@ -242,6 +302,32 @@ const DrawingModal = ({
     showConfirmDeleteModal,
     showDrawingModal,
     hoveringOnDeleteButton,
+  ]);
+
+  useEffect(() => {
+    // only allows clicks of copy/download buttons when respective modals are being shown
+    // poiner-events: none doesn't pass property down to children so this is workaround.
+    if (fullyFinishedLoading && showDrawingModal) {
+      if (openedFromUserModal) {
+        if (modalCtx.drawingModalFromUserOpened) {
+          setAbleToClickAcionButtons(true);
+        } else {
+          setAbleToClickAcionButtons(false);
+        }
+      } else if (!openedFromUserModal) {
+        if (modalCtx.drawingModalOpened) {
+          setAbleToClickAcionButtons(true);
+        } else {
+          setAbleToClickAcionButtons(false);
+        }
+      }
+    }
+  }, [
+    fullyFinishedLoading,
+    showDrawingModal,
+    openedFromUserModal,
+    modalCtx.drawingModalOpened,
+    modalCtx.drawingModalFromUserOpened,
   ]);
 
   useEffect(() => {
@@ -399,7 +485,7 @@ const DrawingModal = ({
   return (
     <div
       ref={drawingModalRef}
-      style={{ width: "75vw" }}
+      style={{ width: modalWidth }}
       onMouseEnter={() => {
         setHoveringOnImage(true);
       }}
@@ -750,16 +836,50 @@ const DrawingModal = ({
                 </div>
               )}
 
-              <CopyToClipboard url={drawing} />
+              {!showMobileButtons && ableToClickActionButtons && (
+                <CopyToClipboard url={drawing} />
+              )}
 
-              <button
-                style={{ display: "flex", gap: "0.75em", fontSize: "16px" }}
-                className={`${baseClasses.activeButton} ${baseClasses.baseFlex}`}
-                onClick={() => downloadDrawing(drawing, drawingMetadata.title)}
+              {!showMobileButtons && ableToClickActionButtons && (
+                <button
+                  style={{ display: "flex", gap: "0.75em", fontSize: "16px" }}
+                  className={`${baseClasses.activeButton} ${baseClasses.baseFlex}`}
+                  onClick={() =>
+                    downloadDrawing(drawing, drawingMetadata.title)
+                  }
+                >
+                  <div>Download</div>
+                  <DownloadIcon color={"#FFF"} />
+                </button>
+              )}
+
+              {/* mobile copy link/download buttons (since they don't fit in bottomContain) */}
+              <div
+                style={{
+                  opacity:
+                    showMobileButtons && ableToClickActionButtons ? 1 : 0,
+                  transform:
+                    showMobileButtons && ableToClickActionButtons
+                      ? "scale(1)"
+                      : "scale(0)",
+                }}
+                className={`${baseClasses.baseFlex} ${classes.mobileActionButtons}`}
               >
-                <div>Download</div>
-                <DownloadIcon color={"#FFF"} />
-              </button>
+                <div ref={mobileCopyToClipboardRef}>
+                  <CopyToClipboard url={drawing} />
+                </div>
+                <button
+                  ref={mobileDownloadRef}
+                  style={{ display: "flex", gap: "0.75em", fontSize: "16px" }}
+                  className={`${baseClasses.activeButton} ${baseClasses.baseFlex}`}
+                  onClick={() =>
+                    downloadDrawing(drawing, drawingMetadata.title)
+                  }
+                >
+                  <div>Download</div>
+                  <DownloadIcon color={"#FFF"} />
+                </button>
+              </div>
             </div>
           )}
         </Card>

@@ -128,6 +128,8 @@ const GallaryItem = ({
   const [deletionCheckpointReached, setDeletionCheckpointReached] =
     useState(false);
 
+  const [dynamicCardWidth, setDynamicCardWidth] = useState("100"); // be cautious of 100% here
+
   useEffect(() => {
     if (!isLoading) {
       if (!isAuthenticated || (isAuthenticated && drawingDetails)) {
@@ -246,6 +248,31 @@ const GallaryItem = ({
       );
     }
   }, [drawingDetails]);
+
+  useEffect(() => {
+    // just for initial render
+    if (window.innerWidth > 1250 && window.innerWidth < 1500) {
+      setDynamicCardWidth("33");
+    } else if (window.innerWidth > 750 && window.innerWidth < 1250) {
+      setDynamicCardWidth("50");
+    } else if (window.innerWidth < 750) {
+      setDynamicCardWidth("100");
+    }
+
+    function resizeHandler() {
+      if (window.innerWidth > 1250 && window.innerWidth < 1500) {
+        setDynamicCardWidth("33");
+      } else if (window.innerWidth > 750 && window.innerWidth < 1250) {
+        setDynamicCardWidth("50");
+      } else if (window.innerWidth < 750) {
+        setDynamicCardWidth("100");
+      }
+    }
+    window.addEventListener("resize", resizeHandler);
+    return () => {
+      window.removeEventListener("resize", resizeHandler);
+    };
+  }, []);
 
   useEffect(() => {
     if (deletionCheckpointReached) {
@@ -520,7 +547,7 @@ const GallaryItem = ({
         className={baseClasses.baseVertFlex}
         ref={drawingModalRef}
       >
-        <Card>
+        <Card width={dynamicCardWidth} fullWidth={true}>
           {/* ------ imageinfo -------- */}
 
           {/* image loading skeleton */}
@@ -530,8 +557,11 @@ const GallaryItem = ({
                 isFetching || showTempBaselineSkeleton || !imageElementLoaded
                   ? "block"
                   : "none",
-              width: window.innerWidth / settings.widthRatio,
-              height: window.innerHeight / settings.heightRatio,
+              // width: window.innerWidth / settings.widthRatio,
+              width: "100%",
+              // height: window.innerHeight / settings.heightRatio,
+              height: "100%",
+              aspectRatio: "16/9",
               borderRadius: "1em 1em 0 0",
             }}
             className={classes.skeletonLoading}
@@ -764,7 +794,7 @@ const GallaryItem = ({
               {/* seconds */}
 
               {/* || modalCtx.drawingModalOpened */}
-              {location.pathname === "/" ? (
+              {/* {location.pathname === "/" && showDurationIcon ? (
                 showTempBaselineSkeleton || isFetching ? (
                   <div
                     style={{ width: "3em", height: "3em", borderRadius: "50%" }}
@@ -783,7 +813,7 @@ const GallaryItem = ({
                     )}
                   </div>
                 )
-              ) : null}
+              ) : null} */}
 
               {/* like toggle */}
               {settings.forPinnedItem ? null : showTempBaselineSkeleton ||

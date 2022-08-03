@@ -6,6 +6,7 @@
 }
 
 .bottomContain {
+  position: relative;
   display: flex;
   justify-content: space-evenly;
   align-items: center;
@@ -16,19 +17,6 @@
 
   /* background-color: rgb(212, 209, 209); */
 }
-
-/* commented out because I don't think we need it anymore */
-/* .marginContain {
-  margin: 1em;
-} */
-/* 
-.vertFlex {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  flex-direction: column;
-  gap: 1em;
-} */
 
 .hide {
   display: none;
@@ -187,6 +175,13 @@
   gap: 0.75em;
 }
 
+.mobileActionButtons {
+  position: absolute;
+  top: 5.5em;
+  gap: 1.5em;
+  transition: all 200ms;
+}
+
 .goBackButton {
   position: absolute;
   top: 1em;
@@ -312,3 +307,9 @@
     background-position-x: -200%;
   }
 }
+
+/* @media (max-width: 550px) {
+  .mobileActionButtons {
+    flex-direction: column;
+  }
+} */

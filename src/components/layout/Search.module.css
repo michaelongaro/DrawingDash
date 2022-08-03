@@ -10,6 +10,9 @@
 
 .searchContainer {
   position: relative;
+  display: flex;
+  justify-content: center;
+  max-width: 100%;
 }
 
 .searchContainer label {
@@ -125,4 +128,11 @@ input {
 
 .searchButton:hover:enabled {
   box-shadow: rgba(253, 76, 0, 0.5) 0 3px 8px;
+}
+
+@media (max-width: 650px) {
+  .formContainer {
+    flex-direction: column;
+    gap: 2.5em;
+  }
 }

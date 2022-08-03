@@ -21,9 +21,10 @@ function HomePage() {
 
   const [showRegisterContainer, setShowRegisterContainer] = useState(true);
 
+  const [minMobileWidthReached, setMinMobileWidthReached] = useState(false);
+
   useEffect(() => {
     if (!isLoading && isAuthenticated) {
-      console.log("should be getting rid of shit");
       setShowRegisterContainer(false);
     }
   }, [isLoading, isAuthenticated]);
@@ -43,6 +44,27 @@ function HomePage() {
     }
   }, [isLoading, showRegisterContainer]);
 
+  useEffect(() => {
+    // just for initial render
+    if (window.innerWidth <= 1075) {
+      setMinMobileWidthReached(true);
+    } else {
+      setMinMobileWidthReached(false);
+    }
+
+    function resizeHandler() {
+      if (window.innerWidth <= 1075) {
+        setMinMobileWidthReached(true);
+      } else {
+        setMinMobileWidthReached(false);
+      }
+    }
+    window.addEventListener("resize", resizeHandler);
+    return () => {
+      window.removeEventListener("resize", resizeHandler);
+    };
+  }, []);
+
   return (
     <motion.div
       initial={{ opacity: 0 }}
@@ -55,6 +77,7 @@ function HomePage() {
           <div
             style={{
               gap: "2em",
+              padding: "0 2em",
             }}
             className={classes.flexContain}
           >
@@ -67,15 +90,19 @@ function HomePage() {
             {showRegisterContainer && (
               <div>
                 <Card>
-                  <div
-                    style={{
-                      height: "20em",
-                    }}
-                    className={classes.flexContainColumn}
-                  >
+                  <div className={classes.firstTimePromo}>
                     <div className={classes.flexContainColumn}>
                       <LogInButton forceShowSignUp={true} />
                       <LogInButton forceShowSignUp={false} />
+                      <div
+                        style={{
+                          display: minMobileWidthReached ? "flex" : "none",
+                          textAlign: "center",
+                        }}
+                        className={classes.promoText}
+                      >
+                        to access all features!
+                      </div>
                     </div>
 
                     <div className={classes.fadingOrContainer}>
@@ -83,8 +110,13 @@ function HomePage() {
                       <div className={classes.or}>OR</div>
                       <div className={classes.trailingLine}></div>
                     </div>
-                    <div className={baseClasses.animatedRainbow}>
-                      <Link to="/daily-drawings">
+                    <div
+                      className={`${classes.animatedRainbowMargin} ${baseClasses.animatedRainbow}`}
+                    >
+                      <Link
+                        to="/daily-drawings"
+                        className={baseClasses.baseFlex}
+                      >
                         Start Your First Drawing!
                       </Link>
                     </div>

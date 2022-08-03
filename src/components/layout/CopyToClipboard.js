@@ -19,7 +19,6 @@ const CopyToClipboard = (props) => {
   function CopyToClipboard() {
     navigator.clipboard.writeText(props.url);
   }
-
   return (
     <button
       onClick={() => {

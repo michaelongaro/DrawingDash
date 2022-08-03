@@ -230,10 +230,13 @@ h6 {
 .animatedRainbow {
   position: relative;
   width: 10em;
-  height: 75px;
+  /* height: 75px; */
   margin: 0 1em 0 1em;
   border-radius: 1em;
   cursor: pointer;
+
+  height: 80%;
+  box-shadow: rgb(0 0 0 / 50%) 0px 2px 5px 2px;
   background-color: yellow;
   background-image: repeating-linear-gradient(-45deg,
       #cf2525,

@@ -38,6 +38,7 @@ const SlideShow = ({ pinnedDrawings, pinnedMetadata, username }) => {
     transitionDuration: 500,
     pauseOnHover: true,
     arrows: true,
+    easing: "ease-in",
 
     prevArrow: (
       <button

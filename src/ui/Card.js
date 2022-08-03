@@ -4,7 +4,14 @@ function Card(props) {
   return (
     <div
       className={classes.card}
-      style={{ width: `${props.width}%`, margin: `${props.margin}`, borderRadius: "1em" }}
+      style={{
+        minWidth: `${props.width}%`,
+        width: props?.fullWidth ? "100%" : "undefined",
+        // def need to think hard about how to get height to scale with width
+        // height: props?.fullWidth ? `${(16 / 9) * 100}%` : "undefined",
+        margin: `${props.margin}`,
+        borderRadius: "1em",
+      }}
     >
       {props.children}
     </div>

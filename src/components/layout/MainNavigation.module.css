@@ -9,7 +9,7 @@
 }
 
 .navbar {
-  width: 40%;
+  width: 50%;
 }
 
 .mainLinkButtons {
@@ -57,7 +57,6 @@
   justify-content: center;
   align-items: center;
   gap: 1.5em;
-  margin-left: 2em;
 }
 
 .dailyDrawButton {
@@ -277,11 +276,55 @@
   place-items: center;
 }
 
+@media only screen and (hover: none) and (max-width: 2000px) {
+  .navbar {
+    width: 40%;
+  }
+}
+
+@media only screen and (hover: hover) and (max-width: 1750px) {
+  .navbar {
+    width: 60%;
+  }
+}
+
+
+
 @media (max-width: 1500px) {
   .navbar {
     width: 50%;
   }
 }
+
+@media only screen and (hover: hover) and (max-width: 1500px) {
+  .navbar {
+    width: 70%;
+  }
+}
+
+@media only screen and (hover: hover) and (max-width: 1255px) {
+
+  /* .navbar {
+    width: 75%;
+  } */
+  .welcomeText {
+    display: none;
+  }
+}
+
+@media only screen and (hover: hover) and (max-width: 1250px) {
+  .navbar {
+    width: 70%;
+  }
+
+  .signInButtons>button {
+    width: 100% !important;
+  }
+}
+
+
+/* change the width of navbar to like 80% or sum shit around this px area */
+
 
 /* equal to or smaller than {1150} */
 @media (max-width: 1200px) {
@@ -290,23 +333,12 @@
   }
 }
 
+@media only screen and (hover: hover) and (max-width: 1075px) {
 
-@media (max-width: 1200px) {
-  /* .header ul {
-    gap: 3.75em;
+  .navbar {
+    width: 70%;
   }
 
-  .dailyDrawButton {
-    width: 200%;
-  }
-
-  .exploreButton {
-    width: 170%;
-  } */
-
-  /* .navButton {
-    display: none;
-  } */
 }
 
 @media (max-width: 1000px) {
@@ -334,6 +366,16 @@
   }
 
 */
+}
+
+@media only screen and (hover: hover) and (max-width: 920px) {
+  .logo {
+    padding-left: .5em;
+  }
+
+  .navbar {
+    width: 80%;
+  }
 }
 
 @media (max-width: 760px) {
@@ -401,7 +443,7 @@
   }
 
   .header ul {
-    gap: 2em;
+    gap: .5em;
   }
 
   .dailyDrawButton {

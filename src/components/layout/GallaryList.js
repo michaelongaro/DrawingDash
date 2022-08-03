@@ -19,11 +19,12 @@ import baseClasses from "../../index.module.css";
 
 const GallaryList = ({
   drawingIDs,
-  title,
-  margin,
-  databasePath,
-  idx,
-  forModal,
+  title = null,
+  margin = null,
+  databasePath = null,
+  idx = null,
+  forModal = null,
+  forDailyFeatured = false,
 }) => {
   const searchCtx = useContext(SearchContext);
 
@@ -43,6 +44,8 @@ const GallaryList = ({
   const [greenOpacity, setGreenOpacity] = useState(0);
 
   const [skeletonRatio, setSkeletonRatio] = useState(1);
+
+  const [minMobileWidthReached, setMinMobileWidthReached] = useState(false);
 
   // will prob want to change the 60 below to be empty then have logic down below to handle
   const [currentlyShownDuration, setCurrentlyShownDuration] = useState();
@@ -75,6 +78,8 @@ const GallaryList = ({
           setSkeletonRatio(6.275);
         } else if (idx === 0) {
           setSkeletonRatio(3.5);
+        } else if (idx === -1) {
+          // ratio for featured drawings/maybe could use idx === 0
         }
 
         // used if want to load a different page other than the default order (60->180->300)
@@ -86,7 +91,6 @@ const GallaryList = ({
 
           return;
         } else {
-          console.log("reloading the old fashioned way, nothing fancy");
           if (drawingIDs["60"].length !== 0) {
             setDurationStates([true, false, false]);
             setCurrentlyShownDuration("60");
@@ -109,6 +113,27 @@ const GallaryList = ({
       }
     }
   }, [drawingIDs]);
+
+  useEffect(() => {
+    // just for initial render
+    if (window.innerWidth <= 500) {
+      setMinMobileWidthReached(true);
+    } else {
+      setMinMobileWidthReached(false);
+    }
+
+    function resizeHandler() {
+      if (window.innerWidth <= 500) {
+        setMinMobileWidthReached(true);
+      } else {
+        setMinMobileWidthReached(false);
+      }
+    }
+    window.addEventListener("resize", resizeHandler);
+    return () => {
+      window.removeEventListener("resize", resizeHandler);
+    };
+  }, []);
 
   useEffect(() => {
     if (showEmptyResults) {
@@ -178,7 +203,10 @@ const GallaryList = ({
   return (
     <>
       {drawingIDs && (
-        <div className={classes.baseFlex}>
+        <div
+          style={{ marginTop: forDailyFeatured ? 0 : "3em" }}
+          className={classes.baseFlex}
+        >
           <div className={classes.buttonContainer}>
             {/* One Minute Button */}
             <div
@@ -231,18 +259,17 @@ const GallaryList = ({
                   opacity: redOpacity,
                   border: "solid red",
                   borderWidth: "2px 2px 0 2px",
-
-                  left: "-2px",
-                  top: "-2px",
-                  width: "188px",
-                  height: "74px",
                 }}
-                className={`${classes.baseButtonFlex} ${classes.durationIconContainer} ${classes.hoverRed}`}
+                className={`${classes.durationButtonPositioning} ${classes.baseButtonFlex} ${classes.durationIconContainer} ${classes.hoverRed}`}
               >
-                <OneMinuteIcon dimensions={"3.5em"} />
+                <OneMinuteIcon
+                  dimensions={minMobileWidthReached ? "3em" : "3.5em"}
+                />
               </div>
 
-              <OneMinuteIcon dimensions={"3.5em"} />
+              <OneMinuteIcon
+                dimensions={minMobileWidthReached ? "3em" : "3.5em"}
+              />
             </div>
 
             {/* 3 Minute Button */}
@@ -295,18 +322,17 @@ const GallaryList = ({
                   opacity: yellowOpacity,
                   border: "solid yellow",
                   borderWidth: "2px 2px 0 2px",
-
-                  left: "-2px",
-                  top: "-2px",
-                  width: "188px",
-                  height: "74px",
                 }}
-                className={`${classes.baseButtonFlex} ${classes.durationIconContainer} ${classes.hoverYellow}`}
+                className={`${classes.durationButtonPositioning} ${classes.baseButtonFlex} ${classes.durationIconContainer} ${classes.hoverYellow}`}
               >
-                <ThreeMinuteIcon dimensions={"3.5em"} />
+                <ThreeMinuteIcon
+                  dimensions={minMobileWidthReached ? "3em" : "3.5em"}
+                />
               </div>
 
-              <ThreeMinuteIcon dimensions={"3.5em"} />
+              <ThreeMinuteIcon
+                dimensions={minMobileWidthReached ? "3em" : "3.5em"}
+              />
             </div>
 
             {/* 5 Minute Button */}
@@ -358,24 +384,33 @@ const GallaryList = ({
                   opacity: greenOpacity,
                   border: "solid green",
                   borderWidth: "2px 2px 0 2px",
-
-                  left: "-2px",
-                  top: "-2px",
-                  width: "188px",
-                  height: "74px",
                 }}
-                className={`${classes.baseButtonFlex} ${classes.durationIconContainer} ${classes.hoverGreen}`}
+                className={`${classes.durationButtonPositioning} ${classes.baseButtonFlex} ${classes.durationIconContainer} ${classes.hoverGreen}`}
               >
-                <FiveMinuteIcon dimensions={"3.5em"} />
+                <FiveMinuteIcon
+                  dimensions={minMobileWidthReached ? "3em" : "3.5em"}
+                />
               </div>
 
-              <FiveMinuteIcon dimensions={"3.5em"} />
+              <FiveMinuteIcon
+                dimensions={minMobileWidthReached ? "3em" : "3.5em"}
+              />
             </div>
           </div>
 
-          <Card margin={margin}>
+          <Card
+            width={forDailyFeatured || forModal ? "100" : "90"}
+            margin={margin}
+          >
             {durationStates[0] && (
-              <div className={classes.gridListContain}>
+              <div
+                style={{
+                  gridTemplateColumns: forDailyFeatured
+                    ? "repeat(1, minmax(210px, 3fr))"
+                    : "undefined",
+                }}
+                className={classes.gridListContain}
+              >
                 {Object.values(drawingIDs["60"])
                   .flat()
                   .map((drawingID, i) => (
@@ -402,7 +437,14 @@ const GallaryList = ({
             )}
 
             {durationStates[1] && (
-              <div className={classes.gridListContain}>
+              <div
+                style={{
+                  gridTemplateColumns: forDailyFeatured
+                    ? "repeat(1, minmax(210px, 3fr))"
+                    : "undefined",
+                }}
+                className={classes.gridListContain}
+              >
                 {Object.values(drawingIDs["180"])
                   .flat()
                   .map((drawingID, i) => (
@@ -429,7 +471,14 @@ const GallaryList = ({
             )}
 
             {durationStates[2] && (
-              <div className={classes.gridListContain}>
+              <div
+                style={{
+                  gridTemplateColumns: forDailyFeatured
+                    ? "repeat(1, minmax(210px, 3fr))"
+                    : "undefined",
+                }}
+                className={classes.gridListContain}
+              >
                 {Object.values(drawingIDs["300"])
                   .flat()
                   .map((drawingID, i) => (
@@ -497,8 +546,14 @@ const GallaryList = ({
           {/* page swap buttons */}
           {/* note: will need to calculate width of page above and then have breakpoints for how many
               images to fetch  */}
-          <div
-            style={{ position: "relative", right: 0, bottom: 0, gap: "1em" }}
+          {/* <div
+            style={{
+              // display: idx !== null && forModal !== null ? "flex" : "none",
+              position: "relative",
+              right: 0,
+              bottom: 0,
+              gap: "1em",
+            }}
             className={baseClasses.baseFlex}
           >
             {currentlyShownDuration &&
@@ -545,7 +600,7 @@ const GallaryList = ({
                     {i + 1}
                   </button>
                 ))}
-          </div>
+          </div> */}
         </div>
       )}
     </>

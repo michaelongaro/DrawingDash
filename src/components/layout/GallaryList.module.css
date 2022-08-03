@@ -10,20 +10,6 @@
   padding: 1em;
 }
 
-/* don't think we need anymore */
-/* .flexListContain {
-  display: flex;
-  justify-content: center;
-  flex-wrap: wrap;
-  /* overflow-y: scroll; */
-/* height: 65vh; 
-  width: 100%;
-  gap: 2em;
-  margin-top: 1em;
-  margin-bottom: 1em;
-} 
-*/
-
 .gridListContain {
   display: grid;
   grid-template-columns: repeat(3, minmax(210px, 3fr));
@@ -37,7 +23,7 @@
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  /* gap: 2em; */
+
   margin-top: 3em;
   width: 100%;
 }
@@ -102,4 +88,28 @@
 
 .pageSelectorButton:hover {
   background-color: #c2c2c2 !important;
+}
+
+@media (max-width: 1250px) {
+  .gridListContain {
+    grid-template-columns: repeat(2, minmax(210px, 3fr));
+  }
+}
+
+@media (max-width: 800px) {
+  .durationIconContainer {
+    padding: .5em;
+  }
+}
+
+@media (max-width: 750px) {
+  .gridListContain {
+    grid-template-columns: repeat(1, minmax(210px, 3fr));
+  }
+}
+
+@media (max-width: 500px) {
+  .buttonContainer {
+    gap: .5em;
+  }
 }

@@ -324,17 +324,19 @@ function NavbarProfile() {
       }}
       className={baseClasses.baseFlex}
     >
-      {username ? (
-        <div
-          id={"welcometext"}
-          style={{
-            overflow: "hidden",
-            display: "inline-block",
-          }}
-        >{`Welcome ${firstTimeVisiting ? "" : "back"},${
-          username ? ` ${username}!` : "!"
-        }`}</div>
-      ) : null}
+      <div className={classes.welcomeText}>
+        {username ? (
+          <div
+            id={"welcometext"}
+            style={{
+              overflow: "hidden",
+              display: "inline-block",
+            }}
+          >{`Welcome ${firstTimeVisiting ? "" : "back"},${
+            username ? ` ${username}!` : "!"
+          }`}</div>
+        ) : null}
+      </div>
       <div
         style={{
           cursor: "pointer",

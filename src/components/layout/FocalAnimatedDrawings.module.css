@@ -267,7 +267,7 @@
 @media (max-width: 900px) {
   .drawingTitleContainer {
     width: 40%;
-    height: 45px;
+    height: 55px;
   }
 }
 
@@ -280,6 +280,13 @@
 @media (max-width: 600px) {
   .searchGridContainer {
     grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+@media (max-width: 450px) {
+  .drawingTitleContainer {
+    width: 60%;
+    height: 55px;
   }
 }
 
