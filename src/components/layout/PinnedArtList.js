@@ -47,7 +47,10 @@ const PinnedArtList = ({ drawingIDs, seconds }) => {
           <div style={{ fontSize: "20px" }}>and return here to pin it!</div>
         </div>
       ) : (
-        <div className={classes.listContain}>
+        <div
+          style={{ height: "100%", overflowY: "scroll" }}
+          className={classes.gridListContain}
+        >
           {drawingIDs.map((drawingID, i) => (
             <PinnedArt
               key={i}

@@ -17,7 +17,8 @@ import baseClasses from "../../index.module.css";
 
 const PinnedModal = React.forwardRef((props, modalRef) => {
   const pinnedCtx = useContext(PinnedContext);
-  const [loadedDrawingIDs, setLoadedDrawingIDs] = useState([]);
+
+  const [loadedDrawingIDs, setLoadedDrawingIDs] = useState(null);
   const [durationIcon, setDurationIcon] = useState();
 
   const { user } = useAuth0();
@@ -63,12 +64,17 @@ const PinnedModal = React.forwardRef((props, modalRef) => {
     // change the 80% to 50% if loadedDrawingIDs === 0
     <div
       style={{
-        width: loadedDrawingIDs.length === 0 ? "" : "80%",
+        width: loadedDrawingIDs
+          ? loadedDrawingIDs.length === 0
+            ? ""
+            : "80%"
+          : "80%",
+        maxHeight: "90vh",
       }}
       classname={classes.card}
       ref={modalRef}
     >
-      <div className={classes.innerModal}>
+      <div style={{ height: "100%" }} className={classes.innerModal}>
         <div className={classes.topControlsContainer}>
           <div className={classes.save}>
             <button
@@ -103,12 +109,14 @@ const PinnedModal = React.forwardRef((props, modalRef) => {
           </div>
         </div>
 
-        <div className={classes.gallaryList}>
-          <PinnedArtList
-            drawingIDs={loadedDrawingIDs}
-            seconds={props.seconds}
-          />
-        </div>
+        {loadedDrawingIDs && (
+          <div style={{ height: "80%" }} className={classes.gallaryList}>
+            <PinnedArtList
+              drawingIDs={loadedDrawingIDs}
+              seconds={props.seconds}
+            />
+          </div>
+        )}
       </div>
     </div>
   );

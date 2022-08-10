@@ -57,6 +57,7 @@ function MainNavigation() {
   const storage = getStorage();
 
   const [minDesktopWidthReached, setMinDesktopWidthReached] = useState(false);
+  const [showDesktopNavbar, setShowDesktopNavbar] = useState(false);
 
   const profilePictureRef = useRef(null);
 
@@ -324,25 +325,41 @@ function MainNavigation() {
   useEffect(() => {
     // just for initial render
     if (
-      window.innerWidth > 900 &&
-      window.innerWidth <= 1075 &&
+      window.innerWidth >= 1100 &&
       matchMedia("(hover: hover), (pointer: pointer)").matches
     ) {
-      setMinDesktopWidthReached(true);
+      setShowDesktopNavbar(true);
     } else {
-      setMinDesktopWidthReached(false);
+      setShowDesktopNavbar(false);
     }
+    // if (
+    //   window.innerWidth > 900 &&
+    //   window.innerWidth <= 1075 &&
+    //   matchMedia("(hover: hover), (pointer: pointer)").matches
+    // ) {
+    //   setMinDesktopWidthReached(true);
+    // } else {
+    //   setMinDesktopWidthReached(false);
+    // }
 
     function resizeHandler() {
       if (
-        window.innerWidth > 900 &&
-        window.innerWidth <= 1075 &&
+        window.innerWidth >= 1100 &&
         matchMedia("(hover: hover), (pointer: pointer)").matches
       ) {
-        setMinDesktopWidthReached(true);
+        setShowDesktopNavbar(true);
       } else {
-        setMinDesktopWidthReached(false);
+        setShowDesktopNavbar(false);
       }
+      // } else if (
+      //   window.innerWidth > 900 &&
+      //   window.innerWidth <= 1075 &&
+      //   matchMedia("(hover: hover), (pointer: pointer)").matches
+      // ) {
+      //   setMinDesktopWidthReached(true);
+      // } else {
+      //   setMinDesktopWidthReached(false);
+      // }
     }
     window.addEventListener("resize", resizeHandler);
     return () => {
@@ -378,7 +395,8 @@ function MainNavigation() {
             justifyContent: "space-between",
             flexWrap: "nowrap",
             paddingLeft: "1em",
-            paddingRight: "1em",
+            paddingRight: showDesktopNavbar ? "4em" : "1em",
+            transition: "all 200ms",
           }}
         >
           <div className={`${baseClasses.baseFlex} ${classes.mainLinkButtons}`}>
@@ -424,10 +442,6 @@ function MainNavigation() {
               </NavLink>
             </li>
           </div>
-          {/* 
-          {matchMedia("(hover: none), (pointer: coarse)").matches && (
-            <div style={{ width: "48px", height: "48px" }}></div>
-          )} */}
 
           {!isLoading && !isAuthenticated ? (
             <>
@@ -442,10 +456,11 @@ function MainNavigation() {
             </>
           ) : (
             <>
-              {matchMedia("(hover: none), (pointer: coarse)").matches ? (
+              {matchMedia("(hover: none), (pointer: coarse)").matches ||
+              !showDesktopNavbar ? (
                 <Sidebar />
               ) : (
-                <NavbarProfile />
+                <NavbarProfile forSidebar={false} />
               )}
             </>
           )}

@@ -1,26 +1,47 @@
+:root {
+  --scale: 1;
+}
+
 .contain {
   display: flex;
-  gap: 3.5em;
+  gap: clamp(1em, 50%, 3.5em);
   justify-content: center;
   align-items: center;
+
+  margin: auto;
+
+  transition: all 200ms;
 }
 
-.contain > div {
+.subControlFlex {
   display: flex;
   justify-content: center;
   align-items: center;
+  flex-wrap: wrap;
+  gap: 1em;
 }
 
-.contain > div > button {
+.colors {
+  width: 377px;
+}
+
+.sizes {
+  width: 200px;
+}
+
+.tools {
+  width: 452px;
+}
+
+.contain>div>button {
   cursor: pointer;
-  margin: 1em 1em 1.5em 1em;
 }
 
 .outerColor {
   position: relative;
   border-radius: 1em;
-  height: 3.125em;
-  width: 3.125em;
+  width: calc(3.125em * var(--scale));
+  height: calc(3.125em * var(--scale));
   border-style: none;
   vertical-align: middle;
 }
@@ -34,8 +55,8 @@
   border: 0.15em solid white;
   border-radius: 0.75em;
   background-color: inherit;
-  height: 2.55em;
-  width: 2.55em;
+  width: calc(2.55em * var(--scale));
+  height: calc(2.55em * var(--scale));
   margin: auto;
   top: 0;
   bottom: 0;
@@ -71,50 +92,162 @@
   right: 0;
 }
 
-.tools {
-  gap: 2em;
-}
-
-.tools > div {
+.tools>div {
   cursor: pointer;
+  max-width: calc(4em * var(--scale));
+  max-height: calc(4em * var(--scale));
 }
 
-.tools > div:hover {
+.tools>div:hover {
   filter: brightness(1.25);
 }
 
-/* I think just keep the .small medium and large, and just do % of those values OOO
-   do them as global variables at top and then reference $size or whatever and do * .85 for the
-   inner borders */
-
 .small {
-  width: 30px;
-  height: 30px;
+  width: calc(30px * var(--scale));
+  height: calc(30px * var(--scale));
 }
 
 .smallFilled {
-  width: 20px;
-  height: 20px;
+  width: calc(20px * var(--scale));
+  height: calc(20px * var(--scale));
 }
 
 .medium {
-  width: 45px;
-  height: 45px;
+  width: calc(45px * var(--scale));
+  height: calc(45px * var(--scale));
 }
+
 .mediumFilled {
-  width: 35px;
-  height: 35px;
+  width: calc(35px * var(--scale));
+  height: calc(35px * var(--scale));
 }
+
 .large {
-  width: 60px;
-  height: 60px;
+  width: calc(60px * var(--scale));
+  height: calc(60px * var(--scale));
 }
+
 .largeFilled {
-  width: 50px;
-  height: 50px;
+  width: calc(50px * var(--scale));
+  height: calc(50px * var(--scale));
 }
 
 .rounded:hover,
 .innerBrushBorder:hover {
   background-color: rgb(49, 49, 49);
+}
+
+/* could prob have used some kind
+ of flex prop to shrink these tbh... */
+
+@media (max-width: 1300px) {
+  :root {
+    --scale: 0.9;
+  }
+
+  .colors {
+    width: 233px;
+  }
+
+  .sizes {
+    width: 116px;
+  }
+
+  .tools {
+    width: 267px;
+  }
+
+  .undo {
+    margin-left: 0 !important;
+  }
+}
+
+@media (max-width: 800px) {
+  .contain {
+    gap: 0.5em;
+  }
+
+  .colors {
+    width: 207px;
+  }
+
+  .sizes {
+    width: 116px;
+  }
+
+  .tools {
+    width: 252px;
+  }
+}
+
+@media (max-width: 730px) {
+  .colors {
+    width: 187px;
+  }
+
+  .sizes {
+    width: 116px;
+  }
+
+  .tools {
+    width: 227px;
+  }
+}
+
+@media (max-width: 660px) {
+  :root {
+    --scale: 0.8;
+  }
+
+  .subControlFlex {
+    gap: 0.5em;
+  }
+
+  .colors {
+    width: 167px;
+  }
+
+  .sizes {
+    width: 78px;
+  }
+
+  .tools {
+    width: 201px;
+  }
+}
+
+@media (max-width: 568px) {
+  :root {
+    --scale: 0.7;
+  }
+
+  .colors {
+    width: 147px;
+  }
+
+  .sizes {
+    width: 76px;
+  }
+
+  .tools {
+    width: 175px;
+  }
+}
+
+@media (max-width: 410px) {
+  :root {
+    --scale: 0.6;
+  }
+
+  .colors {
+    width: 106px;
+  }
+
+  .sizes {
+    width: 60px;
+  }
+
+  .tools {
+    width: 135px;
+  }
 }

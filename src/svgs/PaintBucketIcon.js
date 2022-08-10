@@ -1,12 +1,12 @@
 import React from "react";
 
-const PaintBucketIcon = ({ currentColor }) => {
+const PaintBucketIcon = ({ dimensions, currentColor }) => {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
       version="1.1"
-      width="3em"
-      height="3em"
+      width={dimensions}
+      height={dimensions}
       x="0"
       y="0"
       viewBox="0 0 469.334 469.334"

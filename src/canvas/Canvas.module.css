@@ -23,18 +23,12 @@
   transition: all 200ms;
 }
 
-/* 
-#blur {
-  filter: blur(5px);
-  pointer-events: none;
-} */
-
 .horizContain>div {
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  gap: 1em;
+  /* gap: 1em; */
 }
 
 .flexContain>div>div>canvas {
@@ -55,8 +49,9 @@
 
 .durationButton {
   min-width: 50%;
-  padding-top: 1em;
+  padding-top: 1.5em;
   border-radius: 1em;
+  /* gap: 0 !important; */
   box-shadow: 0 4px 8px 2px rgba(0, 0, 0, 0.2);
 }
 
@@ -65,13 +60,13 @@
 }
 
 .timeBorder {
-  margin-top: 0.5em;
+  margin-top: 0.25em;
   text-shadow: 2px 3px 8px black;
   color: rgba(255, 255, 255, 0.9);
 }
 
 .promptTextMargin {
-  margin: 0 1.5em 1.5em 1.5em;
+  margin: 1em 1.5em 1.5em 1.5em;
   text-shadow: 2px 3px 8px black;
   color: white;
   text-align: center;
@@ -86,23 +81,22 @@
   justify-content: center;
   align-items: center;
   flex-direction: column;
-  /* gap: 2em; */
-  height: 80vh;
   font-size: 1.5em;
 }
 
 .promptRefreshTimer {
+  width: 100%;
+  font-size: 18px;
+  padding: 0.5em 0;
   border-radius: 1em;
   background: linear-gradient(354deg,
       rgb(131 131 131) 0%,
       rgb(231 231 231) 100%);
-  padding: 1.75em;
-  margin-top: .5em;
 }
 
 .canvasOutline {
-  width: 97.27%;
-  height: 75vh;
+  width: 100%;
+  height: 80vh;
   display: flex;
   justify-content: center;
   flex-direction: column;
@@ -185,7 +179,7 @@
   height: 50px;
   opacity: 0;
   padding: 1.75em;
-  font-size: .85em;
+  font-size: 0.85em;
   border-radius: 1em;
   transition: all 250ms;
 }
@@ -217,12 +211,11 @@
   justify-content: center;
   align-items: center;
   margin-bottom: 4em;
-  margin-top: 3em;
-  width: 78vw;
-  height: 90vh;
-}
+  /* margin-top: 3em; */
 
-/* hmm wtf it definitely lags with that on... */
+  width: 82vw;
+  height: 100vh;
+}
 
 .canvasBreathingBackground:after {
   content: "";
@@ -265,8 +258,8 @@
 
 .sharedContain {
   position: relative;
-  width: 75vw;
-  height: 75vh;
+  width: 80vw;
+  min-height: 80vh;
 }
 
 .rounded {
@@ -301,7 +294,7 @@
   height: 100%;
   z-index: 400;
   font-size: 1em;
-  background-color: rgb(255, 255, 255, 0.0);
+  background-color: rgb(255, 255, 255, 0);
 }
 
 .endButtonContainer {
@@ -324,14 +317,11 @@
   gap: 1em;
 
   background-color: white;
-
-  margin-top: 2em;
-  margin-bottom: 2em;
   height: 9em;
 
   border-radius: 1em;
   border: 0;
-  box-shadow: rgba(0, 0, 0, 0.1) 0 2px 4px;
+  box-shadow: rgb(0 0 0 / 20%) 0 2px 4px 1px;
 }
 
 .drawAgainButton {
@@ -339,7 +329,7 @@
   justify-content: center;
   align-items: center;
   gap: 0.5em;
-  margin: 1em 3em 1em 3em;
+
   padding: 1em 3em 1em 3em;
 
   background-image: linear-gradient(-180deg, #ff7e31, #e62c03);
@@ -348,7 +338,7 @@
   color: #ffffff;
   cursor: pointer;
   border: 0;
-  /* white-space: nowrap; */
+
   transition: box-shadow 0.2s;
 }
 
@@ -408,7 +398,7 @@
 }
 
 .mainLoader .loader:before {
-  content: '';
+  content: "";
   display: block;
   padding-top: 100%;
 }
@@ -430,7 +420,8 @@
 .loaderPath {
   stroke-dasharray: 150, 200;
   stroke-dashoffset: -10;
-  -webkit-animation: dash 1.5s ease-in-out infinite, color 6s ease-in-out infinite;
+  -webkit-animation: dash 1.5s ease-in-out infinite,
+    color 6s ease-in-out infinite;
   animation: dash 1.5s ease-in-out infinite, color 6s ease-in-out infinite;
   stroke-linecap: round;
 }
@@ -485,38 +476,94 @@
 
 @-webkit-keyframes color {
   0% {
-    stroke: #EEEEEE;
+    stroke: #eeeeee;
   }
 
   40% {
-    stroke: #EEEEEE;
+    stroke: #eeeeee;
   }
 
   66% {
-    stroke: #EEEEEE;
+    stroke: #eeeeee;
   }
 
   80%,
   90% {
-    stroke: #EEEEEE;
+    stroke: #eeeeee;
   }
 }
 
 @keyframes color {
   0% {
-    stroke: #EEEEEE;
+    stroke: #eeeeee;
   }
 
   40% {
-    stroke: #EEEEEE;
+    stroke: #eeeeee;
   }
 
   66% {
-    stroke: #EEEEEE;
+    stroke: #eeeeee;
   }
 
   80%,
   90% {
-    stroke: #EEEEEE;
+    stroke: #eeeeee;
+  }
+}
+
+@media (max-width: 750px) {
+  .endButtonContainer {
+    width: 90%;
+  }
+}
+
+@media (max-width: 720px) {
+  .registerContainer {
+    transform: scale(0.8);
+  }
+}
+
+@media (max-width: 603px) {
+  .endButtonContainer {
+    padding: 2em 1em 0 1em;
+  }
+
+  .drawAgainButton {
+    padding: 1em;
+  }
+}
+
+@media (max-width: 550px) {
+  .durationButton {
+    min-width: 40%;
+    padding-top: 1.5em;
+  }
+
+  .promptTextMargin {
+    margin: 0.5em 0.5em 1em 0.5em;
+  }
+}
+
+@media (max-width: 500px) {
+  .canvasBreathingBackground {
+    width: 100vw;
+  }
+
+  .sharedContain {
+    width: 98vw;
+  }
+}
+
+@media (max-width: 487px) {
+  .registerContainer {
+    transform: scale(0.7);
+  }
+}
+
+@media (max-width: 400px) {
+  .signInButtonContainer>button {
+    width: 6.5em !important;
+    height: 2.5em !important;
   }
 }

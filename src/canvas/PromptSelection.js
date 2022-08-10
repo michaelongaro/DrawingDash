@@ -1,7 +1,8 @@
 import React, {
   useContext,
   useEffect,
-  // useLayoutEffect,
+  useLayoutEffect,
+  useRef,
   useState,
 } from "react";
 
@@ -47,6 +48,17 @@ const PromptSelection = () => {
     300: ["Bearish", "Swindle"],
     extra: ["Goulish", "Werewolf"],
   };
+
+  const promptSelectionRef = useRef(null);
+  const normalPromptContainerRef = useRef(null);
+  const extraPromptContainerRef = useRef(null);
+
+  const [dynamicRegisterHeight, setDynamicRegisterHeight] = useState(0);
+
+  const [flexDirection, setFlexDirection] = useState("row");
+  const [extraPromptsFlexDirection, setExtraPromptsFlexDirection] =
+    useState("row");
+  const [initInnerWidth, setInitInnerWidth] = useState(1920);
 
   const [showExtraPrompt, setShowExtraPrompt] = useState(false);
   const [extraPromptHasBeenAnimated, setExtraPromptHasBeenAnimated] =
@@ -224,7 +236,11 @@ const PromptSelection = () => {
 
           setHidePlaceholderText(true);
 
-          if (isAuthenticated && !DSCtx.drawingStatuses["extra"]) {
+          // maybe don't need to separate these and just have opacity: 0 scale: 0
+          // etc, might be an issue with the top value changing though...
+
+          // !DSCtx.drawingStatuses["extra"]
+          if (isAuthenticated && showExtraPrompt) {
             anime({
               targets: "#extraPromptText",
               top: [0, "-25px"],
@@ -257,7 +273,7 @@ const PromptSelection = () => {
               duration: 500,
 
               loop: false,
-              easing: "linear",
+              easing: "easeInSine",
             });
           }
         }
@@ -266,7 +282,8 @@ const PromptSelection = () => {
   }, [
     isLoading,
     isAuthenticated,
-    DSCtx.drawingStatuses,
+    // DSCtx.drawingStatuses,
+    showExtraPrompt,
     DSCtx.PBStates,
     showCountdownTimer,
     showPromptsComingShortlyContainer,
@@ -274,8 +291,6 @@ const PromptSelection = () => {
 
   useEffect(() => {
     if (DSCtx.startNewDailyWordsAnimation) {
-      console.log("STAHTED");
-
       DSCtx.setPromptRefreshes(1);
       DSCtx.setDrawingStatusRefreshes(1);
 
@@ -309,8 +324,6 @@ const PromptSelection = () => {
           pointerEvents: ["auto", "none"],
           direction: "normal",
           duration: 500,
-          // delay: 350,
-
           loop: false,
           easing: "linear",
         });
@@ -330,8 +343,6 @@ const PromptSelection = () => {
           pointerEvents: "auto",
           direction: "normal",
           duration: 1000,
-          // delay: 350,
-
           loop: false,
           easing: "linear",
         });
@@ -339,16 +350,10 @@ const PromptSelection = () => {
         // animate extra drawing prompts container out of view
         anime({
           targets: "#extraPromptContainer",
-          // translateY: ["-225px", 0],
-          // delay: 200,
           opacity: [1, 0],
-          // scale: [0, 1],
-          // delay: 500,
-
           pointerEvents: "none",
           direction: "normal",
           loop: false,
-
           duration: 1000,
           easing: "linear",
           complete: () => {
@@ -363,8 +368,6 @@ const PromptSelection = () => {
           scale: 1,
           top: 0,
           opacity: [0, 1],
-          // delay: 350,
-
           pointerEvents: "auto",
           direction: "normal",
           duration: 1000,
@@ -545,7 +548,6 @@ const PromptSelection = () => {
       DSCtx.extraPrompt.title !== "" &&
       !DSCtx.drawingStatuses["extra"]
     ) {
-      console.log(showExtraPrompt, DSCtx.drawingStatuses);
       if (DSCtx.extraPrompt.seconds === 60) {
         setFormattedSeconds("1 Minute");
         setAdaptiveBackground(classes.redBackground);
@@ -639,7 +641,7 @@ const PromptSelection = () => {
         });
       }
 
-      // DSCtx.setExtraPromptsShown(true);
+      DSCtx.setExtraPromptsShown(true);
     } else {
       if (
         DSCtx.drawingStatuses["60"] &&
@@ -647,8 +649,6 @@ const PromptSelection = () => {
         DSCtx.drawingStatuses["300"] &&
         Object.keys(DSCtx.drawingStatuses).length === 3
       ) {
-        console.log("unjustly set blur to true", DSCtx.drawingStatuses);
-
         // blurring out the regular prompts
         setBlur(true);
 
@@ -673,8 +673,6 @@ const PromptSelection = () => {
       }
     });
 
-    console.log("init/coming back", DSCtx.startFromLeft);
-
     anime({
       targets: "#promptSelection",
       loop: false,
@@ -685,6 +683,9 @@ const PromptSelection = () => {
       direction: "normal",
       duration: 500,
       easing: "easeInSine",
+      // complete: () => {
+      //   document.getElementById("root").scrollIntoView({ behavior: "smooth" });
+      // },
     });
   }, [DSCtx.startFromLeft]);
 
@@ -738,6 +739,86 @@ const PromptSelection = () => {
     DSCtx.drawingStatusRefreshes,
     DSCtx.dailyPrompts,
   ]);
+
+  useEffect(() => {
+    // just for initial render
+    if (window.innerWidth <= 1200) {
+      setFlexDirection("column");
+
+      if (window.innerWidth <= 800) {
+        setExtraPromptsFlexDirection("column");
+      } else {
+        setExtraPromptsFlexDirection("row");
+      }
+    } else {
+      setFlexDirection("row");
+      setExtraPromptsFlexDirection("row");
+    }
+
+    if (
+      document.getElementById("normalPromptContainer") !== null &&
+      document.getElementById("registerPromoContainer") !== null
+    ) {
+      setDynamicRegisterHeight(
+        `${
+          document
+            .getElementById("normalPromptContainer")
+            .getBoundingClientRect().height /
+            2 -
+          document
+            .getElementById("registerPromoContainer")
+            .getBoundingClientRect().height /
+            2.2
+        }px`
+      );
+    } else {
+      setDynamicRegisterHeight(0);
+    }
+
+    function resizeHandler() {
+      if (window.innerWidth <= 1200) {
+        setFlexDirection("column");
+
+        if (window.innerWidth <= 800) {
+          setExtraPromptsFlexDirection("column");
+        } else {
+          setExtraPromptsFlexDirection("row");
+        }
+      } else {
+        setFlexDirection("row");
+        setExtraPromptsFlexDirection("row");
+      }
+
+      if (
+        document.getElementById("normalPromptContainer") !== null &&
+        document.getElementById("registerPromoContainer") !== null
+      ) {
+        setDynamicRegisterHeight(
+          `${
+            document
+              .getElementById("normalPromptContainer")
+              .getBoundingClientRect().height /
+              2 -
+            document
+              .getElementById("registerPromoContainer")
+              .getBoundingClientRect().height /
+              2.2
+          }px`
+        );
+      } else {
+        setDynamicRegisterHeight(0);
+      }
+    }
+
+    window.addEventListener("resize", resizeHandler);
+    return () => {
+      window.removeEventListener("resize", resizeHandler);
+    };
+  }, [DSCtx.showPromptSelection]);
+
+  useEffect(() => {
+    setInitInnerWidth(window.innerWidth);
+  }, []);
 
   function updateDisabledOptions(duration, adj, noun) {
     setDurationOptions([
@@ -805,8 +886,6 @@ const PromptSelection = () => {
 
     DSCtx.updatePBStates("selectToChooseBar", true);
 
-    console.log("going to paletteChooser");
-
     anime({
       targets: "#promptSelection",
       loop: false,
@@ -830,16 +909,21 @@ const PromptSelection = () => {
   return (
     <div
       id={"promptSelection"}
+      ref={promptSelectionRef}
       style={{
         position: "relative",
-        left: `${
-          DSCtx.startFromLeft ? -1 * window.innerWidth : window.innerWidth
-        }px`,
-        top: "5vh",
+        left: `${DSCtx.startFromLeft ? -1 * initInnerWidth : initInnerWidth}px`,
+        // top: "5vh",
         width: "100vw",
       }}
     >
-      <div className={classes.timerSelectionsModal}>
+      <div
+        style={{
+          position: "relative",
+          top: "175px",
+        }}
+        className={classes.timerSelectionsModal}
+      >
         <div
           style={{
             marginBottom: "2em",
@@ -877,20 +961,24 @@ const PromptSelection = () => {
         </div>
 
         <div
+          id={"parentPromptContain"}
           style={{
-            // marginTop: "2em",
-            // marginBottom: "2em",
             position: "relative",
-            width: "675px",
+            width:
+              blur && window.innerWidth < 1200
+                ? "clamp(200px, 100%, 675px)"
+                : "675px",
             height: "300px",
           }}
         >
           <div
-            id={"normalPromptContainer"}
             style={{
               position: "absolute",
               top: 0,
-              width: "675px",
+              width:
+                blur && window.innerWidth < 1200
+                  ? "clamp(200px, 100%, 675px)"
+                  : "675px",
               height: "300px",
               opacity: !DSCtx.startFromLeft && showExtraPrompt ? 0 : 1,
             }}
@@ -899,7 +987,10 @@ const PromptSelection = () => {
               style={{
                 filter: blur ? "blur(4px)" : "",
                 pointerEvents: blur ? "none" : "auto",
+                flexDirection: flexDirection,
               }}
+              ref={normalPromptContainerRef}
+              id={"normalPromptContainer"}
               className={classes.horizContain}
             >
               <div
@@ -1002,7 +1093,7 @@ const PromptSelection = () => {
           </div>
 
           <div
-            id={"extraPromptContainer"}
+            // id={"extraPromptContainer"}
             className={showExtraPrompt ? "" : classes.hide}
             style={{
               position: "absolute",
@@ -1013,7 +1104,14 @@ const PromptSelection = () => {
               pointerEvents: showExtraPrompt ? "auto" : "none",
             }}
           >
-            <div className={classes.horizContain}>
+            <div
+              style={{
+                flexDirection: extraPromptsFlexDirection,
+              }}
+              ref={extraPromptContainerRef}
+              id={"extraPromptContainer"}
+              className={classes.horizContain}
+            >
               {/* daily extra prompt */}
               <div
                 className={`${classes.durationButton} ${adaptiveBackground} ${stylingButtonClasses[3]}`}
@@ -1057,10 +1155,10 @@ const PromptSelection = () => {
               <div
                 className={`${classes.durationButton} ${customAdaptiveBackground} ${stylingButtonClasses[3]}`}
                 style={{
-                  height: "300px",
+                  height: "282px",
                   padding: "1.5em",
                   cursor: "pointer",
-                  gap: "1.5em",
+                  gap: "1.25em",
                   backgroundPosition:
                     selectedExtraPrompt === "custom" ? "200px" : "",
                 }}
@@ -1162,8 +1260,8 @@ const PromptSelection = () => {
             id={"nextButton"}
             style={{
               position: "absolute",
-              top: "375px",
-              left: "43%",
+              top: extraPromptsFlexDirection === "row" ? "355px" : "660px",
+              left: "43.5%",
               width: "75px",
               height: "40px",
               opacity: showExtraPrompt ? 1 : 0,
@@ -1193,18 +1291,19 @@ const PromptSelection = () => {
             id={"registerContainer"}
             style={{
               position: "absolute",
-              top: 0,
+              top: dynamicRegisterHeight,
               left: 0,
-              // width: "475px",
-              height: "275px",
+              width: "100%",
+              height: "225px",
               opacity: 0,
               pointerEvents: blur ? "auto" : "none",
             }}
+            className={`${classes.registerContainer} ${baseClasses.baseFlex}`}
           >
             <div
+              id={"registerPromoContainer"}
               style={{
                 height: "10em",
-                marginTop: "1em",
               }}
               className={classes.registerPromoContainer}
             >
@@ -1224,22 +1323,18 @@ const PromptSelection = () => {
 
         <div
           style={{
-            marginTop:
-              showCountdownTimer || showPromptsComingShortlyContainer
-                ? "2em"
-                : 0,
-            position: "relative",
+            position: "absolute",
+            top: "-85px",
             width:
               showCountdownTimer || showPromptsComingShortlyContainer
-                ? "450px"
+                ? "420px"
                 : 0,
             height:
               showCountdownTimer || showPromptsComingShortlyContainer
-                ? "150px"
+                ? "117px"
                 : 0,
             opacity:
               showCountdownTimer || showPromptsComingShortlyContainer ? 1 : 0,
-
             transition: "all 500ms",
           }}
           className={baseClasses.baseFlex}

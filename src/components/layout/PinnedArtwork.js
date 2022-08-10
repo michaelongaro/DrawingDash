@@ -80,7 +80,7 @@ const PinnedArtwork = () => {
 
   return (
     <div className={classes.parentContain}>
-      <div className={classes.pinnedContain}>
+      <div className={`${classes.pinnedContain} ${baseClasses.baseFlex}`}>
         <div style={{ gap: "1em" }} className={baseClasses.baseVertFlex}>
           <OneMinuteIcon dimensions={"3em"} />
           <div

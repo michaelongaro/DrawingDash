@@ -544,11 +544,9 @@ const GallaryList = ({
           </Card>
 
           {/* page swap buttons */}
-          {/* note: will need to calculate width of page above and then have breakpoints for how many
-              images to fetch  */}
-          {/* <div
+          <div
             style={{
-              // display: idx !== null && forModal !== null ? "flex" : "none",
+              display: !forDailyFeatured ? "flex" : "none",
               position: "relative",
               right: 0,
               bottom: 0,
@@ -600,7 +598,7 @@ const GallaryList = ({
                     {i + 1}
                   </button>
                 ))}
-          </div> */}
+          </div>
         </div>
       )}
     </>

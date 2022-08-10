@@ -1,4 +1,4 @@
-import React, { useContext, useState, useEffect } from "react";
+import React, { useContext, useState, useEffect, useRef } from "react";
 
 import anime from "animejs/lib/anime.es.js";
 import { useAuth0 } from "@auth0/auth0-react";
@@ -13,6 +13,15 @@ const ProgressBar = () => {
 
   const DSCtx = useContext(DrawingSelectionContext);
 
+  const rectangleRef = useRef(null);
+  const selectTextRef = useRef(null);
+
+  const [selectMoved, setSelectMoved] = useState(false);
+  const [selectOffset, setSelectOffset] = useState(0);
+
+  const [chooseMoved, setChooseMoved] = useState(false);
+  const [chooseOffset, setChooseOffset] = useState(0);
+
   const [localPBStates, setLocalPBStates] = useState({
     selectCircle: false,
     chooseCircle: false,
@@ -23,6 +32,47 @@ const ProgressBar = () => {
   });
 
   const [cleanupAllStates, setCleanupAllStates] = useState(false);
+
+  useEffect(() => {
+    // just for initial render
+    setSelectOffset(
+      rectangleRef.current.getBoundingClientRect().width / 2 -
+        selectTextRef.current.getBoundingClientRect().width / 2
+    );
+
+    if (document.getElementById("chooseTextContainer") !== null) {
+      console.log("resize");
+
+      setChooseOffset(
+        document.getElementById("chooseTextContainer").getBoundingClientRect()
+          .top -
+          169 -
+          20
+      );
+    }
+
+    function resizeHandler() {
+      setSelectOffset(
+        rectangleRef.current.getBoundingClientRect().width / 2 -
+          selectTextRef.current.getBoundingClientRect().width / 2
+      );
+
+      if (document.getElementById("chooseTextContainer") !== null) {
+        console.log("resize");
+        setChooseOffset(
+          document.getElementById("chooseTextContainer").getBoundingClientRect()
+            .top -
+            169 -
+            20
+        );
+      }
+    }
+
+    window.addEventListener("resize", resizeHandler);
+    return () => {
+      window.removeEventListener("resize", resizeHandler);
+    };
+  }, []);
 
   useEffect(() => {
     if (cleanupAllStates) {
@@ -74,7 +124,7 @@ const ProgressBar = () => {
             anime({
               targets: "#animatedGreenPB",
               loop: false,
-              width: ["520px", "265px"],
+              width: ["95%", "50%"],
               direction: "normal",
               duration: 200,
               easing: "easeInSine",
@@ -91,7 +141,7 @@ const ProgressBar = () => {
                     anime({
                       targets: "#animatedGreenPB",
                       loop: false,
-                      width: ["265px", 0],
+                      width: ["50%", 0],
                       direction: "normal",
                       duration: 200,
                       easing: "easeInSine",
@@ -125,12 +175,23 @@ const ProgressBar = () => {
             direction: "normal",
             delay: 150,
             duration: 500,
-            translateX: [0, "265px"],
-            translateY: [0, "170px"],
+
+            left: [
+              "-13px",
+              `${
+                rectangleRef.current.getBoundingClientRect().width / 2 -
+                selectTextRef.current.getBoundingClientRect().width / 2
+              }px`,
+            ],
+            top: ["20px", "140px"],
+
             fontSize: ["1.25em", "1.5em"],
             fontWeight: [400, 600],
             color: ["rgb(100, 100, 100)", "rgb(0, 0, 0)"],
             easing: "easeInSine",
+            complete: () => {
+              setSelectMoved(true);
+            },
           });
         }
 
@@ -144,23 +205,37 @@ const ProgressBar = () => {
             loop: false,
             direction: "normal",
             duration: 500,
-            translateX: ["265px", 0],
-            translateY: ["170px", 0],
+            left: -13,
+            top: 20,
             fontSize: ["1.5em", "1.25em"],
             fontWeight: [600, 400],
             color: ["rgb(0, 0, 0)", "rgb(100, 100, 100)"],
             easing: "easeInSine",
             complete: function () {
+              setSelectMoved(false);
+
               anime({
                 targets: "#chooseText",
                 loop: false,
                 direction: "normal",
                 duration: 500,
-                translateY: [0, "50px"],
+                translateY: [
+                  0,
+                  `${
+                    document
+                      .getElementById("chooseTextContainer")
+                      .getBoundingClientRect().top -
+                    169 -
+                    25
+                  }`,
+                ],
                 fontSize: ["1.25em", "1.5em"],
                 fontWeight: [400, 600],
                 color: ["rgb(100, 100, 100)", "rgb(0, 0, 0)"],
                 easing: "easeInSine",
+                complete: () => {
+                  setChooseMoved(true);
+                },
               });
             },
           });
@@ -168,7 +243,7 @@ const ProgressBar = () => {
           anime({
             targets: "#animatedGreenPB",
             loop: false,
-            width: [0, "265px"],
+            width: [0, "50%"],
             direction: "normal",
             duration: 350,
             easing: "easeInSine",
@@ -203,7 +278,7 @@ const ProgressBar = () => {
               anime({
                 targets: "#animatedGreenPB",
                 loop: false,
-                width: ["265px", 0],
+                width: ["50%", 0],
                 direction: "normal",
                 duration: 350,
                 easing: "easeInSine",
@@ -223,17 +298,30 @@ const ProgressBar = () => {
             color: ["rgb(0, 0, 0)", "rgb(100, 100, 100)"],
             easing: "easeInSine",
             complete: function () {
+              setChooseMoved(false);
+
               anime({
                 targets: "#selectText",
                 loop: false,
                 direction: "normal",
                 duration: 500,
-                translateX: [0, "265px"],
-                translateY: [0, "170px"],
+
+                left: [
+                  "-13px",
+                  `${
+                    rectangleRef.current.getBoundingClientRect().width / 2 -
+                    selectTextRef.current.getBoundingClientRect().width / 2
+                  }px`,
+                ],
+                top: ["20px", "140px"],
+
                 fontSize: ["1.25em", "1.5em"],
                 fontWeight: [400, 600],
                 color: ["rgb(100, 100, 100)", "rgb(0, 0, 0)"],
                 easing: "easeInSine",
+                complete: () => {
+                  setSelectMoved(true);
+                },
               });
             },
           });
@@ -247,7 +335,7 @@ const ProgressBar = () => {
           anime({
             targets: "#animatedGreenPB",
             loop: false,
-            width: ["265px", "520px"],
+            width: ["50%", "95%"],
             direction: "normal",
             duration: 350,
             easing: "easeInSine",
@@ -275,6 +363,8 @@ const ProgressBar = () => {
             color: ["rgb(0, 0, 0)", "rgb(100, 100, 100)"],
             easing: "easeInSine",
             complete: function () {
+              setChooseMoved(true);
+
               anime({
                 targets: "#drawText",
                 loop: false,
@@ -312,12 +402,23 @@ const ProgressBar = () => {
           loop: false,
           direction: "normal",
           duration: 350,
-          translateX: ["265px", 0],
-          translateY: ["170px", 0],
+
+          left: [
+            `${
+              rectangleRef.current.getBoundingClientRect().width / 2 -
+              selectTextRef.current.getBoundingClientRect().width / 2
+            }px`,
+            "-13px",
+          ],
+          top: ["140px", "20px"],
+
           fontSize: ["1.5em", "1.25em"],
           fontWeight: [600, 400],
           color: ["rgb(0, 0, 0)", "rgb(100, 100, 100)"],
           easing: "easeInSine",
+          complete: () => {
+            setSelectMoved(false);
+          },
         });
 
         DSCtx.setRevertSelectCircle(false);
@@ -333,7 +434,7 @@ const ProgressBar = () => {
   ]);
 
   return (
-    <div className={classes.rectangle}>
+    <div ref={rectangleRef} className={classes.rectangle}>
       {/* select circle */}
       <div className={classes.circle}>
         <div
@@ -349,7 +450,21 @@ const ProgressBar = () => {
           style={{ position: "absolute", top: 0, left: "15px" }}
         ></div>
 
-        <div id="selectText" className={classes.inactive}>
+        <div
+          id="selectText"
+          ref={selectTextRef}
+          style={
+            selectMoved
+              ? {
+                  position: "absolute",
+
+                  left: `${selectOffset}px`,
+                  top: "140px",
+                }
+              : { position: "absolute", left: -13, top: 20 }
+          }
+          className={classes.inactive}
+        >
           Select
         </div>
       </div>
@@ -363,7 +478,27 @@ const ProgressBar = () => {
           <div id="choose" className={classes.completedCircleSkeleton}></div>
         </div>
 
-        <div id="chooseText" className={classes.inactive}>
+        <div
+          // style={
+          //   chooseMoved
+          //     ? {
+          //         position: "absolute",
+          //         // top: `${
+          //         //   document.getElementById("chooseTextContainer") !== null
+          //         //     ? document
+          //         //         .getElementById("chooseTextContainer")
+          //         //         .getBoundingClientRect().top - 169
+          //         //     : // -
+          //         //       // 25
+          //         //       20
+          //         // }px`,
+          //         top: `${chooseOffset}px`,
+          //       }
+          //     : { position: "absolute", top: 20 }
+          // }
+          id="chooseText"
+          className={classes.inactive}
+        >
           Choose
         </div>
       </div>

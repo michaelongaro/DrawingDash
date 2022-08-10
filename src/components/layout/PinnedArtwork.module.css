@@ -4,6 +4,11 @@
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
+.pinnedContain {
+  width: 80%;
+  gap: 2em;
+}
+
 .parentContain {
   display: flex;
   flex-direction: column;
@@ -112,4 +117,12 @@
 
 .activeButton:hover:enabled {
   box-shadow: rgba(253, 76, 0, 0.5) 0 3px 8px;
+}
+
+@media (max-width: 900px) {
+  .pinnedContain {
+    width: 100%;
+    flex-direction: column;
+    gap: 5em;
+  }
 }

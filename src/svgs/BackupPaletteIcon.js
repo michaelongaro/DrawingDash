@@ -1,38 +1,18 @@
 import React from "react";
 
-const BackupPaletteIcon = () => {
+const BackupPaletteIcon = ({ dimensions }) => {
   return (
     <svg
       version="1.1"
       id="Capa_1"
       x="0px"
       y="0px"
-      width="30em"
-      height="30em"
+      width={dimensions}
+      height={dimensions}
       viewBox="0 0 459 459"
       style={{ enableBackground: "new 0 0 459 459" }}
     >
-      {/* <metadata id="metadata92">
-        <rdf:RDF>
-          <cc:Work rdf:about="">
-            <dc:format>image/svg+xml</dc:format>
-            <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-            <dc:title></dc:title>
-          </cc:Work>
-        </rdf:RDF>
-      </metadata> */}
       <defs id="defs90">
-        {/* <inkscape:path-effect
-          effect="powermask"
-          id="path-effect1106"
-          is_visible="true"
-          lpeversion="1"
-          uri="#mask-powermask-path-effect1106"
-          invert="false"
-          hide_mask="false"
-          background="true"
-          background_color="#ffffffff"
-        /> */}
         <mask maskUnits="userSpaceOnUse" id="mask-powermask-path-effect1106">
           <image
             width="280.86282"

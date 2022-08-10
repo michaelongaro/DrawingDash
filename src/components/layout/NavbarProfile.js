@@ -40,7 +40,7 @@ import { app } from "../../util/init-firebase";
 import classes from "./MainNavigation.module.css";
 import baseClasses from "../../index.module.css";
 
-function NavbarProfile() {
+function NavbarProfile({ forSidebar }) {
   // context to determine whether profile picture needs to be refetched
   const PFPUpdateCtx = useContext(ProfilePictureUpdateContext);
 
@@ -316,52 +316,9 @@ function NavbarProfile() {
   }, [username]);
 
   return (
-    <div
-      style={{
-        alignItems: "flex-end",
-        gap: "1em",
-        marginLeft: "2em",
-      }}
-      className={baseClasses.baseFlex}
-    >
-      <div className={classes.welcomeText}>
-        {username ? (
-          <div
-            id={"welcometext"}
-            style={{
-              overflow: "hidden",
-              display: "inline-block",
-            }}
-          >{`Welcome ${firstTimeVisiting ? "" : "back"},${
-            username ? ` ${username}!` : "!"
-          }`}</div>
-        ) : null}
-      </div>
-      <div
-        style={{
-          cursor: "pointer",
-        }}
-        className={classes.profileDropdownContainer}
-        onMouseEnter={() => {
-          setHoveringOnProfilePicture(true);
-        }}
-        onMouseLeave={() => {
-          setHoveringOnProfilePicture(false);
-        }}
-        onClick={() => {
-          // only using this because I couldn't lift up z-index to be able to click link
-          // without hover malfunctioning
-          if (!hoveringOnLogOutButton) {
-            profilePictureRef.current.click();
-          }
-        }}
-      >
-        {/* zIndex just to be able to click on the <Link> */}
-        <div
-          style={{
-            position: "absolute",
-          }}
-        >
+    <>
+      {forSidebar ? (
+        <div style={{ gap: ".5em" }} className={baseClasses.baseVertFlex}>
           {isFetching ? (
             <div
               style={{
@@ -374,65 +331,143 @@ function NavbarProfile() {
           ) : (
             <Link to="/profile/preferences" ref={profilePictureRef}>
               <img
+                style={{
+                  width: "5em",
+                  height: "5em",
+
+                  boxShadow: "rgb(0 0 0 / 30%) 0px 2px 4px 1px",
+                }}
                 className={classes.profilePicture}
                 src={croppedImage ? croppedImage : image}
                 alt={"cropped profile"}
               />
             </Link>
           )}
+          {username && <div>{username}</div>}
         </div>
-
+      ) : (
         <div
-          className={classes.dropdownContainer}
-          onMouseEnter={() => {
-            setHoveringOnProfilePicture(true);
+          style={{
+            alignItems: "flex-end",
+            gap: "1em",
+            marginLeft: "2em",
           }}
-          onMouseLeave={() => {
-            setHoveringOnProfilePicture(false);
-          }}
+          className={baseClasses.baseFlex}
         >
+          <div className={classes.welcomeText}>
+            {username && (
+              <div
+                id={"welcometext"}
+                style={{
+                  overflow: "hidden",
+                  display: "inline-block",
+                }}
+              >{`Welcome ${firstTimeVisiting ? "" : "back"},${
+                username ? ` ${username}!` : "!"
+              }`}</div>
+            )}
+          </div>
           <div
             style={{
-              opacity: hoveringOnProfilePicture ? 1 : 0,
-              pointerEvents: hoveringOnProfilePicture ? "auto" : "none",
+              cursor: "pointer",
             }}
-            className={classes.profileDropdown}
+            className={classes.profileDropdownContainer}
+            onMouseEnter={() => {
+              setHoveringOnProfilePicture(true);
+            }}
+            onMouseLeave={() => {
+              setHoveringOnProfilePicture(false);
+            }}
+            onClick={() => {
+              // only using this because I couldn't lift up z-index to be able to click link
+              // without hover malfunctioning
+              if (!hoveringOnLogOutButton) {
+                profilePictureRef.current.click();
+              }
+            }}
           >
-            <Link
-              className={classes.profileButton}
-              onMouseEnter={() => {
-                setHoveringOnProfileButton(true);
-              }}
-              onMouseLeave={() => {
-                setHoveringOnProfileButton(false);
-              }}
-              to="/profile/preferences"
-            >
-              <DefaultUserIcon
-                dimensions={"1.5em"}
-                color={hoveringOnProfileButton ? "white" : "black"}
-              />
-              <div>Profile</div>
-            </Link>
-
+            {/* zIndex just to be able to click on the <Link> */}
             <div
               style={{
-                width: "100%",
-                height: "100%",
-              }}
-              onMouseEnter={() => {
-                setHoveringOnLogOutButton(true);
-              }}
-              onMouseLeave={() => {
-                setHoveringOnLogOutButton(false);
+                position: "absolute",
               }}
             >
-              <LogOutButton />
+              {isFetching ? (
+                <div
+                  style={{
+                    width: "3em",
+                    height: "3em",
+                    borderRadius: "50%",
+                  }}
+                  className={baseClasses.skeletonLoading}
+                ></div>
+              ) : (
+                <Link to="/profile/preferences" ref={profilePictureRef}>
+                  <img
+                    style={{
+                      boxShadow: "rgb(0 0 0 / 30%) 0px 2px 4px 1px",
+                    }}
+                    className={classes.profilePicture}
+                    src={croppedImage ? croppedImage : image}
+                    alt={"cropped profile"}
+                  />
+                </Link>
+              )}
+            </div>
+
+            <div
+              className={classes.dropdownContainer}
+              onMouseEnter={() => {
+                setHoveringOnProfilePicture(true);
+              }}
+              onMouseLeave={() => {
+                setHoveringOnProfilePicture(false);
+              }}
+            >
+              <div
+                style={{
+                  opacity: hoveringOnProfilePicture ? 1 : 0,
+                  pointerEvents: hoveringOnProfilePicture ? "auto" : "none",
+                }}
+                className={classes.profileDropdown}
+              >
+                <Link
+                  className={classes.profileButton}
+                  onMouseEnter={() => {
+                    setHoveringOnProfileButton(true);
+                  }}
+                  onMouseLeave={() => {
+                    setHoveringOnProfileButton(false);
+                  }}
+                  to="/profile/preferences"
+                >
+                  <DefaultUserIcon
+                    dimensions={"1.5em"}
+                    color={hoveringOnProfileButton ? "white" : "black"}
+                  />
+                  <div>Profile</div>
+                </Link>
+
+                <div
+                  style={{
+                    width: "100%",
+                    height: "100%",
+                  }}
+                  onMouseEnter={() => {
+                    setHoveringOnLogOutButton(true);
+                  }}
+                  onMouseLeave={() => {
+                    setHoveringOnLogOutButton(false);
+                  }}
+                >
+                  <LogOutButton />
+                </div>
+              </div>
             </div>
           </div>
         </div>
-      </div>
-    </div>
+      )}
+    </>
   );
 }
 

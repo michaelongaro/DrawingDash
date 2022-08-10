@@ -272,8 +272,10 @@ const DrawingModal = ({
     function resizeHandler() {
       if (window.innerWidth > 1000) {
         setModalWidth("80vw");
+        setShowMobileButtons(false);
       } else if (window.innerWidth > 775 && window.innerWidth < 1000) {
         setModalWidth("95vw");
+        setShowMobileButtons(false);
       } else if (
         matchMedia("(hover: none), (pointer: coarse)").matches &&
         window.innerWidth < 775
@@ -483,195 +485,204 @@ const DrawingModal = ({
   }
 
   return (
-    <div
-      ref={drawingModalRef}
-      style={{ width: modalWidth }}
-      onMouseEnter={() => {
-        setHoveringOnImage(true);
-      }}
-      onMouseLeave={() => {
-        setHoveringOnImage(false);
-      }}
-    >
-      {/* confirm delete modal */}
+    <>
       <div
-        style={{
-          opacity: showConfirmDeleteModal ? 1 : 0,
-          pointerEvents: showConfirmDeleteModal ? "auto" : "none",
-        }}
-        className={classes.modal}
-      >
-        <div className={classes.confirmDeleteText} ref={confirmDeleteModalRef}>
-          <div>
-            <GarbageIcon dimensions={"3em"} />
-          </div>
-
-          <div>Are you sure you want to delete</div>
-          <div>"{drawingMetadata && drawingMetadata.title}"?</div>
-
-          <div className={classes.deleteModalControls}>
-            <button
-              style={{
-                pointerEvents: showConfirmDeleteModal ? "auto" : "none",
-              }}
-              className={classes.closeButton}
-              onClick={() => {
-                if (showConfirmDeleteModal) setShowConfirmDeleteModal(false);
-              }}
-            >
-              <ExitIcon />
-            </button>
-            <button
-              style={{
-                pointerEvents: showConfirmDeleteModal ? "auto" : "none",
-              }}
-              className={classes.editButton}
-              onClick={() => {
-                if (showConfirmDeleteModal) deleteDrawing();
-              }}
-            >
-              Confirm
-            </button>
-          </div>
-        </div>
-      </div>
-
-      {/* ----- user modal ------- */}
-      <div
-        style={{
-          opacity: showUserModal && modalCtx.userModalOpened ? 1 : 0,
-          pointerEvents:
-            showUserModal && modalCtx.userModalOpened ? "auto" : "none",
-          transition: "all 200ms",
-        }}
-        className={classes.modal}
-      >
-        {loadUserModal && <UserModal user={drawingMetadata.drawnBy} />}
-      </div>
-
-      {/* image container */}
-      <div
-        style={{ gap: "1em" }}
-        className={baseClasses.baseVertFlex}
         ref={drawingModalRef}
+        style={{ width: modalWidth }}
+        onMouseEnter={() => {
+          setHoveringOnImage(true);
+        }}
+        onMouseLeave={() => {
+          setHoveringOnImage(false);
+        }}
       >
-        <Card>
-          {/* ------ imageinfo -------- */}
-
-          {/* image loading skeleton */}
+        {/* confirm delete modal */}
+        <div
+          style={{
+            opacity: showConfirmDeleteModal ? 1 : 0,
+            pointerEvents: showConfirmDeleteModal ? "auto" : "none",
+          }}
+          className={classes.modal}
+        >
           <div
-            style={{
-              display: !imageElementLoaded ? "block" : "none",
-              width: "80%", //window.innerWidth / settings.widthRatio,    prob still need exact values here
-              height: "80%", //window.innerHeight / settings.heightRatio,
-              borderRadius: "1em 1em 0 0",
-            }}
-            className={classes.skeletonLoading}
-          ></div>
-
-          {/* actual image */}
-          <div className={classes.glossOver} style={{ position: "relative" }}>
-            <img
-              style={{
-                display: imageElementLoaded ? "block" : "none",
-                borderRadius: settings.forPinnedShowcase
-                  ? "1em"
-                  : "1em 1em 0 0",
-                minWidth: "100%",
-                minHeight: "100%",
-              }}
-              src={drawing}
-              alt={drawingMetadata?.title ?? "drawing title"}
-              onLoad={() => setImageElementLoaded(true)}
-            />
-
-            {/* delete drawing button */}
-            <button
-              className={classes.deleteButton}
-              style={{
-                display: imageElementLoaded ? "flex" : "none",
-                backgroundColor: hoveringOnDeleteButton ? "red" : "transparent",
-                opacity:
-                  location.pathname === "/profile/gallery" &&
-                  hoveringOnImage &&
-                  !modalCtx.userModalOpened
-                    ? 1
-                    : 0,
-                pointerEvents:
-                  location.pathname === "/profile/gallery" &&
-                  hoveringOnImage &&
-                  !modalCtx.userModalOpened
-                    ? "auto"
-                    : "none",
-                top: "1em",
-                left: "1em",
-              }}
-              onMouseEnter={() => {
-                setHoveringOnDeleteButton(true);
-              }}
-              onMouseLeave={() => {
-                setHoveringOnDeleteButton(false);
-              }}
-              onClick={() => {
-                setHoveringOnDeleteButton(false);
-                setShowConfirmDeleteModal(true);
-              }}
-            >
-              <GarbageIcon dimensions={"1.25em"} />
-            </button>
-
-            <div
-              style={{
-                display: imageElementLoaded ? "flex" : "none",
-                top: openedFromUserModal
-                  ? modalCtx.drawingModalFromUserOpened
-                    ? "1em"
-                    : ".5em"
-                  : modalCtx.drawingModalOpened
-                  ? "1em"
-                  : ".5em",
-                right: openedFromUserModal
-                  ? modalCtx.drawingModalFromUserOpened
-                    ? "4.5em"
-                    : ".5em"
-                  : modalCtx.drawingModalOpened
-                  ? "4.5em"
-                  : ".5em",
-                transition: "all 200ms",
-              }}
-              className={`${drawingTotalLikes > 0 ? classes.likes : ""}`}
-            >
-              {drawingTotalLikes > 0 && (
-                <div style={{ gap: ".5em" }} className={baseClasses.baseFlex}>
-                  <HeartFilledIcon dimensions={"1em"} />{" "}
-                  <div>{drawingTotalLikes}</div>
-                </div>
-              )}
+            className={classes.confirmDeleteText}
+            ref={confirmDeleteModalRef}
+          >
+            <div>
+              <GarbageIcon dimensions={"3em"} />
             </div>
 
-            <button
-              style={{
-                display: imageElementLoaded ? "flex" : "none",
-                right: "1em",
-              }}
-              className={baseClasses.close}
-              onClick={() => {
-                setCloseButtonClicked(true);
-              }}
-            ></button>
-          </div>
+            <div>Are you sure you want to delete</div>
+            <div>"{drawingMetadata && drawingMetadata.title}"?</div>
 
-          {/* -------- metainfo --------- */}
-          {settings.forPinnedShowcase ? null : (
+            <div className={classes.deleteModalControls}>
+              <button
+                style={{
+                  pointerEvents: showConfirmDeleteModal ? "auto" : "none",
+                }}
+                className={classes.closeButton}
+                onClick={() => {
+                  if (showConfirmDeleteModal) setShowConfirmDeleteModal(false);
+                }}
+              >
+                <ExitIcon />
+              </button>
+              <button
+                style={{
+                  pointerEvents: showConfirmDeleteModal ? "auto" : "none",
+                }}
+                className={classes.editButton}
+                onClick={() => {
+                  if (showConfirmDeleteModal) deleteDrawing();
+                }}
+              >
+                Confirm
+              </button>
+            </div>
+          </div>
+        </div>
+
+        {/* ----- user modal ------- */}
+        <div
+          style={{
+            opacity: showUserModal && modalCtx.userModalOpened ? 1 : 0,
+            pointerEvents:
+              showUserModal && modalCtx.userModalOpened ? "auto" : "none",
+            transition: "all 200ms",
+          }}
+          className={classes.modal}
+        >
+          {loadUserModal && <UserModal user={drawingMetadata.drawnBy} />}
+        </div>
+
+        {/* image container */}
+        <div
+          style={{ gap: "1em" }}
+          className={baseClasses.baseVertFlex}
+          ref={drawingModalRef}
+        >
+          <Card>
+            {/* ------ imageinfo -------- */}
+
+            {/* image loading skeleton */}
             <div
               style={{
-                fontSize:
-                  location.pathname === "/profile/gallery" ||
-                  location.pathname === "/profile/likes"
-                    ? ".9em"
-                    : "1em",
-                background: drawingMetadata.hasOwnProperty("averageColor")
-                  ? `linear-gradient(
+                display: !imageElementLoaded ? "block" : "none",
+                width: "80%", //window.innerWidth / settings.widthRatio,    prob still need exact values here
+                height: "80%", //window.innerHeight / settings.heightRatio,
+                borderRadius: "1em 1em 0 0",
+              }}
+              className={classes.skeletonLoading}
+            ></div>
+
+            {/* actual image */}
+            <div
+              className={baseClasses.baseFlex}
+              style={{ position: "relative" }}
+            >
+              <img
+                style={{
+                  display: imageElementLoaded ? "block" : "none",
+                  borderRadius: settings.forPinnedShowcase
+                    ? "1em"
+                    : "1em 1em 0 0",
+                  // minWidth: "100%",
+                  // minHeight: "100%",
+                }}
+                src={drawing}
+                alt={drawingMetadata?.title ?? "drawing title"}
+                onLoad={() => setImageElementLoaded(true)}
+              />
+
+              {/* delete drawing button */}
+              <button
+                className={classes.deleteButton}
+                style={{
+                  display: imageElementLoaded ? "flex" : "none",
+                  backgroundColor: hoveringOnDeleteButton
+                    ? "red"
+                    : "transparent",
+                  opacity:
+                    location.pathname === "/profile/gallery" &&
+                    hoveringOnImage &&
+                    !modalCtx.userModalOpened
+                      ? 1
+                      : 0,
+                  pointerEvents:
+                    location.pathname === "/profile/gallery" &&
+                    hoveringOnImage &&
+                    !modalCtx.userModalOpened
+                      ? "auto"
+                      : "none",
+                  top: "1em",
+                  left: "1em",
+                }}
+                onMouseEnter={() => {
+                  setHoveringOnDeleteButton(true);
+                }}
+                onMouseLeave={() => {
+                  setHoveringOnDeleteButton(false);
+                }}
+                onClick={() => {
+                  setHoveringOnDeleteButton(false);
+                  setShowConfirmDeleteModal(true);
+                }}
+              >
+                <GarbageIcon dimensions={"1.25em"} />
+              </button>
+
+              <div
+                style={{
+                  display: imageElementLoaded ? "flex" : "none",
+                  top: openedFromUserModal
+                    ? modalCtx.drawingModalFromUserOpened
+                      ? "1em"
+                      : ".5em"
+                    : modalCtx.drawingModalOpened
+                    ? "1em"
+                    : ".5em",
+                  right: openedFromUserModal
+                    ? modalCtx.drawingModalFromUserOpened
+                      ? "4.5em"
+                      : ".5em"
+                    : modalCtx.drawingModalOpened
+                    ? "4.5em"
+                    : ".5em",
+                  transition: "all 200ms",
+                }}
+                className={`${drawingTotalLikes > 0 ? classes.likes : ""}`}
+              >
+                {drawingTotalLikes > 0 && (
+                  <div style={{ gap: ".5em" }} className={baseClasses.baseFlex}>
+                    <HeartFilledIcon dimensions={"1em"} />{" "}
+                    <div>{drawingTotalLikes}</div>
+                  </div>
+                )}
+              </div>
+
+              <button
+                style={{
+                  display: imageElementLoaded ? "flex" : "none",
+                  right: "1em",
+                }}
+                className={baseClasses.close}
+                onClick={() => {
+                  setCloseButtonClicked(true);
+                }}
+              ></button>
+            </div>
+
+            {/* -------- metainfo --------- */}
+            {settings.forPinnedShowcase ? null : (
+              <div
+                style={{
+                  fontSize:
+                    location.pathname === "/profile/gallery" ||
+                    location.pathname === "/profile/likes"
+                      ? ".9em"
+                      : "1em",
+                  background: drawingMetadata.hasOwnProperty("averageColor")
+                    ? `linear-gradient(
                                         \n
                                         145deg,
                                         \n
@@ -681,210 +692,237 @@ const DrawingModal = ({
                                             ${drawingMetadata["averageColor"]["g"]}, 
                                             ${drawingMetadata["averageColor"]["b"]})
                                       )`
-                  : "linear-gradient(\n    145deg,\n    rgb(255, 255, 255) 0%,\n    #c2c2c2 125%\n  )",
-              }}
-              className={classes.bottomContain}
-            >
-              {/* profile image */}
-
-              <div
-                style={{
-                  position: "relative",
-                  cursor: "pointer",
-                  width: "50px",
-                  height: "50px",
+                    : "linear-gradient(\n    145deg,\n    rgb(255, 255, 255) 0%,\n    #c2c2c2 125%\n  )",
                 }}
-                onClick={() => {
-                  if (!modalCtx.userModalOpened) {
-                    setShowUserModal(true);
-                    modalCtx.setUserModalOpened(true);
-                    setLoadUserModal(true);
-                  } else {
-                    // closing drawing modal and taking user back to original user modal
-                    // done to save bandwidth and also for user clarity so they can't go
-                    // multiple layers deep
-                    modalCtx.setDrawingModalFromUserOpened(false);
-                  }
-                }}
-                onMouseEnter={() => {
-                  setHoveringOnProfilePicture(true);
-                }}
-                onMouseLeave={() => {
-                  setHoveringOnProfilePicture(false);
-                }}
+                className={classes.bottomContain}
               >
-                <ProfilePicture user={drawingMetadata.drawnBy} size="small" />
+                {/* profile image */}
 
-                {/* username tooltip */}
-                <div
-                  style={{ cursor: "pointer" }}
-                  className={classes.usernameTooltipContainer}
-                  onMouseEnter={() => {
-                    setHoveringOnUsernameTooltip(true);
-                  }}
-                  onMouseLeave={() => {
-                    setHoveringOnUsernameTooltip(false);
-                  }}
-                >
-                  <div
-                    style={{
-                      opacity:
-                        hoveringOnProfilePicture || hoveringOnUsernameTooltip
-                          ? 1
-                          : 0,
-                      transform:
-                        hoveringOnProfilePicture || hoveringOnUsernameTooltip
-                          ? "scale(1)"
-                          : "scale(0)",
-                      cursor: "pointer",
-                      left: 0,
-                      top: "70px",
-                      padding: "2em",
-                    }}
-                    className={classes.usernameTooltip}
-                  >
-                    {artistUsername}
-                  </div>
-                </div>
-              </div>
-
-              {/* ----- drawingID data ----- */}
-              {/* title */}
-              <div style={{ textAlign: "center" }}>{drawingMetadata.title}</div>
-
-              {/* date */}
-              <div>{drawingMetadata.date}</div>
-
-              {/* seconds */}
-              {(location.pathname === "/" || modalCtx.drawingModalOpened) && (
-                <div style={{ width: "3em", height: "3em" }}>
-                  {drawingMetadata.seconds === 60 && (
-                    <OneMinuteIcon dimensions={"3em"} />
-                  )}
-                  {drawingMetadata.seconds === 180 && (
-                    <ThreeMinuteIcon dimensions={"3em"} />
-                  )}
-                  {drawingMetadata.seconds === 300 && (
-                    <FiveMinuteIcon dimensions={"3em"} />
-                  )}
-                </div>
-              )}
-
-              {settings.forPinnedItem ? null : (
                 <div
                   style={{
                     position: "relative",
-                    width: "1.5em",
-                    height: "1.5em",
+                    cursor: "pointer",
+                    width: "50px",
+                    height: "50px",
                   }}
                   onClick={() => {
-                    if (!isLoading && !isAuthenticated) {
-                      setShowTooltip(true);
-                    } else if (!isLoading && isAuthenticated) {
-                      toggleFavoriteStatusHandler();
+                    if (!modalCtx.userModalOpened) {
+                      setShowUserModal(true);
+                      modalCtx.setUserModalOpened(true);
+                      setLoadUserModal(true);
+                    } else {
+                      // closing drawing modal and taking user back to original user modal
+                      // done to save bandwidth and also for user clarity so they can't go
+                      // multiple layers deep
+                      modalCtx.setDrawingModalFromUserOpened(false);
                     }
                   }}
                   onMouseEnter={() => {
-                    setHoveringOnHeart(true);
+                    setHoveringOnProfilePicture(true);
                   }}
                   onMouseLeave={() => {
-                    setHoveringOnHeart(false);
+                    setHoveringOnProfilePicture(false);
                   }}
                 >
-                  {/* heart icon(s) */}
-                  <div style={{ cursor: "pointer" }}>
-                    {hoveringOnHeart ? (
-                      favoritesCtx.itemIsFavorite(
-                        drawingID,
-                        drawingMetadata.seconds,
-                        drawingMetadata.title
-                      ) ? (
-                        <HeartBrokenIcon />
-                      ) : (
-                        <HeartFilledIcon dimensions={"1.5em"} />
-                      )
-                    ) : favoritesCtx.itemIsFavorite(
-                        drawingID,
-                        drawingMetadata.seconds,
-                        drawingMetadata.title
-                      ) ? (
-                      <HeartFilledIcon dimensions={"1.5em"} />
-                    ) : (
-                      <HeartOutlineIcon />
-                    )}
-                  </div>
+                  <ProfilePicture user={drawingMetadata.drawnBy} size="small" />
 
-                  {/* unregistered user tooltip */}
+                  {/* username tooltip */}
                   <div
-                    style={{
-                      opacity: hoveringOnLikesTooltip || showTooltip ? 1 : 0,
-                      transform:
-                        hoveringOnLikesTooltip || showTooltip
-                          ? "scale(1)"
-                          : "scale(0)",
-                    }}
-                    className={classes.likesTooltip}
+                    style={{ cursor: "pointer" }}
+                    className={classes.usernameTooltipContainer}
                     onMouseEnter={() => {
-                      setHoveringOnLikesTooltip(true);
+                      setHoveringOnUsernameTooltip(true);
                     }}
                     onMouseLeave={() => {
-                      setHoveringOnLikesTooltip(false);
+                      setHoveringOnUsernameTooltip(false);
                     }}
                   >
-                    Sign up or Log in to like drawings
+                    <div
+                      style={{
+                        opacity:
+                          hoveringOnProfilePicture || hoveringOnUsernameTooltip
+                            ? 1
+                            : 0,
+                        transform:
+                          hoveringOnProfilePicture || hoveringOnUsernameTooltip
+                            ? "scale(1)"
+                            : "scale(0)",
+                        cursor: "pointer",
+                        left: 0,
+                        top: "70px",
+                        padding: "2em",
+                      }}
+                      className={classes.usernameTooltip}
+                    >
+                      {artistUsername}
+                    </div>
                   </div>
                 </div>
-              )}
 
-              {!showMobileButtons && ableToClickActionButtons && (
-                <CopyToClipboard url={drawing} />
-              )}
-
-              {!showMobileButtons && ableToClickActionButtons && (
-                <button
-                  style={{ display: "flex", gap: "0.75em", fontSize: "16px" }}
-                  className={`${baseClasses.activeButton} ${baseClasses.baseFlex}`}
-                  onClick={() =>
-                    downloadDrawing(drawing, drawingMetadata.title)
-                  }
-                >
-                  <div>Download</div>
-                  <DownloadIcon color={"#FFF"} />
-                </button>
-              )}
-
-              {/* mobile copy link/download buttons (since they don't fit in bottomContain) */}
-              <div
-                style={{
-                  opacity:
-                    showMobileButtons && ableToClickActionButtons ? 1 : 0,
-                  transform:
-                    showMobileButtons && ableToClickActionButtons
-                      ? "scale(1)"
-                      : "scale(0)",
-                }}
-                className={`${baseClasses.baseFlex} ${classes.mobileActionButtons}`}
-              >
-                <div ref={mobileCopyToClipboardRef}>
-                  <CopyToClipboard url={drawing} />
+                {/* ----- drawingID data ----- */}
+                {/* title */}
+                <div style={{ textAlign: "center" }}>
+                  {drawingMetadata.title}
                 </div>
-                <button
-                  ref={mobileDownloadRef}
-                  style={{ display: "flex", gap: "0.75em", fontSize: "16px" }}
-                  className={`${baseClasses.activeButton} ${baseClasses.baseFlex}`}
-                  onClick={() =>
-                    downloadDrawing(drawing, drawingMetadata.title)
-                  }
+
+                {/* date */}
+                <div>{drawingMetadata.date}</div>
+
+                {/* seconds */}
+                {(location.pathname === "/" || modalCtx.drawingModalOpened) && (
+                  <div style={{ width: "3em", height: "3em" }}>
+                    {drawingMetadata.seconds === 60 && (
+                      <OneMinuteIcon dimensions={"3em"} />
+                    )}
+                    {drawingMetadata.seconds === 180 && (
+                      <ThreeMinuteIcon dimensions={"3em"} />
+                    )}
+                    {drawingMetadata.seconds === 300 && (
+                      <FiveMinuteIcon dimensions={"3em"} />
+                    )}
+                  </div>
+                )}
+
+                {settings.forPinnedItem ? null : (
+                  <div
+                    style={{
+                      position: "relative",
+                      width: "1.5em",
+                      height: "1.5em",
+                    }}
+                    onClick={() => {
+                      if (!isLoading && !isAuthenticated) {
+                        setShowTooltip(true);
+                      } else if (!isLoading && isAuthenticated) {
+                        toggleFavoriteStatusHandler();
+                      }
+                    }}
+                    onMouseEnter={() => {
+                      setHoveringOnHeart(true);
+                    }}
+                    onMouseLeave={() => {
+                      setHoveringOnHeart(false);
+                    }}
+                  >
+                    {/* heart icon(s) */}
+                    <div style={{ cursor: "pointer" }}>
+                      {hoveringOnHeart ? (
+                        favoritesCtx.itemIsFavorite(
+                          drawingID,
+                          drawingMetadata.seconds,
+                          drawingMetadata.title
+                        ) ? (
+                          <HeartBrokenIcon />
+                        ) : (
+                          <HeartFilledIcon dimensions={"1.5em"} />
+                        )
+                      ) : favoritesCtx.itemIsFavorite(
+                          drawingID,
+                          drawingMetadata.seconds,
+                          drawingMetadata.title
+                        ) ? (
+                        <HeartFilledIcon dimensions={"1.5em"} />
+                      ) : (
+                        <HeartOutlineIcon />
+                      )}
+                    </div>
+
+                    {/* unregistered user tooltip */}
+                    <div
+                      style={{
+                        opacity: hoveringOnLikesTooltip || showTooltip ? 1 : 0,
+                        transform:
+                          hoveringOnLikesTooltip || showTooltip
+                            ? "scale(1)"
+                            : "scale(0)",
+                      }}
+                      className={classes.likesTooltip}
+                      onMouseEnter={() => {
+                        setHoveringOnLikesTooltip(true);
+                      }}
+                      onMouseLeave={() => {
+                        setHoveringOnLikesTooltip(false);
+                      }}
+                    >
+                      Sign up or Log in to like drawings
+                    </div>
+                  </div>
+                )}
+
+                {!showMobileButtons && ableToClickActionButtons && (
+                  <CopyToClipboard url={drawing} />
+                )}
+
+                {!showMobileButtons && ableToClickActionButtons && (
+                  <button
+                    style={{ display: "flex", gap: "0.75em", fontSize: "16px" }}
+                    className={`${baseClasses.activeButton} ${baseClasses.baseFlex}`}
+                    onClick={() =>
+                      downloadDrawing(drawing, drawingMetadata.title)
+                    }
+                  >
+                    <div>Download</div>
+                    <DownloadIcon color={"#FFF"} />
+                  </button>
+                )}
+
+                {/* mobile copy link/download buttons (since they don't fit in bottomContain) */}
+                {/* <div
+                  style={{
+                    opacity:
+                      showMobileButtons && ableToClickActionButtons ? 1 : 0,
+                    transform:
+                      showMobileButtons && ableToClickActionButtons
+                        ? "scale(1)"
+                        : "scale(0)",
+                  }}
+                  className={`${baseClasses.baseFlex} ${classes.mobileActionButtons}`}
                 >
-                  <div>Download</div>
-                  <DownloadIcon color={"#FFF"} />
-                </button>
+                  <div ref={mobileCopyToClipboardRef}>
+                    <CopyToClipboard url={drawing} />
+                  </div>
+                  <button
+                    ref={mobileDownloadRef}
+                    style={{ display: "flex", gap: "0.75em", fontSize: "16px" }}
+                    className={`${baseClasses.activeButton} ${baseClasses.baseFlex}`}
+                    onClick={() =>
+                      downloadDrawing(drawing, drawingMetadata.title)
+                    }
+                  >
+                    <div>Download</div>
+                    <DownloadIcon color={"#FFF"} />
+                  </button>
+                </div> */}
               </div>
-            </div>
-          )}
-        </Card>
+            )}
+          </Card>
+        </div>
       </div>
-    </div>
+
+      <div
+        style={{
+          opacity: showMobileButtons && ableToClickActionButtons ? 1 : 0,
+          transform:
+            showMobileButtons && ableToClickActionButtons
+              ? "scale(1)"
+              : "scale(0)",
+        }}
+        className={`${baseClasses.baseFlex} ${classes.mobileActionButtons}`}
+      >
+        <div ref={mobileCopyToClipboardRef}>
+          <CopyToClipboard url={drawing} />
+        </div>
+        <button
+          ref={mobileDownloadRef}
+          style={{ display: "flex", gap: "0.75em", fontSize: "16px" }}
+          className={`${baseClasses.activeButton} ${baseClasses.baseFlex}`}
+          onClick={() => downloadDrawing(drawing, drawingMetadata.title)}
+        >
+          <div>Download</div>
+          <DownloadIcon color={"#FFF"} />
+        </button>
+      </div>
+    </>
   );
 };
 

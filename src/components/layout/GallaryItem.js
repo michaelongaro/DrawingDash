@@ -129,6 +129,7 @@ const GallaryItem = ({
     useState(false);
 
   const [dynamicCardWidth, setDynamicCardWidth] = useState("100"); // be cautious of 100% here
+  const [gap, setGap] = useState(false);
 
   useEffect(() => {
     if (!isLoading) {
@@ -253,8 +254,12 @@ const GallaryItem = ({
     // just for initial render
     if (window.innerWidth > 1250 && window.innerWidth < 1500) {
       setDynamicCardWidth("33");
+      setGap(false);
     } else if (window.innerWidth > 750 && window.innerWidth < 1250) {
       setDynamicCardWidth("50");
+      setGap(false);
+    } else if (window.innerWidth < 775) {
+      setGap(true);
     } else if (window.innerWidth < 750) {
       setDynamicCardWidth("100");
     }
@@ -264,6 +269,8 @@ const GallaryItem = ({
         setDynamicCardWidth("33");
       } else if (window.innerWidth > 750 && window.innerWidth < 1250) {
         setDynamicCardWidth("50");
+      } else if (window.innerWidth < 775) {
+        setGap(true);
       } else if (window.innerWidth < 750) {
         setDynamicCardWidth("100");
       }
@@ -524,6 +531,7 @@ const GallaryItem = ({
               : modalCtx.drawingModalOpened)
               ? "auto"
               : "none",
+          gap: gap ? "1em" : 0,
           transition: "all 200ms",
         }}
         className={classes.modal}
@@ -569,7 +577,7 @@ const GallaryItem = ({
 
           {/* actual image */}
           <div
-            className={classes.glossOver}
+            className={`${baseClasses.baseFlex} ${classes.glossOver}`}
             style={{ position: "relative" }}
             onClick={() => {
               if (
@@ -599,8 +607,8 @@ const GallaryItem = ({
                 borderRadius: settings.forPinnedShowcase
                   ? "1em"
                   : "1em 1em 0 0",
-                minWidth: "100%",
-                minHeight: "100%",
+                // minWidth: "100%",
+                // minHeight: "100%",
               }}
               src={fetchedDrawing}
               alt={drawingDetails?.title ?? "drawing title"}
@@ -705,6 +713,8 @@ const GallaryItem = ({
                       cursor: "pointer",
                       width: "50px",
                       height: "50px",
+                      borderRadius: "50%",
+                      boxShadow: "rgb(0 0 0 / 10%) 0 2px 4px",
                     }}
                     onClick={() => {
                       if (!modalCtx.userModalOpened) {

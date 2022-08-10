@@ -11,7 +11,9 @@ export const CanvasProvider = ({ children }) => {
 
   const previousFillStyle = useRef("#FFFFFF");
 
-  const [mouseInsideOfCanvas, setMouseInsideOfCanvas] = useState(false);
+  const [mouseInsideOfCanvas, setMouseInsideOfCanvas] = useState(true); // necessary at all?
+  // just points to a useEffect that changes the
+  // mouseinsidecanvasRef...
   const [currentColor, setCurrentColor] = useState("#FFFFFF");
 
   const previousDrawingSnapshots = useRef([]);
@@ -21,27 +23,109 @@ export const CanvasProvider = ({ children }) => {
   const mouseInsideOfCanvasRef = useRef(false);
   const newFloodFillAdded = useRef(false);
 
+  const paintColor = useRef("#FFFFFF");
+  const basePaintBrushSize = useRef(5);
+
   const [prevNumSnapshots, setPrevNumSnapshots] = useState(0);
   const [floodFillStatus, setFloodFillStatus] = useState(false);
 
   const canvasRef = useRef(null);
   const contextRef = useRef(null);
 
+  function scaleCanvas(ev) {
+    if (canvasRef.current) {
+      const canvas = canvasRef.current;
+      const ctx = canvas.getContext("2d");
+
+      const prevCanvasState = save(ctx);
+
+      canvas.style.width = "100%";
+      canvas.style.height = "100%";
+      canvas.width = canvas.offsetWidth;
+      canvas.height = canvas.offsetHeight;
+
+      previousDrawingSnapshots.current = [];
+      setPrevNumSnapshots(0);
+
+      clearCanvas();
+
+      restore(ctx, prevCanvasState);
+
+      contextRef.current = ctx;
+    }
+  }
+
+  useEffect(() => {
+    window.addEventListener("resize", scaleCanvas);
+
+    return () => {
+      window.removeEventListener("resize", scaleCanvas);
+    };
+  }, []);
+
+  function save(ctx) {
+    let props = [
+      "strokeStyle",
+      "fillStyle",
+      "globalAlpha",
+      "lineWidth",
+      "lineCap",
+      "lineJoin",
+      "miterLimit",
+      "lineDashOffset",
+      "shadowOffsetX",
+      "shadowOffsetY",
+      "shadowBlur",
+      "shadowColor",
+      "globalCompositeOperation",
+      "font",
+      "textAlign",
+      "textBaseline",
+      "direction",
+      "imageSmoothingEnabled",
+    ];
+    let state = {};
+    for (let prop of props) {
+      state[prop] = ctx[prop];
+    }
+    return state;
+  }
+
+  function restore(ctx, state) {
+    for (let prop in state) {
+      ctx[prop] = state[prop];
+    }
+
+    if (window.innerWidth < 1000) {
+      ctx["lineWidth"] = basePaintBrushSize.current * 0.5;
+    } else {
+      ctx["lineWidth"] =
+        basePaintBrushSize.current * (window.innerWidth / 1920);
+    }
+
+    ctx["fillStyle"] = paintColor.current;
+  }
+
   function prepareCanvas() {
     const canvas = canvasRef.current;
-    const mod_width = window.innerWidth * 0.75;
-    const mod_height = window.innerHeight * 0.75;
 
-    canvas.width = mod_width;
-    canvas.height = mod_height;
-    canvas.style.width = `${mod_width}px`;
-    canvas.style.height = `${mod_height}px`;
+    canvas.style.width = "100%";
+    canvas.style.height = "100%";
+    canvas.width = canvas.offsetWidth;
+    canvas.height = canvas.offsetHeight;
 
     const context = canvas.getContext("2d");
     context.lineCap = "round";
     context.lineJoin = "round";
-    context.lineWidth = 8;
-    // context.imageSmoothingEnabled = false;
+
+    // to prevent lineWidth from becoming too small (+ too similiar to each other)
+    if (window.innerWidth < 1000) {
+      context.lineWidth = 8 * 0.5;
+      basePaintBrushSize.current = 5;
+    } else {
+      context.lineWidth = 8 * (window.innerWidth / 1920);
+      basePaintBrushSize.current = 5;
+    }
 
     contextRef.current = context;
   }
@@ -52,7 +136,7 @@ export const CanvasProvider = ({ children }) => {
     context.strokeStyle = color;
     context.fillStyle = color;
     previousFillStyle.current = color;
-    console.log("fill and stroke got changed to", color);
+    paintColor.current = color;
     contextRef.current = context;
     setCurrentColor(color);
   }
@@ -60,7 +144,16 @@ export const CanvasProvider = ({ children }) => {
   function changeBrushSize(brushSize) {
     const canvas = canvasRef.current;
     const context = canvas.getContext("2d");
-    context.lineWidth = brushSize;
+
+    // to prevent lineWidth from becoming too small (+ too similiar to each other)
+    if (window.innerWidth < 1000) {
+      context.lineWidth = brushSize * 0.5;
+      basePaintBrushSize.current = brushSize;
+    } else {
+      context.lineWidth = brushSize * (window.innerWidth / 1920);
+      basePaintBrushSize.current = brushSize;
+    }
+
     contextRef.current.closePath();
     isDrawing.current = false;
 
@@ -123,7 +216,7 @@ export const CanvasProvider = ({ children }) => {
     return (brightest + 0.05) / (darkest + 0.05);
   }
 
-  function floodFillHandler(event) {
+  function floodFillHandler(ev) {
     const canvas = canvasRef.current;
     const ctx = canvas.getContext("2d");
 
@@ -138,9 +231,8 @@ export const CanvasProvider = ({ children }) => {
 
     const rect = canvas.getBoundingClientRect();
 
-    // could probably just do offsetX/Y
-    const x = Math.round(event.clientX - rect.left);
-    const y = Math.round(event.clientY - rect.top);
+    const x = Math.round((ev.clientX ?? ev.touches[0].clientX) - rect.left);
+    const y = Math.round((ev.clientY ?? ev.touches[0].clientY) - rect.top);
 
     // if currently hovered color and color to fill with are the same, return
     if (
@@ -173,15 +265,10 @@ export const CanvasProvider = ({ children }) => {
         ? overrideMouseInsideCanvas
         : false;
 
-    console.log(newFloodFillAdded.current);
-
     if (drawingOutsideCanvas.current && !adjustedMouseInsideCanvas) {
       takeSnapshot();
       drawingOutsideCanvas.current = false;
     } else if (!drawingOutsideCanvas.current) {
-      // okay actually need to add ANOTHER freaking state here to see
-      // whether the floodfill that you are trying to add will actually go through
-      // maybe could use ableToFloodFill? idk look at that ish
       if (
         isDrawing.current &&
         mouseInsideOfCanvasRef.current &&
@@ -194,7 +281,6 @@ export const CanvasProvider = ({ children }) => {
         !adjustedMouseInsideCanvas &&
         newFloodFillAdded.current
       ) {
-        console.log("snapshot taken and resetting ish to false");
         takeSnapshot();
       }
     }
@@ -218,8 +304,9 @@ export const CanvasProvider = ({ children }) => {
 
   function getRelativePointFromEvent(ev, elem) {
     const bbox = elem.getBoundingClientRect();
-    const x = ev.clientX - bbox.left;
-    const y = ev.clientY - bbox.top;
+
+    const x = (ev.clientX ?? ev.touches[0].clientX) - bbox.left;
+    const y = (ev.clientY ?? ev.touches[0].clientY) - bbox.top;
 
     return { x, y };
   }
@@ -264,8 +351,6 @@ export const CanvasProvider = ({ children }) => {
 
     previousDrawingSnapshots.current.push(lastDrawingSnapshot);
     setPrevNumSnapshots((prevNum) => prevNum + 1);
-
-    console.log(previousDrawingSnapshots.current.length);
   }
 
   function draw(ev) {
@@ -274,6 +359,8 @@ export const CanvasProvider = ({ children }) => {
     const previous_evt = lastEvent || {};
     const was_offscreen = previous_evt.offscreen;
 
+    console.log(ev, ev.type);
+
     if (ev.isTrusted) {
       const { clientX, clientY } = ev;
       lastEvent = { clientX, clientY };
@@ -281,7 +368,12 @@ export const CanvasProvider = ({ children }) => {
 
     const point = getRelativePointFromEvent(ev, canvasRef.current);
 
-    if (floodFillStatusRef.current && ev.buttons === 1) {
+    if (
+      floodFillStatusRef.current &&
+      (ev.buttons === 1 ||
+        (ev.target === canvas &&
+          (ev.type === "touchstart" || ev.type === "touchmove")))
+    ) {
       // if able to fill and mouse is currently inside canvas, fill
       if (
         ableToFloodFill.current &&
@@ -311,7 +403,11 @@ export const CanvasProvider = ({ children }) => {
           );
 
           lastEvent.offscreen = true;
-          if (ev.buttons === 1) {
+          if (
+            ev.buttons === 1 ||
+            (ev.target === canvas &&
+              (ev.type === "touchstart" || ev.type === "touchmove"))
+          ) {
             if (!isDrawing.current) {
               contextRef.current.moveTo(previous_point.x, previous_point.y);
 
@@ -325,7 +421,11 @@ export const CanvasProvider = ({ children }) => {
         }
         // if this is a new occurance of mouse offscreen
         else {
-          if (ev.buttons === 1) {
+          if (
+            ev.buttons === 1 ||
+            (ev.target === canvas &&
+              (ev.type === "touchstart" || ev.type === "touchmove"))
+          ) {
             lastEvent.offscreen = true;
 
             if (isDrawing.current) {
@@ -340,23 +440,31 @@ export const CanvasProvider = ({ children }) => {
             }
           } else {
             contextRef.current.closePath();
-
             isDrawing.current = false;
           }
         }
       }
       // if mouse is inside the canvas, clicking, but hasn't started drawing yet
       else {
-        if (ev.buttons === 1 && !isDrawing.current) {
+        if (
+          (ev.buttons === 1 ||
+            (ev.target === canvas &&
+              (ev.type === "touchstart" || ev.type === "touchmove"))) &&
+          !isDrawing.current
+        ) {
           contextRef.current.moveTo(point.x, point.y);
-          // contextRef.current.clearRect(0, 0, canvas.width, canvas.height);
           contextRef.current.beginPath();
           isDrawing.current = true;
         }
       }
 
       // if mouse is inside the canvas, clicking, will draw like normal
-      if (ev.buttons === 1 && isDrawing.current) {
+      if (
+        (ev.buttons === 1 ||
+          (ev.target === canvas &&
+            (ev.type === "touchstart" || ev.type === "touchmove"))) &&
+        isDrawing.current
+      ) {
         contextRef.current.lineTo(point.x, point.y);
         contextRef.current.stroke();
       }

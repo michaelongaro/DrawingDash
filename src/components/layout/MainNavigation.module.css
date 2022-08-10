@@ -73,22 +73,6 @@
 }
 
 
-
-/* @media (max-width: 1920px) {
-  .dailyDrawButton {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 250px;
-    height: 60px;
-    border-radius: 1em;
-    border-color: #e2e2e2;
-    border-width: 0.25em;
-    border-style: solid;
-    transition: all 200ms;
-  }
-} */
-
 .dailyDrawButton:hover {
   background-color: hsl(348deg 100% 44%);
 }

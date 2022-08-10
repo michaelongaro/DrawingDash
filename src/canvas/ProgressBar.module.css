@@ -58,3 +58,9 @@
   background-color: #18d638;
   z-index: 2;
 }
+
+@media (max-width: 650px) {
+  .rectangle {
+    width: 90%;
+  }
+}

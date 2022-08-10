@@ -369,11 +369,16 @@ const Preferences = () => {
   };
 
   return (
-    <div className={`${classes.baseFlex} ${classes.prefCard}`}>
+    <div
+      style={{ gap: "1em" }}
+      className={`${baseClasses.baseVertFlex} ${classes.prefCard}`}
+    >
       <ProfileHeader title={"Preferences"} />
 
       <div style={{ position: "relative", width: "100%" }}>
-        <div style={{ gap: "4em" }} className={baseClasses.baseFlex}>
+        <div
+          className={`${classes.topPreferencesContain} ${baseClasses.baseFlex}`}
+        >
           <div
             style={{ gap: "3em", width: "33%", alignItems: "flex-start" }}
             className={baseClasses.baseVertFlex}
@@ -562,7 +567,7 @@ const Preferences = () => {
           </div>
 
           <div className={baseClasses.baseFlex}>
-            <div className={classes.vertTrailing}></div>
+            <div className={classes.fadingLine}></div>
           </div>
 
           <div
@@ -672,7 +677,7 @@ const Preferences = () => {
               className={baseClasses.activeButton}
               onClick={() => setEditAvailable(false)}
             >
-              <div className={classes.baseHorizFlex}>
+              <div style={{ gap: "0.75em" }} className={classes.baseFlex}>
                 <div>Edit</div>
 
                 <EditPreferencesIcon
@@ -748,7 +753,7 @@ const Preferences = () => {
       </div>
 
       <div
-        style={{ paddingBottom: "3em", marginTop: "1em" }}
+        style={{ paddingBottom: "5em", marginTop: "1em" }}
         className={baseClasses.baseFlex}
       >
         <PinnedArtwork />

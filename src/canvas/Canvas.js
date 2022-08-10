@@ -20,6 +20,8 @@ export function Canvas() {
     // was chosen/rendered)
     let timeoutID = setTimeout(() => setShowProgressBar(true), 200);
 
+    DSCtx.setShowPromptSelection(true);
+
     return () => {
       clearTimeout(timeoutID);
 
@@ -53,6 +55,7 @@ export function Canvas() {
   }
 
   return (
+    // style={{ height: "1500px" }}
     <div className={baseClasses.baseVertFlex}>
       {showProgressBar && <ProgressBar />}
       {renderCurrentScreen()}

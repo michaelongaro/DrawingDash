@@ -1,3 +1,5 @@
+import { useState, useEffect } from "react";
+
 import { useLocation } from "react-router-dom";
 import { Outlet } from "react-router";
 import { motion } from "framer-motion";
@@ -8,11 +10,53 @@ import classes from "../components/layout/ProfileLayout.module.css";
 
 const Profile = () => {
   const location = useLocation();
-  const profileCardStyles = {
-    width: "55%",
-    display: "flex",
-    justifyContent: "center",
-  };
+
+  const [showProfileNavigation, setShowProfileNavigation] = useState(false);
+  const [profileCardStyles, setProfileCardStyles] = useState(null);
+
+  // 900px go to column
+
+  useEffect(() => {
+    if (window.innerWidth <= 1100) {
+      setProfileCardStyles({
+        width: "95vw",
+        display: "flex",
+        justifyContent: "center",
+      });
+      setShowProfileNavigation(false);
+    } else {
+      setProfileCardStyles({
+        width: "1046px",
+        marginRight: "1em",
+        display: "flex",
+        justifyContent: "center",
+      });
+      setShowProfileNavigation(true);
+    }
+
+    function resizeHandler() {
+      if (window.innerWidth <= 1100) {
+        setProfileCardStyles({
+          width: "95vw",
+          display: "flex",
+          justifyContent: "center",
+        });
+        setShowProfileNavigation(false);
+      } else {
+        setProfileCardStyles({
+          width: "1046px",
+          marginRight: "1em",
+          display: "flex",
+          justifyContent: "center",
+        });
+        setShowProfileNavigation(true);
+      }
+    }
+    window.addEventListener("resize", resizeHandler);
+    return () => {
+      window.removeEventListener("resize", resizeHandler);
+    };
+  }, []);
 
   return (
     <motion.div
@@ -28,7 +72,7 @@ const Profile = () => {
         }}
         className={classes.horizontalContain}
       >
-        <ProfileNavigation />
+        {showProfileNavigation && <ProfileNavigation />}
         <div style={profileCardStyles}>
           <Outlet />
         </div>

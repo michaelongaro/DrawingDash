@@ -176,8 +176,6 @@
 }
 
 .mobileActionButtons {
-  position: absolute;
-  top: 5.5em;
   gap: 1.5em;
   transition: all 200ms;
 }
@@ -307,9 +305,3 @@
     background-position-x: -200%;
   }
 }
-
-/* @media (max-width: 550px) {
-  .mobileActionButtons {
-    flex-direction: column;
-  }
-} */

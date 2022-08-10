@@ -50,6 +50,7 @@
   height: 65px;
   overflow: hidden;
   border-radius: 50%;
+  box-shadow: rgb(0 0 0 / 30%) 0 2px 4px;
   z-index: 200;
 }
 

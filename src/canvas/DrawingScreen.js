@@ -63,6 +63,8 @@ const DrawingScreen = () => {
     300: 2,
   };
 
+  const [initComponentWidth, setInitComponentWidth] = useState(1920);
+
   const [startTimer, setStartTimer] = useState(false);
   const [countdownKey, setCountdownKey] = useState(0);
   const [drawingTime, setDrawingTime] = useState(60);
@@ -80,18 +82,16 @@ const DrawingScreen = () => {
     useState(false);
 
   const drawingScreenRef = useRef(null);
+  const canvasContainerRef = useRef(null);
 
   const {
     canvasRef,
     prepareCanvas,
     clearCanvas,
     finishDrawing,
-    floodFillHandler,
-    takeSnapshot,
     draw,
     resetAbleToFloodFill,
     floodFillStatus,
-    mouseInsideOfCanvas,
     setMouseInsideOfCanvas,
   } = useCanvas();
 
@@ -120,11 +120,12 @@ const DrawingScreen = () => {
       easing: "easeInSine",
       complete: () => {
         // scrolling down to canvas after progress bar +
-        drawingScreenRef.current.scrollIntoView({ behavior: "smooth" });
+        canvasContainerRef.current.scrollIntoView({ behavior: "smooth" });
       },
     });
 
     // 3-2-1 countdown animation
+    console.log("animation stated");
     anime({
       targets: "#threeCountdown",
       loop: false,
@@ -133,7 +134,7 @@ const DrawingScreen = () => {
 
       keyframes: [
         {
-          translateY: ["-100px", 0],
+          top: ["-75px", 0],
           opacity: [0, 1],
           scale: [0, 1],
           easing: "easeOutElastic(2.5, .6)",
@@ -141,7 +142,7 @@ const DrawingScreen = () => {
         },
         { opacity: 1, scale: 1, duration: 400 },
         {
-          translateY: [0, "100px"],
+          top: [0, "75px"],
           opacity: [1, 0],
           scale: [1, 0],
           easing: "easeInSine",
@@ -161,7 +162,7 @@ const DrawingScreen = () => {
 
       keyframes: [
         {
-          translateY: ["-100px", 0],
+          top: ["-75px", 0],
           opacity: [0, 1],
           scale: [0, 1],
           easing: "easeOutElastic(2.5, .6)",
@@ -169,7 +170,7 @@ const DrawingScreen = () => {
         },
         { opacity: 1, scale: 1, duration: 400 },
         {
-          translateY: [0, "100px"],
+          top: [0, "75px"],
           opacity: [1, 0],
           scale: [1, 0],
           easing: "easeInSine",
@@ -189,7 +190,7 @@ const DrawingScreen = () => {
 
       keyframes: [
         {
-          translateY: ["-100px", 0],
+          top: ["-75px", 0],
           opacity: [0, 1],
           scale: [0, 1],
           easing: "easeOutElastic(2.5, .6)",
@@ -197,7 +198,7 @@ const DrawingScreen = () => {
         },
         { opacity: 1, scale: 1, duration: 400 },
         {
-          translateY: [0, "100px"],
+          top: [0, "75px"],
           opacity: [1, 0],
           scale: [1, 0],
           easing: "easeInSine",
@@ -219,6 +220,10 @@ const DrawingScreen = () => {
   }, []);
 
   useEffect(() => {
+    setInitComponentWidth(window.innerWidth);
+  }, []);
+
+  useEffect(() => {
     // adding eventlisteners only when canvas is available to be interacted with
     let currentCanvasRef = null;
     if (initAnimationDelayCompleted && DSCtx.seconds === 0) {
@@ -226,11 +231,18 @@ const DrawingScreen = () => {
       document.addEventListener("mouseup", resetAbleToFloodFill);
       document.addEventListener("mouseup", finishDrawing);
 
+      document.addEventListener("touchmove", draw);
+      document.addEventListener("touchend", resetAbleToFloodFill);
+      document.addEventListener("touchend", finishDrawing);
+
       document.documentElement.addEventListener("mouseenter", draw, {
         once: true,
       });
 
       canvasRef.current.addEventListener("wheel", preventScrolling);
+      canvasRef.current.addEventListener("touchstart", preventScrolling);
+      canvasRef.current.addEventListener("touchmove", preventScrolling);
+
       currentCanvasRef = canvasRef.current;
     }
 
@@ -238,6 +250,10 @@ const DrawingScreen = () => {
       document.removeEventListener("mousemove", draw);
       document.removeEventListener("mouseup", resetAbleToFloodFill);
       document.removeEventListener("mouseup", finishDrawing);
+
+      document.removeEventListener("touchmove", draw);
+      document.removeEventListener("touchend", resetAbleToFloodFill);
+      document.removeEventListener("touchend", finishDrawing);
 
       document.documentElement.removeEventListener(
         "mouseenter",
@@ -250,6 +266,8 @@ const DrawingScreen = () => {
 
       if (currentCanvasRef) {
         currentCanvasRef.removeEventListener("wheel", preventScrolling);
+        currentCanvasRef.removeEventListener("touchstart", preventScrolling);
+        currentCanvasRef.removeEventListener("touchmove", preventScrolling);
       }
     };
   }, [DSCtx.seconds, initAnimationDelayCompleted]);
@@ -674,7 +692,7 @@ const DrawingScreen = () => {
       id={"drawingScreen"}
       style={{
         position: "relative",
-        left: `${-1 * window.innerWidth}px`,
+        left: `${-1 * initComponentWidth}px`,
         top: "5vh",
         width: "100vw",
       }}
@@ -683,16 +701,14 @@ const DrawingScreen = () => {
     >
       <div
         style={{
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          flexDirection: "column",
-          gap: "1em",
+          marginTop: "3em",
         }}
       >
-        <div className={classes.canvasBreathingBackground}>
-          {/* there is a chance that adding this marginBottom could mess up canvas drawing logic */}
-          <div style={{ userSelect: "none", marginBottom: ".25em" }}>
+        <div
+          ref={canvasContainerRef}
+          className={classes.canvasBreathingBackground}
+        >
+          <div style={{ userSelect: "none", margin: "0.15em 0" }}>
             {DSCtx.chosenPrompt}
           </div>
 
@@ -701,40 +717,48 @@ const DrawingScreen = () => {
               style={{ zIndex: showCanvasOutline ? 500 : -1 }}
               className={`${showCanvasOutline} ${classes.startScreen}`}
             >
-              {/* {DSCtx.seconds} */}
-              <div style={{ position: "relative" }}>
+              <div
+                style={{ position: "relative", width: "100%", height: "100%" }}
+                className={baseClasses.baseFlex}
+              >
                 <div
-                  id={"threeCountdown"}
                   style={{
-                    position: "absolute",
-                    top: "-50px",
-                    opacity: 0,
-                    scale: 0,
+                    position: "relative",
+                    width: "27px",
+                    height: "72px",
                   }}
+                  className={baseClasses.baseFlex}
                 >
-                  3
-                </div>
-                <div
-                  id={"twoCountdown"}
-                  style={{
-                    position: "absolute",
-                    top: "-50px",
-                    opacity: 0,
-                    scale: 0,
-                  }}
-                >
-                  2
-                </div>
-                <div
-                  id={"oneCountdown"}
-                  style={{
-                    position: "absolute",
-                    top: "-50px",
-                    opacity: 0,
-                    scale: 0,
-                  }}
-                >
-                  1
+                  <div
+                    id={"threeCountdown"}
+                    style={{
+                      position: "absolute",
+                      top: 0,
+                      opacity: 0,
+                    }}
+                  >
+                    3
+                  </div>
+                  <div
+                    id={"twoCountdown"}
+                    style={{
+                      position: "absolute",
+                      top: 0,
+                      opacity: 0,
+                    }}
+                  >
+                    2
+                  </div>
+                  <div
+                    id={"oneCountdown"}
+                    style={{
+                      position: "absolute",
+                      top: 0,
+                      opacity: 0,
+                    }}
+                  >
+                    1
+                  </div>
                 </div>
               </div>
             </div>
@@ -760,9 +784,16 @@ const DrawingScreen = () => {
                   {renderTime}
                 </CountdownCircleTimer>
               </div>
-              <div className={classes.canvasBorder}>
+              <div
+                style={{ display: "block" }}
+                className={classes.canvasBorder}
+              >
                 <canvas
+                  // className={classes.canvas}
                   style={{
+                    // width: "100% !important",
+                    // height: "100% !important",
+                    // objectFit: "contain",
                     cursor: floodFillStatus
                       ? // paintbucket cursor svg
                         getCursorPaintbucketIcon(
@@ -785,11 +816,7 @@ const DrawingScreen = () => {
                         }, pointer`,
                   }}
                   onMouseDown={draw}
-                  // onMouseUp={() => {
-                  //   if (mouseInsideOfCanvas) {
-                  //     finishDrawing();
-                  //   }
-                  // }}
+                  onTouchStart={draw}
                   onMouseEnter={() => {
                     setMouseInsideOfCanvas(true);
                   }}
@@ -818,7 +845,9 @@ const DrawingScreen = () => {
                   <div
                     className={`${classes.promptRefreshTimer} ${baseClasses.baseVertFlex}`}
                   >
-                    <div>New prompts refresh in</div>
+                    <div className={baseClasses.baseFlex}>
+                      New prompts refresh in
+                    </div>
                     <Countdown
                       date={resetAtDate}
                       renderer={formatTime}
@@ -874,8 +903,14 @@ const DrawingScreen = () => {
                 )}
 
                 {!isLoading && !isAuthenticated ? (
-                  <button className={classes.registerPromoContainer}>
-                    <div className={classes.baseFlex}>
+                  <button
+                    style={{ margin: "1em 0" }}
+                    className={classes.registerPromoContainer}
+                  >
+                    <div
+                      style={{ gap: "1em" }}
+                      className={`${classes.signInButtonContainer} ${baseClasses.baseFlex}`}
+                    >
                       <LogInButton forceShowSignUp={true} />
                       <div>or</div>
                       <LogInButton forceShowSignUp={false} />

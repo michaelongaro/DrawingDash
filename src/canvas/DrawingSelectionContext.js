@@ -241,11 +241,11 @@ export function DrawingSelectionProvider(props) {
     setDrawingTime(0);
     setPaletteColors(["#FFFFFF", "#FFFFFF", "#FFFFFF", "#FFFFFF", "#FFFFFF"]);
 
+    setShowPromptSelection(false);
     setShowPaletteChooser(false);
     setShowDrawingScreen(false);
     setShowEndOverlay(false);
     setShowEndOutline(false);
-    setShowPromptSelection(true);
   }
 
   function goBackToPromptSelection() {

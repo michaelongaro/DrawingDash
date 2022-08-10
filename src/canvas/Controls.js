@@ -241,7 +241,7 @@ const Controls = () => {
   return (
     // eventually make this into a loop, is entirely possible and looks terrible as is
     <div className={classes.contain}>
-      <div>
+      <div className={`${classes.colors} ${classes.subControlFlex}`}>
         <button
           className={classes.outerColor}
           style={{ backgroundColor: DSCtx.paletteColors[0] }}
@@ -309,7 +309,7 @@ const Controls = () => {
         </button>
       </div>
       {/* ////////////////////// Start of Brush Sizes /////////////////////////////// */}
-      <div>
+      <div className={`${classes.sizes} ${classes.subControlFlex}`}>
         <button
           className={`${classes.rounded} ${classes.small}`}
           disabled={tempDisable}
@@ -354,7 +354,7 @@ const Controls = () => {
         </button>
       </div>
       {/* //////////////////// Start of Paint Bucket Tool / Eraser Tool ///////////////////////////// */}
-      <div className={classes.tools}>
+      <div className={`${classes.tools} ${classes.subControlFlex}`}>
         <div
           style={{
             backgroundColor: toolStatuses[0] ? "#f7c17a" : "",
@@ -368,7 +368,7 @@ const Controls = () => {
           onClick={() => changeTool(0)}
         >
           <Paintbrush
-            dimensions={"3em"}
+            dimensions={"100%"}
             currentColor={DSCtx.currentColor}
             eraser={false}
           />
@@ -386,7 +386,10 @@ const Controls = () => {
           }}
           onClick={() => changeTool(1)}
         >
-          <PaintBucketIcon currentColor={DSCtx.currentColor} />
+          <PaintBucketIcon
+            dimensions={"100%"}
+            currentColor={DSCtx.currentColor}
+          />
         </div>
 
         <div
@@ -402,7 +405,7 @@ const Controls = () => {
           onClick={() => changeTool(2)}
         >
           <Paintbrush
-            dimensions={"3em"}
+            dimensions={"100%"}
             currentColor={"#FFFFFF"}
             eraser={true}
           />
@@ -421,9 +424,9 @@ const Controls = () => {
             opacity: prevNumSnapshots > 0 ? 1 : 0.5,
             pointerEvents: prevNumSnapshots > 0 ? "auto" : "none",
           }}
-          className={baseClasses.baseFlex}
+          className={`${classes.undo} ${baseClasses.baseFlex}`}
         >
-          <RedoIcon dimensions={"3em"} color={"#dbdbdb"} />
+          <RedoIcon dimensions={"80%"} color={"#dbdbdb"} />
         </div>
 
         <div
@@ -436,7 +439,7 @@ const Controls = () => {
           style={{ marginLeft: "1em" }}
           className={baseClasses.baseFlex}
         >
-          <GarbageIcon dimensions={"3em"} />
+          <GarbageIcon dimensions={"80%"} />
         </div>
       </div>
     </div>
