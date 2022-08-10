@@ -106,6 +106,10 @@
   border-top-width: 0px;
   border-bottom-width: 0px;
   border-radius: 5px;
+
+  transition-property: opacity, transform, background-color;
+  transition-duration: 500ms, 500ms, 50ms;
+  transition-delay: 0ms, 0ms, 450ms;
 }
 
 .canvasBorder {

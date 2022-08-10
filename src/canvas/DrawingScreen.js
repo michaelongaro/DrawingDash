@@ -836,7 +836,6 @@ const DrawingScreen = () => {
                   ? "rgba(255,255,255, .2)"
                   : "rgba(255,255,255, .001)",
                 transform: showEndOutline ? "scale(1)" : "scale(0)",
-                transition: "all 500ms",
               }}
               className={`${classes.canvasOutline} ${classes.endScreen}`}
             >

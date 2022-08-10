@@ -1,3 +1,5 @@
+@import "../../index.module.css";
+
 .sideContain {
   margin-top: 1em;
   margin-bottom: 1em;
@@ -46,7 +48,7 @@
 }
 
 .greenNavlink:hover:before {
-  width: 100%;
+  --greenNavbuttonWidth: 100%;
 }
 
 .greenNavlink:after {
@@ -66,7 +68,7 @@
   position: absolute;
   bottom: 0;
   left: 0;
-  width: 0%;
+  width: var(--greenNavbuttonWidth);
   height: 100%;
   background-color: hsl(128deg 100% 42%);
   transition: all 0.3s;
@@ -92,7 +94,7 @@
 }
 
 .yellowNavlink:hover:before {
-  width: 100%;
+  --yellowNavbuttonWidth: 100%;
 }
 
 .yellowNavlink:after {
@@ -113,7 +115,7 @@
   position: absolute;
   bottom: 0;
   left: 0;
-  width: 0%;
+  width: var(--yellowNavbuttonWidth);
   height: 100%;
   background-color: hsl(60deg 95% 39%);
   transition: all 0.3s;
@@ -139,7 +141,7 @@
 }
 
 .redNavlink:hover:before {
-  width: 100%;
+  --redNavbuttonWidth: 100%;
 }
 
 .redNavlink:after {
@@ -159,7 +161,7 @@
   position: absolute;
   bottom: 0;
   left: 0;
-  width: 0%;
+  width: var(--redNavbuttonWidth);
   height: 100%;
   background-color: hsl(357deg 100% 37%);
   transition: all 0.3s;

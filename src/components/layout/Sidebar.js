@@ -32,6 +32,45 @@ const Sidebar = ({ pageWrapId, outerContainerId }) => {
   const [yellowActive, setYellowActive] = useState(false);
   const [redActive, setRedActive] = useState(false);
 
+  const [greenTouched, setGreenTouched] = useState(false);
+  const [yellowTouched, setYellowTouched] = useState(false);
+  const [redTouched, setRedTouched] = useState(false);
+
+  useEffect(() => {
+    if (location.pathname === "/profile/preferences") {
+      document.documentElement.style.setProperty(
+        "--greenNavbuttonWidth",
+        "100%"
+      );
+      document.documentElement.style.setProperty(
+        "--yellowNavbuttonWidth",
+        "0%"
+      );
+      document.documentElement.style.setProperty("--redNavbuttonWidth", "0%");
+    } else if (location.pathname === "/profile/gallery") {
+      document.documentElement.style.setProperty("--greenNavbuttonWidth", "0%");
+      document.documentElement.style.setProperty(
+        "--yellowNavbuttonWidth",
+        "100%"
+      );
+      document.documentElement.style.setProperty("--redNavbuttonWidth", "0%");
+    } else if (location.pathname === "/profile/likes") {
+      document.documentElement.style.setProperty("--greenNavbuttonWidth", "0%");
+      document.documentElement.style.setProperty(
+        "--yellowNavbuttonWidth",
+        "0%"
+      );
+      document.documentElement.style.setProperty("--redNavbuttonWidth", "100%");
+    } else {
+      document.documentElement.style.setProperty("--greenNavbuttonWidth", "0%");
+      document.documentElement.style.setProperty(
+        "--yellowNavbuttonWidth",
+        "0%"
+      );
+      document.documentElement.style.setProperty("--redNavbuttonWidth", "0%");
+    }
+  }, [location.pathname]);
+
   useEffect(() => {
     // just for initial render
     if (window.innerWidth < 750) {
@@ -142,7 +181,9 @@ const Sidebar = ({ pageWrapId, outerContainerId }) => {
             </div>
           ) : (
             <div style={{ gap: "1em" }} className={baseClasses.baseVertFlex}>
-              <NavbarProfile forSidebar={true} />
+              <div onClick={() => setSidebarOpened(false)}>
+                <NavbarProfile forSidebar={true} />
+              </div>
 
               <ul style={{ gap: 0 }} className={profileClasses.vertContain}>
                 <li
@@ -150,9 +191,16 @@ const Sidebar = ({ pageWrapId, outerContainerId }) => {
                   className={profileClasses.sideContain}
                 >
                   <div
-                    style={{ width: "100%" }}
+                    style={{
+                      width: "100%",
+                      filter: greenTouched ? "brightness(.5)" : "brightness(1)",
+                    }}
                     className={profileClasses.greenNavlink}
                     onClick={() => changeSelectedTab(0)}
+                    onMouseDown={() => setGreenTouched(true)}
+                    onTouchStart={() => setGreenTouched(true)}
+                    onMouseUp={() => setGreenTouched(false)}
+                    onTouchEnd={() => setGreenTouched(false)}
                   >
                     <Link
                       to="/profile/preferences"
@@ -184,9 +232,19 @@ const Sidebar = ({ pageWrapId, outerContainerId }) => {
                   className={profileClasses.sideContain}
                 >
                   <div
-                    style={{ width: "100%" }}
+                    style={{
+                      width: "100%",
+
+                      filter: yellowTouched
+                        ? "brightness(.5)"
+                        : "brightness(1)",
+                    }}
                     className={profileClasses.yellowNavlink}
                     onClick={() => changeSelectedTab(1)}
+                    onMouseDown={() => setYellowTouched(true)}
+                    onTouchStart={() => setYellowTouched(true)}
+                    onMouseUp={() => setYellowTouched(false)}
+                    onTouchEnd={() => setYellowTouched(false)}
                   >
                     <Link
                       to="/profile/gallery"
@@ -218,9 +276,16 @@ const Sidebar = ({ pageWrapId, outerContainerId }) => {
                   className={profileClasses.sideContain}
                 >
                   <div
-                    style={{ width: "100%" }}
+                    style={{
+                      width: "100%",
+                      filter: redTouched ? "brightness(.5)" : "brightness(1)",
+                    }}
                     className={profileClasses.redNavlink}
                     onClick={() => changeSelectedTab(2)}
+                    onMouseDown={() => setRedTouched(true)}
+                    onTouchStart={() => setRedTouched(true)}
+                    onMouseUp={() => setRedTouched(false)}
+                    onTouchEnd={() => setRedTouched(false)}
                   >
                     <Link
                       to="/profile/likes"

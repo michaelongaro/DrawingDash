@@ -2,6 +2,10 @@
   --dark-animated-gradient-color: #000;
   --light-animated-gradient-color: #fff;
   --shimmerPlayState: paused;
+
+  --greenNavbuttonWidth: 0%;
+  --yellowNavbuttonWidth: 0%;
+  --redNavbuttonWidth: 0%;
 }
 
 *,
