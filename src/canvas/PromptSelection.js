@@ -1,10 +1,4 @@
-import React, {
-  useContext,
-  useEffect,
-  useLayoutEffect,
-  useRef,
-  useState,
-} from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 
 import anime from "animejs/lib/anime.es.js";
 import Select from "react-select";
@@ -96,7 +90,7 @@ const PromptSelection = () => {
 
   const [nextDisabled, setNextDisabled] = useState(true);
   const [selectedExtraPrompt, setSelectedExtraPrompt] = useState("");
-  const [blur, setBlur] = useState(false);
+  const [showRegisterContainer, setShowRegisterContainer] = useState(false);
   const [showCountdownTimer, setShowCountdownTimer] = useState(false);
   const [resetAtDate, setResetAtDate] = useState(
     "January 01, 2030 00:00:00 GMT+03:00"
@@ -302,7 +296,7 @@ const PromptSelection = () => {
 
       // animate signup/login container down out of view if it is showing
       if (showPromptsComingShortlyContainer) {
-        if (blur) {
+        if (showRegisterContainer) {
           anime({
             targets: "#registerContainer",
             opacity: [1, 0],
@@ -312,7 +306,7 @@ const PromptSelection = () => {
             easing: "linear",
           });
 
-          setBlur(false);
+          setShowRegisterContainer(false);
         }
 
         // animate "a drawing Prompt" into view
@@ -650,7 +644,9 @@ const PromptSelection = () => {
         Object.keys(DSCtx.drawingStatuses).length === 3
       ) {
         // blurring out the regular prompts
-        setBlur(true);
+        if (window.innerWidth > 1200) {
+          setShowRegisterContainer(true);
+        }
 
         // animate signup/login container down into view
         anime({
@@ -744,6 +740,7 @@ const PromptSelection = () => {
     // just for initial render
     if (window.innerWidth <= 1200) {
       setFlexDirection("column");
+      setShowRegisterContainer(false);
 
       if (window.innerWidth <= 800) {
         setExtraPromptsFlexDirection("column");
@@ -753,6 +750,18 @@ const PromptSelection = () => {
     } else {
       setFlexDirection("row");
       setExtraPromptsFlexDirection("row");
+
+      if (
+        DSCtx.drawingStatuses["60"] &&
+        DSCtx.drawingStatuses["180"] &&
+        DSCtx.drawingStatuses["300"] &&
+        Object.keys(DSCtx.drawingStatuses).length === 3
+      ) {
+        // blurring out the regular prompts
+        if (window.innerWidth > 1200) {
+          setShowRegisterContainer(true);
+        }
+      }
     }
 
     if (
@@ -778,6 +787,7 @@ const PromptSelection = () => {
     function resizeHandler() {
       if (window.innerWidth <= 1200) {
         setFlexDirection("column");
+        setShowRegisterContainer(false);
 
         if (window.innerWidth <= 800) {
           setExtraPromptsFlexDirection("column");
@@ -787,6 +797,18 @@ const PromptSelection = () => {
       } else {
         setFlexDirection("row");
         setExtraPromptsFlexDirection("row");
+
+        if (
+          DSCtx.drawingStatuses["60"] &&
+          DSCtx.drawingStatuses["180"] &&
+          DSCtx.drawingStatuses["300"] &&
+          Object.keys(DSCtx.drawingStatuses).length === 3
+        ) {
+          // blurring out the regular prompts
+          if (window.innerWidth > 1200) {
+            setShowRegisterContainer(true);
+          }
+        }
       }
 
       if (
@@ -814,7 +836,7 @@ const PromptSelection = () => {
     return () => {
       window.removeEventListener("resize", resizeHandler);
     };
-  }, [DSCtx.showPromptSelection]);
+  }, [DSCtx.showPromptSelection, DSCtx.drawingStatuses]);
 
   useEffect(() => {
     setInitInnerWidth(window.innerWidth);
@@ -965,7 +987,7 @@ const PromptSelection = () => {
           style={{
             position: "relative",
             width:
-              blur && window.innerWidth < 1200
+              showRegisterContainer && window.innerWidth < 1200
                 ? "clamp(200px, 100%, 675px)"
                 : "675px",
             height: "300px",
@@ -976,7 +998,7 @@ const PromptSelection = () => {
               position: "absolute",
               top: 0,
               width:
-                blur && window.innerWidth < 1200
+                showRegisterContainer && window.innerWidth < 1200
                   ? "clamp(200px, 100%, 675px)"
                   : "675px",
               height: "300px",
@@ -985,8 +1007,8 @@ const PromptSelection = () => {
           >
             <div
               style={{
-                filter: blur ? "blur(4px)" : "",
-                pointerEvents: blur ? "none" : "auto",
+                filter: showRegisterContainer ? "blur(4px)" : "",
+                pointerEvents: showRegisterContainer ? "none" : "auto",
                 flexDirection: flexDirection,
               }}
               ref={normalPromptContainerRef}
@@ -1093,7 +1115,6 @@ const PromptSelection = () => {
           </div>
 
           <div
-            // id={"extraPromptContainer"}
             className={showExtraPrompt ? "" : classes.hide}
             style={{
               position: "absolute",
@@ -1291,26 +1312,31 @@ const PromptSelection = () => {
             id={"registerContainer"}
             style={{
               position: "absolute",
-              top: dynamicRegisterHeight,
+              top: window.innerWidth < 1200 ? "-190px" : dynamicRegisterHeight,
               left: 0,
+              right: 0,
               width: "100%",
-              height: "225px",
+              height: window.innerWidth < 1200 ? "7em" : "225px",
               opacity: 0,
-              pointerEvents: blur ? "auto" : "none",
+              pointerEvents: showRegisterContainer ? "auto" : "none",
             }}
             className={`${classes.registerContainer} ${baseClasses.baseFlex}`}
           >
             <div
               id={"registerPromoContainer"}
               style={{
-                height: "10em",
+                height: window.innerWidth < 1200 ? "7em" : "10em",
               }}
               className={classes.registerPromoContainer}
             >
               <div className={classes.baseFlex}>
-                {blur && <LogInButton forceShowSignUp={true} />}
+                {showRegisterContainer && (
+                  <LogInButton forceShowSignUp={true} />
+                )}
                 <div>or</div>
-                {blur && <LogInButton forceShowSignUp={false} />}
+                {showRegisterContainer && (
+                  <LogInButton forceShowSignUp={false} />
+                )}
               </div>
 
               <div style={{ width: "60%", textAlign: "center" }}>

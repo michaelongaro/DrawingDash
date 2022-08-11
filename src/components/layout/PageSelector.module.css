@@ -1,0 +1,23 @@
+.pageSelectorButton {
+  border-radius: 1em;
+  border: none;
+  width: 2.5em;
+  height: 2.5em;
+  cursor: pointer;
+  box-shadow: 0 4px 8px rgb(0 0 0 / 20%);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .pageSelectorButton:hover {
+    background-color: #c2c2c2 !important;
+  }
+}
+
+.pageSelectorInput {
+  width: 2.5em;
+  height: 2.5em;
+  border-radius: 0.25em;
+  border: 1px solid black;
+  text-align: center;
+  box-shadow: 0 4px 8px rgb(0 0 0 / 20%);
+}

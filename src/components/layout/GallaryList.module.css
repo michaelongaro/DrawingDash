@@ -64,20 +64,6 @@
   display: none;
 }
 
-.pageSelectorButton {
-  margin-top: 1em;
-  border-radius: 1em;
-  border: none;
-  width: 2.5em;
-  height: 2.5em;
-  cursor: pointer;
-  box-shadow: 0 4px 8px rgb(0 0 0 / 20%);
-}
-
-.pageSelectorButton:hover {
-  background-color: #c2c2c2 !important;
-}
-
 @media (max-width: 1250px) {
   .gridListContain {
     grid-template-columns: repeat(2, minmax(210px, 3fr));

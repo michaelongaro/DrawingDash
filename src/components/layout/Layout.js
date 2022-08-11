@@ -122,14 +122,9 @@ function Layout(props) {
               ? "82vh"
               : dynamicHeight,
           height:
-            location.pathname === "/profile/gallery" ||
-            location.pathname === "/profile/likes"
-              ? "100vh"
-              : location.pathname !== "/daily-drawings"
+            location.pathname === "/daily-drawings" && !DSCtx.showDrawingScreen
               ? "82vh"
-              : DSCtx.showDrawingScreen
-              ? ""
-              : "82vh",
+              : "",
           width: "100%",
           margin: "3rem 0 0 0",
         }}

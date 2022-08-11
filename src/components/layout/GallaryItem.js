@@ -18,9 +18,6 @@ import DownloadIcon from "../../svgs/DownloadIcon";
 import HeartOutlineIcon from "../../svgs/HeartOutlineIcon";
 import HeartFilledIcon from "../../svgs/HeartFilledIcon";
 import HeartBrokenIcon from "../../svgs/HeartBrokenIcon";
-import FiveMinuteIcon from "../../svgs/FiveMinuteIcon";
-import OneMinuteIcon from "../../svgs/OneMinuteIcon";
-import ThreeMinuteIcon from "../../svgs/ThreeMinuteIcon";
 import ExitIcon from "../../svgs/ExitIcon";
 import GarbageIcon from "../../svgs/GarbageIcon";
 
@@ -175,6 +172,7 @@ const GallaryItem = ({
   ]);
 
   useEffect(() => {
+    console.log(drawingID);
     get(child(dbRef, `drawings/${drawingID}`)).then((snapshot) => {
       if (snapshot.exists()) {
         setDrawingDetails(snapshot.val());

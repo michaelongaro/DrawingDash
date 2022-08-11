@@ -8,7 +8,10 @@ import classes from "./ProfileHeader.module.css";
 
 const ProfileHeader = ({ title }) => {
   return (
-    <div className={classes.profileHeader}>
+    <div
+      style={{ width: title === "Preferences" ? "100%" : "" }}
+      className={classes.profileHeader}
+    >
       <div className={classes.leadingLine}></div>
       {title === "Preferences" && <PreferencesIcon dimensions={"1.75em"} />}
       {title === "Gallery" && <GalleryIcon dimensions={"1.75em"} />}

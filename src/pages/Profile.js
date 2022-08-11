@@ -20,6 +20,7 @@ const Profile = () => {
     if (window.innerWidth <= 1100) {
       setProfileCardStyles({
         width: "95vw",
+        marginBottom: "2em",
         display: "flex",
         justifyContent: "center",
       });
@@ -28,6 +29,7 @@ const Profile = () => {
       setProfileCardStyles({
         width: "1046px",
         marginRight: "1em",
+        marginBottom: "2em",
         display: "flex",
         justifyContent: "center",
       });
@@ -38,6 +40,7 @@ const Profile = () => {
       if (window.innerWidth <= 1100) {
         setProfileCardStyles({
           width: "95vw",
+          marginBottom: "2em",
           display: "flex",
           justifyContent: "center",
         });
@@ -46,6 +49,7 @@ const Profile = () => {
         setProfileCardStyles({
           width: "1046px",
           marginRight: "1em",
+          marginBottom: "2em",
           display: "flex",
           justifyContent: "center",
         });

@@ -326,6 +326,7 @@
   border-radius: 1em;
   border: 0;
   box-shadow: rgb(0 0 0 / 20%) 0 2px 4px 1px;
+  transition: all 200ms;
 }
 
 .drawAgainButton {
@@ -538,6 +539,12 @@
   }
 }
 
+@media (max-width: 600px) {
+  .registerPromoContainer {
+    width: 80%;
+  }
+}
+
 @media (max-width: 550px) {
   .durationButton {
     min-width: 40%;
@@ -569,5 +576,9 @@
   .signInButtonContainer>button {
     width: 6.5em !important;
     height: 2.5em !important;
+  }
+
+  .registerPromoContainer {
+    width: 70%;
   }
 }

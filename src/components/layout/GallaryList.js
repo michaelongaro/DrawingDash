@@ -8,6 +8,7 @@ import SearchContext from "./SearchContext";
 import Card from "../../ui/Card";
 
 import GallaryItem from "./GallaryItem";
+import PageSelector from "./PageSelector";
 
 import FiveMinuteIcon from "../../svgs/FiveMinuteIcon";
 import OneMinuteIcon from "../../svgs/OneMinuteIcon";
@@ -57,6 +58,7 @@ const GallaryList = ({
   }, []);
 
   useEffect(() => {
+    console.log("gallList ids", drawingIDs);
     if (drawingIDs) {
       if (isEqual(drawingIDs, { 60: [], 180: [], 300: [] })) {
         setShowEmptyResults(true);
@@ -547,57 +549,17 @@ const GallaryList = ({
           <div
             style={{
               display: !forDailyFeatured ? "flex" : "none",
-              position: "relative",
-              right: 0,
-              bottom: 0,
               gap: "1em",
             }}
             className={baseClasses.baseFlex}
           >
-            {currentlyShownDuration &&
-              Array(
-                Math.floor(
-                  (searchCtx.pageSelectorDetails["totalDrawingsByDuration"][
-                    idx
-                  ][currentlyShownDuration] +
-                    6 -
-                    1) /
-                    6
-                )
-              )
-                .fill("")
-                .map((val, i) => (
-                  <button
-                    key={i}
-                    style={{
-                      backgroundColor:
-                        searchCtx.pageSelectorDetails["currentPageNumber"][
-                          idx
-                        ] ===
-                        i + 1
-                          ? "#c2c2c2"
-                          : "#fff",
-                    }}
-                    className={classes.pageSelectorButton}
-                    // replace 6 with the max allowed per page
-                    onClick={() => {
-                      searchCtx.getGallary(
-                        6 * i,
-                        6 * (i + 1),
-                        6,
-                        idx,
-                        databasePath
-                      );
-                      searchCtx.updatePageSelectorDetails(
-                        "currentPageNumber",
-                        i + 1,
-                        idx
-                      );
-                    }}
-                  >
-                    {i + 1}
-                  </button>
-                ))}
+            {currentlyShownDuration && (
+              <PageSelector
+                currentlyShownDuration={currentlyShownDuration}
+                idx={idx}
+                databasePath={databasePath}
+              />
+            )}
           </div>
         </div>
       )}

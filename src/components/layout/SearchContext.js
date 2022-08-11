@@ -326,6 +326,7 @@ export function SearchProvider(props) {
         }
       })
       .then(() => {
+        console.log("context", gallaryResults);
         updateSearchValues("gallary", gallaryResults, idx);
 
         updatePageSelectorDetails(

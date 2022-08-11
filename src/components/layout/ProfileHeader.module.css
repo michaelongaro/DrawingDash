@@ -3,27 +3,23 @@
   justify-content: center;
   align-items: center;
   gap: 0.5em;
-  margin: 1em;
+  margin: 1em auto 2em auto;
 
-  width: 35em;
+  /* width: 35em; */
 }
 
 .leadingLine {
   height: 1px;
   width: 30%;
-  background-image: linear-gradient(
-    to right,
-    rgba(255, 255, 255, 0),
-    rgba(0, 0, 0, 1)
-  );
+  background-image: linear-gradient(to right,
+      rgba(255, 255, 255, 0),
+      rgba(0, 0, 0, 1));
 }
 
 .trailingLine {
   height: 1px;
   width: 30%;
-  background-image: linear-gradient(
-    to right,
-    rgba(0, 0, 0, 1),
-    rgba(255, 255, 255, 0)
-  );
+  background-image: linear-gradient(to right,
+      rgba(0, 0, 0, 1),
+      rgba(255, 255, 255, 0));
 }
