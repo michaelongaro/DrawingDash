@@ -34,8 +34,12 @@ const Search = ({ dbPath, margin, idx, forModal }) => {
 
   const [gallaryListStaticTitle, setGallaryListStaticTitle] = useState();
 
+  const formContainerRef = useRef(null);
   const adjectiveInputRef = useRef();
   const nounInputRef = useRef();
+
+  const [dynamicNounMargin, setDynamicNounMargin] = useState(0);
+  const [dynamicSearchMargin, setDynamicSearchMargin] = useState(0);
 
   const [adjInputFocused, setAdjInputFocused] = useState(false);
   const [nounInputFocused, setNounInputFocused] = useState(false);
@@ -78,6 +82,45 @@ const Search = ({ dbPath, margin, idx, forModal }) => {
       idx
     );
   }, [adjInputFocused, nounInputFocused, idx]);
+
+  useEffect(() => {
+    if (formContainerRef.current !== null) {
+      if (
+        window
+          .getComputedStyle(formContainerRef.current)
+          .getPropertyValue("flex-direction") === "column"
+      ) {
+        if (showAdjResults && !showNounResults) {
+          let adjustedMargin;
+
+          if (searchCtx.searchValues["requestedAdjectives"][idx].length === 0) {
+            adjustedMargin = 32;
+          } else {
+            adjustedMargin =
+              searchCtx.searchValues["requestedAdjectives"][idx].length * 32;
+          }
+          setDynamicNounMargin(`${adjustedMargin}px`);
+
+          setDynamicSearchMargin(0); // resetting other margin
+        } else if (!showAdjResults && showNounResults) {
+          let adjustedMargin;
+
+          if (searchCtx.searchValues["requestedNouns"][idx].length === 0) {
+            adjustedMargin = 32;
+          } else {
+            adjustedMargin =
+              searchCtx.searchValues["requestedNouns"][idx].length * 32;
+          }
+          setDynamicSearchMargin(`${adjustedMargin}px`);
+
+          setDynamicNounMargin(0); // resetting other margin
+        } else if (!showAdjResults && !showNounResults) {
+          setDynamicSearchMargin(0);
+          setDynamicNounMargin(0);
+        }
+      }
+    }
+  }, [showAdjResults, showNounResults, searchCtx.searchValues, idx]);
 
   useEffect(() => {
     // arrowup/down event autofillHandlers
@@ -372,7 +415,11 @@ const Search = ({ dbPath, margin, idx, forModal }) => {
 
   return (
     <>
-      <form className={classes.formContainer} onSubmit={prepGallarySearch}>
+      <form
+        ref={formContainerRef}
+        className={classes.formContainer}
+        onSubmit={prepGallarySearch}
+      >
         <div className={classes.searchContainer}>
           <input
             className={classes.searchInput}
@@ -398,7 +445,13 @@ const Search = ({ dbPath, margin, idx, forModal }) => {
             />
           </div>
         </div>
-        <div className={classes.searchContainer}>
+        <div
+          style={{
+            marginTop: dynamicNounMargin,
+            transition: "all 200ms",
+          }}
+          className={classes.searchContainer}
+        >
           <input
             className={classes.searchInput}
             id="noun"
@@ -423,7 +476,15 @@ const Search = ({ dbPath, margin, idx, forModal }) => {
             />
           </div>
         </div>
-        <button className={baseClasses.activeButton}>Search</button>
+        <button
+          style={{
+            marginTop: dynamicSearchMargin,
+            transition: "all 200ms",
+          }}
+          className={baseClasses.activeButton}
+        >
+          Search
+        </button>
       </form>
 
       <GallaryList

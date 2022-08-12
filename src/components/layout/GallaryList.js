@@ -30,6 +30,7 @@ const GallaryList = ({
   const searchCtx = useContext(SearchContext);
 
   const location = useLocation();
+  console.log(location.pathname);
 
   const [showEmptyResults, setShowEmptyResults] = useState(false);
 
@@ -550,6 +551,11 @@ const GallaryList = ({
             style={{
               display: !forDailyFeatured ? "flex" : "none",
               gap: "1em",
+              marginTop:
+                location.pathname !== "/profile/gallery" &&
+                location.pathname !== "/profile/likes"
+                  ? "1em"
+                  : 0,
             }}
             className={baseClasses.baseFlex}
           >

@@ -1,7 +1,6 @@
-.flexContain {
-  display: flex;
-  justify-content: center;
-  align-items: center;
+.focalAnimatedContainer {
+  gap: 2em;
+  padding: 0 2em;
 }
 
 .firstTimePromo {
@@ -59,6 +58,11 @@
 }
 
 @media (max-width: 1075px) {
+  .focalAnimatedContainer {
+    padding: 0;
+    flex-direction: column;
+  }
+
   .flexContain {
     flex-direction: column;
   }

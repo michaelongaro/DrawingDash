@@ -1,12 +1,14 @@
-import React, { useState, useEffect, useContext } from "react";
+import React, { useState, useEffect, useContext, useRef } from "react";
 
 import anime from "animejs/lib/anime.es.js";
+import { isEqual } from "lodash";
+
 import DrawingSelectionContext from "./DrawingSelectionContext";
+
 import BackupPaletteIcon from "../svgs/BackupPaletteIcon";
 
 import classes from "./PaletteChooser.module.css";
 import baseClasses from "../index.module.css";
-import { isEqual } from "lodash";
 
 const PaletteChooser = () => {
   const DSCtx = useContext(DrawingSelectionContext);
@@ -15,11 +17,11 @@ const PaletteChooser = () => {
   const [dynamicButtonDimensions, setDynamicButtonDimensions] = useState(1);
   const [dyanmicIconDimensions, setDyanmicIconDimensions] = useState("30em");
 
-  const [reactToNextTouchStart, setReactToNextTouchStart] = useState(false);
-  const [currentlySelectedColorPicker, setCurrentlySelectedColorPicker] =
-    useState(null);
-  const [currentlySelectedColorEvent, setCurrentlySelectedColorEvent] =
-    useState(null);
+  const firstColorRef = useRef(null);
+  const secondColorRef = useRef(null);
+  const thirdColorRef = useRef(null);
+  const fourthColorRef = useRef(null);
+  const fifthColorRef = useRef(null);
 
   const [paletteColors, setPaletteColors] = useState([
     "#FFFFFF",
@@ -44,18 +46,6 @@ const PaletteChooser = () => {
     false,
     false,
   ]);
-
-  const [nextDisabled, setNextDisabled] = useState(true);
-
-  // useEffect(() => {
-  //   let filteredArray = statusOfCheckmarks.filter(function (item, pos) {
-  //     return statusOfCheckmarks.indexOf(item) === pos;
-  //   });
-
-  //   if (filteredArray.length === 1 && filteredArray[0] === true) {
-  //     setNextDisabled(false);
-  //   }
-  // }, [statusOfCheckmarks]);
 
   useEffect(() => {
     anime({
@@ -104,30 +94,18 @@ const PaletteChooser = () => {
 
   useEffect(() => {
     function touchHandler(ev) {
-      if (
-        reactToNextTouchStart &&
-        currentlySelectedColorEvent !== null &&
-        currentlySelectedColorEvent
-      ) {
-        updatePaletteAndCheckmarkStates(
-          currentlySelectedColorEvent,
-          currentlySelectedColorPicker
-        );
-        setReactToNextTouchStart(false);
-        setCurrentlySelectedColorEvent(null);
-        setCurrentlySelectedColorPicker(null);
-      }
+      firstColorRef.current.blur();
+      secondColorRef.current.blur();
+      thirdColorRef.current.blur();
+      fourthColorRef.current.blur();
+      fifthColorRef.current.blur();
     }
 
-    window.addEventListener("touchstart", touchHandler);
+    window.addEventListener("touchmove", touchHandler);
     return () => {
-      window.removeEventListener("touchstart", touchHandler);
+      window.removeEventListener("touchmove", touchHandler);
     };
-  }, [
-    reactToNextTouchStart,
-    currentlySelectedColorPicker,
-    currentlySelectedColorEvent,
-  ]);
+  }, []);
 
   function updatePaletteAndCheckmarkStates(event, idx) {
     const shallowCopyPalettes = [...paletteColors];
@@ -211,12 +189,8 @@ const PaletteChooser = () => {
               >
                 <input
                   type="color"
+                  ref={firstColorRef}
                   className={classes.colorInput}
-                  onTouchStart={(ev) => {
-                    setCurrentlySelectedColorEvent(ev);
-                    setCurrentlySelectedColorPicker(0);
-                    setReactToNextTouchStart(true);
-                  }}
                   onBlur={(event) => {
                     updatePaletteAndCheckmarkStates(event, 0);
                   }}
@@ -253,12 +227,8 @@ const PaletteChooser = () => {
               >
                 <input
                   type="color"
+                  ref={secondColorRef}
                   className={classes.colorInput}
-                  onTouchStart={(ev) => {
-                    setCurrentlySelectedColorEvent(ev);
-                    setCurrentlySelectedColorPicker(1);
-                    setReactToNextTouchStart(true);
-                  }}
                   onBlur={(event) => {
                     updatePaletteAndCheckmarkStates(event, 1);
                   }}
@@ -295,12 +265,8 @@ const PaletteChooser = () => {
               >
                 <input
                   type="color"
+                  ref={thirdColorRef}
                   className={classes.colorInput}
-                  onTouchStart={(ev) => {
-                    setCurrentlySelectedColorEvent(ev);
-                    setCurrentlySelectedColorPicker(2);
-                    setReactToNextTouchStart(true);
-                  }}
                   onBlur={(event) => {
                     updatePaletteAndCheckmarkStates(event, 2);
                   }}
@@ -338,12 +304,8 @@ const PaletteChooser = () => {
               >
                 <input
                   type="color"
+                  ref={fourthColorRef}
                   className={classes.colorInput}
-                  onTouchStart={(ev) => {
-                    setCurrentlySelectedColorEvent(ev);
-                    setCurrentlySelectedColorPicker(3);
-                    setReactToNextTouchStart(true);
-                  }}
                   onBlur={(event) => {
                     updatePaletteAndCheckmarkStates(event, 3);
                   }}
@@ -382,12 +344,8 @@ const PaletteChooser = () => {
               >
                 <input
                   type="color"
+                  ref={fifthColorRef}
                   className={classes.colorInput}
-                  onTouchStart={(ev) => {
-                    setCurrentlySelectedColorEvent(ev);
-                    setCurrentlySelectedColorPicker(4);
-                    setReactToNextTouchStart(true);
-                  }}
                   onBlur={(event) => {
                     updatePaletteAndCheckmarkStates(event, 4);
                   }}
@@ -447,7 +405,6 @@ const PaletteChooser = () => {
           </button>
           <button
             className={baseClasses.activeButton}
-            //nextDisabled
             disabled={
               !isEqual(statusOfCheckmarks, [true, true, true, true, true])
             }

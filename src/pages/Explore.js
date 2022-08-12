@@ -36,7 +36,10 @@ function Explore() {
       exit={{ opacity: 0 }}
       transition={{ duration: 0.2 }}
     >
-      <div style={{ height: dynamicHeight }} className={classes.exploreContain}>
+      <div
+        style={{ minHeight: dynamicHeight }}
+        className={classes.exploreContain}
+      >
         <FocalAnimatedDrawings forHomepage={false} forSearch={true} />
         <Search dbPath={"titles"} forModal={false} idx={0} />
       </div>

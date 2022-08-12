@@ -11,7 +11,7 @@ function DailyDoodle() {
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
       transition={{ duration: 0.2 }}
-      style={{ height: "100%" }}
+      style={{ height: "82vh" }} // was 100%, keep an eye on this
     >
       <CanvasProvider>
         <Canvas />

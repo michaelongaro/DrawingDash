@@ -13,8 +13,7 @@ function Layout(props) {
   const [dynamicHeight, setDynamicHeight] = useState("82vh");
 
   useEffect(() => {
-    // just for initial render, setTimeout so layout has time
-    // to fully settle
+    // just for initial render, setTimeout so layout has time to fully settle
     setTimeout(() => {
       if (DSCtx.showPromptSelection) {
         // was 778 i think
@@ -96,7 +95,6 @@ function Layout(props) {
           setDynamicHeight("100vh");
         }
       }
-      // }
     }
     window.addEventListener("resize", resizeHandler);
     return () => {

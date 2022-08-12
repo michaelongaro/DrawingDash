@@ -48,7 +48,11 @@
 
 @media (max-width: 900px) {
   .bannerLogo {
-    width: 150px;
+    width: 135px;
+  }
+
+  .bannerFlex {
+    font-size: 1em;
   }
 }
 

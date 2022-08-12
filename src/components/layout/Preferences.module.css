@@ -302,12 +302,3 @@ input[type="file"] {
         rgba(255, 255, 255, 0));
   }
 }
-
-/* maybe also throw into 900 above? */
-/* @media (max-width: 680px) {}
-
-@media (max-width: 500px) {
-  .leftSideContain {
-    width: 90%;
-  }
-} */

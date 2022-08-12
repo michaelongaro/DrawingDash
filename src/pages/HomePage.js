@@ -75,11 +75,7 @@ function HomePage() {
       {!isLoading && (
         <section id={"homePageContainer"} style={{ opacity: 0 }}>
           <div
-            style={{
-              gap: "2em",
-              padding: "0 2em",
-            }}
-            className={classes.flexContain}
+            className={`${classes.focalAnimatedContainer} ${baseClasses.baseFlex}`}
           >
             <FocalAnimatedDrawings
               forHomepage={showRegisterContainer}
