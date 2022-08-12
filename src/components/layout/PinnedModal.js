@@ -61,15 +61,15 @@ const PinnedModal = React.forwardRef((props, modalRef) => {
   }, []);
 
   return (
-    // change the 80% to 50% if loadedDrawingIDs === 0
     <div
       style={{
+        minWidth: "50vw",
         width: loadedDrawingIDs
           ? loadedDrawingIDs.length === 0
             ? ""
             : "80%"
           : "80%",
-        maxHeight: "90vh",
+        height: "90vh",
       }}
       classname={classes.card}
       ref={modalRef}
@@ -98,7 +98,7 @@ const PinnedModal = React.forwardRef((props, modalRef) => {
           </div>
           <div className={classes.exit}>
             <button
-              className={baseClasses.close}
+              className={baseClasses.baseClose}
               onClick={() => {
                 pinnedCtx.setShow60({ display: "none" });
                 pinnedCtx.setShow180({ display: "none" });
@@ -110,7 +110,10 @@ const PinnedModal = React.forwardRef((props, modalRef) => {
         </div>
 
         {loadedDrawingIDs && (
-          <div style={{ height: "80%" }} className={classes.gallaryList}>
+          <div
+            style={{ height: "80%", width: "90%" }}
+            className={classes.gallaryList}
+          >
             <PinnedArtList
               drawingIDs={loadedDrawingIDs}
               seconds={props.seconds}

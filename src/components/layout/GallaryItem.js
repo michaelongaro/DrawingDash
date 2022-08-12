@@ -1,5 +1,5 @@
 import React from "react";
-import { useState, useEffect, useCallback, useContext, useRef } from "react";
+import { useState, useEffect, useContext, useRef } from "react";
 import { useLocation } from "react-router-dom";
 import { useAuth0 } from "@auth0/auth0-react";
 
@@ -63,33 +63,15 @@ const GallaryItem = ({
   const dbRef = ref(getDatabase(app));
   const storage = getStorage();
 
+  const drawingRef = useRef(null);
   const drawingModalRef = useRef(null);
   const confirmDeleteModalRef = useRef();
-
-  // const imageDimensionsRef = useCallback((node) => {
-  //   if (node !== null) {
-  //     // setSkeletonWidth(node.getBoundingClientRect().width);
-  //     // setSkeletonHeight(node.getBoundingClientRect().height);
-  //     console.log(
-  //       node.getBoundingClientRect().width,
-  //       node.getBoundingClientRect().height
-  //     );
-  //     console.log(node.offsetWidth, node.offsetHeight);
-
-  //     setSkeletonWidth(node.offsetWidth);
-  //     setSkeletonHeight(node.offsetHeight);
-  //   }
-  // }, []);
-
-  // const [skeletonWidth, setSkeletonWidth] = useState(0);
-  // const [skeletonHeight, setSkeletonHeight] = useState(0);
-
-  // const [showImage, setShowImage] = useState(false);
 
   const [drawingTotalLikes, setDrawingTotalLikes] = useState(0);
   const [drawingDailyLikes, setDrawingDailyLikes] = useState(0);
 
   const [imageElementLoaded, setImageElementLoaded] = useState(false);
+  const [dynamicAspectRatio, setDynamicAspectRatio] = useState("");
 
   const [showDrawingModal, setShowDrawingModal] = useState(false);
   const [showUserModal, setShowUserModal] = useState(false);
@@ -187,7 +169,7 @@ const GallaryItem = ({
 
     setShowTempBaselineSkeleton(true);
 
-    const timerID = setTimeout(() => setShowTempBaselineSkeleton(false), 400);
+    const timerID = setTimeout(() => setShowTempBaselineSkeleton(false), 500);
 
     return () => {
       clearTimeout(timerID);
@@ -262,6 +244,16 @@ const GallaryItem = ({
       setDynamicCardWidth("100");
     }
 
+    if (imageElementLoaded && drawingRef.current !== null) {
+      console.log("init", drawingRef.current.getBoundingClientRect().height);
+
+      setDynamicAspectRatio(
+        `16/${
+          drawingRef.current.getBoundingClientRect().height < 253 ? "7.8" : "8"
+        }`
+      );
+    }
+
     function resizeHandler() {
       if (window.innerWidth > 1250 && window.innerWidth < 1500) {
         setDynamicCardWidth("33");
@@ -272,12 +264,27 @@ const GallaryItem = ({
       } else if (window.innerWidth < 750) {
         setDynamicCardWidth("100");
       }
+
+      if (imageElementLoaded && drawingRef.current !== null) {
+        console.log(
+          "resize",
+          drawingRef.current.getBoundingClientRect().height
+        );
+
+        setDynamicAspectRatio(
+          `16/${
+            drawingRef.current.getBoundingClientRect().height < 253
+              ? "7.8"
+              : "8"
+          }`
+        );
+      }
     }
     window.addEventListener("resize", resizeHandler);
     return () => {
       window.removeEventListener("resize", resizeHandler);
     };
-  }, []);
+  }, [imageElementLoaded]);
 
   useEffect(() => {
     if (deletionCheckpointReached) {
@@ -567,7 +574,7 @@ const GallaryItem = ({
               width: "100%",
               // height: window.innerHeight / settings.heightRatio,
               height: "100%",
-              aspectRatio: "16/9",
+              aspectRatio: "16/7.75",
               borderRadius: "1em 1em 0 0",
             }}
             className={classes.skeletonLoading}
@@ -576,14 +583,30 @@ const GallaryItem = ({
           {/* actual image */}
           <div
             className={`${baseClasses.baseFlex} ${classes.glossOver}`}
-            style={{ position: "relative" }}
+            style={{
+              position: "relative",
+              display:
+                imageElementLoaded && !showTempBaselineSkeleton && !isFetching
+                  ? "block"
+                  : "none",
+              aspectRatio: "16/7.75",
+
+              // dynamicAspectRatio,
+
+              // imageElementLoaded && drawingRef.current !== null
+              //   ? `16/${
+              //       drawingRef.current.getBoundingClientRect().height < 253
+              //         ? ""
+              //         : "8"
+              //     }`
+              //   : "",
+            }}
             onClick={() => {
               if (
                 !settings.forHomepage &&
                 !settings.forPinnedShowcase &&
                 !settings.forPinnedItem &&
-                // needed so that when clicking on delete button drawing modal doesn't show
-                !hoveringOnDeleteButton
+                !hoveringOnDeleteButton // drawing modal doesn't show when delete clicked
               ) {
                 if (openedFromUserModal) {
                   modalCtx.setDrawingModalFromUserOpened(true);
@@ -596,6 +619,7 @@ const GallaryItem = ({
             }}
           >
             <img
+              ref={drawingRef}
               style={{
                 display:
                   !isFetching && !showTempBaselineSkeleton && imageElementLoaded
@@ -605,8 +629,8 @@ const GallaryItem = ({
                 borderRadius: settings.forPinnedShowcase
                   ? "1em"
                   : "1em 1em 0 0",
-                // minWidth: "100%",
-                // minHeight: "100%",
+                maxWidth: "100%",
+                maxHeight: "100%",
               }}
               src={fetchedDrawing}
               alt={drawingDetails?.title ?? "drawing title"}
@@ -799,29 +823,7 @@ const GallaryItem = ({
                 <div>{drawingDetails.date}</div>
               )}
 
-              {/* seconds */}
-
-              {/* || modalCtx.drawingModalOpened */}
-              {/* {location.pathname === "/" && showDurationIcon ? (
-                showTempBaselineSkeleton || isFetching ? (
-                  <div
-                    style={{ width: "3em", height: "3em", borderRadius: "50%" }}
-                    className={classes.skeletonLoading}
-                  ></div>
-                ) : (
-                  <div style={{ width: "3em", height: "3em" }}>
-                    {drawingDetails.seconds === 60 && (
-                      <OneMinuteIcon dimensions={"3em"} />
-                    )}
-                    {drawingDetails.seconds === 180 && (
-                      <ThreeMinuteIcon dimensions={"3em"} />
-                    )}
-                    {drawingDetails.seconds === 300 && (
-                      <FiveMinuteIcon dimensions={"3em"} />
-                    )}
-                  </div>
-                )
-              ) : null} */}
+              {/* seconds only shown in DrawingModal */}
 
               {/* like toggle */}
               {settings.forPinnedItem ? null : showTempBaselineSkeleton ||

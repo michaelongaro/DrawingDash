@@ -1,3 +1,20 @@
+.leftSideContain {
+  gap: 3em;
+  width: 33%;
+  align-items: flex-start;
+}
+
+.rightSideContain {
+  gap: 1em;
+  width: 33%;
+}
+
+.editContainer {
+  position: absolute;
+  right: 1em;
+  top: 0;
+}
+
 .topPreferencesContain {
   gap: 4em;
 }
@@ -257,6 +274,20 @@ input[type="file"] {
 }
 
 @media (max-width: 900px) {
+
+  .leftSideContain {
+    width: 90%;
+    margin-top: .5em;
+  }
+
+  .rightSideContain {
+    width: 100%;
+  }
+
+  .editContainer {
+    top: -2.5em;
+  }
+
   .topPreferencesContain {
     flex-direction: column;
     gap: 2em;
@@ -271,3 +302,12 @@ input[type="file"] {
         rgba(255, 255, 255, 0));
   }
 }
+
+/* maybe also throw into 900 above? */
+/* @media (max-width: 680px) {}
+
+@media (max-width: 500px) {
+  .leftSideContain {
+    width: 90%;
+  }
+} */

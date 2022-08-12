@@ -159,7 +159,7 @@ const Preferences = () => {
   }
 
   useEffect(() => {
-    const timerID = setTimeout(() => setShowTempBaselineSkeleton(false), 400);
+    const timerID = setTimeout(() => setShowTempBaselineSkeleton(false), 500);
 
     return () => {
       clearTimeout(timerID);
@@ -380,8 +380,7 @@ const Preferences = () => {
           className={`${classes.topPreferencesContain} ${baseClasses.baseFlex}`}
         >
           <div
-            style={{ gap: "3em", width: "33%", alignItems: "flex-start" }}
-            className={baseClasses.baseVertFlex}
+            className={`${classes.leftSideContain} ${baseClasses.baseVertFlex}`}
           >
             <div style={{ gap: "1.5em" }} className={baseClasses.baseFlex}>
               <div className={classes.inputLabel}>Username</div>
@@ -571,8 +570,7 @@ const Preferences = () => {
           </div>
 
           <div
-            style={{ gap: "1em", width: "33%" }}
-            className={baseClasses.baseVertFlex}
+            className={`${classes.rightSideContain} ${baseClasses.baseVertFlex}`}
           >
             {isFetching || showTempBaselineSkeleton ? (
               <div
@@ -660,7 +658,7 @@ const Preferences = () => {
                   className={baseClasses.skeletonLoading}
                 ></div>
               ) : (
-                <div>
+                <div style={{ textAlign: "center" }}>
                   <i>{status}</i>
                 </div>
               )}
@@ -668,10 +666,7 @@ const Preferences = () => {
           </div>
         </div>
 
-        <div
-          style={{ position: "absolute", right: "1em", top: 0 }}
-          className={classes.change}
-        >
+        <div className={classes.editContainer}>
           {editAvailable ? (
             <button
               className={baseClasses.activeButton}

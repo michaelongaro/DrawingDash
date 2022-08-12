@@ -28,15 +28,15 @@ const PinnedArtList = ({ drawingIDs, seconds }) => {
     <>
       {drawingIDs.length === 0 ? (
         <div
-          style={{ height: "50vh", width: "45vw", gap: "1.5em" }}
+          style={{ height: "100%", width: "100%", gap: "1.5em" }}
           className={baseClasses.baseVertFlex}
         >
           <div style={{ fontSize: "20px" }}>No drawings found</div>
           <div
-            style={{ width: "14em" }}
+            style={{ width: "14em", height: "8em" }}
             className={baseClasses.animatedRainbow}
           >
-            <Link to="/daily-drawings">
+            <Link to="/daily-drawings" className={baseClasses.baseFlex}>
               <div style={{ gap: ".5em" }} className={baseClasses.baseFlex}>
                 <div>Start A</div>
                 <div>{durationSVG}</div>

@@ -44,7 +44,6 @@ body {
 body {
   padding: 0;
   margin: 0;
-
 }
 
 #root {
@@ -123,7 +122,7 @@ h6 {
 }
 
 .closeButton:active:enabled {
-  filter: brightness(.7);
+  filter: brightness(0.7);
   box-shadow: none;
 }
 
@@ -164,7 +163,7 @@ h6 {
 }
 
 .activeButton:active:enabled {
-  filter: brightness(.7);
+  filter: brightness(0.7);
   box-shadow: none;
 }
 
@@ -194,12 +193,26 @@ h6 {
   cursor: pointer;
 }
 
-.close:hover {
+.baseClose {
+  display: flex;
+  position: absolute;
+  width: 2em;
+  height: 2em;
+  border: none;
+  background-color: transparent;
+  opacity: 0.3;
+  cursor: pointer;
+}
+
+.close:hover,
+.baseClose:hover {
   opacity: 1;
 }
 
 .close:before,
-.close:after {
+.baseClose:before,
+.close:after,
+.baseClose:after {
   position: absolute;
   left: 15px;
   content: " ";
@@ -208,14 +221,15 @@ h6 {
   background-color: #333;
 }
 
-.close:before {
+.close:before,
+.baseClose:before {
   transform: rotate(45deg);
 }
 
-.close:after {
+.close:after,
+.baseClose:after {
   transform: rotate(-45deg);
 }
-
 
 .animatedRainbow a {
   position: absolute;

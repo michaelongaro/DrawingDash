@@ -63,7 +63,7 @@
   width: 100%;
   justify-content: space-between;
   align-items: center;
-  padding: 1em 1em 0.5em 1em;
+  padding: 0 1.5em 0.5em 1.5em;
 }
 
 .title {
@@ -125,4 +125,19 @@
     flex-direction: column;
     gap: 5em;
   }
+}
+
+@media (max-width: 550px) {
+  .topControlsContainer {
+    padding: 0 .75em .5em .75em;
+  }
+
+  .title {
+    gap: .5em;
+  }
+
+  .title>h3 {
+    width: 50%;
+  }
+
 }
