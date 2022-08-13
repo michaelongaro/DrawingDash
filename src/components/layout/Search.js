@@ -1,5 +1,7 @@
 import React, { useRef, useEffect, useState, useContext } from "react";
 
+import { isEqual } from "lodash";
+
 import SearchContext from "./SearchContext";
 import GallaryList from "./GallaryList";
 import AdjAutofillResults from "./AdjAutofillResults";
@@ -23,6 +25,8 @@ import baseClasses from "../../index.module.css";
 const Search = ({ dbPath, margin, idx, forModal }) => {
   const searchCtx = useContext(SearchContext);
   const db = getDatabase(app);
+
+  const [resultsPerPage, setResultsPerPage] = useState(0);
 
   const [dbTitles, setDBTitles] = useState(null);
 
@@ -67,13 +71,57 @@ const Search = ({ dbPath, margin, idx, forModal }) => {
   };
 
   useEffect(() => {
-    searchCtx.resetAllValues(idx);
+    // inital render
+    if (window.innerWidth > 1250) {
+      setResultsPerPage(16);
+    } else if (window.innerWidth > 750) {
+      setResultsPerPage(10);
+    } else {
+      setResultsPerPage(6);
+    }
 
-    // if searching through a user's gallary/likes
-    if (idx !== 0) {
-      searchCtx.getGallary(0, 6, 6, idx, dbPath);
+    function resizeHandler(ev) {
+      if (window.innerWidth > 1250) {
+        setResultsPerPage(16);
+      } else if (window.innerWidth > 750) {
+        setResultsPerPage(10);
+      } else {
+        setResultsPerPage(6);
+      }
+    }
+
+    window.addEventListener("resize", resizeHandler);
+
+    return () => {
+      window.removeEventListener("resize", resizeHandler);
+    };
+  }, []);
+
+  useEffect(() => {
+    if (
+      adjectiveInputRef.current.value === "" &&
+      nounInputRef.current.value === ""
+    ) {
+      searchCtx.resetAllValues(idx);
     }
   }, []);
+
+  useEffect(() => {
+    // waiting for searchCtx.resetAllValues to complete before getGallary
+    if (
+      isEqual(searchCtx.pageSelectorDetails["totalDrawingsByDuration"][idx], {
+        60: 0,
+        180: 0,
+        300: 0,
+      })
+    ) {
+      // if searching through a user's gallary/likes
+
+      if (idx !== 0) {
+        searchCtx.getGallary(0, resultsPerPage, resultsPerPage, idx, dbPath);
+      }
+    }
+  }, [searchCtx.updatePageSelectorDetails, resultsPerPage, idx, dbPath]);
 
   useEffect(() => {
     searchCtx.updateSearchValues(
@@ -397,9 +445,9 @@ const Search = ({ dbPath, margin, idx, forModal }) => {
     searchCtx.updatePageSelectorDetails("durationToManuallyLoad", null, idx);
 
     if (idx !== 0) {
-      searchCtx.getGallary(0, 6, 6, idx, dbPath);
+      searchCtx.getGallary(0, resultsPerPage, resultsPerPage, idx, dbPath);
     } else {
-      searchCtx.getGallary(0, 6, 6, idx, dbPath);
+      searchCtx.getGallary(0, resultsPerPage, resultsPerPage, idx, dbPath);
     }
 
     setGallaryListStaticTitle(

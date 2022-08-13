@@ -1,4 +1,4 @@
-import { createContext, useEffect, useState } from "react";
+import { createContext, useState, useEffect } from "react";
 
 import { getDatabase, get, ref, child } from "firebase/database";
 import { app } from "../../util/init-firebase";
@@ -41,6 +41,13 @@ export function SearchProvider(props) {
     durationToManuallyLoad: [null, null, null],
   });
 
+  useEffect(() => {
+    console.log(
+      "pageSelector changed to",
+      pageSelectorDetails.totalDrawingsByDuration
+    );
+  }, [pageSelectorDetails]);
+
   function manuallyLoadDurations(idx) {
     if (pageSelectorDetails["durationToManuallyLoad"][idx] === "60") {
       return [true, false, false];
@@ -49,15 +56,6 @@ export function SearchProvider(props) {
     } else if (pageSelectorDetails["durationToManuallyLoad"][idx] === "300") {
       return [false, false, true];
     }
-  }
-
-  function updateSearchValues(key, value, idx) {
-    let tempValues = { ...searchValues };
-    let newValue = tempValues[key];
-    newValue[idx] = value;
-
-    tempValues[key] = newValue;
-    setSearchValues(tempValues);
   }
 
   function resetAllValues(idx) {
@@ -77,18 +75,29 @@ export function SearchProvider(props) {
     setSearchValues(tempSearchValues);
   }
 
+  // DIS IS THE CULPRIT FOR RESETTING THEM TO 0
   function resetPageSelectorDetails(idx) {
-    updatePageSelectorDetails("currentPageNumber", 1, idx);
-    updatePageSelectorDetails(
-      "totalDrawingsByDuration",
-      {
-        60: 0,
-        180: 0,
-        300: 0,
-      },
-      idx
-    );
-    updatePageSelectorDetails("durationToManuallyLoad", null, idx);
+    let tempPageSelectorDetails = { ...pageSelectorDetails };
+
+    tempPageSelectorDetails["currentPageNumber"][idx] = 1;
+    tempPageSelectorDetails["totalDrawingsByDuration"][idx] = {
+      60: 0,
+      180: 0,
+      300: 0,
+    };
+    tempPageSelectorDetails["durationToManuallyLoad"][idx] = null;
+
+    console.log("resetting pageSelectorVals");
+    setPageSelectorDetails(tempPageSelectorDetails);
+  }
+
+  function updateSearchValues(key, value, idx) {
+    let tempValues = { ...searchValues };
+    let newValue = tempValues[key];
+    newValue[idx] = value;
+
+    tempValues[key] = newValue;
+    setSearchValues(tempValues);
   }
 
   function updatePageSelectorDetails(key, value, idx) {
@@ -326,7 +335,7 @@ export function SearchProvider(props) {
         }
       })
       .then(() => {
-        console.log("context", gallaryResults);
+        console.log("context", gallaryResults, totalDrawings);
         updateSearchValues("gallary", gallaryResults, idx);
 
         updatePageSelectorDetails(

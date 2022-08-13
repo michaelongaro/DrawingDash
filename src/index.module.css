@@ -191,6 +191,21 @@ h6 {
   background-color: transparent;
   opacity: 0.3;
   cursor: pointer;
+  transition: all 100ms;
+}
+
+.drawingModalClose {
+  display: flex;
+  position: absolute;
+  width: 2em;
+  height: 2em;
+  top: 1em;
+  right: 1.75em;
+  border: none;
+  background-color: transparent;
+  opacity: 0.3;
+  cursor: pointer;
+  transition: all 100ms;
 }
 
 .baseClose {
@@ -202,17 +217,21 @@ h6 {
   background-color: transparent;
   opacity: 0.3;
   cursor: pointer;
+  transition: all 100ms;
 }
 
 .close:hover,
-.baseClose:hover {
+.baseClose:hover,
+.drawingModalClose:hover {
   opacity: 1;
 }
 
 .close:before,
 .baseClose:before,
+.drawingModalClose:before,
 .close:after,
-.baseClose:after {
+.baseClose:after,
+.drawingModalClose:after {
   position: absolute;
   left: 15px;
   content: " ";
@@ -221,13 +240,20 @@ h6 {
   background-color: #333;
 }
 
+.drawingModalClose:before,
+.drawingModalClose:after {
+  background-color: grey;
+}
+
 .close:before,
-.baseClose:before {
+.baseClose:before,
+.drawingModalClose:before {
   transform: rotate(45deg);
 }
 
 .close:after,
-.baseClose:after {
+.baseClose:after,
+.drawingModalClose:after {
   transform: rotate(-45deg);
 }
 

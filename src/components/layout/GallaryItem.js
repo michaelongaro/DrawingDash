@@ -73,6 +73,8 @@ const GallaryItem = ({
   const [imageElementLoaded, setImageElementLoaded] = useState(false);
   const [dynamicAspectRatio, setDynamicAspectRatio] = useState("");
 
+  const [resultsPerPage, setResultsPerPage] = useState(0);
+
   const [showDrawingModal, setShowDrawingModal] = useState(false);
   const [showUserModal, setShowUserModal] = useState(false);
 
@@ -133,6 +135,33 @@ const GallaryItem = ({
   ]);
 
   useEffect(() => {
+    // inital render
+    if (window.innerWidth > 1250) {
+      setResultsPerPage(16);
+    } else if (window.innerWidth > 750) {
+      setResultsPerPage(10);
+    } else {
+      setResultsPerPage(6);
+    }
+
+    function resizeHandler(ev) {
+      if (window.innerWidth > 1250) {
+        setResultsPerPage(16);
+      } else if (window.innerWidth > 750) {
+        setResultsPerPage(10);
+      } else {
+        setResultsPerPage(6);
+      }
+    }
+
+    window.addEventListener("resize", resizeHandler);
+
+    return () => {
+      window.removeEventListener("resize", resizeHandler);
+    };
+  }, []);
+
+  useEffect(() => {
     if (!modalCtx.userModalOpened) {
       setShowUserModal(false);
       setLoadUserModal(false);
@@ -154,7 +183,6 @@ const GallaryItem = ({
   ]);
 
   useEffect(() => {
-    console.log(drawingID);
     get(child(dbRef, `drawings/${drawingID}`)).then((snapshot) => {
       if (snapshot.exists()) {
         setDrawingDetails(snapshot.val());
@@ -245,8 +273,6 @@ const GallaryItem = ({
     }
 
     if (imageElementLoaded && drawingRef.current !== null) {
-      console.log("init", drawingRef.current.getBoundingClientRect().height);
-
       setDynamicAspectRatio(
         `16/${
           drawingRef.current.getBoundingClientRect().height < 253 ? "7.8" : "8"
@@ -266,11 +292,6 @@ const GallaryItem = ({
       }
 
       if (imageElementLoaded && drawingRef.current !== null) {
-        console.log(
-          "resize",
-          drawingRef.current.getBoundingClientRect().height
-        );
-
         setDynamicAspectRatio(
           `16/${
             drawingRef.current.getBoundingClientRect().height < 253
@@ -288,11 +309,10 @@ const GallaryItem = ({
 
   useEffect(() => {
     if (deletionCheckpointReached) {
-      searchCtx.getGallary(0, 6, 6, idx, dbPath);
-      console.log("called getGallary with", idx, dbPath, "066");
+      searchCtx.getGallary(0, resultsPerPage, resultsPerPage, idx, dbPath);
       setDeletionCheckpointReached(false);
     }
-  }, [dbPath, idx, deletionCheckpointReached]);
+  }, [resultsPerPage, dbPath, idx, deletionCheckpointReached]);
 
   useEffect(() => {
     let setTimeoutID;
@@ -352,15 +372,11 @@ const GallaryItem = ({
     get(child(dbRef, `titles/${seconds}/${title}`)).then((snapshot) => {
       if (snapshot.exists()) {
         let drawingIDs = snapshot.val()["drawingID"];
-        console.log("total Ids", drawingIDs);
         // removing the index that has the corresponding drawingID
         drawingIDs.splice(drawingIDs.indexOf(uniqueID), 1);
         if (drawingIDs.length === 0) {
-          console.log("removing whole reg titles of", title);
           remove(ref(db, `titles/${seconds}/${title}`));
         } else {
-          console.log("updating reg titles of", title);
-
           update(ref(db, `titles/${seconds}/${title}`), {
             drawingID: drawingIDs,
           });
@@ -377,16 +393,12 @@ const GallaryItem = ({
           // removing the index that has the corresponding drawingID
           drawingIDs.splice(drawingIDs.indexOf(uniqueID), 1);
           if (drawingIDs.length === 0) {
-            console.log("removing whole reg titles of", title);
-
             remove(ref(db, `users/${user}/titles/${seconds}/${title}`)).then(
               () => {
                 setDeletionCheckpointReached(true);
               }
             );
           } else {
-            console.log("updating reg titles of", title);
-
             update(ref(db, `users/${user}/titles/${seconds}/${title}`), {
               drawingID: drawingIDs,
             }).then(() => {
@@ -587,7 +599,7 @@ const GallaryItem = ({
               position: "relative",
               display:
                 imageElementLoaded && !showTempBaselineSkeleton && !isFetching
-                  ? "block"
+                  ? "flex"
                   : "none",
               aspectRatio: "16/7.75",
 
@@ -650,13 +662,15 @@ const GallaryItem = ({
                 backgroundColor: hoveringOnDeleteButton ? "red" : "transparent",
                 opacity:
                   location.pathname === "/profile/gallery" &&
-                  hoveringOnImage &&
+                  (hoveringOnImage ||
+                    matchMedia("(hover: none), (pointer: coarse)").matches) &&
                   !modalCtx.userModalOpened
                     ? 1
                     : 0,
                 pointerEvents:
                   location.pathname === "/profile/gallery" &&
-                  hoveringOnImage &&
+                  (hoveringOnImage ||
+                    matchMedia("(hover: none), (pointer: coarse)").matches) &&
                   !modalCtx.userModalOpened
                     ? "auto"
                     : "none",

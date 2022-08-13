@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 
 import { useLocation } from "react-router-dom";
 import { Outlet } from "react-router";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 
 import ProfileNavigation from "../components/layout/ProfileNavigation";
 
@@ -63,25 +63,28 @@ const Profile = () => {
   }, []);
 
   return (
-    <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-      transition={{ duration: 0.2 }}
-    >
-      <div
-        style={{
-          minHeight:
-            location.pathname === "/profile/preferences" ? "82vh" : "100vh",
-        }}
-        className={classes.horizontalContain}
+    <AnimatePresence>
+      <motion.div
+        key={"profile"}
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        transition={{ duration: 0.2 }}
       >
-        {showProfileNavigation && <ProfileNavigation />}
-        <div style={profileCardStyles}>
-          <Outlet />
+        <div
+          style={{
+            minHeight:
+              location.pathname === "/profile/preferences" ? "82vh" : "100vh",
+          }}
+          className={classes.horizontalContain}
+        >
+          {showProfileNavigation && <ProfileNavigation />}
+          <div style={profileCardStyles}>
+            <Outlet />
+          </div>
         </div>
-      </div>
-    </motion.div>
+      </motion.div>
+    </AnimatePresence>
   );
 };
 

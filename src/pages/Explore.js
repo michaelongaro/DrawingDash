@@ -1,5 +1,5 @@
 import React, { useState, useContext, useEffect } from "react";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 
 import SearchContext from "../components/layout/SearchContext";
 
@@ -31,6 +31,7 @@ function Explore() {
   }, [searchCtx.searchValues]);
   return (
     <motion.div
+      key={"explore"}
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}

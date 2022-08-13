@@ -24,7 +24,7 @@ const Gallary = () => {
           <div style={{ margin: "1em" }}>
             <Search
               dbPath={`users/${user.sub}/titles`}
-              margin={"1em"}
+              margin={"0"}
               idx={2}
               forModal={false}
             />

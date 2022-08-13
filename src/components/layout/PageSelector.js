@@ -16,6 +16,11 @@ const PageSelector = ({ currentlyShownDuration, idx, databasePath }) => {
   const [resultsPerPage, setResultsPerPage] = useState(0);
   const [numPages, setNumPages] = useState(0);
 
+  console.log("currShown:", currentlyShownDuration, idx, databasePath);
+
+  // still gall 300 -> likes, it doesn't show page selector buttons
+  // on likes
+
   useEffect(() => {
     // inital render
     if (window.innerWidth > 1250) {
@@ -56,7 +61,19 @@ const PageSelector = ({ currentlyShownDuration, idx, databasePath }) => {
         )
       );
     }
-  }, [resultsPerPage, searchCtx.pageSelectorDetails]);
+  }, [
+    resultsPerPage,
+    searchCtx.pageSelectorDetails,
+    currentlyShownDuration,
+    idx,
+  ]);
+
+  useEffect(() => {
+    if (inputRef.current !== null) {
+      inputRef.current.value =
+        searchCtx.pageSelectorDetails["currentPageNumber"][idx];
+    }
+  }, [searchCtx.pageSelectorDetails, idx]);
 
   function handleSubmit(ev) {
     ev.preventDefault();
@@ -179,11 +196,18 @@ const PageSelector = ({ currentlyShownDuration, idx, databasePath }) => {
             </button>
             <form onSubmit={handleSubmit}>
               <input
+                ref={inputRef}
                 type={"number"}
                 min={1}
                 max={numPages}
+                placeholder={1}
+                style={{
+                  color:
+                    inputRef.current !== null && inputRef.current?.value === ""
+                      ? "grey"
+                      : "black",
+                }}
                 className={classes.pageSelectorInput}
-                ref={inputRef}
                 onChange={(e) => {
                   setCustomPageNumber(parseInt(e.target.value));
                 }}

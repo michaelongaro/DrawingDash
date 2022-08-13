@@ -74,9 +74,11 @@ const Sidebar = ({ pageWrapId, outerContainerId }) => {
   useEffect(() => {
     // just for initial render
     if (window.innerWidth < 750) {
-      setSidebarWidth("100%");
+      setSidebarWidth("75%");
+    } else if (window.innerWidth >= 750 && window.innerWidth < 1350) {
+      setSidebarWidth("33%");
     } else {
-      setSidebarWidth("50%");
+      setSidebarWidth("25%");
     }
 
     function touchHandler(e) {
@@ -90,9 +92,11 @@ const Sidebar = ({ pageWrapId, outerContainerId }) => {
 
     function resizeHandler() {
       if (window.innerWidth < 750) {
-        setSidebarWidth("100%");
+        setSidebarWidth("75%");
+      } else if (window.innerWidth >= 750 && window.innerWidth < 1350) {
+        setSidebarWidth("33%");
       } else {
-        setSidebarWidth("50%");
+        setSidebarWidth("25%");
       }
     }
 

@@ -40,7 +40,7 @@ const Likes = () => {
             <div style={{ margin: "1em" }}>
               <Search
                 dbPath={`users/${user.sub}/likes`}
-                margin={"1em"}
+                margin={"0"}
                 idx={2}
                 forModal={false}
               />

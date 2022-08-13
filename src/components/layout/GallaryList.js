@@ -32,6 +32,8 @@ const GallaryList = ({
   const location = useLocation();
   console.log(location.pathname);
 
+  const [dynamicWidth, setDyanmicWidth] = useState(0);
+
   const [showEmptyResults, setShowEmptyResults] = useState(false);
 
   const [durationStates, setDurationStates] = useState([false, false, false]);
@@ -81,8 +83,6 @@ const GallaryList = ({
           setSkeletonRatio(6.275);
         } else if (idx === 0) {
           setSkeletonRatio(3.5);
-        } else if (idx === -1) {
-          // ratio for featured drawings/maybe could use idx === 0
         }
 
         // used if want to load a different page other than the default order (60->180->300)
@@ -115,10 +115,34 @@ const GallaryList = ({
         }
       }
     }
-  }, [drawingIDs]);
+    // below dep was only drawingIDs
+  }, [drawingIDs, forModal, idx, searchCtx.pageSelectorDetails]);
 
   useEffect(() => {
     // just for initial render
+
+    if (window.innerWidth > 1500 && !forDailyFeatured && !forModal) {
+      setDyanmicWidth("90");
+    } else if (
+      window.innerWidth < 1500 &&
+      window.innerWidth > 1000 &&
+      forDailyFeatured
+    ) {
+      setDyanmicWidth("80");
+    } else if (
+      window.innerWidth < 1000 &&
+      window.innerWidth > 750 &&
+      forDailyFeatured
+    ) {
+      setDyanmicWidth("90");
+    } else if (window.innerWidth < 750 && forDailyFeatured) {
+      setDyanmicWidth("100");
+    }
+
+    if (forModal) {
+      setDyanmicWidth("100");
+    }
+
     if (window.innerWidth <= 500) {
       setMinMobileWidthReached(true);
     } else {
@@ -126,17 +150,40 @@ const GallaryList = ({
     }
 
     function resizeHandler() {
+      if (window.innerWidth > 1500 && !forDailyFeatured && !forModal) {
+        setDyanmicWidth("90");
+      } else if (
+        window.innerWidth < 1500 &&
+        window.innerWidth > 1000 &&
+        forDailyFeatured
+      ) {
+        setDyanmicWidth("80");
+      } else if (
+        window.innerWidth < 1000 &&
+        window.innerWidth > 750 &&
+        forDailyFeatured
+      ) {
+        setDyanmicWidth("90");
+      } else if (window.innerWidth < 750 && forDailyFeatured) {
+        setDyanmicWidth("100");
+      }
+
+      if (forModal) {
+        setDyanmicWidth("100");
+      }
+
       if (window.innerWidth <= 500) {
         setMinMobileWidthReached(true);
       } else {
         setMinMobileWidthReached(false);
       }
     }
+
     window.addEventListener("resize", resizeHandler);
     return () => {
       window.removeEventListener("resize", resizeHandler);
     };
-  }, []);
+  }, [forDailyFeatured, forModal]);
 
   useEffect(() => {
     if (showEmptyResults) {
@@ -401,10 +448,7 @@ const GallaryList = ({
             </div>
           </div>
 
-          <Card
-            width={forDailyFeatured || forModal ? "100" : "90"}
-            margin={margin}
-          >
+          <Card width={dynamicWidth} margin={margin}>
             {durationStates[0] && (
               <div
                 style={{
@@ -549,13 +593,9 @@ const GallaryList = ({
           {/* page swap buttons */}
           <div
             style={{
-              display: !forDailyFeatured ? "flex" : "none",
+              display: !forDailyFeatured && !showEmptyResults ? "flex" : "none",
               gap: "1em",
-              marginTop:
-                location.pathname !== "/profile/gallery" &&
-                location.pathname !== "/profile/likes"
-                  ? "1em"
-                  : 0,
+              marginTop: "1em",
             }}
             className={baseClasses.baseFlex}
           >

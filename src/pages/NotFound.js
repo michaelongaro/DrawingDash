@@ -19,6 +19,7 @@ const NotFound = () => {
   };
   return (
     <motion.div
+      key={"notFound"}
       style={{ height: "70vh" }}
       className={baseClasses.baseFlex}
       initial={{ opacity: 0 }}

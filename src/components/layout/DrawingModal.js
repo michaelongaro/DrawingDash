@@ -188,7 +188,7 @@ const DrawingModal = ({
   useEffect(() => {
     // just for initial render
     if (window.innerWidth > 1000) {
-      setModalWidth("80vw");
+      setModalWidth("75vw");
     } else if (window.innerWidth > 775 && window.innerWidth < 1000) {
       setModalWidth("95vw");
     } else if (
@@ -561,7 +561,7 @@ const DrawingModal = ({
           className={baseClasses.baseVertFlex}
           ref={drawingModalRef}
         >
-          <Card>
+          <Card width={"100"}>
             {/* ------ imageinfo -------- */}
 
             {/* image loading skeleton */}
@@ -665,7 +665,7 @@ const DrawingModal = ({
                   display: imageElementLoaded ? "flex" : "none",
                   right: "1em",
                 }}
-                className={baseClasses.close}
+                className={baseClasses.drawingModalClose}
                 onClick={() => {
                   setCloseButtonClicked(true);
                 }}

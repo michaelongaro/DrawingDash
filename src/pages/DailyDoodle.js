@@ -7,6 +7,7 @@ import { Canvas } from "../canvas/Canvas";
 function DailyDoodle() {
   return (
     <motion.div
+      key={"daily"}
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}

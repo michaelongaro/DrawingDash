@@ -7,7 +7,11 @@ function Card(props) {
       style={{
         minWidth: `${props.width}%`,
         // maxWidth: `${props.width}%`,
-        width: props?.fullWidth ? "100%" : "90%",
+        width: props?.fullWidth
+          ? "100%"
+          : props?.width
+          ? `${props.width}%`
+          : "90%",
         // def need to think hard about how to get height to scale with width
         // height: props?.fullWidth ? `${(16 / 9) * 100}%` : "undefined",
         margin: `${props.margin}`,
