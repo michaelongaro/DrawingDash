@@ -42,19 +42,6 @@
   border-radius: 1em;
 }
 
-.modal {
-  position: fixed;
-  left: 0;
-  top: 0;
-  right: 0;
-
-  display: flex;
-  justify-content: center;
-  align-items: center;
-
-  margin: 3em;
-}
-
 .topControlsContainer {
   position: relative;
   background-color: rgb(167, 167, 167);
@@ -117,6 +104,25 @@
 
 .activeButton:hover:enabled {
   box-shadow: rgba(253, 76, 0, 0.5) 0 3px 8px;
+}
+
+.modal {
+  position: absolute;
+  left: 0;
+  top: 0;
+
+  width: 100vw;
+  height: 100vh;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 500;
+
+  transition: all 200ms;
 }
 
 @media (max-width: 900px) {

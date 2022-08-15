@@ -13,7 +13,6 @@ import FiveMinuteIcon from "../../svgs/FiveMinuteIcon";
 
 import classes from "./PinnedArtwork.module.css";
 import baseClasses from "../../index.module.css";
-import { motion, AnimatePresence } from "framer-motion";
 
 const PinnedArtwork = () => {
   const pinnedCtx = useContext(PinnedContext);
@@ -93,23 +92,20 @@ const PinnedArtwork = () => {
               }
             }}
           >
-            <AnimatePresence>
-              {isEqual(show60, showModal) && (
-                <motion.div
-                  key={"pinnedModal60"}
-                  initial={{ opacity: 0 }}
-                  animate={{
-                    opacity: 1,
-                  }}
-                  exit={{ opacity: 0 }}
-                  transition={{ duration: 0.17 }}
-                  style={show60}
-                  className={baseClasses.baseFlex}
-                >
+            {/* tried with framer motion but was too stuttery */}
+            <div
+              style={{
+                opacity: isEqual(show60, showModal) ? 1 : 0,
+                pointerEvents: isEqual(show60, showModal) ? "auto" : "none",
+              }}
+              className={classes.modal}
+            >
+              <div style={show60} className={baseClasses.baseFlex}>
+                {isEqual(show60, showModal) && (
                   <PinnedModal seconds={60} ref={ref60} />
-                </motion.div>
-              )}
-            </AnimatePresence>
+                )}
+              </div>
+            </div>
 
             <div>
               <PinnedShowcaseItem
@@ -129,23 +125,20 @@ const PinnedArtwork = () => {
               }
             }}
           >
-            <AnimatePresence>
-              {isEqual(show180, showModal) && (
-                <motion.div
-                  key={"pinnedModal180"}
-                  initial={{ opacity: 0 }}
-                  animate={{
-                    opacity: 1,
-                  }}
-                  exit={{ opacity: 0 }}
-                  transition={{ duration: 0.17 }}
-                  style={show180}
-                  className={baseClasses.baseFlex}
-                >
+            <div
+              style={{
+                opacity: isEqual(show180, showModal) ? 1 : 0,
+                pointerEvents: isEqual(show180, showModal) ? "auto" : "none",
+              }}
+              className={classes.modal}
+            >
+              <div style={show180} className={baseClasses.baseFlex}>
+                {isEqual(show180, showModal) && (
                   <PinnedModal seconds={180} ref={ref180} />
-                </motion.div>
-              )}
-            </AnimatePresence>
+                )}
+              </div>
+            </div>
+
             <div>
               <PinnedShowcaseItem
                 drawingID={pinnedCtx.pinnedDrawingIDs["180"]}
@@ -165,23 +158,20 @@ const PinnedArtwork = () => {
               }
             }}
           >
-            <AnimatePresence exitBeforeEnter>
-              {isEqual(show300, showModal) && (
-                <motion.div
-                  key={"pinnedModal300"}
-                  initial={{ opacity: 0 }}
-                  animate={{
-                    opacity: 1,
-                  }}
-                  exit={{ opacity: 0 }}
-                  transition={{ duration: 0.17 }}
-                  style={show300}
-                  className={baseClasses.baseFlex}
-                >
+            <div
+              style={{
+                opacity: isEqual(show300, showModal) ? 1 : 0,
+                pointerEvents: isEqual(show300, showModal) ? "auto" : "none",
+              }}
+              className={classes.modal}
+            >
+              <div style={show300} className={baseClasses.baseFlex}>
+                {isEqual(show300, showModal) && (
                   <PinnedModal seconds={300} ref={ref300} />
-                </motion.div>
-              )}
-            </AnimatePresence>
+                )}
+              </div>
+            </div>
+
             <div>
               <PinnedShowcaseItem
                 drawingID={pinnedCtx.pinnedDrawingIDs["300"]}
