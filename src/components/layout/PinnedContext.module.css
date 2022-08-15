@@ -1,4 +1,5 @@
 .highlighted {
-  border: 0.5em solid #4be639;
-  border-radius: 1.5em;
+  outline: 0.5em solid #4be639 !important;
+  border-radius: 1em;
+  transition: all 200ms;
 }

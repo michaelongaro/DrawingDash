@@ -5,7 +5,7 @@ const EaselIcon = ({ dimensions }) => {
     <svg
       width={dimensions}
       height={dimensions}
-      viewBox="-55 0 511 511.99844"
+      viewBox="-75 0 511 511.99844"
       xmlns="http://www.w3.org/2000/svg"
     >
       <path

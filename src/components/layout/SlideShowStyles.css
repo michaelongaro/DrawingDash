@@ -1,6 +1,13 @@
 /* only in this file because I couldn't figure out how to get regular .module css
    file to recognize the chained class styles */
 
+.images-wrap>div {
+  height: 193px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
 .durationIndicator {
   opacity: 0.3;
   cursor: pointer;

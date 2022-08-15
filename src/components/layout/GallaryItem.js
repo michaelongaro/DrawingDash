@@ -97,6 +97,8 @@ const GallaryItem = ({
   const [hoveringOnUsernameTooltip, setHoveringOnUsernameTooltip] =
     useState(false);
 
+  const [heartScale, setHeartScale] = useState(1);
+
   const [ableToShowProfilePicture, setAbleToShowProfilePicture] =
     useState(false);
 
@@ -602,16 +604,6 @@ const GallaryItem = ({
                   ? "flex"
                   : "none",
               aspectRatio: "16/7.75",
-
-              // dynamicAspectRatio,
-
-              // imageElementLoaded && drawingRef.current !== null
-              //   ? `16/${
-              //       drawingRef.current.getBoundingClientRect().height < 253
-              //         ? ""
-              //         : "8"
-              //     }`
-              //   : "",
             }}
             onClick={() => {
               if (
@@ -854,21 +846,48 @@ const GallaryItem = ({
                     height: "1.5em",
                   }}
                   onClick={() => {
+                    console.log(0);
                     if (!isLoading && !isAuthenticated) {
                       setShowTooltip(true);
                     } else if (!isLoading && isAuthenticated) {
                       toggleFavoriteStatusHandler();
                     }
                   }}
+                  onMouseDown={() => {
+                    console.log(1);
+                    setHeartScale(0.95);
+                  }}
+                  onMouseUp={() => {
+                    console.log(2);
+                    setHeartScale(1);
+                  }}
+                  onTouchStart={() => {
+                    console.log(3);
+                    setHeartScale(0.95);
+                  }}
+                  onTouchEnd={() => {
+                    console.log(4);
+                    setHeartScale(1);
+                  }}
                   onMouseEnter={() => {
+                    console.log(5);
                     setHoveringOnHeart(true);
+                    setHeartScale(1.05);
                   }}
                   onMouseLeave={() => {
+                    console.log(6);
                     setHoveringOnHeart(false);
+                    setHeartScale(0.95);
                   }}
                 >
                   {/* heart icon(s) */}
-                  <div style={{ cursor: "pointer" }}>
+                  <div
+                    style={{
+                      cursor: "pointer",
+                      transform: `scale(${heartScale})`,
+                      transition: "all 200ms",
+                    }}
+                  >
                     {hoveringOnHeart ? (
                       favoritesCtx.itemIsFavorite(
                         drawingID,

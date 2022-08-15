@@ -150,7 +150,13 @@ const SlideShow = ({ pinnedDrawings, pinnedMetadata, username }) => {
       ) : (
         <Slide {...properties}>
           {pinnedDrawings.map((drawing, index) => (
-            <div key={index}>
+            <div
+              style={{
+                aspectRatio: "16/7.75",
+              }}
+              className={baseClasses.baseFlex}
+              key={index}
+            >
               {drawing === "" ? (
                 <div
                   style={{
@@ -173,7 +179,15 @@ const SlideShow = ({ pinnedDrawings, pinnedMetadata, username }) => {
                   <div>drawing yet</div>
                 </div>
               ) : (
-                <img draggable="false" src={drawing} alt="Slideshow" />
+                <img
+                  style={{
+                    maxWidth: "100%",
+                    maxHeight: "100%",
+                  }}
+                  draggable="false"
+                  src={drawing}
+                  alt="Slideshow"
+                />
               )}
             </div>
           ))}

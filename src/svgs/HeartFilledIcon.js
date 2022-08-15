@@ -1,6 +1,6 @@
 import React from "react";
 
-const HeartFilledIcon = ({dimensions}) => {
+const HeartFilledIcon = ({ dimensions }) => {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -11,6 +11,9 @@ const HeartFilledIcon = ({dimensions}) => {
       y="0"
       viewBox="0 0 512 512"
       style={{ enableBackground: "new 0 0 512 512" }}
+      // hmmm so if we keep the onMouseEnter/onTouchStart over in these svg components
+      // will have to start the broken heart and this one here at the larger size right?
+      // think abouuut it :3
     >
       <g>
         <link type="text/css" rel="stylesheet" id="dark-mode-custom-link" />

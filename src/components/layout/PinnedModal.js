@@ -14,6 +14,7 @@ import FiveMinuteIcon from "../../svgs/FiveMinuteIcon";
 
 import classes from "./PinnedArtwork.module.css";
 import baseClasses from "../../index.module.css";
+import { AnimatePresence, motion } from "framer-motion";
 
 const PinnedModal = React.forwardRef((props, modalRef) => {
   const pinnedCtx = useContext(PinnedContext);
@@ -60,29 +61,52 @@ const PinnedModal = React.forwardRef((props, modalRef) => {
     );
   }, []);
 
+  const variants = {
+    open: { opacity: 1, scale: 1 },
+    closed: { opacity: 0, scale: 0 },
+  };
+
   return (
     <div
+      // hmm maybe use framer motion here to do the fade in/out?
       style={{
         minWidth: "50vw",
-        width: loadedDrawingIDs
-          ? loadedDrawingIDs.length === 0
-            ? ""
-            : "80%"
-          : "80%",
+        // width: loadedDrawingIDs
+        //   ? loadedDrawingIDs.length === 0
+        //     ? ""
+        //     : "80%"
+        //   : "80%",
+        // height: loadedDrawingIDs
+        //   ? loadedDrawingIDs.length === 0
+        //     ? ""
+        //     : "90vh"
+        //   : "90vh",
+        width: "80%",
         height: "90vh",
+        boxShadow: "0 4px 8px rgb(0 0 0 / 20%)",
+        borderRadius: "1em",
       }}
-      classname={classes.card}
+      // className={classes.card}
       ref={modalRef}
     >
-      <div style={{ height: "100%" }} className={classes.innerModal}>
+      <div
+        style={{
+          height: "100%",
+          paddingTop: "1em",
+          justifyContent: "normal",
+        }}
+        className={classes.innerModal}
+      >
         <div className={classes.topControlsContainer}>
           <div className={classes.save}>
             <button
               className={baseClasses.activeButton}
               disabled={!pinnedCtx.manuallyChangedSelectedDrawing}
               onClick={() => {
-                pinnedCtx.updateDatabase(pinnedCtx.selectedPinnedDrawings);
-                pinnedCtx.setPinnedDrawingIDs(pinnedCtx.selectedPinnedDrawings);
+                pinnedCtx.updateDatabase(pinnedCtx.selectedPinnedDrawingIDs);
+                pinnedCtx.setPinnedDrawingIDs(
+                  pinnedCtx.selectedPinnedDrawingIDs
+                );
                 pinnedCtx.setShow60({ display: "none" });
                 pinnedCtx.setShow180({ display: "none" });
                 pinnedCtx.setShow300({ display: "none" });
@@ -111,7 +135,7 @@ const PinnedModal = React.forwardRef((props, modalRef) => {
 
         {loadedDrawingIDs && (
           <div
-            style={{ height: "80%", width: "90%" }}
+            style={{ height: "85%", width: "90%" }}
             className={classes.gallaryList}
           >
             <PinnedArtList
@@ -122,6 +146,9 @@ const PinnedModal = React.forwardRef((props, modalRef) => {
         )}
       </div>
     </div>
+    //     </motion.div>
+    //   )}
+    // </AnimatePresence>
   );
 });
 

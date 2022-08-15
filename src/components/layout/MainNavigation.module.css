@@ -10,6 +10,7 @@
 
 .navbar {
   width: 50%;
+  transition: all 200ms;
 }
 
 .mainLinkButtons {
@@ -71,7 +72,6 @@
   border-style: solid;
   transition: all 200ms;
 }
-
 
 .dailyDrawButton:hover {
   background-color: hsl(348deg 100% 44%);
@@ -260,45 +260,37 @@
   place-items: center;
 }
 
-@media only screen and (hover: none) and (max-width: 2000px) {
+@media only screen and (hover: hover) and (max-width: 1850px) {
   .navbar {
-    width: 40%;
+    width: 55%;
   }
 }
 
-@media only screen and (hover: hover) and (max-width: 1750px) {
+@media only screen and (hover: hover) and (max-width: 1700px) {
   .navbar {
     width: 60%;
   }
 }
 
-
-
-@media (max-width: 1500px) {
+@media only screen and (hover: hover) and (max-width: 1455px) {
   .navbar {
-    width: 50%;
+    width: 70%;
   }
 }
 
-@media only screen and (hover: hover) and (max-width: 1500px) {
+@media only screen and (hover: hover) and (max-width: 1350px) {
   .navbar {
     width: 70%;
   }
 }
 
 @media only screen and (hover: hover) and (max-width: 1255px) {
+  .navbar {
+    width: 55%;
+  }
 
-  /* .navbar {
-    width: 75%;
-  } */
   .welcomeText {
     display: none;
-  }
-}
-
-@media only screen and (hover: hover) and (max-width: 1250px) {
-  .navbar {
-    width: 70%;
   }
 
   .signInButtons>button {
@@ -306,23 +298,50 @@
   }
 }
 
+/* @media only screen and (hover: hover) and (max-width: 1250px) {
+  /* .navbar {
+    width: 70%;
+  }
 
-/* change the width of navbar to like 80% or sum shit around this px area */
+  .signInButtons>button {
+    width: 100% !important;
+  }
+} */
 
+@media only screen and (hover: hover) and (max-width: 920px) {
+  .logo {
+    padding-left: 0.5em;
+  }
 
-/* equal to or smaller than {1150} */
+  .navbar {
+    width: 80%;
+  }
+}
+
+/* mobile */
+
+@media only screen and (hover: hover) and (max-width: 1075px) {
+  .navbar {
+    width: 70%;
+  }
+}
+
+@media only screen and (hover: none) and (max-width: 2000px) {
+  .navbar {
+    width: 40%;
+  }
+}
+
+@media only screen and (hover: none) and (max-width: 1500px) {
+  .navbar {
+    width: 50%;
+  }
+}
+
 @media (max-width: 1200px) {
   .navbar {
     width: 60%;
   }
-}
-
-@media only screen and (hover: hover) and (max-width: 1075px) {
-
-  .navbar {
-    width: 70%;
-  }
-
 }
 
 @media (max-width: 1000px) {
@@ -343,24 +362,8 @@
   .mainLinkButtons {
     gap: 1.5em;
   }
-
-  /*
-  .header ul {
-    gap: 4.5em;
-  }
-
-*/
 }
 
-@media only screen and (hover: hover) and (max-width: 920px) {
-  .logo {
-    padding-left: .5em;
-  }
-
-  .navbar {
-    width: 80%;
-  }
-}
 
 @media (max-width: 760px) {
   .navbar {
@@ -382,13 +385,11 @@
   .navButton {
     display: none;
   }
-
-
 }
 
-@media (max-width: 600px) {
+@media (max-width: 630px) {
   .navbar {
-    width: 70%;
+    width: 60%;
   }
 
   #logoImg {
@@ -406,20 +407,21 @@
   .exploreButton {
     width: 180%;
   }
-
-  /* .header ul {
-    gap: 3.5em;
-  } */
 }
 
+@media (max-width: 540px) {
+  .navbar {
+    width: 67%;
+  }
+}
 
 @media (max-width: 450px) {
   .navbar {
-    width: 80%;
+    width: 55%;
   }
 
   .logo {
-    padding-left: .5em;
+    padding-left: 0.5em;
   }
 
   .mainLinkButtons {
@@ -427,7 +429,7 @@
   }
 
   .header ul {
-    gap: .5em;
+    gap: 0.5em;
   }
 
   .dailyDrawButton {
@@ -440,5 +442,17 @@
 
   .navButton {
     display: none;
+  }
+}
+
+@media (max-width: 410px) {
+  .navbar {
+    width: 62%;
+  }
+}
+
+@media (max-width: 350px) {
+  .navbar {
+    width: 75%;
   }
 }

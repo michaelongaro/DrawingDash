@@ -45,8 +45,6 @@ const PinnedShowcaseItem = ({ drawingID, timer }) => {
         <div style={{ gap: ".75em" }} className={baseClasses.baseVertFlex}>
           <div
             style={{
-              // width: window.innerWidth / 7.442,
-              // height: window.innerHeight / 7.442,
               width: "258px",
               height: "125px",
               borderRadius: "1em",
@@ -67,13 +65,7 @@ const PinnedShowcaseItem = ({ drawingID, timer }) => {
         <div
           style={{
             position: "relative",
-            // width: window.innerWidth / 7.442,
-            // height: window.innerHeight / 7.442,
             width: "258px",
-            // aspectRatio: "16/9",
-
-            // width: "258px",
-            // aspectRatio: "16/9",
             height: "125px",
           }}
           onMouseEnter={() => setHoveringOnShowcase(true)}
@@ -89,11 +81,7 @@ const PinnedShowcaseItem = ({ drawingID, timer }) => {
               position: "absolute",
               top: 0,
               left: 0,
-              // have these dimensions be a ratio like the loading ones
-              // width: window.innerWidth / 7.442,
-              // height: window.innerHeight / 7.442,
               width: "258px",
-              // aspectRatio: "16/9",
               height: "125px",
               opacity: hoveringOnShowcase || noPinnedDrawing ? 1 : 0,
               transition: "all 200ms",
@@ -105,10 +93,7 @@ const PinnedShowcaseItem = ({ drawingID, timer }) => {
               style={{
                 cursor: "pointer",
                 gap: ".5em",
-                // width: window.innerWidth / 7.442,
-                // height: window.innerHeight / 7.442,
                 width: "258px",
-                // aspectRatio: "16/9",
                 height: "125px",
                 opacity: hoveringOnShowcase || noPinnedDrawing ? 1 : 0,
               }}
@@ -124,16 +109,10 @@ const PinnedShowcaseItem = ({ drawingID, timer }) => {
               position: "absolute",
               top: 0,
               left: 0,
-              // width: window.innerWidth / 7.442,
-              // height: window.innerHeight / 7.442,
               width: "258px",
               aspectRatio: "16/9",
             }}
           >
-            {/* mmmkay so you proposed just having a fixed width of the pinned drawing because
-          then obv it would stay constant no matter the innerWidth, hmmm but actually is there an 
-          issue with that? I feel like that woudl work and then for the modal you would idk i guess
-          follow normal gallarylist procedure? hmm */}
             {!noPinnedDrawing && (
               <GallaryItem
                 drawingID={drawingID}

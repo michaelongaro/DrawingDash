@@ -30,7 +30,6 @@ const GallaryList = ({
   const searchCtx = useContext(SearchContext);
 
   const location = useLocation();
-  console.log(location.pathname);
 
   const [dynamicWidth, setDyanmicWidth] = useState(0);
 

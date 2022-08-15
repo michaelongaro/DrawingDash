@@ -21,22 +21,21 @@ function Layout(props) {
           setDynamicHeight("82vh");
         } else {
           if (DSCtx.extraPromptsShown) {
-            setDynamicHeight(
-              document
-                ?.getElementById("extraPromptContainer")
-                ?.getBoundingClientRect().height + 392
-            );
+            if (document.getElementById("extraPromptContainer")) {
+              setDynamicHeight(
+                document
+                  .getElementById("extraPromptContainer")
+                  .getBoundingClientRect().height + 392
+              );
+            }
           } else {
-            console.log(
-              document
-                ?.getElementById("normalPromptContainer")
-                ?.getBoundingClientRect().height
-            );
-            setDynamicHeight(
-              document
-                ?.getElementById("normalPromptContainer")
-                ?.getBoundingClientRect().height + 392
-            );
+            if (document.getElementById("normalPromptContainer")) {
+              setDynamicHeight(
+                document
+                  .getElementById("normalPromptContainer")
+                  .getBoundingClientRect().height + 392
+              );
+            }
           }
         }
       } else if (DSCtx.showPaletteChooser) {
@@ -63,22 +62,21 @@ function Layout(props) {
           setDynamicHeight("82vh");
         } else {
           if (DSCtx.extraPromptsShown) {
-            setDynamicHeight(
-              document
-                .getElementById("extraPromptContainer")
-                .getBoundingClientRect().height + 392
-            );
+            if (document.getElementById("extraPromptContainer")) {
+              setDynamicHeight(
+                document
+                  .getElementById("extraPromptContainer")
+                  .getBoundingClientRect().height + 392
+              );
+            }
           } else {
-            console.log(
-              document
-                ?.getElementById("normalPromptContainer")
-                ?.getBoundingClientRect().height
-            );
-            setDynamicHeight(
-              document
-                .getElementById("normalPromptContainer")
-                .getBoundingClientRect().height + 392
-            );
+            if (document.getElementById("normalPromptContainer")) {
+              setDynamicHeight(
+                document
+                  .getElementById("normalPromptContainer")
+                  .getBoundingClientRect().height + 392
+              );
+            }
           }
         }
       } else if (DSCtx.showPaletteChooser) {

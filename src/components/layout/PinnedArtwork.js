@@ -13,6 +13,7 @@ import FiveMinuteIcon from "../../svgs/FiveMinuteIcon";
 
 import classes from "./PinnedArtwork.module.css";
 import baseClasses from "../../index.module.css";
+import { motion, AnimatePresence } from "framer-motion";
 
 const PinnedArtwork = () => {
   const pinnedCtx = useContext(PinnedContext);
@@ -41,6 +42,7 @@ const PinnedArtwork = () => {
   };
 
   useEffect(() => {
+    console.log("running because 60:", pinnedCtx.show60);
     setShow60(pinnedCtx.show60);
     setShow180(pinnedCtx.show180);
     setShow300(pinnedCtx.show300);
@@ -55,6 +57,7 @@ const PinnedArtwork = () => {
       ) {
         if (ref60.current) {
           if (!ref60.current.contains(event.target)) {
+            console.log("diddn't click inside");
             pinnedCtx.setShow60({ display: "none" });
             pinnedCtx.resetAllAndHighlightNewInit();
           }
@@ -72,9 +75,9 @@ const PinnedArtwork = () => {
       }
     };
 
-    document.addEventListener("mousedown", handler);
+    document.addEventListener("click", handler);
     return () => {
-      document.removeEventListener("mousedown", handler);
+      document.removeEventListener("click", handler);
     };
   });
 
@@ -90,11 +93,23 @@ const PinnedArtwork = () => {
               }
             }}
           >
-            <div style={show60}>
+            <AnimatePresence>
               {isEqual(show60, showModal) && (
-                <PinnedModal seconds={60} ref={ref60} />
+                <motion.div
+                  key={"pinnedModal60"}
+                  initial={{ opacity: 0 }}
+                  animate={{
+                    opacity: 1,
+                  }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.17 }}
+                  style={show60}
+                  className={baseClasses.baseFlex}
+                >
+                  <PinnedModal seconds={60} ref={ref60} />
+                </motion.div>
               )}
-            </div>
+            </AnimatePresence>
 
             <div>
               <PinnedShowcaseItem
@@ -114,11 +129,23 @@ const PinnedArtwork = () => {
               }
             }}
           >
-            <div style={show180}>
+            <AnimatePresence>
               {isEqual(show180, showModal) && (
-                <PinnedModal seconds={180} ref={ref180} />
+                <motion.div
+                  key={"pinnedModal180"}
+                  initial={{ opacity: 0 }}
+                  animate={{
+                    opacity: 1,
+                  }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.17 }}
+                  style={show180}
+                  className={baseClasses.baseFlex}
+                >
+                  <PinnedModal seconds={180} ref={ref180} />
+                </motion.div>
               )}
-            </div>
+            </AnimatePresence>
             <div>
               <PinnedShowcaseItem
                 drawingID={pinnedCtx.pinnedDrawingIDs["180"]}
@@ -138,11 +165,23 @@ const PinnedArtwork = () => {
               }
             }}
           >
-            <div style={show300}>
+            <AnimatePresence exitBeforeEnter>
               {isEqual(show300, showModal) && (
-                <PinnedModal seconds={300} ref={ref300} />
+                <motion.div
+                  key={"pinnedModal300"}
+                  initial={{ opacity: 0 }}
+                  animate={{
+                    opacity: 1,
+                  }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.17 }}
+                  style={show300}
+                  className={baseClasses.baseFlex}
+                >
+                  <PinnedModal seconds={300} ref={ref300} />
+                </motion.div>
               )}
-            </div>
+            </AnimatePresence>
             <div>
               <PinnedShowcaseItem
                 drawingID={pinnedCtx.pinnedDrawingIDs["300"]}

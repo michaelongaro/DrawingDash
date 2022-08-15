@@ -24,7 +24,7 @@ const PinnedArt = (props) => {
   function updateContext() {
     pinnedCtx.setManuallyChangedSelectedDrawing(true);
     pinnedCtx.resetAllAndHighlightNew(`${props.seconds}`, props.idx);
-    pinnedCtx.updateSelectedPinnedDrawings(props.drawingID, props.seconds);
+    pinnedCtx.updateSelectedPinnedDrawingIDs(props.drawingID, props.seconds);
   }
 
   useEffect(() => {

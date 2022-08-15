@@ -113,17 +113,21 @@ h6 {
   padding: 0.75em 1em;
   margin-right: 0.5em;
   filter: brightness(1);
+  transform: scale(1);
   transition-duration: 0.2s, 0.1s;
   transition-property: box-shadow, filter;
+  transition: transform 100ms;
 }
 
 .closeButton:hover:enabled {
   box-shadow: rgba(117, 117, 117, 0.5) 0 3px 5px;
+  transform: scale(1.02);
 }
 
 .closeButton:active:enabled {
   filter: brightness(0.7);
   box-shadow: none;
+  transform: scale(0.98);
 }
 
 .activeButton {
@@ -149,8 +153,10 @@ h6 {
   z-index: 9;
   border: 0;
   filter: brightness(1);
+  transform: scale(1);
   transition-duration: 0.2s, 0.1s;
   transition-property: box-shadow, filter;
+  transition: transform 100ms;
 }
 
 .activeButton:disabled {
@@ -160,11 +166,13 @@ h6 {
 
 .activeButton:hover:enabled {
   box-shadow: rgba(253, 76, 0, 0.5) 0 3px 8px;
+  transform: scale(1.02);
 }
 
 .activeButton:active:enabled {
-  filter: brightness(0.7);
+  filter: brightness(0.8);
   box-shadow: none;
+  transform: scale(0.98);
 }
 
 .baseFlex {

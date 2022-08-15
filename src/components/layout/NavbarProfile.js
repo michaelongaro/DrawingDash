@@ -361,6 +361,7 @@ function NavbarProfile({ forSidebar }) {
                 style={{
                   overflow: "hidden",
                   display: "inline-block",
+                  whiteSpace: "nowrap",
                 }}
               >{`Welcome ${firstTimeVisiting ? "" : "back"},${
                 username ? ` ${username}!` : "!"
