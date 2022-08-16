@@ -9,12 +9,6 @@ export function ModalProvider(props) {
     useState(false);
   const [hideAllModals, setHideAllModals] = useState(false);
 
-  // maybe in return () callback in [] gallitem set this to false?
-
-  useEffect(() => {
-    console.log(drawingModalOpened);
-  }, [drawingModalOpened]);
-
   const context = {
     drawingModalOpened: drawingModalOpened,
     setDrawingModalOpened: setDrawingModalOpened,

@@ -16,11 +16,6 @@ const PageSelector = ({ currentlyShownDuration, idx, databasePath }) => {
   const [resultsPerPage, setResultsPerPage] = useState(0);
   const [numPages, setNumPages] = useState(0);
 
-  console.log("currShown:", currentlyShownDuration, idx, databasePath);
-
-  // still gall 300 -> likes, it doesn't show page selector buttons
-  // on likes
-
   useEffect(() => {
     // inital render
     if (window.innerWidth > 1250) {
@@ -96,14 +91,6 @@ const PageSelector = ({ currentlyShownDuration, idx, databasePath }) => {
     } else if (pageDirection === "next") {
       modifier = searchCtx.pageSelectorDetails["currentPageNumber"][idx] + 1;
     }
-
-    console.log(
-      numPages,
-      resultsPerPage * (modifier - 1),
-      resultsPerPage * (modifier - 1) + resultsPerPage,
-      modifier,
-      searchCtx.pageSelectorDetails["currentPageNumber"][idx]
-    );
 
     searchCtx.getGallary(
       resultsPerPage * (modifier - 1),

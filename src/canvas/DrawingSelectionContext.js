@@ -129,7 +129,6 @@ export function DrawingSelectionProvider(props) {
           // on if their last seen prompts match the current prompts
           if (currentUserInfo && !isAuthenticated) {
             if (!isEqual(currentUserInfo["lastSeenPrompts"], snapshot.val())) {
-              console.log("found currentUserInfo and resetting everything");
               currentUserInfo["lastSeenPrompts"] = snapshot.val();
               currentUserInfo["dailyCompletedPrompts"] = {
                 60: false,

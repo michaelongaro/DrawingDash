@@ -218,10 +218,8 @@ const DrawingModal = ({
                 !mobileCopyToClipboardRef.current.contains(event.target) &&
                 !mobileDownloadRef.current.contains(event.target)
               ) {
-                console.log("outsidemodal");
                 modalCtx.setDrawingModalFromUserOpened(false);
               } else {
-                console.log("normal close");
                 modalCtx.setDrawingModalFromUserOpened(false);
               }
             }
@@ -235,11 +233,8 @@ const DrawingModal = ({
                 !mobileCopyToClipboardRef.current.contains(event.target) &&
                 !mobileDownloadRef.current.contains(event.target)
               ) {
-                console.log("outsidemodal", event.target);
-
                 modalCtx.setDrawingModalOpened(false);
               } else {
-                console.log("normal close");
                 modalCtx.setDrawingModalOpened(false);
               }
             }

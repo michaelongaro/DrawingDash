@@ -271,7 +271,6 @@ const Preferences = () => {
 
   useEffect(() => {
     if (DBCropData && image) {
-      console.log("242 called", DBCropData);
       showCroppedImage(true, true);
     }
   }, [image, DBCropData]);
@@ -292,10 +291,6 @@ const Preferences = () => {
     }
   }, [inputWasChanged, username, status]);
 
-  useEffect(() => {
-    console.log(inputWasChanged, ableToPost);
-  }, [inputWasChanged, ableToPost]);
-
   // return save to true after pushing to db
   function handleSubmit(event) {
     event.preventDefault();
@@ -304,7 +299,6 @@ const Preferences = () => {
       upload();
     } else {
       if (isEditingImage) {
-        console.log("uploaded just a crop change");
         PFPUpdateCtx.setJustACropChange(true);
         setIsEditingImage(false);
       }
@@ -356,7 +350,6 @@ const Preferences = () => {
   async function upload() {
     const photoRef = ref_storage(storage, `users/${user.sub}/profile`);
 
-    console.log(userUploadedImage, image);
     const snapshot = await uploadBytes(photoRef, userUploadedImage ?? image, {
       contentType: imageFileType,
     });
@@ -369,10 +362,6 @@ const Preferences = () => {
     PFPUpdateCtx.setRefreshProfilePicture(true);
     PFPUpdateCtx.setJustACropChange(false);
   }
-
-  useEffect(() => {
-    console.log(isEditingImage);
-  }, [isEditingImage]);
 
   const handleChange = (e) => {
     // will eventually have to error handle if something other than jpeg/jpg/png is uploaded
@@ -388,7 +377,6 @@ const Preferences = () => {
         return;
       }
 
-      console.log("didn't return");
       setUserUploadedImage(e.target.files[0]);
       let reader = new FileReader();
       reader.onload = function (e) {
@@ -764,7 +752,6 @@ const Preferences = () => {
                   disabled={!ableToPost}
                   className={baseClasses.activeButton}
                   onClick={(e) => {
-                    console.log("clicked");
                     if (ableToPost) {
                       handleSubmit(e);
                     }

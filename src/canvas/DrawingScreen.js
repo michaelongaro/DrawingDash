@@ -125,7 +125,6 @@ const DrawingScreen = () => {
     });
 
     // 3-2-1 countdown animation
-    console.log("animation stated");
     anime({
       targets: "#threeCountdown",
       loop: false,

@@ -13,6 +13,8 @@ export function SearchProvider(props) {
     autofilledNounInput: ["", "", ""],
     requestedAdjectives: [[], [], []],
     requestedNouns: [[], [], []],
+    submittedAdjectives: [[], [], []],
+    submittedNouns: [[], [], []],
     adjKeyboardNavigationIndex: [-1, -1, -1],
     nounKeyboardNavigationIndex: [-1, -1, -1],
     anInputIsFocused: [false, false, false],
@@ -41,13 +43,6 @@ export function SearchProvider(props) {
     durationToManuallyLoad: [null, null, null],
   });
 
-  useEffect(() => {
-    console.log(
-      "pageSelector changed to",
-      pageSelectorDetails.totalDrawingsByDuration
-    );
-  }, [pageSelectorDetails]);
-
   function manuallyLoadDurations(idx) {
     if (pageSelectorDetails["durationToManuallyLoad"][idx] === "60") {
       return [true, false, false];
@@ -67,6 +62,8 @@ export function SearchProvider(props) {
     tempSearchValues["autofilledNounInput"][idx] = "";
     tempSearchValues["requestedAdjectives"][idx] = [];
     tempSearchValues["requestedNouns"][idx] = [];
+    tempSearchValues["submittedAdjectives"][idx] = [];
+    tempSearchValues["submittedNouns"][idx] = [];
     tempSearchValues["adjKeyboardNavigationIndex"][idx] = -1;
     tempSearchValues["nounKeyboardNavigationIndex"][idx] = -1;
     tempSearchValues["anInputIsFocused"][idx] = false;
@@ -75,7 +72,6 @@ export function SearchProvider(props) {
     setSearchValues(tempSearchValues);
   }
 
-  // DIS IS THE CULPRIT FOR RESETTING THEM TO 0
   function resetPageSelectorDetails(idx) {
     let tempPageSelectorDetails = { ...pageSelectorDetails };
 
@@ -87,7 +83,6 @@ export function SearchProvider(props) {
     };
     tempPageSelectorDetails["durationToManuallyLoad"][idx] = null;
 
-    console.log("resetting pageSelectorVals");
     setPageSelectorDetails(tempPageSelectorDetails);
   }
 
@@ -127,15 +122,29 @@ export function SearchProvider(props) {
     let fetchAll = false;
 
     if (
-      searchValues["adjSearch"][idx] === "" &&
-      searchValues["nounSearch"][idx] === ""
+      idx !== 0 &&
+      searchValues["submittedAdjectives"][idx].length === 0 &&
+      searchValues["submittedNouns"][idx].length === 0
     ) {
-      if (idx !== 0) {
-        fetchAll = true;
-      } else {
-        return;
-      }
+      console.log("fetching all");
+      fetchAll = true;
     }
+
+    // if (
+    //   // searchValues["adjSearch"][idx] === "" &&
+    //   // searchValues["nounSearch"][idx] === ""
+    //   searchValues["requestedAdjectives"][idx].length === 0 &&
+    //   searchValues["requestedNouns"][idx].length === 0
+
+    //   // AHHHHHHHHHH take deep fresh start tommorrow you are lahoosing your moind!!!
+    //   // but don't worry I am 99% sure this isn't actually complex so you should be gucci ;3
+    // ) {
+    //   if (idx !== 0) {
+    //     fetchAll = true;
+    //   } else {
+    //     return;
+    //   }
+    // }
 
     let fullQuery = `${searchValues["adjSearch"][idx]} ${searchValues["nounSearch"][idx]}`;
 

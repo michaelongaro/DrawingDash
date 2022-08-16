@@ -60,7 +60,6 @@ const GallaryList = ({
   }, []);
 
   useEffect(() => {
-    console.log("gallList ids", drawingIDs);
     if (drawingIDs) {
       if (isEqual(drawingIDs, { 60: [], 180: [], 300: [] })) {
         setShowEmptyResults(true);
@@ -554,12 +553,12 @@ const GallaryList = ({
               <div
                 style={{
                   gap: "1em",
-                  minWidth:
-                    idx === 1
-                      ? location.pathname === "/profile/gallery"
-                        ? "50vw"
-                        : "74vw"
-                      : "75vw",
+                  // minWidth:
+                  //   idx === 1
+                  //     ? location.pathname === "/profile/gallery"
+                  //       ? "50vw"
+                  //       : "74vw"
+                  //     : "75vw",
                   minHeight: "350px",
                 }}
                 className={baseClasses.baseVertFlex}

@@ -49,6 +49,7 @@ const Search = ({ dbPath, margin, idx, forModal }) => {
   const [nounInputFocused, setNounInputFocused] = useState(false);
 
   const [mobileWidthReached, setMobileWidthReached] = useState(false);
+  const [inputsWereSubmitted, setInputsWereSubmitted] = useState(false);
 
   useEffect(() => {
     if ((adjInputFocused || nounInputFocused) && mobileWidthReached) {
@@ -127,21 +128,30 @@ const Search = ({ dbPath, margin, idx, forModal }) => {
   }, []);
 
   useEffect(() => {
-    // waiting for searchCtx.resetAllValues to complete before getGallary
-    if (
-      isEqual(searchCtx.pageSelectorDetails["totalDrawingsByDuration"][idx], {
-        60: 0,
-        180: 0,
-        300: 0,
-      })
-    ) {
-      // if searching through a user's gallary/likes
-
-      if (idx !== 0) {
+    if (resultsPerPage !== 0) {
+      console.log("entered up top", getSubmittedInputValues());
+      if (
+        idx !== 0 &&
+        getSubmittedInputValues()["subAdjs"].length === 0 &&
+        getSubmittedInputValues()["subNouns"].length === 0
+      ) {
+        searchCtx.getGallary(0, resultsPerPage, resultsPerPage, idx, dbPath);
+      } else if (
+        idx === 0 &&
+        getSubmittedInputValues()["subAdjs"].length !== 0 &&
+        getSubmittedInputValues()["subNouns"].length !== 0
+      ) {
         searchCtx.getGallary(0, resultsPerPage, resultsPerPage, idx, dbPath);
       }
     }
-  }, [searchCtx.updatePageSelectorDetails, resultsPerPage, idx, dbPath]);
+  }, [resultsPerPage, idx, dbPath]);
+
+  function getSubmittedInputValues() {
+    return {
+      subAdjs: searchCtx.searchValues["submittedAdjectives"][idx],
+      subNouns: searchCtx.searchValues["submittedNouns"][idx],
+    };
+  }
 
   useEffect(() => {
     searchCtx.updateSearchValues(
@@ -239,13 +249,10 @@ const Search = ({ dbPath, margin, idx, forModal }) => {
           }
         }
       } else if (e.key === "ArrowUp") {
-        console.log("up");
         if (showAdjResults) {
           e.preventDefault();
 
           if (adjIdx > 0 && adjIdx < adjResults.length) {
-            console.log("up - adj showing");
-
             if (adjResults[adjIdx - 1] === "related") {
               searchCtx.updateSearchValues(
                 "adjKeyboardNavigationIndex",
@@ -368,10 +375,6 @@ const Search = ({ dbPath, margin, idx, forModal }) => {
     }
   }, [searchCtx.searchValues["autofilledNounInput"][idx]]);
 
-  useEffect(() => {
-    console.log(showAdjResults);
-  }, [showAdjResults]);
-
   let autofillHandler = (event, isFocusing = null, forAdj = null) => {
     let focusedInsideAdjInput, focusedInsideNounInput;
 
@@ -459,26 +462,76 @@ const Search = ({ dbPath, margin, idx, forModal }) => {
     };
   }, []);
 
+  useEffect(() => {
+    if (
+      // searchCtx.searchValues["submittedAdjectives"][idx].length !== 0 &&
+      // searchCtx.searchValues["submittedNouns"][idx].length !== 0
+      inputsWereSubmitted
+    ) {
+      console.log("permarefreshing");
+      setInputsWereSubmitted(false);
+
+      searchCtx.updatePageSelectorDetails("durationToManuallyLoad", null, idx);
+
+      if (idx !== 0) {
+        searchCtx.getGallary(0, resultsPerPage, resultsPerPage, idx, dbPath);
+      } else {
+        searchCtx.getGallary(0, resultsPerPage, resultsPerPage, idx, dbPath);
+      }
+
+      setGallaryListStaticTitle(
+        `${searchCtx.searchValues["adjSearch"][idx]} ${searchCtx.searchValues["nounSearch"][idx]}`
+      );
+
+      // clearing autofill + related context values
+      searchCtx.updateSearchValues("autofilledAdjectiveInput", "", idx);
+      searchCtx.updateSearchValues("autofilledNounInput", "", idx);
+      searchCtx.updateSearchValues("requestedAdjectives", [], idx);
+      searchCtx.updateSearchValues("requestedNouns", [], idx);
+    }
+  }, [
+    inputsWereSubmitted,
+    searchCtx.searchValues,
+    idx,
+    dbPath,
+    resultsPerPage,
+  ]);
+
   function prepGallarySearch(event) {
     event.preventDefault();
 
-    searchCtx.updatePageSelectorDetails("durationToManuallyLoad", null, idx);
-
-    if (idx !== 0) {
-      searchCtx.getGallary(0, resultsPerPage, resultsPerPage, idx, dbPath);
-    } else {
-      searchCtx.getGallary(0, resultsPerPage, resultsPerPage, idx, dbPath);
-    }
-
-    setGallaryListStaticTitle(
-      `${searchCtx.searchValues["adjSearch"][idx]} ${searchCtx.searchValues["nounSearch"][idx]}`
+    // may want to do a {...searchCtx.searchValues}
+    // and update the shiet manually as opposed to two separate calls here
+    searchCtx.updateSearchValues(
+      "submittedAdjectives",
+      adjectiveInputRef.current.value,
+      idx
+    );
+    searchCtx.updateSearchValues(
+      "submittedNouns",
+      nounInputRef.current.value,
+      idx
     );
 
-    // clearing autofill + related context values
-    searchCtx.updateSearchValues("autofilledAdjectiveInput", "", idx);
-    searchCtx.updateSearchValues("autofilledNounInput", "", idx);
-    searchCtx.updateSearchValues("requestedAdjectives", [], idx);
-    searchCtx.updateSearchValues("requestedNouns", [], idx);
+    setInputsWereSubmitted(true);
+
+    // searchCtx.updatePageSelectorDetails("durationToManuallyLoad", null, idx);
+
+    // if (idx !== 0) {
+    //   searchCtx.getGallary(0, resultsPerPage, resultsPerPage, idx, dbPath);
+    // } else {
+    //   searchCtx.getGallary(0, resultsPerPage, resultsPerPage, idx, dbPath);
+    // }
+
+    // setGallaryListStaticTitle(
+    //   `${searchCtx.searchValues["adjSearch"][idx]} ${searchCtx.searchValues["nounSearch"][idx]}`
+    // );
+
+    // // clearing autofill + related context values
+    // searchCtx.updateSearchValues("autofilledAdjectiveInput", "", idx);
+    // searchCtx.updateSearchValues("autofilledNounInput", "", idx);
+    // searchCtx.updateSearchValues("requestedAdjectives", [], idx);
+    // searchCtx.updateSearchValues("requestedNouns", [], idx);
   }
 
   return (

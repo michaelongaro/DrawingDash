@@ -73,10 +73,6 @@ export function FavoritesProvider(props) {
     }
   }, [isLoading, isAuthenticated]);
 
-  useEffect(() => {
-    console.log(userFavorites);
-  }, [userFavorites]);
-
   function addFavorite(
     currDrawingID,
     drawingSeconds,

@@ -36,12 +36,8 @@ const PinnedModal = React.forwardRef((props, modalRef) => {
     get(child(dbRef, `users/${user.sub}/titles/${props.seconds}`)).then(
       (snapshot) => {
         if (snapshot.exists()) {
-          console.log(snapshot.val());
           for (const drawingID of Object.values(snapshot.val())) {
-            console.log(Object.values(snapshot.val()));
             // stores all drawingIDs for a given title in fetchedDrawingIDs
-            console.log(Object.values(drawingID["drawingID"]));
-
             fetchedDrawingIDs.push(Object.values(drawingID["drawingID"]));
           }
         }

@@ -359,8 +359,6 @@ export const CanvasProvider = ({ children }) => {
     const previous_evt = lastEvent || {};
     const was_offscreen = previous_evt.offscreen;
 
-    console.log(ev, ev.type);
-
     if (ev.isTrusted) {
       const { clientX, clientY } = ev;
       lastEvent = { clientX, clientY };
