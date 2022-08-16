@@ -81,7 +81,7 @@
 }
 
 .setStatus {
-  width: 17em;
+  width: 15em;
 }
 
 .maxChars {
@@ -121,19 +121,32 @@
 
 .cropImageModal {
   position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-
-  width: 60vw;
-  height: 75vh;
+  width: 65vw;
 
   border-radius: 1em;
   background: linear-gradient(350deg,
       rgb(27, 138, 56) 0%,
       rgb(36, 231, 62) 100%);
 
-  z-index: 350;
+  z-index: 950;
+}
+
+.invalidFileTypeModal {
+  position: relative;
+  width: 50vw;
+  height: 30vh;
+  border-radius: 1em;
+
+  gap: 1.5em;
+
+  padding: 1.5em;
+
+  background: linear-gradient(350deg,
+      rgb(27, 138, 56) 0%,
+      rgb(36, 231, 62) 100%);
+
+  z-index: 950;
+
 }
 
 .uploadOverlay {
@@ -274,10 +287,9 @@ input[type="file"] {
 }
 
 @media (max-width: 900px) {
-
   .leftSideContain {
     width: 90%;
-    margin-top: .5em;
+    margin-top: 1.5em;
   }
 
   .rightSideContain {
@@ -300,5 +312,36 @@ input[type="file"] {
         rgba(255, 255, 255, 0),
         rgba(0, 0, 0, 1),
         rgba(255, 255, 255, 0));
+  }
+}
+
+@media (max-width: 1000px) {
+  .cropImageModal {
+    width: 80vw;
+  }
+}
+
+@media (max-width: 730px) {
+  .invalidFileTypeModal {
+    width: 80vw;
+    height: 50vh;
+  }
+}
+
+@media (max-width: 575px) {
+  .cropImageModal {
+    width: 95vw;
+  }
+}
+
+@media (max-width: 445px) {
+  .invalidFileTypeModal>div {
+    flex-direction: column;
+  }
+}
+
+@media (max-width: 420px) {
+  .setStatus {
+    width: 13em;
   }
 }

@@ -22,6 +22,7 @@ import EditPreferencesIcon from "../../svgs/EditPreferencesIcon";
 import ResizeIcon from "../../svgs/ResizeIcon";
 import UploadIcon from "../../svgs/UploadIcon";
 import RedoIcon from "../../svgs/RedoIcon";
+import InvalidFileTypeIcon from "../../svgs/InvalidFileTypeIcon";
 
 import {
   getDatabase,
@@ -78,10 +79,13 @@ const Preferences = () => {
   const [editAvailable, setEditAvailable] = useState(true);
 
   const inputRef = useRef();
+  const invalidFileTypeModalRef = useRef(null);
 
   // crop states
   const [DBCropData, setDBCropData] = useState(null);
 
+  const [showInvalidFileTypeModal, setShowInvalidFileTypeModal] =
+    useState(false);
   const [showCropModal, setShowCropModal] = useState(false);
   const [crop, setCrop] = useState({ x: 0, y: 0 });
   const [zoom, setZoom] = useState(1);
@@ -169,6 +173,33 @@ const Preferences = () => {
       pinnedCtx.setShow300({ display: "none" });
     };
   }, []);
+
+  useEffect(() => {
+    function clickHandler(ev) {
+      if (showInvalidFileTypeModal) {
+        if (!invalidFileTypeModalRef.current.contains(ev.target)) {
+          setShowInvalidFileTypeModal(false);
+        }
+      }
+    }
+
+    function escapeHandler(e) {
+      if (e.key === "Escape") {
+        e.preventDefault();
+
+        setShowCropModal(false);
+        setShowInvalidFileTypeModal(false);
+      }
+    }
+
+    document.addEventListener("click", clickHandler);
+    document.addEventListener("keydown", escapeHandler);
+
+    return () => {
+      document.removeEventListener("click", clickHandler);
+      document.removeEventListener("keydown", escapeHandler);
+    };
+  }, [showInvalidFileTypeModal]);
 
   useEffect(() => {
     let timeoutID = null;
@@ -290,6 +321,8 @@ const Preferences = () => {
       status: status,
       defaultProfilePicture: user.picture,
       profileCropMetadata: croppedAreaPixels ? cropMetadata : false,
+    }).then(() => {
+      fetchUserPreferences();
     });
 
     setInputWasChanged(false);
@@ -347,24 +380,28 @@ const Preferences = () => {
     if (e.target.files[0]) {
       if (e.target.files[0].type === "image/jpeg") {
         setImageFileType("image/jpeg");
-      }
-      if (e.target.files[0].type === "image/png") {
+      } else if (e.target.files[0].type === "image/png") {
         setImageFileType("image/png");
+      } else {
+        inputRef.current.value = null;
+        setShowInvalidFileTypeModal(true);
+        return;
       }
 
+      console.log("didn't return");
       setUserUploadedImage(e.target.files[0]);
       let reader = new FileReader();
       reader.onload = function (e) {
-        // setImage(e.target.result);
         setCropReadyImage(e.target.result);
       };
       reader.readAsDataURL(e.target.files[0]);
       // can delete this below if doesn't work
       setCroppedImage(null);
       setCroppedAreaPixels(null);
-      console.log("setting true from wack place");
       setHasChangedPicture(true);
       setNewImageUploaded(true);
+      setCrop({ x: 0, y: 0 });
+      setZoom(1);
     }
   };
 
@@ -743,7 +780,7 @@ const Preferences = () => {
 
       <div style={{ marginTop: "3em" }} className={classes.pinnedTitle}>
         <div className={classes.leadingLine}></div>
-        <h3>Pinned Drawings</h3>
+        <h3 style={{ textAlign: "center" }}>Pinned Drawings</h3>
         <div className={classes.trailingLine}></div>
       </div>
 
@@ -754,26 +791,55 @@ const Preferences = () => {
         <PinnedArtwork />
       </div>
 
-      {showCropModal ? (
+      <div
+        style={{
+          opacity: showCropModal ? 1 : 0,
+          pointerEvents: showCropModal ? "auto" : "none",
+        }}
+        className={classes.modal}
+      >
+        <div className={classes.cropImageModal}>
+          <ImageCropModal
+            id={1}
+            imageUrl={cropReadyImage ?? image}
+            cropInit={crop}
+            zoomInit={zoom}
+            onCropChange={setCrop}
+            onCropComplete={onCropComplete}
+            onZoomChange={setZoom}
+            applyChanges={showCroppedImage}
+            discardChanges={onClose}
+          />
+        </div>
+      </div>
+
+      <div
+        style={{
+          opacity: showInvalidFileTypeModal ? 1 : 0,
+          pointerEvents: showInvalidFileTypeModal ? "auto" : "none",
+        }}
+        className={classes.modal}
+      >
         <div
-          style={{ opacity: showCropModal ? 1 : 0 }}
-          className={classes.modal}
+          ref={invalidFileTypeModalRef}
+          style={{ transition: "all 200ms" }}
+          className={`${classes.invalidFileTypeModal} ${baseClasses.baseVertFlex}`}
         >
-          <div className={classes.cropImageModal}>
-            <ImageCropModal
-              id={1}
-              imageUrl={cropReadyImage ?? image}
-              cropInit={crop}
-              zoomInit={zoom}
-              onCropChange={setCrop}
-              onCropComplete={onCropComplete}
-              onZoomChange={setZoom}
-              applyChanges={showCroppedImage}
-              discardChanges={onClose}
-            />
+          <button
+            style={{ right: "1em" }}
+            className={baseClasses.close}
+            onClick={() => {
+              setShowInvalidFileTypeModal(false);
+            }}
+          ></button>
+
+          <InvalidFileTypeIcon dimensions={"5em"} />
+          <div className={baseClasses.baseFlex}>
+            <div>Please upload either a</div>
+            <div>".jpg" or ".png" file.</div>
           </div>
         </div>
-      ) : null}
+      </div>
     </div>
   );
 };

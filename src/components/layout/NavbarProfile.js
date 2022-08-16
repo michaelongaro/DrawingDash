@@ -81,11 +81,9 @@ function NavbarProfile({ forSidebar }) {
   // all of this should really be encapsulated into a hook
   const showCroppedImage = async (disableSkeleton = false) => {
     try {
-      let currentCropAreaPixels = croppedAreaPixels ?? DBCropData;
-
       const croppedImg = await getCroppedImg(
         cropReadyImage ?? image,
-        currentCropAreaPixels,
+        DBCropData,
         imageFileType
       );
 
@@ -160,7 +158,7 @@ function NavbarProfile({ forSidebar }) {
           }
         });
     }
-    // if (!prevDBCropData && !prevImage) {
+
     if (!isLoading && isAuthenticated) {
       // image manipulation -> should ideally be in its own hook
       onValue(ref_database(db, `users/${user.sub}/preferences`), (snapshot) => {
@@ -217,11 +215,7 @@ function NavbarProfile({ forSidebar }) {
             );
           }
         });
-      // }
     }
-
-    // making sure that user modal can always be opened when visiting page for the first time
-    // localStorage.setItem("baseUserModalOpened", "false");
   }, [isLoading, isAuthenticated]);
 
   useEffect(() => {

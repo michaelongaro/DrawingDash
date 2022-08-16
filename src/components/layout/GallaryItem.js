@@ -261,6 +261,21 @@ const GallaryItem = ({
   }, [drawingDetails]);
 
   useEffect(() => {
+    function escapeHandler(ev) {
+      if (ev.key === "Escape") {
+        ev.preventDefault();
+
+        setShowConfirmDeleteModal(false);
+      }
+    }
+
+    document.addEventListener("keydown", escapeHandler);
+    return () => {
+      document.removeEventListener("keydown", escapeHandler);
+    };
+  });
+
+  useEffect(() => {
     // just for initial render
     if (window.innerWidth > 1250 && window.innerWidth < 1500) {
       setDynamicCardWidth("33");

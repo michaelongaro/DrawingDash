@@ -41,42 +41,54 @@ const PinnedArtwork = () => {
   };
 
   useEffect(() => {
-    console.log("running because 60:", pinnedCtx.show60);
     setShow60(pinnedCtx.show60);
     setShow180(pinnedCtx.show180);
     setShow300(pinnedCtx.show300);
   }, [pinnedCtx.show60, pinnedCtx.show180, pinnedCtx.show300]);
 
   useEffect(() => {
-    let handler = (event) => {
+    function clickHandler(ev) {
       if (
         pinnedCtx.show60["display"] !== "none" ||
         pinnedCtx.show180["display"] !== "none" ||
         pinnedCtx.show300["display"] !== "none"
       ) {
         if (ref60.current) {
-          if (!ref60.current.contains(event.target)) {
+          if (!ref60.current.contains(ev.target)) {
             console.log("diddn't click inside");
             pinnedCtx.setShow60({ display: "none" });
             pinnedCtx.resetAllAndHighlightNewInit();
           }
         } else if (ref180.current) {
-          if (!ref180.current.contains(event.target)) {
+          if (!ref180.current.contains(ev.target)) {
             pinnedCtx.setShow180({ display: "none" });
             pinnedCtx.resetAllAndHighlightNewInit();
           }
         } else if (ref300.current) {
-          if (!ref300.current.contains(event.target)) {
+          if (!ref300.current.contains(ev.target)) {
             pinnedCtx.setShow300({ display: "none" });
             pinnedCtx.resetAllAndHighlightNewInit();
           }
         }
       }
-    };
+    }
 
-    document.addEventListener("click", handler);
+    function escapeHandler(ev) {
+      if (ev.key === "Escape") {
+        ev.preventDefault();
+
+        pinnedCtx.setShow60({ display: "none" });
+        pinnedCtx.setShow180({ display: "none" });
+        pinnedCtx.setShow300({ display: "none" });
+      }
+    }
+
+    document.addEventListener("click", clickHandler);
+    document.addEventListener("keydown", escapeHandler);
+
     return () => {
-      document.removeEventListener("click", handler);
+      document.removeEventListener("click", clickHandler);
+      document.removeEventListener("keydown", escapeHandler);
     };
   });
 

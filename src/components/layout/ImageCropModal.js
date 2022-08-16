@@ -46,28 +46,33 @@ const ImageCropModal = ({
           onCropComplete={onCropComplete}
         />
       </div>
-      <div className={classes.controls}>
-        <div className={classes.zoomContainer}>
-          <div>Zoom</div>
-          <input
-            type="range"
-            min={1}
-            max={3}
-            step={0.1}
-            value={zoomInit}
-            onInput={(e) => {
-              onZoomChange(e.target.value);
-            }}
-            className={classes.slider}
-          ></input>
-        </div>
-        <div className={classes.buttonContainer}>
-          <button className={baseClasses.closeButton} onClick={discardChanges}>
-            <ExitIcon />
-          </button>
-          <button className={baseClasses.activeButton} onClick={applyChanges}>
-            Apply
-          </button>
+      <div className={baseClasses.baseFlex}>
+        <div className={classes.controls}>
+          <div className={classes.zoomContainer}>
+            <div>Zoom</div>
+            <input
+              type="range"
+              min={1}
+              max={3}
+              step={0.1}
+              value={zoomInit}
+              onInput={(e) => {
+                onZoomChange(e.target.value);
+              }}
+              className={classes.slider}
+            ></input>
+          </div>
+          <div className={classes.buttonContainer}>
+            <button
+              className={baseClasses.closeButton}
+              onClick={discardChanges}
+            >
+              <ExitIcon />
+            </button>
+            <button className={baseClasses.activeButton} onClick={applyChanges}>
+              Apply
+            </button>
+          </div>
         </div>
       </div>
     </div>
