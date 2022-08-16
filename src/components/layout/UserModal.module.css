@@ -17,8 +17,8 @@
 
   height: 100%;
   width: 100%;
-
   padding: 1em 3em 1em 3em;
+
   overflow-y: scroll;
   overflow-x: hidden;
 }
@@ -28,7 +28,7 @@
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  gap: .5em;
+  gap: 0.5em;
 
   background-color: white;
   padding: 3em;
@@ -52,7 +52,7 @@
 
 .rightSide {
   text-align: center;
-  width: 25em;
+  width: 28em;
 }
 
 .indicators {
@@ -115,7 +115,10 @@
 @media (max-width: 1250px) {
   .userModalContain {
     width: 95vw;
+  }
 
+  .userModal {
+    padding: 1em;
   }
 
   .container {
@@ -134,5 +137,11 @@
 @media (max-width: 600px) {
   .container {
     width: 100%;
+  }
+}
+
+@media (max-width: 500px) {
+  .rightSide {
+    width: 35em;
   }
 }

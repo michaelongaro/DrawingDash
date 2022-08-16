@@ -89,7 +89,7 @@ const SlideShow = ({ pinnedDrawings, pinnedMetadata, username }) => {
       }
     },
     infinite: true,
-    easing: "ease",
+    // easing: "ease",
     onChange: (previous, next) => {
       setCurrentSlideshowTitle(
         pinnedMetadata[next] === "" ? "" : pinnedMetadata[next].title
@@ -111,11 +111,10 @@ const SlideShow = ({ pinnedDrawings, pinnedMetadata, username }) => {
         <div style={{ gap: "1.5em" }} className={baseClasses.baseVertFlex}>
           <div
             style={{
-              width: "400px",
               height: "193px",
               borderRadius: "1em",
             }}
-            className={baseClasses.skeletonLoading}
+            className={`${classes.skeletonWidth} ${baseClasses.skeletonLoading}`}
           ></div>
 
           <div style={{ gap: "1em" }} className={baseClasses.baseFlex}>
@@ -153,8 +152,9 @@ const SlideShow = ({ pinnedDrawings, pinnedMetadata, username }) => {
             <div
               style={{
                 aspectRatio: "16/7.75",
+                width: "100%",
               }}
-              className={baseClasses.baseFlex}
+              className={drawing === "" ? "" : baseClasses.baseFlex}
               key={index}
             >
               {drawing === "" ? (
@@ -164,7 +164,8 @@ const SlideShow = ({ pinnedDrawings, pinnedMetadata, username }) => {
 
                     backgroundColor: fallbackBackgroundColors[index],
                     borderRadius: "1em",
-                    height: "12.0625em",
+                    // height: "12.0625em",
+                    height: "100%",
                     userSelect: "none",
                   }}
                   className={baseClasses.baseVertFlex}

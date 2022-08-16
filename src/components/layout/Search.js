@@ -48,6 +48,14 @@ const Search = ({ dbPath, margin, idx, forModal }) => {
   const [adjInputFocused, setAdjInputFocused] = useState(false);
   const [nounInputFocused, setNounInputFocused] = useState(false);
 
+  const [mobileWidthReached, setMobileWidthReached] = useState(false);
+
+  useEffect(() => {
+    if ((adjInputFocused || nounInputFocused) && mobileWidthReached) {
+      formContainerRef.current.scrollIntoView({ behavior: "smooth" });
+    }
+  }, [adjInputFocused, nounInputFocused, mobileWidthReached]);
+
   const refreshAdjSearch = (event) => {
     searchCtx.updateSearchValues("adjSearch", event.target.value.trim(), idx);
 
@@ -80,6 +88,12 @@ const Search = ({ dbPath, margin, idx, forModal }) => {
       setResultsPerPage(6);
     }
 
+    if (window.innerWidth <= 650) {
+      setMobileWidthReached(true);
+    } else {
+      setMobileWidthReached(false);
+    }
+
     function resizeHandler(ev) {
       if (window.innerWidth > 1250) {
         setResultsPerPage(16);
@@ -87,6 +101,12 @@ const Search = ({ dbPath, margin, idx, forModal }) => {
         setResultsPerPage(10);
       } else {
         setResultsPerPage(6);
+      }
+
+      if (window.innerWidth <= 650) {
+        setMobileWidthReached(true);
+      } else {
+        setMobileWidthReached(false);
       }
     }
 

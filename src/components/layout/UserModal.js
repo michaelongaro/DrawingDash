@@ -271,8 +271,6 @@ const UserModal = ({ user }) => {
           </button>
         )}
         <button
-          // style={{ top: "-1em", right: "-1.25em" }}
-
           style={{ top: "-2.5rem", right: "1.5rem" }}
           className={baseClasses.close}
           onClick={() => {
@@ -284,31 +282,6 @@ const UserModal = ({ user }) => {
         ></button>
       </div>
       <div className={classes.userModal}>
-        {/* <div style={{ position: "relative", width: "100%" }}>
-          {modalCtx.drawingModalOpened && (
-            <button
-              style={{ top: "-1em", left: "-1em" }}
-              className={baseClasses.activeButton}
-              onClick={() => {
-                // closing user modal
-                modalCtx.setUserModalOpened(false);
-              }}
-            >
-              Return to image
-            </button>
-          )}
-          <button
-            style={{ top: "-1em", right: "-1.25em" }}
-            className={baseClasses.close}
-            onClick={() => {
-              // closing all modals
-              modalCtx.setDrawingModalFromUserOpened(false);
-              modalCtx.setDrawingModalOpened(false);
-              modalCtx.setUserModalOpened(false);
-            }}
-          ></button>
-        </div> */}
-
         <div className={`${classes.container} ${classes.prefCard}`}>
           <div className={classes.leftSide}>
             {isFetchingProfilePicture ? (
@@ -334,10 +307,8 @@ const UserModal = ({ user }) => {
               />
             )}
 
-            <div style={{ marginTop: "1em" }} className={classes.showUsername}>
-              {username}
-            </div>
-            <div className={classes.showStatus}>
+            <div style={{ marginTop: "1em" }}>{username}</div>
+            <div style={{ textAlign: "center" }}>
               <i>{status}</i>
             </div>
           </div>

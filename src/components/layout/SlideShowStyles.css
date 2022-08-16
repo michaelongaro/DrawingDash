@@ -2,7 +2,8 @@
    file to recognize the chained class styles */
 
 .images-wrap>div {
-  height: 193px;
+  /* height: 193px; */
+  height: 100%;
   display: flex;
   justify-content: center;
   align-items: center;

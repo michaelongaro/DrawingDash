@@ -29,3 +29,26 @@ ul {
 .nav:active {
   filter: brightness(.5);
 }
+
+.skeletonWidth {
+  width: 100%;
+  transition: all 200ms;
+}
+
+@media (max-width: 550px) {
+  .skeletonWidth {
+    width: 75%;
+  }
+}
+
+@media (max-width: 450px) {
+  .skeletonWidth {
+    width: 65%;
+  }
+}
+
+@media (max-width: 400px) {
+  .skeletonWidth {
+    width: 55%;
+  }
+}
