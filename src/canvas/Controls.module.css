@@ -164,7 +164,7 @@
 
 @media (max-width: 800px) {
   .contain {
-    gap: 0.5em;
+    gap: 1em;
   }
 
   .colors {

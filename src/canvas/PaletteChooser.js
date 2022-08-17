@@ -48,6 +48,8 @@ const PaletteChooser = () => {
   ]);
 
   useEffect(() => {
+    document.getElementById("root").scrollIntoView({ behavior: "smooth" });
+
     anime({
       targets: "#paletteChooser",
       loop: false,
@@ -56,9 +58,10 @@ const PaletteChooser = () => {
       direction: "normal",
       duration: 500,
       easing: "easeInSine",
-      complete: () => {
-        document.getElementById("root").scrollIntoView({ behavior: "smooth" });
-      },
+      // complete: () => {
+      //   DSCtx.setCheckScrollState(true);
+      //   document.getElementById("root").scrollIntoView({ behavior: "smooth" });
+      // },
     });
   }, []);
 
@@ -124,6 +127,10 @@ const PaletteChooser = () => {
   }
 
   function moveOntoDrawScreen() {
+    document.getElementById("root").scrollIntoView({ behavior: "smooth" });
+
+    DSCtx.setExtendLayoutHeight(true);
+
     anime({
       targets: "#paletteChooser",
       loop: false,
@@ -386,6 +393,10 @@ const PaletteChooser = () => {
             onClick={() => {
               DSCtx.updatePBStates("selectToChooseBar", false);
               DSCtx.setStartFromLeft(false);
+
+              document
+                .getElementById("root")
+                .scrollIntoView({ behavior: "smooth" });
 
               anime({
                 targets: "#paletteChooser",

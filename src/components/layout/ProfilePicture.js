@@ -1,70 +1,19 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 
-import getCroppedImg from "../../util/cropImage";
-
-import {
-  getDatabase,
-  ref as ref_database,
-  set,
-  child,
-  onValue,
-  get,
-} from "firebase/database";
-
-import {
-  getDownloadURL,
-  getStorage,
-  getMetadata,
-  ref as ref_storage,
-  // uploadBytes,
-} from "firebase/storage";
-
-import { app } from "../../util/init-firebase";
+import ProfilePictureUpdateContext from "./ProfilePictureUpdateContext";
 
 import classes from "./ProfilePicture.module.css";
 import baseClasses from "../../index.module.css";
 
 const ProfilePicture = ({ user, size }) => {
-  const db = getDatabase(app);
-  const dbRef = ref_database(getDatabase(app));
-  const storage = getStorage();
+  const PFPUpdateCtx = useContext(ProfilePictureUpdateContext);
 
   const [isFetching, setIsFetching] = useState(true);
 
   const [shimmerStyle, setShimmerStyle] = useState(size);
   const [roundedProfileStyle, setRoundedProfileStyle] = useState(size);
 
-  // technically should have profile fetching + return cropped image
-  // in separate exported function...
-  const [imageFileType, setImageFileType] = useState(null);
-  const [croppedImage, setCroppedImage] = useState(null);
-  const [DBCropData, setDBCropData] = useState(null);
-
-  const [image, setImage] = useState();
-
-  // okay so we probably need to upload user.image to storage under "defaultImage"
-  // and if the regular fetch fails than get that one
-
-  const showCroppedImage = async () => {
-    try {
-      const croppedImg = await getCroppedImg(image, DBCropData, imageFileType);
-
-      setCroppedImage(croppedImg);
-      setIsFetching(false);
-    } catch (e) {
-      console.log(e);
-    }
-  };
-
   useEffect(() => {
-    get(child(dbRef, `users/${user}/preferences`)).then((snapshot) => {
-      if (user && snapshot.val()["profileCropMetadata"]) {
-        setDBCropData(
-          snapshot.val()["profileCropMetadata"]["croppedAreaPixels"]
-        );
-      }
-    });
-
     if (size === "small") {
       setShimmerStyle(classes.shimmerSmall);
       setRoundedProfileStyle(classes.roundedProfileSmall);
@@ -76,38 +25,14 @@ const ProfilePicture = ({ user, size }) => {
       setRoundedProfileStyle(classes.roundedProfileLarge);
     }
 
-    getDownloadURL(ref_storage(storage, `users/${user}/profile`))
-      .then((url) => {
-        getMetadata(ref_storage(storage, `users/${user}/profile`))
-          .then((metadata) => {
-            setImageFileType(metadata.contentType);
-            setImage(url);
-          })
-          .catch((e) => {
-            console.error(e);
-          });
-      })
-      .catch((error) => {
-        if (
-          error.code === "storage/object-not-found" ||
-          error.code === "storage/unknown"
-        ) {
-          // defaulting to auth0 image
-          onValue(ref_database(db, `users/${user}/preferences`), (snapshot) => {
-            if (snapshot.exists()) {
-              setImage(snapshot.val()["defaultProfilePicture"]);
-              setIsFetching(false);
-            }
-          });
-        }
-      });
+    PFPUpdateCtx.fetchProfilePicture(user);
   }, []);
 
   useEffect(() => {
-    if (imageFileType && image && DBCropData) {
-      showCroppedImage();
+    if (PFPUpdateCtx.image !== null) {
+      setIsFetching(false);
     }
-  }, [imageFileType, image, DBCropData]);
+  }, [PFPUpdateCtx.image]);
 
   return (
     <>
@@ -124,7 +49,7 @@ const ProfilePicture = ({ user, size }) => {
         <div className={shimmerStyle}>
           <img
             className={roundedProfileStyle}
-            src={croppedImage ?? image}
+            src={PFPUpdateCtx.image}
             alt="Profile"
           />
         </div>

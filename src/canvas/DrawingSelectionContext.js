@@ -45,6 +45,7 @@ export function DrawingSelectionProvider(props) {
   const [showPromptSelection, setShowPromptSelection] = useState(true);
   const [showPaletteChooser, setShowPaletteChooser] = useState(false);
   const [showDrawingScreen, setShowDrawingScreen] = useState(false);
+  const [extendLayoutHeight, setExtendLayoutHeight] = useState(false);
 
   const [showEndOverlay, setShowEndOverlay] = useState(false);
   const [showEndOutline, setShowEndOutline] = useState(false);
@@ -56,6 +57,8 @@ export function DrawingSelectionProvider(props) {
 
   // used to determine whether PromptSelection slides in from left/right
   const [startFromLeft, setStartFromLeft] = useState(true);
+
+  const [checkScrollState, setCheckScrollState] = useState(false);
 
   const [PBStates, setPBStates] = useState({
     selectCircle: false,
@@ -240,9 +243,10 @@ export function DrawingSelectionProvider(props) {
     setDrawingTime(0);
     setPaletteColors(["#FFFFFF", "#FFFFFF", "#FFFFFF", "#FFFFFF", "#FFFFFF"]);
 
-    setShowPromptSelection(false);
+    setShowPromptSelection(true);
     setShowPaletteChooser(false);
     setShowDrawingScreen(false);
+    setExtendLayoutHeight(false);
     setShowEndOverlay(false);
     setShowEndOutline(false);
   }
@@ -271,6 +275,8 @@ export function DrawingSelectionProvider(props) {
 
     startNewDailyWordsAnimation: startNewDailyWordsAnimation,
     setStartNewDailyWordsAnimation: setStartNewDailyWordsAnimation,
+    extendLayoutHeight: extendLayoutHeight,
+    setExtendLayoutHeight: setExtendLayoutHeight,
 
     promptRefreshes: promptRefreshes,
     setPromptRefreshes: setPromptRefreshes,
@@ -282,6 +288,8 @@ export function DrawingSelectionProvider(props) {
     setResetComplete: setResetComplete,
     revertSelectCircle: revertSelectCircle,
     setRevertSelectCircle: setRevertSelectCircle,
+    checkScrollState: checkScrollState,
+    setCheckScrollState: setCheckScrollState,
 
     drawingStatuses: drawingStatuses,
     setDrawingStatuses: setDrawingStatuses,

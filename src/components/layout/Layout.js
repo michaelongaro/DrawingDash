@@ -15,7 +15,9 @@ function Layout(props) {
   useEffect(() => {
     // just for initial render, setTimeout so layout has time to fully settle
     setTimeout(() => {
-      if (DSCtx.showPromptSelection) {
+      if (DSCtx.extendLayoutHeight) {
+        setDynamicHeight("110vh");
+      } else if (DSCtx.showPromptSelection) {
         // was 778 i think
         if (window.innerWidth > 1200 && window.innerHeight > 900) {
           setDynamicHeight("82vh");
@@ -45,19 +47,19 @@ function Layout(props) {
             window.innerHeight <= 929 &&
             window.innerWidth > 550)
         ) {
-          setDynamicHeight("82vh");
+          setDynamicHeight("88vh");
         } else if (window.innerHeight > 929) {
           setDynamicHeight("800px"); // trying to account for huge heights like an ipad..
         } else {
           setDynamicHeight("100vh");
         }
-      } else {
-        setDynamicHeight("82vh");
       }
     }, 500);
 
     function resizeHandler() {
-      if (DSCtx.showPromptSelection) {
+      if (DSCtx.extendLayoutHeight) {
+        setDynamicHeight("110vh");
+      } else if (DSCtx.showPromptSelection) {
         if (window.innerWidth > 1200 && window.innerHeight > 900) {
           setDynamicHeight("82vh");
         } else {
@@ -102,6 +104,7 @@ function Layout(props) {
     DSCtx.extraPromptsShown,
     DSCtx.showPromptSelection,
     DSCtx.showPaletteChooser,
+    DSCtx.extendLayoutHeight,
     location.pathname,
   ]);
 
@@ -109,6 +112,7 @@ function Layout(props) {
     <>
       <MainNavigation />
       <main
+        id={"main"}
         style={{
           minHeight:
             location.pathname === "/profile/gallery" ||
@@ -118,11 +122,12 @@ function Layout(props) {
               ? "82vh"
               : dynamicHeight,
           height:
-            location.pathname === "/daily-drawings" && !DSCtx.showDrawingScreen
+            location.pathname === "/daily-drawings" && !DSCtx.extendLayoutHeight
               ? "82vh"
               : "",
           width: "100%",
           margin: "3rem 0 0 0",
+          transition: "all 50ms",
         }}
       >
         {props.children}

@@ -1,12 +1,12 @@
 import React, { useState, useEffect, useRef, useContext } from "react";
 
-import getCroppedImg from "../../util/cropImage";
 import SlideShow from "./SlideShow";
 
 import Search from "./Search";
 
 import ModalContext from "./ModalContext";
 import SearchContext from "./SearchContext";
+import ProfilePictureUpdateContext from "./ProfilePictureUpdateContext";
 
 import {
   getDatabase,
@@ -31,8 +31,8 @@ import baseClasses from "../../index.module.css";
 const UserModal = ({ user }) => {
   const modalCtx = useContext(ModalContext);
   const searchCtx = useContext(SearchContext);
+  const PFPUpdateCtx = useContext(ProfilePictureUpdateContext);
 
-  const db = getDatabase(app);
   const dbRef = ref_database(getDatabase(app));
 
   const storage = getStorage();
@@ -48,24 +48,19 @@ const UserModal = ({ user }) => {
     useState(true);
   const [isFetchingPinnedDrawings, setIsFetchingPinnedDrawings] =
     useState(true);
+  const [showTempBaselineSkeleton, setShowTempBaselineSkeleton] =
+    useState(true);
 
-  const [image, setImage] = useState(null);
   const [pinnedMetadata, setPinnedMetadata] = useState();
   const [pinnedDrawings, setPinnedDrawings] = useState();
-  const [imageFileType, setImageFileType] = useState(null);
-  const [croppedImage, setCroppedImage] = useState(null);
-  const [DBCropData, setDBCropData] = useState(null);
 
-  const showCroppedImage = async () => {
-    try {
-      const croppedImg = await getCroppedImg(image, DBCropData, imageFileType);
+  useEffect(() => {
+    const timerID = setTimeout(() => setShowTempBaselineSkeleton(false), 500);
 
-      setCroppedImage(croppedImg);
-      setIsFetchingProfilePicture(false);
-    } catch (e) {
-      console.log(e);
-    }
-  };
+    return () => {
+      clearTimeout(timerID);
+    };
+  }, []);
 
   useEffect(() => {
     function modalHandler(event) {
@@ -118,16 +113,10 @@ const UserModal = ({ user }) => {
 
   useEffect(() => {
     // fetch data from db if it is present
-    console.log("am trying to get loaded");
     get(child(dbRef, `users/${user}/preferences`)).then((snapshot) => {
       if (snapshot.exists()) {
         setUsername(snapshot.val()["username"]);
         setStatus(snapshot.val()["status"]);
-        if (snapshot.val()["profileCropMetadata"]) {
-          setDBCropData(
-            snapshot.val()["profileCropMetadata"]["croppedAreaPixels"]
-          );
-        }
 
         get(child(dbRef, `users/${user}/pinnedArt`)).then((snapshot2) => {
           if (snapshot2.exists()) {
@@ -139,39 +128,14 @@ const UserModal = ({ user }) => {
       }
     });
 
-    getDownloadURL(ref_storage(storage, `users/${user}/profile`))
-      .then((url) => {
-        getMetadata(ref_storage(storage, `users/${user}/profile`))
-          .then((metadata) => {
-            setImageFileType(metadata.contentType);
-            setImage(url);
-          })
-          .catch((e) => {
-            console.error(e);
-          });
-      })
-      .catch((error) => {
-        if (
-          error.code === "storage/object-not-found" ||
-          error.code === "storage/unknown"
-        ) {
-          // defaulting to auth0 image
-          onValue(ref_database(db, `users/${user}/preferences`), (snapshot) => {
-            if (snapshot.exists()) {
-              console.log("found", snapshot.val());
-              setImage(snapshot.val()["defaultProfilePicture"]);
-              setIsFetchingProfilePicture(false);
-            }
-          });
-        }
-      });
+    PFPUpdateCtx.fetchProfilePicture(user);
   }, []);
 
   useEffect(() => {
-    if (imageFileType && image && DBCropData) {
-      showCroppedImage();
+    if (PFPUpdateCtx.image !== null) {
+      setIsFetchingProfilePicture(false);
     }
-  }, [imageFileType, image, DBCropData]);
+  }, [PFPUpdateCtx.image]);
 
   useEffect(() => {
     if (pinnedMetadata && pinnedDrawings) setIsFetchingPinnedDrawings(false);
@@ -284,7 +248,7 @@ const UserModal = ({ user }) => {
       <div className={classes.userModal}>
         <div className={`${classes.container} ${classes.prefCard}`}>
           <div className={classes.leftSide}>
-            {isFetchingProfilePicture ? (
+            {isFetchingProfilePicture || showTempBaselineSkeleton ? (
               <div
                 style={{
                   width: "165px",
@@ -302,7 +266,7 @@ const UserModal = ({ user }) => {
                   borderRadius: "50%",
                   boxShadow: "rgb(0 0 0 / 30%) 0px 3px 8px 1px",
                 }}
-                src={croppedImage ? croppedImage : image}
+                src={PFPUpdateCtx.image}
                 alt="Profile"
               />
             )}

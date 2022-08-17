@@ -238,12 +238,26 @@ const Preferences = () => {
       setUserEmail(user.email);
       setImageAltInfo(user.name);
 
-      getDownloadURL(ref_storage(storage, `users/${user.sub}/profile`))
-        .then((url) => {
+      getDownloadURL(ref_storage(storage, `users/${user.sub}/profile`)).then(
+        (url) => {
           getMetadata(ref_storage(storage, `users/${user.sub}/profile`))
             .then((metadata) => {
               setImageFileType(metadata.contentType);
+              setCropReadyImage(url);
+            })
+            .catch((e) => {
+              console.error(e);
+            });
+        }
+      );
+
+      getDownloadURL(ref_storage(storage, `users/${user.sub}/croppedProfile`))
+        .then((url) => {
+          getMetadata(ref_storage(storage, `users/${user.sub}/croppedProfile`))
+            .then((metadata) => {
+              setImageFileType(metadata.contentType);
               setImage(url);
+              setIsFetching(false);
             })
             .catch((e) => {
               console.error(e);
@@ -270,12 +284,6 @@ const Preferences = () => {
   }, [isLoading, isAuthenticated]);
 
   useEffect(() => {
-    if (DBCropData && image) {
-      showCroppedImage(true, true);
-    }
-  }, [image, DBCropData]);
-
-  useEffect(() => {
     if (newImageUploaded) {
       setShowCropModal(true);
     }
@@ -299,7 +307,20 @@ const Preferences = () => {
       upload();
     } else {
       if (isEditingImage) {
-        PFPUpdateCtx.setJustACropChange(true);
+        const croppedPhotoRef = ref_storage(
+          storage,
+          `users/${user.sub}/croppedProfile`
+        );
+        console.log(croppedImage);
+
+        getFileBlob(croppedImage, (blob) => {
+          uploadBytes(croppedPhotoRef, blob, {
+            contentType: imageFileType,
+          }).then(() => {
+            PFPUpdateCtx.setRefreshProfilePicture(true);
+          });
+        });
+
         setIsEditingImage(false);
       }
     }
@@ -347,25 +368,44 @@ const Preferences = () => {
     setInputWasChanged(false);
   }
 
+  var getFileBlob = function (url, cb) {
+    var xhr = new XMLHttpRequest();
+    xhr.open("GET", url);
+    xhr.responseType = "blob";
+    xhr.addEventListener("load", function () {
+      cb(xhr.response);
+    });
+    xhr.send();
+  };
+
   async function upload() {
     const photoRef = ref_storage(storage, `users/${user.sub}/profile`);
 
-    const snapshot = await uploadBytes(photoRef, userUploadedImage ?? image, {
+    const croppedPhotoRef = ref_storage(
+      storage,
+      `users/${user.sub}/croppedProfile`
+    );
+
+    await uploadBytes(photoRef, userUploadedImage ?? image, {
       contentType: imageFileType,
+    });
+
+    getFileBlob(croppedImage, (blob) => {
+      uploadBytes(croppedPhotoRef, blob, {
+        contentType: imageFileType,
+      }).then(() => {
+        PFPUpdateCtx.setRefreshProfilePicture(true);
+      });
     });
 
     const photoURL = await getDownloadURL(photoRef);
 
     setImage(photoURL);
 
-    // telling MainNavigation to refetch it's profile picture to the newly uploaded one
-    PFPUpdateCtx.setRefreshProfilePicture(true);
     PFPUpdateCtx.setJustACropChange(false);
   }
 
   const handleChange = (e) => {
-    // will eventually have to error handle if something other than jpeg/jpg/png is uploaded
-    // but this is okay for now
     if (e.target.files[0]) {
       if (e.target.files[0].type === "image/jpeg") {
         setImageFileType("image/jpeg");
@@ -383,7 +423,7 @@ const Preferences = () => {
         setCropReadyImage(e.target.result);
       };
       reader.readAsDataURL(e.target.files[0]);
-      // can delete this below if doesn't work
+
       setCroppedImage(null);
       setCroppedAreaPixels(null);
       setHasChangedPicture(true);

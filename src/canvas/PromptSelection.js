@@ -669,6 +669,8 @@ const PromptSelection = () => {
       }
     });
 
+    document.getElementById("root").scrollIntoView({ behavior: "smooth" });
+
     anime({
       targets: "#promptSelection",
       loop: false,
@@ -680,6 +682,8 @@ const PromptSelection = () => {
       duration: 500,
       easing: "easeInSine",
       // complete: () => {
+      //   // set ctx state to true here
+      //   // DSCtx.setCheckScrollState(true);
       //   document.getElementById("root").scrollIntoView({ behavior: "smooth" });
       // },
     });
@@ -688,7 +692,7 @@ const PromptSelection = () => {
   useEffect(() => {
     // only set selectCircle to true if PBStates is default state
     // + not all daily's finished
-
+    console.log("1st");
     if (
       isEqual(DSCtx.PBStates, {
         selectCircle: false,
@@ -700,16 +704,24 @@ const PromptSelection = () => {
       }) &&
       DSCtx.resetComplete
     ) {
+      console.log("2st");
+
       // regular flow (drawings init loaded + not all prompts have been completed)
       // -> start animation of selectCircle
       if (DSCtx.promptRefreshes === 1 && DSCtx.drawingStatusRefreshes > 0) {
+        console.log("3st");
+
         if (!isLoading && isAuthenticated) {
+          console.log("4st");
+
           if (
             !DSCtx.drawingStatuses["60"] ||
             !DSCtx.drawingStatuses["180"] ||
             !DSCtx.drawingStatuses["300"] ||
             !DSCtx.drawingStatuses["extra"]
           ) {
+            console.log("5st");
+
             // setHidePlaceholderText(false);
             DSCtx.updatePBStates("selectCircle", true);
           }
@@ -906,7 +918,8 @@ const PromptSelection = () => {
       return;
     }
 
-    DSCtx.updatePBStates("selectToChooseBar", true);
+    // DSCtx.updatePBStates("selectToChooseBar", true);
+    document.getElementById("root").scrollIntoView({ behavior: "smooth" });
 
     anime({
       targets: "#promptSelection",
@@ -924,6 +937,8 @@ const PromptSelection = () => {
         DSCtx.setShowEndOverlay(false);
         DSCtx.setShowEndOutline(false);
         DSCtx.setShowPromptSelection(false);
+
+        DSCtx.updatePBStates("selectToChooseBar", true);
       },
     });
   }
