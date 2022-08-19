@@ -17,13 +17,12 @@ import baseClasses from "../../index.module.css";
 function MainNavigation() {
   const { isLoading, isAuthenticated } = useAuth0();
 
-  const [minDesktopWidthReached, setMinDesktopWidthReached] = useState(false);
   const [showDesktopNavbar, setShowDesktopNavbar] = useState(false);
 
   useEffect(() => {
     // just for initial render
     if (
-      window.innerWidth >= 1100 &&
+      window.innerWidth > 1200 &&
       matchMedia("(hover: hover), (pointer: pointer)").matches
     ) {
       setShowDesktopNavbar(true);
@@ -33,7 +32,7 @@ function MainNavigation() {
 
     function resizeHandler() {
       if (
-        window.innerWidth >= 1100 &&
+        window.innerWidth > 1200 &&
         matchMedia("(hover: hover), (pointer: pointer)").matches
       ) {
         setShowDesktopNavbar(true);
@@ -59,16 +58,7 @@ function MainNavigation() {
           />
         </Link>
       </div>
-      <nav
-        style={
-          !isAuthenticated && minDesktopWidthReached
-            ? {
-                width: "90%",
-              }
-            : {}
-        }
-        className={classes.navbar}
-      >
+      <nav className={classes.navbar}>
         <ul
           style={{
             position: "relative ",
@@ -125,7 +115,8 @@ function MainNavigation() {
 
           {!isLoading && !isAuthenticated ? (
             <>
-              {matchMedia("(hover: none), (pointer: coarse)").matches ? (
+              {matchMedia("(hover: none), (pointer: coarse)").matches ||
+              !showDesktopNavbar ? (
                 <Sidebar />
               ) : (
                 <div className={classes.signInButtons}>

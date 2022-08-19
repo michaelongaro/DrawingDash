@@ -70,7 +70,7 @@ const Controls = () => {
     let tempPaletteColors = DSCtx.paletteColors;
     tempPaletteColors[5] = "#FFFFFF";
     DSCtx.setPaletteColors(tempPaletteColors);
-    DSCtx.setCurrentCursorSize(5);
+    DSCtx.setCurrentCursorSize(8);
   }, []);
 
   useEffect(() => {
@@ -89,23 +89,23 @@ const Controls = () => {
             changeBrushSize(8);
             updateSelectedBrushSize(1);
             setCurrentCursorSize(5);
-            DSCtx.setCurrentCursorSize(5);
+            DSCtx.setCurrentCursorSize(8);
             return;
           }
 
           if (currentCursorSize === 5 && e.deltaY > 0) {
-            changeBrushSize(3);
+            changeBrushSize(4);
             updateSelectedBrushSize(0);
             setCurrentCursorSize(2);
-            DSCtx.setCurrentCursorSize(2);
+            DSCtx.setCurrentCursorSize(4);
             return;
           }
 
           if (currentCursorSize === 5 && e.deltaY < 0) {
-            changeBrushSize(15);
+            changeBrushSize(16);
             updateSelectedBrushSize(2);
             setCurrentCursorSize(8);
-            DSCtx.setCurrentCursorSize(8);
+            DSCtx.setCurrentCursorSize(16);
             return;
           }
 
@@ -113,7 +113,7 @@ const Controls = () => {
             changeBrushSize(8);
             updateSelectedBrushSize(1);
             setCurrentCursorSize(5);
-            DSCtx.setCurrentCursorSize(5);
+            DSCtx.setCurrentCursorSize(8);
             return;
           }
         }
@@ -314,10 +314,10 @@ const Controls = () => {
           className={`${classes.rounded} ${classes.small}`}
           disabled={tempDisable}
           onClick={() => {
-            changeBrushSize(3);
+            changeBrushSize(4);
             updateSelectedBrushSize(0);
             setCurrentCursorSize(2);
-            DSCtx.setCurrentCursorSize(2);
+            DSCtx.setCurrentCursorSize(4);
           }}
         >
           <div
@@ -331,7 +331,7 @@ const Controls = () => {
             changeBrushSize(8);
             updateSelectedBrushSize(1);
             setCurrentCursorSize(5);
-            DSCtx.setCurrentCursorSize(5);
+            DSCtx.setCurrentCursorSize(8);
           }}
         >
           <div
@@ -342,10 +342,10 @@ const Controls = () => {
           className={`${classes.rounded} ${classes.large}`}
           disabled={tempDisable}
           onClick={() => {
-            changeBrushSize(15);
+            changeBrushSize(16);
             updateSelectedBrushSize(2);
             setCurrentCursorSize(8);
-            DSCtx.setCurrentCursorSize(8);
+            DSCtx.setCurrentCursorSize(16);
           }}
         >
           <div
@@ -436,7 +436,6 @@ const Controls = () => {
               clearCanvas(true);
             }
           }}
-          style={{ marginLeft: "1em" }}
           className={baseClasses.baseFlex}
         >
           <GarbageIcon dimensions={"80%"} />

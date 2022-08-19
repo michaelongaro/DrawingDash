@@ -194,7 +194,7 @@
   }
 }
 
-@media (max-width: 660px) {
+@media (max-width: 680px) {
   :root {
     --scale: 0.8;
   }
@@ -234,7 +234,7 @@
   }
 }
 
-@media (max-width: 410px) {
+@media (max-width: 425px) {
   :root {
     --scale: 0.6;
   }

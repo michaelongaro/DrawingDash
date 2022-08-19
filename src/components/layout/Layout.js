@@ -10,17 +10,17 @@ function Layout(props) {
   const location = useLocation();
   const DSCtx = useContext(DrawingSelectionContext);
 
-  const [dynamicHeight, setDynamicHeight] = useState("82vh");
-
+  const [dynamicHeight, setDynamicHeight] = useState("87.5vh");
+  // debugger;
   useEffect(() => {
     // just for initial render, setTimeout so layout has time to fully settle
     setTimeout(() => {
       if (DSCtx.extendLayoutHeight) {
-        setDynamicHeight("110vh");
+        setDynamicHeight("115vh");
       } else if (DSCtx.showPromptSelection) {
         // was 778 i think
         if (window.innerWidth > 1200 && window.innerHeight > 900) {
-          setDynamicHeight("82vh");
+          setDynamicHeight("87.5vh");
         } else {
           if (DSCtx.extraPromptsShown) {
             if (document.getElementById("extraPromptContainer")) {
@@ -58,10 +58,10 @@ function Layout(props) {
 
     function resizeHandler() {
       if (DSCtx.extendLayoutHeight) {
-        setDynamicHeight("110vh");
+        setDynamicHeight("115vh");
       } else if (DSCtx.showPromptSelection) {
         if (window.innerWidth > 1200 && window.innerHeight > 900) {
-          setDynamicHeight("82vh");
+          setDynamicHeight("87.5vh");
         } else {
           if (DSCtx.extraPromptsShown) {
             if (document.getElementById("extraPromptContainer")) {
@@ -88,7 +88,7 @@ function Layout(props) {
             window.innerHeight <= 929 &&
             window.innerWidth > 550)
         ) {
-          setDynamicHeight("82vh");
+          setDynamicHeight("87.5vh");
         } else if (window.innerHeight > 929) {
           setDynamicHeight("800px"); // trying to account for huge heights like an ipad..
         } else {
@@ -107,7 +107,7 @@ function Layout(props) {
     DSCtx.extendLayoutHeight,
     location.pathname,
   ]);
-
+  // debugger;
   return (
     <>
       <MainNavigation />
@@ -119,11 +119,11 @@ function Layout(props) {
             location.pathname === "/profile/likes"
               ? "100vh"
               : location.pathname !== "/daily-drawings"
-              ? "82vh"
+              ? "87.5vh"
               : dynamicHeight,
           height:
             location.pathname === "/daily-drawings" && !DSCtx.extendLayoutHeight
-              ? "82vh"
+              ? "87.5vh"
               : "",
           width: "100%",
           margin: "3rem 0 0 0",

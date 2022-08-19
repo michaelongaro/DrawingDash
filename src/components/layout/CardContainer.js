@@ -38,7 +38,7 @@ function CardContainer() {
           <LinkIcon />
         </div>
         <div style={{ height: "5em", textAlign: "center" }}>
-          Share your drawings with your friends
+          Instantly share your drawings
         </div>
       </div>
     </div>

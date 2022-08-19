@@ -36,6 +36,7 @@
   gap: 0.5em;
   padding: 1em;
   background-color: white;
+  border: 1px solid rgba(0, 0, 0, 0.2);
   z-index: 600;
   transition: all 200ms;
 }
@@ -55,7 +56,7 @@
   border-radius: 1em;
 }
 
-.searchGridContainer {
+.animatedGridContainer {
   position: absolute;
   top: 0;
   left: 0;
@@ -67,9 +68,27 @@
   gap: 0px 0px;
   grid-auto-flow: row;
   grid-template-areas:
-    "drawing0 drawing1 drawing2 drawing3 drawing4 drawing5 drawing6 drawing7 drawing8 drawing9"
-    "drawing10 drawing11 drawing12 drawing13 drawing14 drawing15 drawing16 drawing17 drawing18 drawing19"
-    "drawing20 drawing21 drawing22 drawing23 drawing24 drawing25 drawing26 drawing27 drawing28 drawing29";
+    "drawing0 drawing1 drawing2 drawing3 drawing4 drawing5 drawing6 drawing7 drawing8"
+    "drawing9 drawing10 drawing11 drawing12 drawing13 drawing14 drawing15 drawing16 drawing17"
+    "drawing18 drawing19 drawing20 drawing21 drawing22 drawing23 drawing24 drawing25 drawing26";
+  transition: all 200ms;
+}
+
+.unregisteredAnimatedGridContainer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: grid;
+  grid-template-columns: repeat(9, 1fr);
+  grid-template-rows: 1fr 1fr 1fr;
+  gap: 0px 0px;
+  grid-auto-flow: row;
+  grid-template-areas:
+    "drawing0 drawing1 drawing2 drawing3 drawing4 drawing5 drawing6 drawing7 drawing8"
+    "drawing9 drawing10 drawing11 drawing12 drawing13 drawing14 drawing15 drawing16 drawing17"
+    "drawing18 drawing19 drawing20 drawing21 drawing22 drawing23 drawing24 drawing25 drawing26";
   transition: all 200ms;
 }
 
@@ -110,11 +129,12 @@
   grid-area: drawing8;
 }
 
+/* start of second row */
+
 .drawing9 {
   grid-area: drawing9;
 }
 
-/* start of second row */
 .drawing10 {
   grid-area: drawing10;
 }
@@ -147,6 +167,7 @@
   grid-area: drawing17;
 }
 
+/* start of third row */
 .drawing18 {
   grid-area: drawing18;
 }
@@ -163,7 +184,6 @@
   grid-area: drawing21;
 }
 
-/* start of third row */
 .drawing22 {
   grid-area: drawing22;
 }
@@ -182,22 +202,6 @@
 
 .drawing26 {
   grid-area: drawing26;
-}
-
-.drawing27 {
-  grid-area: drawing27;
-}
-
-.drawing28 {
-  grid-area: drawing28;
-}
-
-.drawing29 {
-  grid-area: drawing29;
-}
-
-.drawing30 {
-  grid-area: drawing30;
 }
 
 @-webkit-keyframes backgroundFade {
@@ -242,25 +246,28 @@
   }
 }
 
+/* unregisteredAnimatedGridContainer */
 @media (max-width: 1400px) {
-  .searchGridContainer {
+  .unregisteredAnimatedGridContainer {
     grid-template-columns: repeat(8, 1fr);
   }
 }
 
-@media (max-width: 1200px) {
-  .searchGridContainer {
+@media (max-width: 1300px) {
+  .unregisteredAnimatedGridContainer {
     grid-template-columns: repeat(7, 1fr);
+  }
+}
+
+@media (max-width: 1150px) {
+  .unregisteredAnimatedGridContainer {
+    grid-template-columns: repeat(6, 1fr);
   }
 }
 
 @media (max-width: 1000px) {
   .fullWidth {
     width: 95%;
-  }
-
-  .searchGridContainer {
-    grid-template-columns: repeat(6, 1fr);
   }
 }
 
@@ -272,13 +279,13 @@
 }
 
 @media (max-width: 800px) {
-  .searchGridContainer {
+  .unregisteredAnimatedGridContainer {
     grid-template-columns: repeat(5, 1fr);
   }
 }
 
 @media (max-width: 600px) {
-  .searchGridContainer {
+  .unregisteredAnimatedGridContainer {
     grid-template-columns: repeat(4, 1fr);
   }
 }
@@ -291,7 +298,62 @@
 }
 
 @media (max-width: 400px) {
-  .searchGridContainer {
+  .unregisteredAnimatedGridContainer {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+/* normal AnimatedGridContainer */
+@media (max-width: 1400px) {
+  .animatedGridContainer {
+    grid-template-columns: repeat(8, 1fr);
+  }
+}
+
+@media (max-width: 1200px) {
+  .animatedGridContainer {
+    grid-template-columns: repeat(7, 1fr);
+  }
+}
+
+@media (max-width: 1000px) {
+  .fullWidth {
+    width: 95%;
+  }
+
+  .animatedGridContainer {
+    grid-template-columns: repeat(6, 1fr);
+  }
+}
+
+@media (max-width: 900px) {
+  .drawingTitleContainer {
+    width: 40%;
+    height: 55px;
+  }
+}
+
+@media (max-width: 800px) {
+  .animatedGridContainer {
+    grid-template-columns: repeat(5, 1fr);
+  }
+}
+
+@media (max-width: 600px) {
+  .animatedGridContainer {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+@media (max-width: 450px) {
+  .drawingTitleContainer {
+    width: 60%;
+    height: 55px;
+  }
+}
+
+@media (max-width: 400px) {
+  .animatedGridContainer {
     grid-template-columns: repeat(3, 1fr);
   }
 }

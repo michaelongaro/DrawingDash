@@ -14,14 +14,11 @@
   align-items: center;
   flex-direction: row;
   width: 100%;
-  gap: 6em;
-  /* margin-top: 3em; */
+  gap: 5.5em;
 }
 
 .paletteIconContainer {
   position: absolute;
-  /* width: 30em;
-  height: 30em; */
   top: 5.5em;
   z-index: 1;
 }
@@ -53,6 +50,8 @@
   pointer-events: none;
   user-select: none;
   z-index: 3;
+  opacity: 1;
+  transition: all 200ms;
 }
 
 .colorInput {

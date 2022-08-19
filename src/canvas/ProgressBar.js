@@ -22,8 +22,6 @@ const ProgressBar = () => {
   const [chooseMoved, setChooseMoved] = useState(false);
   const [chooseOffset, setChooseOffset] = useState(0);
 
-  // const [scrolledToMain, setScrolledToMain] = useState(false);
-
   const [localPBStates, setLocalPBStates] = useState({
     selectCircle: false,
     chooseCircle: false,
@@ -35,32 +33,20 @@ const ProgressBar = () => {
 
   const [cleanupAllStates, setCleanupAllStates] = useState(false);
 
-  // useEffect(() => {
-  //   console.log(chooseMoved, chooseOffset);
-  // }, [chooseMoved, chooseOffset]);
-
   useEffect(() => {
     // just for initial render
     setSelectOffset(
       rectangleRef.current.getBoundingClientRect().width / 2 -
-        selectTextRef.current.getBoundingClientRect().width / 2
+        selectTextRef.current.getBoundingClientRect().width / 2 -
+        7.5
     );
 
     if (document.getElementById("chooseTextContainer") !== null) {
-      console.log("resize");
-
-      //document.getElementById("chooseTextContainer").offsetTop - document.body.scrollTop
       setChooseOffset(
         document.getElementById("chooseTextContainer").getBoundingClientRect()
           .top -
           169 -
           15
-        // Math.abs(
-        //   document.getElementById("chooseTextContainer").offsetTop -
-        //     document.body.scrollTop
-        // ) -
-        //   169 +
-        //   15
       );
     }
 
@@ -71,18 +57,11 @@ const ProgressBar = () => {
       );
 
       if (document.getElementById("chooseTextContainer") !== null) {
-        console.log("resize");
         setChooseOffset(
           document.getElementById("chooseTextContainer").getBoundingClientRect()
             .top -
             169 -
             15
-          // Math.abs(
-          //   document.getElementById("chooseTextContainer").offsetTop -
-          //     document.body.scrollTop
-          // ) -
-          //   169 +
-          //   15
         );
       }
     }
@@ -92,30 +71,6 @@ const ProgressBar = () => {
       window.removeEventListener("resize", resizeHandler);
     };
   }, []);
-
-  // useEffect(() => {
-  //   if (DSCtx.checkScrollState) {
-  //     const element = document.getElementById("root");
-  //     const y = element.getBoundingClientRect().top + window.scrollY;
-
-  //     function checkScrollEnd() {
-  //       if (
-  //         (window.scrollY ||
-  //           document.body.scrollTop ||
-  //           document.documentElement.scrollTop) < y
-  //       ) {
-  //         window.requestAnimationFrame(checkScrollEnd);
-  //         // setScrolledToMain(false);
-  //         console.log("false");
-  //       } else {
-  //         setScrolledToMain(true);
-  //         console.log("true");
-  //       }
-  //     }
-
-  //     window.requestAnimationFrame(checkScrollEnd);
-  //   }
-  // }, [DSCtx.checkScrollState]);
 
   useEffect(() => {
     if (cleanupAllStates) {
@@ -127,9 +82,6 @@ const ProgressBar = () => {
   // in their own files and then call them here (with same structure)
 
   useEffect(() => {
-    // if (scrolledToMain) {
-    //   setScrolledToMain(false);
-
     // only check for states if context (current) values are populated
     if (
       !isEqual(DSCtx.PBStates, {
@@ -146,7 +98,6 @@ const ProgressBar = () => {
         !localPBStates["resetToSelectBar"]
       ) {
         // moving everything back to default positions
-
         anime({
           targets: "#draw",
           loop: false,
@@ -226,7 +177,8 @@ const ProgressBar = () => {
               "-13px",
               `${
                 rectangleRef.current.getBoundingClientRect().width / 2 -
-                selectTextRef.current.getBoundingClientRect().width / 2
+                selectTextRef.current.getBoundingClientRect().width / 2 -
+                7.5
               }px`,
             ],
             top: ["20px", "140px"],
@@ -260,20 +212,7 @@ const ProgressBar = () => {
             complete: function () {
               setSelectMoved(false);
 
-              // setChooseOffset(
-              //   document
-              //     .getElementById("chooseTextContainer")
-              //     .getBoundingClientRect().top -
-              //     169 -
-              //     15
-              // );
               setChooseOffset(
-                // Math.abs(
-                //   document.getElementById("chooseTextContainer").offsetTop -
-                //     document.body.scrollTop
-                // ) -
-                //   169 +
-                //   15
                 document
                   .getElementById("chooseTextContainer")
                   .getBoundingClientRect().top -
@@ -294,12 +233,6 @@ const ProgressBar = () => {
                       .getBoundingClientRect().top -
                     169 -
                     15
-                    // Math.abs(
-                    //   document.getElementById("chooseTextContainer").offsetTop -
-                    //     document.body.scrollTop
-                    // ) -
-                    // 169 +
-                    // 15
                   }`,
                 ],
                 fontSize: ["1.25em", "1.5em"],
@@ -308,19 +241,6 @@ const ProgressBar = () => {
                 easing: "easeInSine",
                 complete: () => {
                   setChooseMoved(true);
-                  // setChooseOffset(
-                  //   // document
-                  //   //   .getElementById("chooseTextContainer")
-                  //   //   .getBoundingClientRect().top +
-                  //   //   window.scrollY -
-                  //   //   169 -
-                  //   //   15
-                  //   Math.abs(
-                  //     document.getElementById("chooseTextContainer").offsetTop -
-                  //       document.body.scrollTop +
-                  //       169
-                  //   ) + 15
-                  // );
                 },
               });
             },
@@ -377,7 +297,6 @@ const ProgressBar = () => {
             loop: false,
             direction: "normal",
             duration: 500,
-            // translateY: ["50px", 0],
             top: 20,
             fontSize: ["1.5em", "1.25em"],
             fontWeight: [600, 400],
@@ -396,7 +315,8 @@ const ProgressBar = () => {
                   "-13px",
                   `${
                     rectangleRef.current.getBoundingClientRect().width / 2 -
-                    selectTextRef.current.getBoundingClientRect().width / 2
+                    selectTextRef.current.getBoundingClientRect().width / 2 -
+                    7.5
                   }px`,
                 ],
                 top: ["20px", "140px"],
@@ -443,14 +363,13 @@ const ProgressBar = () => {
             loop: false,
             direction: "normal",
             duration: 500,
-            // translateY: ["70px", 0],
             top: 20,
             fontSize: ["1.5em", "1.25em"],
             fontWeight: [600, 400],
             color: ["rgb(0, 0, 0)", "rgb(100, 100, 100)"],
             easing: "easeInSine",
             complete: function () {
-              setChooseMoved(true);
+              setChooseMoved(false);
 
               anime({
                 targets: "#drawText",
@@ -480,7 +399,7 @@ const ProgressBar = () => {
           width: ["28px", 0],
           minHeight: ["28px", 0],
           direction: "normal",
-          duration: 300,
+          duration: 100,
           easing: "easeInSine",
         });
 
@@ -488,12 +407,13 @@ const ProgressBar = () => {
           targets: "#selectText",
           loop: false,
           direction: "normal",
-          duration: 350,
+          duration: 150,
 
           left: [
             `${
               rectangleRef.current.getBoundingClientRect().width / 2 -
-              selectTextRef.current.getBoundingClientRect().width / 2
+              selectTextRef.current.getBoundingClientRect().width / 2 -
+              7.5
             }px`,
             "-13px",
           ],
@@ -512,9 +432,7 @@ const ProgressBar = () => {
       }
       setLocalPBStates(DSCtx.PBStates);
     }
-    // }
   }, [
-    // scrolledToMain,
     isLoading,
     isAuthenticated,
     DSCtx.revertSelectCircle,

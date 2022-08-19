@@ -195,6 +195,7 @@ const DrawingModal = ({
       matchMedia("(hover: none), (pointer: coarse)").matches &&
       window.innerWidth < 775
     ) {
+      setModalWidth("95vw");
       setShowMobileButtons(true);
     } else {
       setShowMobileButtons(false);
@@ -275,6 +276,7 @@ const DrawingModal = ({
         matchMedia("(hover: none), (pointer: coarse)").matches &&
         window.innerWidth < 775
       ) {
+        setModalWidth("95vw");
         setShowMobileButtons(true);
       } else {
         setShowMobileButtons(false);

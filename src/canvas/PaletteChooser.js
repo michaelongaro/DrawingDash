@@ -15,7 +15,7 @@ const PaletteChooser = () => {
 
   const [initComponentWidth, setInitComponentWidth] = useState(1920);
   const [dynamicButtonDimensions, setDynamicButtonDimensions] = useState(1);
-  const [dyanmicIconDimensions, setDyanmicIconDimensions] = useState("30em");
+  const [dyanmicIconDimensions, setDyanmicIconDimensions] = useState("27em");
 
   const firstColorRef = useRef(null);
   const secondColorRef = useRef(null);
@@ -32,11 +32,11 @@ const PaletteChooser = () => {
   ]);
 
   const [visibilityOfOverlays, setVisibilityOfOverlays] = useState([
-    classes.showOverlay,
-    classes.showOverlay,
-    classes.showOverlay,
-    classes.showOverlay,
-    classes.showOverlay,
+    true,
+    true,
+    true,
+    true,
+    true,
   ]);
 
   const [statusOfCheckmarks, setStatusOfCheckmarks] = useState([
@@ -58,10 +58,6 @@ const PaletteChooser = () => {
       direction: "normal",
       duration: 500,
       easing: "easeInSine",
-      // complete: () => {
-      //   DSCtx.setCheckScrollState(true);
-      //   document.getElementById("root").scrollIntoView({ behavior: "smooth" });
-      // },
     });
   }, []);
 
@@ -72,7 +68,7 @@ const PaletteChooser = () => {
       setDyanmicIconDimensions("20em");
     } else {
       setDynamicButtonDimensions(1);
-      setDyanmicIconDimensions("30em");
+      setDyanmicIconDimensions("27em");
     }
 
     function resizeHandler() {
@@ -81,7 +77,7 @@ const PaletteChooser = () => {
         setDyanmicIconDimensions("20em");
       } else {
         setDynamicButtonDimensions(1);
-        setDyanmicIconDimensions("30em");
+        setDyanmicIconDimensions("27em");
       }
     }
 
@@ -122,7 +118,7 @@ const PaletteChooser = () => {
 
   function updateOverlayState(idx) {
     const shallowCopyOverlays = [...visibilityOfOverlays];
-    shallowCopyOverlays.splice(idx, 1, classes.hide);
+    shallowCopyOverlays.splice(idx, 1, false);
     setVisibilityOfOverlays(shallowCopyOverlays);
   }
 
@@ -180,10 +176,11 @@ const PaletteChooser = () => {
           <div
             style={{
               position: "absolute",
-              gap: "7em",
+              gap: dynamicButtonDimensions === 1 ? "5.5em" : "7em",
               top: dynamicButtonDimensions === 1 ? "21%" : "12%",
               width: "100%",
               transform: `scale(${dynamicButtonDimensions})`,
+              transition: "all 200ms",
             }}
             className={baseClasses.baseVertFlex}
           >
@@ -202,7 +199,12 @@ const PaletteChooser = () => {
                     updatePaletteAndCheckmarkStates(event, 0);
                   }}
                 />
-                <div className={visibilityOfOverlays[0]}>?</div>
+                <div
+                  style={{ opacity: visibilityOfOverlays[0] ? 1 : 0 }}
+                  className={classes.showOverlay}
+                >
+                  ?
+                </div>
                 <div
                   className={classes.circle}
                   style={{
@@ -240,7 +242,12 @@ const PaletteChooser = () => {
                     updatePaletteAndCheckmarkStates(event, 1);
                   }}
                 />
-                <div className={visibilityOfOverlays[1]}>?</div>
+                <div
+                  style={{ opacity: visibilityOfOverlays[1] ? 1 : 0 }}
+                  className={classes.showOverlay}
+                >
+                  ?
+                </div>
                 <div
                   className={classes.circle}
                   style={{
@@ -278,7 +285,12 @@ const PaletteChooser = () => {
                     updatePaletteAndCheckmarkStates(event, 2);
                   }}
                 />
-                <div className={visibilityOfOverlays[2]}>?</div>
+                <div
+                  style={{ opacity: visibilityOfOverlays[2] ? 1 : 0 }}
+                  className={classes.showOverlay}
+                >
+                  ?
+                </div>
                 <div
                   className={classes.circle}
                   style={{
@@ -318,7 +330,12 @@ const PaletteChooser = () => {
                   }}
                 />
 
-                <div className={visibilityOfOverlays[3]}>?</div>
+                <div
+                  style={{ opacity: visibilityOfOverlays[3] ? 1 : 0 }}
+                  className={classes.showOverlay}
+                >
+                  ?
+                </div>
 
                 <div
                   className={classes.circle}
@@ -357,7 +374,12 @@ const PaletteChooser = () => {
                     updatePaletteAndCheckmarkStates(event, 4);
                   }}
                 />
-                <div className={visibilityOfOverlays[4]}>?</div>
+                <div
+                  style={{ opacity: visibilityOfOverlays[4] ? 1 : 0 }}
+                  className={classes.showOverlay}
+                >
+                  ?
+                </div>
                 <div
                   className={classes.circle}
                   style={{
@@ -391,7 +413,6 @@ const PaletteChooser = () => {
           <button
             className={baseClasses.activeButton}
             onClick={() => {
-              DSCtx.updatePBStates("selectToChooseBar", false);
               DSCtx.setStartFromLeft(false);
 
               document
@@ -408,6 +429,7 @@ const PaletteChooser = () => {
                 easing: "easeInSine",
                 complete: () => {
                   DSCtx.goBackToPromptSelection();
+                  DSCtx.updatePBStates("selectToChooseBar", false);
                 },
               });
             }}

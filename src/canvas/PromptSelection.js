@@ -15,14 +15,7 @@ import OneMinuteIcon from "../svgs/OneMinuteIcon";
 import ThreeMinuteIcon from "../svgs/ThreeMinuteIcon";
 import FiveMinuteIcon from "../svgs/FiveMinuteIcon";
 
-import {
-  getDatabase,
-  ref as ref_database,
-  set,
-  onValue,
-  child,
-  get,
-} from "firebase/database";
+import { getDatabase, ref as ref_database, onValue } from "firebase/database";
 
 import { app } from "../util/init-firebase";
 
@@ -276,7 +269,6 @@ const PromptSelection = () => {
   }, [
     isLoading,
     isAuthenticated,
-    // DSCtx.drawingStatuses,
     showExtraPrompt,
     DSCtx.PBStates,
     showCountdownTimer,
@@ -303,7 +295,7 @@ const PromptSelection = () => {
             scale: [1, 0],
             direction: "normal",
             duration: 400,
-            easing: "linear",
+            easing: "easeInSine",
           });
 
           setShowRegisterContainer(false);
@@ -319,7 +311,7 @@ const PromptSelection = () => {
           direction: "normal",
           duration: 500,
           loop: false,
-          easing: "linear",
+          easing: "easeInSine",
         });
 
         setShowPromptsComingShortlyContainer(false);
@@ -338,7 +330,7 @@ const PromptSelection = () => {
           direction: "normal",
           duration: 1000,
           loop: false,
-          easing: "linear",
+          easing: "easeInSine",
         });
 
         // animate extra drawing prompts container out of view
@@ -569,7 +561,7 @@ const PromptSelection = () => {
           delay: 350,
 
           loop: false,
-          easing: "linear",
+          easing: "easeInSine",
         });
         // animate "An Extra Drawing Prompt" down into view
         anime({
@@ -582,7 +574,7 @@ const PromptSelection = () => {
           delay: 500,
           loop: false,
           duration: 1000,
-          easing: "linear",
+          easing: "easeInSine",
         });
 
         // animate normal drawing prompts container down out of view
@@ -620,15 +612,12 @@ const PromptSelection = () => {
 
         anime({
           targets: "#nextButton",
-          // translateY: "1300px",
-          // height: [0, "100%"],
-
           loop: false,
           delay: 800,
           opacity: [0, 1],
           direction: "normal",
           duration: 1500,
-          easing: "linear",
+          easing: "easeInSine",
           complete: () => {
             setExtraPromptHasBeenAnimated(true);
           },
@@ -656,7 +645,7 @@ const PromptSelection = () => {
           // maybe scale this [0, 1] ?
           direction: "normal",
           duration: 500,
-          easing: "linear",
+          easing: "easeInSine",
         });
       }
     }
@@ -692,7 +681,6 @@ const PromptSelection = () => {
   useEffect(() => {
     // only set selectCircle to true if PBStates is default state
     // + not all daily's finished
-    console.log("1st");
     if (
       isEqual(DSCtx.PBStates, {
         selectCircle: false,
@@ -704,24 +692,16 @@ const PromptSelection = () => {
       }) &&
       DSCtx.resetComplete
     ) {
-      console.log("2st");
-
       // regular flow (drawings init loaded + not all prompts have been completed)
       // -> start animation of selectCircle
       if (DSCtx.promptRefreshes === 1 && DSCtx.drawingStatusRefreshes > 0) {
-        console.log("3st");
-
         if (!isLoading && isAuthenticated) {
-          console.log("4st");
-
           if (
             !DSCtx.drawingStatuses["60"] ||
             !DSCtx.drawingStatuses["180"] ||
             !DSCtx.drawingStatuses["300"] ||
             !DSCtx.drawingStatuses["extra"]
           ) {
-            console.log("5st");
-
             // setHidePlaceholderText(false);
             DSCtx.updatePBStates("selectCircle", true);
           }
@@ -918,7 +898,6 @@ const PromptSelection = () => {
       return;
     }
 
-    // DSCtx.updatePBStates("selectToChooseBar", true);
     document.getElementById("root").scrollIntoView({ behavior: "smooth" });
 
     anime({

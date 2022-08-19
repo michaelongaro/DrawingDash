@@ -14,8 +14,6 @@ const Profile = () => {
   const [showProfileNavigation, setShowProfileNavigation] = useState(false);
   const [profileCardStyles, setProfileCardStyles] = useState(null);
 
-  // 900px go to column
-
   useEffect(() => {
     if (window.innerWidth <= 1100) {
       setProfileCardStyles({
@@ -74,7 +72,7 @@ const Profile = () => {
         <div
           style={{
             minHeight:
-              location.pathname === "/profile/preferences" ? "82vh" : "100vh",
+              location.pathname === "/profile/preferences" ? "87.5vh" : "100vh",
           }}
           className={classes.horizontalContain}
         >

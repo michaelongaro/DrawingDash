@@ -89,7 +89,7 @@ const SlideShow = ({ pinnedDrawings, pinnedMetadata, username }) => {
       }
     },
     infinite: true,
-    // easing: "ease",
+
     onChange: (previous, next) => {
       setCurrentSlideshowTitle(
         pinnedMetadata[next] === "" ? "" : pinnedMetadata[next].title

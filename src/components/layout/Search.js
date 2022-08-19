@@ -463,12 +463,7 @@ const Search = ({ dbPath, margin, idx, forModal }) => {
   }, []);
 
   useEffect(() => {
-    if (
-      // searchCtx.searchValues["submittedAdjectives"][idx].length !== 0 &&
-      // searchCtx.searchValues["submittedNouns"][idx].length !== 0
-      inputsWereSubmitted
-    ) {
-      console.log("permarefreshing");
+    if (inputsWereSubmitted) {
       setInputsWereSubmitted(false);
 
       searchCtx.updatePageSelectorDetails("durationToManuallyLoad", null, idx);
@@ -501,7 +496,7 @@ const Search = ({ dbPath, margin, idx, forModal }) => {
     event.preventDefault();
 
     // may want to do a {...searchCtx.searchValues}
-    // and update the shiet manually as opposed to two separate calls here
+    // and update manually as opposed to two separate calls here
     searchCtx.updateSearchValues(
       "submittedAdjectives",
       adjectiveInputRef.current.value,
@@ -513,25 +508,18 @@ const Search = ({ dbPath, margin, idx, forModal }) => {
       idx
     );
 
-    setInputsWereSubmitted(true);
-
-    // searchCtx.updatePageSelectorDetails("durationToManuallyLoad", null, idx);
-
-    // if (idx !== 0) {
-    //   searchCtx.getGallary(0, resultsPerPage, resultsPerPage, idx, dbPath);
-    // } else {
-    //   searchCtx.getGallary(0, resultsPerPage, resultsPerPage, idx, dbPath);
-    // }
-
-    // setGallaryListStaticTitle(
-    //   `${searchCtx.searchValues["adjSearch"][idx]} ${searchCtx.searchValues["nounSearch"][idx]}`
-    // );
-
-    // // clearing autofill + related context values
-    // searchCtx.updateSearchValues("autofilledAdjectiveInput", "", idx);
-    // searchCtx.updateSearchValues("autofilledNounInput", "", idx);
-    // searchCtx.updateSearchValues("requestedAdjectives", [], idx);
-    // searchCtx.updateSearchValues("requestedNouns", [], idx);
+    if (idx !== 0) {
+      setInputsWereSubmitted(true);
+    } else {
+      if (
+        adjectiveInputRef.current.value.length !== 0 ||
+        nounInputRef.current.value.length !== 0
+      ) {
+        setInputsWereSubmitted(true);
+      } else {
+        searchCtx.resetAllValues(idx);
+      }
+    }
   }
 
   return (
@@ -555,7 +543,6 @@ const Search = ({ dbPath, margin, idx, forModal }) => {
               autofillHandler(e, false, true);
             }}
             autoComplete="off"
-            required
           ></input>
           <label>Adjective</label>
           <div className={showAdjResults ? classes.show : classes.hide}>
@@ -586,7 +573,6 @@ const Search = ({ dbPath, margin, idx, forModal }) => {
               autofillHandler(e, false, false);
             }}
             autoComplete="off"
-            required
           ></input>
           <label>Noun</label>
           <div className={showNounResults ? classes.show : classes.hide}>

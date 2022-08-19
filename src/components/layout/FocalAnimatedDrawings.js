@@ -1,7 +1,10 @@
 import React, { useEffect, useState, useRef } from "react";
 
+import { useAuth0 } from "@auth0/auth0-react";
+import { useLocation } from "react-router-dom";
 import anime from "animejs/lib/anime.es.js";
 import isEqual from "lodash/isEqual";
+
 import { getDatabase, get, ref, child } from "firebase/database";
 
 import {
@@ -13,7 +16,6 @@ import {
 
 import { app } from "../../util/init-firebase";
 
-import AnimatedDrawing from "./AnimatedDrawing";
 import AnimatedGridContainer from "./AnimatedGridContainer";
 import FocalBannerMessage from "./FocalBannerMessage";
 
@@ -26,6 +28,9 @@ import SHADES_OF_GREEN from "../../ui/greenshades";
 import classes from "./FocalAnimatedDrawings.module.css";
 
 const FocalAnimatedDrawings = (props) => {
+  const { isLoading, isAuthenticated } = useAuth0();
+  const location = useLocation();
+
   const [showPrompt, setShowPrompt] = useState([false, false, false]);
   const [randomDrawingIDs60, setRandomDrawingIDs60] = useState(null);
   const [randomDrawingIDs180, setRandomDrawingIDs180] = useState(null);
@@ -40,8 +45,6 @@ const FocalAnimatedDrawings = (props) => {
   const [fetchedDrawings300, setFetchedDrawings300] = useState([]);
 
   const [startIntervalTimer, setStartIntervalTimer] = useState(false);
-
-  const [offsetX, setOffsetX] = useState(0);
 
   const intervalID = useRef(null);
 
@@ -370,7 +373,11 @@ const FocalAnimatedDrawings = (props) => {
         style={{
           opacity: showPrompt[0] && fetchedDrawings60.length > 0 ? 1 : 0,
         }}
-        className={`${classes.searchGridContainer}`}
+        className={`${
+          !isLoading && !isAuthenticated && location.pathname === "/"
+            ? classes.unregisteredAnimatedGridContainer
+            : classes.animatedGridContainer
+        }`}
       >
         <AnimatedGridContainer
           displayDrawings={showPrompt[0] && fetchedDrawings60.length > 0}
@@ -385,7 +392,11 @@ const FocalAnimatedDrawings = (props) => {
         style={{
           opacity: showPrompt[1] && fetchedDrawings180.length > 0 ? 1 : 0,
         }}
-        className={`${classes.searchGridContainer}`}
+        className={`${
+          !isLoading && !isAuthenticated && location.pathname === "/"
+            ? classes.unregisteredAnimatedGridContainer
+            : classes.animatedGridContainer
+        }`}
       >
         <AnimatedGridContainer
           displayDrawings={showPrompt[1] && fetchedDrawings180.length > 0}
@@ -400,7 +411,11 @@ const FocalAnimatedDrawings = (props) => {
         style={{
           opacity: showPrompt[2] && fetchedDrawings300.length > 0 ? 1 : 0,
         }}
-        className={`${classes.searchGridContainer}`}
+        className={`${
+          !isLoading && !isAuthenticated && location.pathname === "/"
+            ? classes.unregisteredAnimatedGridContainer
+            : classes.animatedGridContainer
+        }`}
       >
         <AnimatedGridContainer
           displayDrawings={showPrompt[2] && fetchedDrawings300.length > 0}

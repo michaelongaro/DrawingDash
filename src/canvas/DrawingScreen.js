@@ -73,6 +73,8 @@ const DrawingScreen = () => {
   const [showPendingDownload, setShowPendingDownload] = useState(false);
   const [showPendingCopy, setShowPendingCopy] = useState(false);
 
+  const [mobileThresholdReached, setMobileThresholdReached] = useState(null);
+
   const [showCountdownTimer, setShowCountdownTimer] = useState(false);
   const [resetAtDate, setResetAtDate] = useState(
     "January 01, 2030 00:00:00 GMT+03:00"
@@ -119,8 +121,14 @@ const DrawingScreen = () => {
       duration: 250,
       easing: "easeInSine",
       complete: () => {
-        // scrolling down to canvas after progress bar +
+        // scrolling down to canvas after progress bar completes
         canvasContainerRef.current.scrollIntoView({ behavior: "smooth" });
+
+        if (window.innerWidth < 1300) {
+          setMobileThresholdReached(true);
+        } else {
+          setMobileThresholdReached(false);
+        }
       },
     });
 
@@ -223,6 +231,43 @@ const DrawingScreen = () => {
   }, []);
 
   useEffect(() => {
+    // just for initial render
+    if (mobileThresholdReached !== null) {
+      if (window.innerWidth < 1300) {
+        setMobileThresholdReached(true);
+      } else {
+        setMobileThresholdReached(false);
+      }
+    }
+
+    function resizeHandler() {
+      if (mobileThresholdReached !== null) {
+        if (window.innerWidth < 1300) {
+          setMobileThresholdReached(true);
+        } else {
+          setMobileThresholdReached(false);
+        }
+      }
+    }
+
+    window.addEventListener("resize", resizeHandler);
+    return () => {
+      window.removeEventListener("resize", resizeHandler);
+    };
+  }, [mobileThresholdReached]);
+
+  useEffect(() => {
+    if (mobileThresholdReached !== null) {
+      setTimeout(() => {
+        // not sure why timeout was needed, we are waiting for state to change
+        // and I feel like it should immediately change the scroll position too,
+        // however this was the workaround
+        canvasContainerRef.current.scrollIntoView({ behavior: "smooth" });
+      }, 250);
+    }
+  }, [mobileThresholdReached]);
+
+  useEffect(() => {
     // adding eventlisteners only when canvas is available to be interacted with
     let currentCanvasRef = null;
     if (initAnimationDelayCompleted && DSCtx.seconds === 0) {
@@ -273,20 +318,20 @@ const DrawingScreen = () => {
 
   const [showCanvas, setShowCanvas] = useState(false);
 
-  const [showCountdownOverlay, setShowCountdownOverlay] = useState(
-    classes.overlayBreathingBackground
-  );
+  // const [showCountdownOverlay, setShowCountdownOverlay] = useState(
+  //   classes.overlayBreathingBackground
+  // );
 
   const [showCanvasOutline, setShowCanvasOutline] = useState(
     classes.canvasOutline
   );
 
-  const [showEndOverlay, setShowEndOverlay] = useState(classes.hide);
+  // const [showEndOverlay, setShowEndOverlay] = useState(classes.hide);
   const [showEndOutline, setShowEndOutline] = useState(false);
 
   useEffect(() => {
     if (!DSCtx.showPaletteChooser) {
-      setShowCountdownOverlay(classes.overlayBreathingBackground);
+      // setShowCountdownOverlay(classes.overlayBreathingBackground);
       setShowCanvasOutline(classes.canvasOutline);
       setShowCanvas(false);
     }
@@ -311,7 +356,7 @@ const DrawingScreen = () => {
       if (DSCtx.seconds > 0) {
         setTimeout(() => DSCtx.setSeconds(DSCtx.seconds - 1), 1000);
       } else {
-        setShowCountdownOverlay(classes.hide);
+        // setShowCountdownOverlay(classes.hide);
         setShowCanvasOutline(classes.hide);
 
         clearCanvas();
@@ -700,11 +745,15 @@ const DrawingScreen = () => {
     >
       <div
         style={{
-          marginTop: "3em",
+          marginTop: "2.5em",
+          marginBottom: "2.5em",
         }}
       >
         <div
           ref={canvasContainerRef}
+          style={{
+            scrollMargin: mobileThresholdReached ? 0 : "1em",
+          }}
           className={classes.canvasBreathingBackground}
         >
           <div style={{ userSelect: "none", margin: "0.15em 0" }}>
@@ -788,21 +837,21 @@ const DrawingScreen = () => {
                 className={classes.canvasBorder}
               >
                 <canvas
-                  // className={classes.canvas}
                   style={{
-                    // width: "100% !important",
-                    // height: "100% !important",
-                    // objectFit: "contain",
                     cursor: floodFillStatus
                       ? // paintbucket cursor svg
                         getCursorPaintbucketIcon(
                           DSCtx.currentColor.replace("#", "")
                         )
-                      : // regular selected color cursor svg
-                        `url('data:image/svg+xml;utf8,<svg id="svg" xmlns="http://www.w3.org/2000/svg" version="1.1" width="40" height="40"><circle cx="${
-                          DSCtx.currentCursorSize
-                        }" cy="${DSCtx.currentCursorSize}" r="${
-                          DSCtx.currentCursorSize
+                      : // regular selected color cursor svg // used to be 40 height/width
+                        `url('data:image/svg+xml;utf8,<svg id="svg" xmlns="http://www.w3.org/2000/svg" version="1.1" width="${
+                          DSCtx.adjustedCurrentCursorSize
+                        }" height="${
+                          DSCtx.adjustedCurrentCursorSize
+                        }"><circle cx="${
+                          DSCtx.adjustedCurrentCursorSize / 2
+                        }" cy="${DSCtx.adjustedCurrentCursorSize / 2}" r="${
+                          DSCtx.adjustedCurrentCursorSize / 2
                         }" style="fill: %23${DSCtx.currentColor.replace(
                           "#",
                           ""
@@ -810,8 +859,8 @@ const DrawingScreen = () => {
                           DSCtx.currentColor === "#FFFFFF" ? "%23c4c4c4" : ""
                         }; strokeWidth:${
                           DSCtx.currentColor === "#FFFFFF" ? "1px" : "0"
-                        }; "/></svg>') ${DSCtx.currentCursorSize} ${
-                          DSCtx.currentCursorSize
+                        }; "/></svg>') ${DSCtx.adjustedCurrentCursorSize / 2} ${
+                          DSCtx.adjustedCurrentCursorSize / 2
                         }, pointer`,
                   }}
                   onMouseDown={draw}

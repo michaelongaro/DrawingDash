@@ -1,6 +1,5 @@
-import { createContext, useState } from "react";
+import { createContext, useState, useEffect } from "react";
 import { useAuth0 } from "@auth0/auth0-react";
-import { useEffect } from "react";
 
 import isEqual from "lodash/isEqual";
 
@@ -38,6 +37,7 @@ export function DrawingSelectionProvider(props) {
     "#FFFFFF",
   ]);
   const [currentCursorSize, setCurrentCursorSize] = useState(5);
+  const [adjustedCurrentCursorSize, setAdjustedCurrentCursorSize] = useState(0);
   const [currentColor, setCurrentColor] = useState("#FFFFFF");
 
   const [fetchNewWords, setFetchNewWords] = useState(true);
@@ -221,6 +221,16 @@ export function DrawingSelectionProvider(props) {
     }
   }, [resetComplete, drawingStatuses, promptRefreshes, drawingStatusRefreshes]);
 
+  useEffect(() => {
+    if (window.innerWidth < 1000) {
+      setAdjustedCurrentCursorSize(currentCursorSize * 0.5);
+    } else {
+      setAdjustedCurrentCursorSize(
+        currentCursorSize * (window.innerWidth / 1920)
+      );
+    }
+  }, [currentCursorSize]);
+
   function updatePBStates(field, value) {
     let tempPBStatuses = { ...PBStates };
     tempPBStatuses[field] = value;
@@ -272,6 +282,8 @@ export function DrawingSelectionProvider(props) {
     setPBStates: setPBStates,
     updatePBStates: updatePBStates,
     resetProgressBar: resetProgressBar,
+    adjustedCurrentCursorSize: adjustedCurrentCursorSize,
+    setAdjustedCurrentCursorSize: setAdjustedCurrentCursorSize,
 
     startNewDailyWordsAnimation: startNewDailyWordsAnimation,
     setStartNewDailyWordsAnimation: setStartNewDailyWordsAnimation,

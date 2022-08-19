@@ -10,8 +10,9 @@
   align-items: center;
 
   gap: 1em;
-  padding: 1em 0;
+  padding: 1em;
 
+  width: 100%;
   height: 20em;
 }
 
@@ -99,7 +100,7 @@
 
   .animatedRainbowMargin {
     margin: 0;
-    height: 90px;
+    min-height: 90px;
   }
 }
 
@@ -110,8 +111,14 @@
 }
 
 @media (max-width: 550px) {
-  .firstTimePromo {
+  /* .firstTimePromo {
     gap: 1em;
+  } */
+}
+
+@media (max-width: 525px) {
+  .firstTimePromo {
+    gap: 2em;
   }
 }
 
@@ -123,6 +130,7 @@
   .firstTimePromo {
     flex-direction: column;
     height: 15em;
+    gap: 0;
   }
 
   .flexContainColumn {
@@ -148,4 +156,10 @@
         rgb(41, 41, 41),
         rgba(255, 255, 255, 0));
   }
+
+  /* .animatedRainbowMargin {
+    margin: 0;
+    min-height: 45px;
+    max-height: 70px;
+  } */
 }

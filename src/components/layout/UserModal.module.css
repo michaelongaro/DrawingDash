@@ -46,6 +46,7 @@
   display: flex;
   justify-content: space-evenly;
   align-items: center;
+  margin-bottom: 3em;
 
   padding: 1.25em;
 }
@@ -124,7 +125,6 @@
   .container {
     flex-direction: column;
     padding: 1em;
-    margin-bottom: 3em;
     gap: 2em;
     width: auto;
   }
