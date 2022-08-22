@@ -470,8 +470,6 @@ const GallaryList = ({
                         skeleHeight: "10em",
                         skeleDateWidth: "6em",
                         skeleTitleWidth: "6em",
-                        widthRatio: skeletonRatio,
-                        heightRatio: skeletonRatio,
                       }}
                       idx={idx}
                       dbPath={databasePath}
@@ -504,8 +502,6 @@ const GallaryList = ({
                         skeleHeight: "10em",
                         skeleDateWidth: "6em",
                         skeleTitleWidth: "6em",
-                        widthRatio: skeletonRatio,
-                        heightRatio: skeletonRatio,
                       }}
                       idx={idx}
                       dbPath={databasePath}
@@ -538,8 +534,6 @@ const GallaryList = ({
                         skeleHeight: "10em",
                         skeleDateWidth: "6em",
                         skeleTitleWidth: "6em",
-                        widthRatio: skeletonRatio,
-                        heightRatio: skeletonRatio,
                       }}
                       idx={idx}
                       dbPath={databasePath}
@@ -553,12 +547,6 @@ const GallaryList = ({
               <div
                 style={{
                   gap: "1em",
-                  // minWidth:
-                  //   idx === 1
-                  //     ? location.pathname === "/profile/gallery"
-                  //       ? "50vw"
-                  //       : "74vw"
-                  //     : "75vw",
                   minHeight: "350px",
                 }}
                 className={baseClasses.baseVertFlex}

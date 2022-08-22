@@ -71,6 +71,7 @@ const DrawingModal = ({
   const storage = getStorage();
 
   const drawingModalRef = useRef(null);
+  const imageRef = useRef(null);
   const confirmDeleteModalRef = useRef();
 
   const mobileCopyToClipboardRef = useRef(null);
@@ -184,6 +185,12 @@ const DrawingModal = ({
       );
     }
   }, [drawingMetadata]);
+
+  useEffect(() => {
+    if (imageElementLoaded) {
+      console.log(imageRef.current.width, drawingModalRef.current.width);
+    }
+  }, [imageElementLoaded]);
 
   useEffect(() => {
     // just for initial render
@@ -574,15 +581,17 @@ const DrawingModal = ({
 
             {/* actual image */}
             <div
-              className={baseClasses.baseFlex}
-              style={{ position: "relative" }}
+              className={`${classes.borderBackgroundContainer} ${baseClasses.baseFlex}`}
             >
               <img
+                ref={imageRef}
                 style={{
                   display: imageElementLoaded ? "block" : "none",
-                  borderRadius: settings.forPinnedShowcase
-                    ? "1em"
-                    : "1em 1em 0 0",
+                  borderRadius: imageElementLoaded
+                    ? imageRef.current.width < window.innerWidth * 0.75
+                      ? undefined
+                      : "1em 1em 0 0"
+                    : undefined,
                   // minWidth: "100%",
                   // minHeight: "100%",
                 }}
@@ -862,34 +871,6 @@ const DrawingModal = ({
                     <DownloadIcon color={"#FFF"} />
                   </button>
                 )}
-
-                {/* mobile copy link/download buttons (since they don't fit in bottomContain) */}
-                {/* <div
-                  style={{
-                    opacity:
-                      showMobileButtons && ableToClickActionButtons ? 1 : 0,
-                    transform:
-                      showMobileButtons && ableToClickActionButtons
-                        ? "scale(1)"
-                        : "scale(0)",
-                  }}
-                  className={`${baseClasses.baseFlex} ${classes.mobileActionButtons}`}
-                >
-                  <div ref={mobileCopyToClipboardRef}>
-                    <CopyToClipboard url={drawing} />
-                  </div>
-                  <button
-                    ref={mobileDownloadRef}
-                    style={{ display: "flex", gap: "0.75em", fontSize: "16px" }}
-                    className={`${baseClasses.activeButton} ${baseClasses.baseFlex}`}
-                    onClick={() =>
-                      downloadDrawing(drawing, drawingMetadata.title)
-                    }
-                  >
-                    <div>Download</div>
-                    <DownloadIcon color={"#FFF"} />
-                  </button>
-                </div> */}
               </div>
             )}
           </Card>
@@ -899,10 +880,9 @@ const DrawingModal = ({
       <div
         style={{
           opacity: showMobileButtons && ableToClickActionButtons ? 1 : 0,
-          transform:
-            showMobileButtons && ableToClickActionButtons
-              ? "scale(1)"
-              : "scale(0)",
+          width: showMobileButtons && ableToClickActionButtons ? "100%" : "0%",
+          overflow:
+            showMobileButtons && ableToClickActionButtons ? "auto" : "hidden",
         }}
         className={`${baseClasses.baseFlex} ${classes.mobileActionButtons}`}
       >

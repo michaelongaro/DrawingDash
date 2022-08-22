@@ -38,36 +38,13 @@ const Sidebar = ({ pageWrapId, outerContainerId }) => {
 
   useEffect(() => {
     if (location.pathname === "/profile/preferences") {
-      document.documentElement.style.setProperty(
-        "--greenNavbuttonWidth",
-        "100%"
-      );
-      document.documentElement.style.setProperty(
-        "--yellowNavbuttonWidth",
-        "0%"
-      );
-      document.documentElement.style.setProperty("--redNavbuttonWidth", "0%");
+      updateSidebarNavigationLinkStates("100%", "0%", "0%");
     } else if (location.pathname === "/profile/gallery") {
-      document.documentElement.style.setProperty("--greenNavbuttonWidth", "0%");
-      document.documentElement.style.setProperty(
-        "--yellowNavbuttonWidth",
-        "100%"
-      );
-      document.documentElement.style.setProperty("--redNavbuttonWidth", "0%");
+      updateSidebarNavigationLinkStates("0%", "100%", "0%");
     } else if (location.pathname === "/profile/likes") {
-      document.documentElement.style.setProperty("--greenNavbuttonWidth", "0%");
-      document.documentElement.style.setProperty(
-        "--yellowNavbuttonWidth",
-        "0%"
-      );
-      document.documentElement.style.setProperty("--redNavbuttonWidth", "100%");
+      updateSidebarNavigationLinkStates("0%", "0%", "100%");
     } else {
-      document.documentElement.style.setProperty("--greenNavbuttonWidth", "0%");
-      document.documentElement.style.setProperty(
-        "--yellowNavbuttonWidth",
-        "0%"
-      );
-      document.documentElement.style.setProperty("--redNavbuttonWidth", "0%");
+      updateSidebarNavigationLinkStates("0%", "0%", "0%");
     }
   }, [location.pathname]);
 
@@ -134,6 +111,29 @@ const Sidebar = ({ pageWrapId, outerContainerId }) => {
       setYellowActive(false);
       setRedActive(true);
     }
+  }
+
+  function updateSidebarNavigationLinkStates(
+    greenPercent,
+    yellowPercent,
+    redPercent
+  ) {
+    document.documentElement.style.setProperty(
+      "--greenNavbuttonWidth",
+      greenPercent
+    );
+    document.documentElement.style.setProperty(
+      "--yellowNavbuttonWidth",
+      yellowPercent
+    );
+    document.documentElement.style.setProperty(
+      "--redNavbuttonWidth",
+      redPercent
+    );
+
+    setGreenActive(greenPercent === "100%");
+    setYellowActive(yellowPercent === "100%");
+    setRedActive(redPercent === "100%");
   }
 
   return (

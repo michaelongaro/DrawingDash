@@ -228,6 +228,13 @@ const DrawingScreen = () => {
 
   useEffect(() => {
     setInitComponentWidth(window.innerWidth);
+
+    // trying to hide mobile address bar to show max possible
+    // drawing space
+    if (matchMedia("(hover: none), (pointer: coarse)").matches) {
+      console.log("moved");
+      window.scrollTo(0, 1);
+    }
   }, []);
 
   useEffect(() => {

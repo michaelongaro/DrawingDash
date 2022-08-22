@@ -167,6 +167,8 @@ const PageSelector = ({ currentlyShownDuration, idx, databasePath }) => {
             >
               <Arrow dimensions={"1em"} color={"#c2c2c2"} direction={"left"} />
             </button>
+
+            {/* ontouchstart/end mousedown/up scale shii on all minus the input */}
             <button
               style={{
                 backgroundColor:

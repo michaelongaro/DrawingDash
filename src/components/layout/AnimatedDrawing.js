@@ -1,14 +1,16 @@
-import React, { useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import anime from "animejs/lib/anime.es.js";
 
 import classes from "./AnimatedDrawing.module.css";
 import baseClasses from "../../index.module.css";
 
 const AnimatedDrawing = (props) => {
-  const animationRef = useRef(null);
+  const imageRef = useRef(null);
+
+  const [imageElementLoaded, setImageElementLoaded] = useState(false);
 
   useEffect(() => {
-    animationRef.current = anime({
+    anime({
       targets: `#drawing${props.id}`,
 
       rotateY: "90deg",
@@ -25,17 +27,35 @@ const AnimatedDrawing = (props) => {
 
   return (
     <div
-      id={`drawing${props.id}`}
-      className={`${classes.spinner} ${baseClasses.baseFlex}`}
       style={{
-        pointerEvents: "none",
+        width: "100%",
+        height: "100%",
       }}
+      className={baseClasses.baseFlex}
     >
-      <img
-        className={classes.face2}
-        alt={"animated revealing featured drawing"}
-        src={props.drawing}
-      ></img>
+      <div
+        id={`drawing${props.id}`}
+        className={`${classes.spinner} ${baseClasses.baseFlex}`}
+        style={{
+          pointerEvents: "none",
+        }}
+      >
+        <img
+          ref={imageRef}
+          style={{
+            aspectRatio: imageElementLoaded
+              ? `${imageRef.current.naturalWidth} / ${imageRef.current.naturalHeight}`
+              : undefined,
+            height: "100%",
+          }}
+          className={classes.face2}
+          alt={"randomly selected animated revealing focal drawing"}
+          src={props.drawing}
+          onLoad={() => {
+            setImageElementLoaded(true);
+          }}
+        ></img>
+      </div>
     </div>
   );
 };

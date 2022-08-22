@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { NavLink } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { NavLink, useLocation } from "react-router-dom";
 import GalleryIcon from "../../svgs/GalleryIcon";
 import LikesIcon from "../../svgs/LikesIcon";
 import PreferencesIcon from "../../svgs/PreferencesIcon";
@@ -7,9 +7,46 @@ import PreferencesIcon from "../../svgs/PreferencesIcon";
 import classes from "./ProfileNavigation.module.css";
 
 const ProfileNavigation = () => {
+  const location = useLocation();
+
   const [greenActive, setGreenActive] = useState(false);
   const [yellowActive, setYellowActive] = useState(false);
   const [redActive, setRedActive] = useState(false);
+
+  useEffect(() => {
+    if (location.pathname === "/profile/preferences") {
+      updateProfileNavigationLinkStates("100%", "0%", "0%");
+    } else if (location.pathname === "/profile/gallery") {
+      updateProfileNavigationLinkStates("0%", "100%", "0%");
+    } else if (location.pathname === "/profile/likes") {
+      updateProfileNavigationLinkStates("0%", "0%", "100%");
+    } else {
+      updateProfileNavigationLinkStates("0%", "0%", "0%");
+    }
+  }, [location.pathname]);
+
+  function updateProfileNavigationLinkStates(
+    greenPercent,
+    yellowPercent,
+    redPercent
+  ) {
+    document.documentElement.style.setProperty(
+      "--greenNavbuttonWidth",
+      greenPercent
+    );
+    document.documentElement.style.setProperty(
+      "--yellowNavbuttonWidth",
+      yellowPercent
+    );
+    document.documentElement.style.setProperty(
+      "--redNavbuttonWidth",
+      redPercent
+    );
+
+    setGreenActive(greenPercent === "100%");
+    setYellowActive(yellowPercent === "100%");
+    setRedActive(redPercent === "100%");
+  }
 
   return (
     <nav className={classes.sidebar}>

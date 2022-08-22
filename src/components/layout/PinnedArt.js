@@ -51,8 +51,6 @@ const PinnedArt = (props) => {
             skeleHeight: "18em",
             skeleDateWidth: "50%",
             skeleTitleWidth: "50%",
-            widthRatio: 4.396,
-            heightRatio: 4.396,
           }}
         />
       </div>

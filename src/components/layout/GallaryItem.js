@@ -71,7 +71,6 @@ const GallaryItem = ({
   const [drawingDailyLikes, setDrawingDailyLikes] = useState(0);
 
   const [imageElementLoaded, setImageElementLoaded] = useState(false);
-  const [dynamicAspectRatio, setDynamicAspectRatio] = useState("");
 
   const [resultsPerPage, setResultsPerPage] = useState(0);
 
@@ -289,14 +288,6 @@ const GallaryItem = ({
       setDynamicCardWidth("100");
     }
 
-    if (imageElementLoaded && drawingRef.current !== null) {
-      setDynamicAspectRatio(
-        `16/${
-          drawingRef.current.getBoundingClientRect().height < 253 ? "7.8" : "8"
-        }`
-      );
-    }
-
     function resizeHandler() {
       if (window.innerWidth > 1250 && window.innerWidth < 1500) {
         setDynamicCardWidth("33");
@@ -306,16 +297,6 @@ const GallaryItem = ({
         setGap(true);
       } else if (window.innerWidth < 750) {
         setDynamicCardWidth("100");
-      }
-
-      if (imageElementLoaded && drawingRef.current !== null) {
-        setDynamicAspectRatio(
-          `16/${
-            drawingRef.current.getBoundingClientRect().height < 253
-              ? "7.8"
-              : "8"
-          }`
-        );
       }
     }
     window.addEventListener("resize", resizeHandler);
@@ -599,9 +580,7 @@ const GallaryItem = ({
                 isFetching || showTempBaselineSkeleton || !imageElementLoaded
                   ? "block"
                   : "none",
-              // width: window.innerWidth / settings.widthRatio,
               width: "100%",
-              // height: window.innerHeight / settings.heightRatio,
               height: "100%",
               aspectRatio: "16/7.75",
               borderRadius: "1em 1em 0 0",
@@ -618,7 +597,8 @@ const GallaryItem = ({
                 imageElementLoaded && !showTempBaselineSkeleton && !isFetching
                   ? "flex"
                   : "none",
-              aspectRatio: "16/7.75",
+              width: settings.forPinnedShowcase ? "258px" : undefined,
+              height: settings.forPinnedShowcase ? "125px" : undefined,
             }}
             onClick={() => {
               if (
@@ -639,6 +619,7 @@ const GallaryItem = ({
           >
             <img
               ref={drawingRef}
+              id={"drawing"}
               style={{
                 display:
                   !isFetching && !showTempBaselineSkeleton && imageElementLoaded

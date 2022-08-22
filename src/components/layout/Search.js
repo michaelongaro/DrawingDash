@@ -543,6 +543,7 @@ const Search = ({ dbPath, margin, idx, forModal }) => {
               autofillHandler(e, false, true);
             }}
             autoComplete="off"
+            required
           ></input>
           <label>Adjective</label>
           <div className={showAdjResults ? classes.show : classes.hide}>
@@ -573,6 +574,7 @@ const Search = ({ dbPath, margin, idx, forModal }) => {
               autofillHandler(e, false, false);
             }}
             autoComplete="off"
+            required
           ></input>
           <label>Noun</label>
           <div className={showNounResults ? classes.show : classes.hide}>
@@ -588,6 +590,7 @@ const Search = ({ dbPath, margin, idx, forModal }) => {
             marginTop: dynamicSearchMargin,
             transition: "all 200ms",
           }}
+          formNoValidate
           className={baseClasses.activeButton}
         >
           Search
