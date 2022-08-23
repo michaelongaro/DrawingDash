@@ -182,8 +182,9 @@ const SlideShow = ({ pinnedDrawings, pinnedMetadata, username }) => {
               ) : (
                 <img
                   style={{
-                    maxWidth: "100%",
+                    maxWidth: "99%",
                     maxHeight: "100%",
+                    boxShadow: "rgba(0, 0, 0, 0.3) 0 2px 4px",
                   }}
                   draggable="false"
                   src={drawing}
