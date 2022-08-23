@@ -41,6 +41,7 @@ function NavbarProfile({ forSidebar }) {
 
   // user profile info states
   const [username, setUsername] = useState();
+  const [image, setImage] = useState(null);
   const [firstTimeVisiting, setFirstTimeVisiting] = useState(true);
 
   const [isFetching, setIsFetching] = useState(true);
@@ -126,20 +127,21 @@ function NavbarProfile({ forSidebar }) {
         }
       );
 
-      PFPUpdateCtx.fetchProfilePicture(user.sub);
+      PFPUpdateCtx.fetchProfilePicture(user.sub, setImage);
     }
   }, [isLoading, isAuthenticated]);
 
   useEffect(() => {
-    if (PFPUpdateCtx.image !== null) {
+    if (image !== null) {
       setIsFetching(false);
     }
-  }, [PFPUpdateCtx.image]);
+  }, [image]);
 
   useEffect(() => {
     if (PFPUpdateCtx.refreshProfilePicture) {
       setIsFetching(true);
-      PFPUpdateCtx.fetchProfilePicture(user.sub);
+      PFPUpdateCtx.fetchProfilePicture(user.sub, setImage);
+      PFPUpdateCtx.setRefreshProfilePicture(false);
     }
   }, [PFPUpdateCtx.refreshProfilePicture]);
 
@@ -148,8 +150,8 @@ function NavbarProfile({ forSidebar }) {
       anime({
         targets: "#welcometext",
         loop: false,
-        // width: [0, "100%"],
-        // height: [0, "100%"],
+        width: [0, "100%"],
+        height: [0, "100%"],
         opacity: [0, 1],
         minHeight: [0, "auto"],
         direction: "normal",
@@ -173,7 +175,11 @@ function NavbarProfile({ forSidebar }) {
               className={baseClasses.skeletonLoading}
             ></div>
           ) : (
-            <Link to="/profile/preferences" ref={profilePictureRef}>
+            <Link
+              to="/profile/preferences"
+              ref={profilePictureRef}
+              className={`${classes.sidebarProfileContainer} ${classes.shimmerMedium}`}
+            >
               <img
                 style={{
                   width: "5em",
@@ -182,7 +188,7 @@ function NavbarProfile({ forSidebar }) {
                   boxShadow: "rgb(0 0 0 / 30%) 0px 2px 4px 1px",
                 }}
                 className={classes.profilePicture}
-                src={PFPUpdateCtx.image}
+                src={image}
                 alt={"cropped profile"}
               />
             </Link>
@@ -253,7 +259,7 @@ function NavbarProfile({ forSidebar }) {
                       boxShadow: "rgb(0 0 0 / 30%) 0px 2px 4px 1px",
                     }}
                     className={classes.profilePicture}
-                    src={PFPUpdateCtx.image}
+                    src={image}
                     alt={"cropped profile"}
                   />
                 </Link>

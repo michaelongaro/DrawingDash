@@ -695,7 +695,7 @@ const Preferences = () => {
               </div>
             )}
 
-            <>
+            <div style={{ marginTop: "1em" }}>
               {isFetching || showTempBaselineSkeleton ? (
                 <div
                   style={{
@@ -707,8 +707,8 @@ const Preferences = () => {
               ) : (
                 <div>{username}</div>
               )}
-            </>
-            <>
+            </div>
+            <div style={{ marginTop: "0.5em" }}>
               {isFetching || showTempBaselineSkeleton ? (
                 <div
                   style={{
@@ -719,10 +719,10 @@ const Preferences = () => {
                 ></div>
               ) : (
                 <div style={{ textAlign: "center" }}>
-                  <i>{status}</i>
+                  <i>"{status}"</i>
                 </div>
               )}
-            </>
+            </div>
           </div>
         </div>
 

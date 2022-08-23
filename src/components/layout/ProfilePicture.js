@@ -1,26 +1,12 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 
-import {
-  getDatabase,
-  ref as ref_database,
-  child,
-  get,
-} from "firebase/database";
-
-import {
-  getDownloadURL,
-  getStorage,
-  ref as ref_storage,
-} from "firebase/storage";
-
-import { app } from "../../util/init-firebase";
+import ProfilePictureUpdateContext from "./ProfilePictureUpdateContext";
 
 import classes from "./ProfilePicture.module.css";
 import baseClasses from "../../index.module.css";
 
 const ProfilePicture = ({ user, size }) => {
-  const dbRef = ref_database(getDatabase(app));
-  const storage = getStorage();
+  const PFPUpdateCtx = useContext(ProfilePictureUpdateContext);
 
   const [isFetching, setIsFetching] = useState(true);
   const [showTempBaselineSkeleton, setShowTempBaselineSkeleton] =
@@ -51,23 +37,7 @@ const ProfilePicture = ({ user, size }) => {
       setRoundedProfileStyle(classes.roundedProfileLarge);
     }
 
-    getDownloadURL(ref_storage(storage, `users/${user}/croppedProfile`))
-      .then((url) => {
-        setImage(url);
-      })
-      .catch((error) => {
-        if (
-          error.code === "storage/object-not-found" ||
-          error.code === "storage/unknown"
-        ) {
-          // defaulting to auth0 image
-          get(child(dbRef, "dailyPrompts")).then((snapshot) => {
-            if (snapshot.exists()) {
-              setImage(snapshot.val()["defaultProfilePicture"]);
-            }
-          });
-        }
-      });
+    PFPUpdateCtx.fetchProfilePicture(user, setImage);
   }, []);
 
   useEffect(() => {
@@ -78,11 +48,11 @@ const ProfilePicture = ({ user, size }) => {
 
   return (
     <>
-      {isFetching ? (
+      {isFetching || showTempBaselineSkeleton ? (
         <div
           style={{
             display:
-              isFetching || showTempBaselineSkeleton || !imageElementLoaded
+              (isFetching || showTempBaselineSkeleton) && !imageElementLoaded
                 ? "block"
                 : "none",
             width: size === "small" ? "50px" : "65px",

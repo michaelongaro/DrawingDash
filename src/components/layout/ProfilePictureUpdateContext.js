@@ -22,10 +22,10 @@ export function ProfilePictureUpdateProvider(props) {
   const storage = getStorage();
 
   const [refreshProfilePicture, setRefreshProfilePicture] = useState(false);
-  const [image, setImage] = useState(null);
+  // const [image, setImage] = useState(null);
   const [justACropChange, setJustACropChange] = useState(false);
 
-  function fetchProfilePicture(userID) {
+  function fetchProfilePicture(userID, setImage) {
     getDownloadURL(ref_storage(storage, `users/${userID}/croppedProfile`))
       .then((url) => {
         setImage(url);
@@ -48,8 +48,8 @@ export function ProfilePictureUpdateProvider(props) {
   const context = {
     refreshProfilePicture: refreshProfilePicture,
     setRefreshProfilePicture: setRefreshProfilePicture,
-    image: image,
-    setImage: setImage,
+    // image: image,
+    // setImage: setImage,
     justACropChange: justACropChange,
     setJustACropChange: setJustACropChange,
     fetchProfilePicture: fetchProfilePicture,

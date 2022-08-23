@@ -43,6 +43,7 @@ const UserModal = ({ user }) => {
 
   const [username, setUsername] = useState("");
   const [status, setStatus] = useState("");
+  const [image, setImage] = useState(null);
 
   const [isFetchingProfilePicture, setIsFetchingProfilePicture] =
     useState(true);
@@ -128,14 +129,14 @@ const UserModal = ({ user }) => {
       }
     });
 
-    PFPUpdateCtx.fetchProfilePicture(user);
+    PFPUpdateCtx.fetchProfilePicture(user, setImage);
   }, []);
 
   useEffect(() => {
-    if (PFPUpdateCtx.image !== null) {
+    if (image !== null) {
       setIsFetchingProfilePicture(false);
     }
-  }, [PFPUpdateCtx.image]);
+  }, [image]);
 
   useEffect(() => {
     if (pinnedMetadata && pinnedDrawings) setIsFetchingPinnedDrawings(false);
@@ -266,14 +267,14 @@ const UserModal = ({ user }) => {
                   borderRadius: "50%",
                   boxShadow: "rgb(0 0 0 / 30%) 0px 3px 8px 1px",
                 }}
-                src={PFPUpdateCtx.image}
+                src={image}
                 alt="Profile"
               />
             )}
 
             <div style={{ marginTop: "1em" }}>{username}</div>
             <div style={{ textAlign: "center" }}>
-              <i>{status}</i>
+              <i>"{status}"</i>
             </div>
           </div>
 

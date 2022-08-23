@@ -5,7 +5,6 @@
   align-items: center;
   justify-content: space-between;
   background-color: #18d638;
-  /* padding: 0 4%; */
 }
 
 .navbar {
@@ -21,10 +20,6 @@
   padding-left: 6em;
   transition: all 200ms;
 }
-
-/* #logoImg {
-  border: 1px solid black;
-} */
 
 .logo:hover {
   filter: brightness(1.5);
@@ -43,6 +38,52 @@
   text-align: center;
   text-decoration: none;
   color: black;
+}
+
+.sidebarProfileContainer {
+  transition: all 200ms;
+}
+
+.sidebarProfileContainer:hover {
+  transform: scale(1.05);
+}
+
+.sidebarProfileContainer:active {
+  transform: scale(.95);
+}
+
+.shimmerMedium {
+  position: relative;
+  width: 80px;
+  height: 80px;
+  overflow: hidden;
+  border-radius: 50%;
+  box-shadow: rgb(0 0 0 / 30%) 0 2px 4px;
+  z-index: 200;
+}
+
+.shimmerMedium:hover:before {
+  position: absolute;
+  top: 0;
+  left: -125px;
+  content: "";
+  width: 80px;
+  height: 80px;
+  background: rgba(255, 255, 255, 0.6);
+  transform: skew(45deg);
+  /* transition: 0.1s; */
+  animation: shineMedium 0.6s ease;
+  animation-play-state: var(--shimmerPlayState);
+}
+
+@keyframes shineMedium {
+  from {
+    left: -100px;
+  }
+
+  to {
+    left: 100px;
+  }
 }
 
 .badge {
