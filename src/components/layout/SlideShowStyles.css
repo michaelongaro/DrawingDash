@@ -1,6 +1,11 @@
 /* only in this file because I couldn't figure out how to get regular .module css
    file to recognize the chained class styles */
 
+.react-slideshow-wrapper {
+  box-shadow: rgb(0 0 0 / 30%) 0px 2px 4px;
+  border-radius: 1em;
+}
+
 .images-wrap>div {
   height: 100%;
   display: flex;
