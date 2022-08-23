@@ -1,4 +1,4 @@
-.fullWidth {
+.animatedDrawingsContainer {
   background: linear-gradient(89deg, #11ca49, #72c659, #0b8e22);
   background-size: 600% 600%;
 
@@ -34,7 +34,7 @@
   align-items: center;
   border-radius: 1em;
   gap: 0.5em;
-  padding: 1em;
+  padding: 0.75em;
   background-color: white;
   border: 1px solid rgba(0, 0, 0, 0.2);
   z-index: 600;
@@ -266,7 +266,7 @@
 }
 
 @media (max-width: 1000px) {
-  .fullWidth {
+  .animatedDrawingsContainer {
     width: 95%;
   }
 }
@@ -292,8 +292,17 @@
 
 @media (max-width: 450px) {
   .drawingTitleContainer {
+    padding: 0;
     width: 60%;
-    height: 55px;
+    height: 30px;
+  }
+
+  .focalProgressBar {
+    height: 3px;
+  }
+
+  .animatedDrawingsContainer {
+    height: 16em !important;
   }
 }
 
@@ -317,7 +326,7 @@
 }
 
 @media (max-width: 1000px) {
-  .fullWidth {
+  .animatedDrawingsContainer {
     width: 95%;
   }
 
@@ -347,8 +356,17 @@
 
 @media (max-width: 450px) {
   .drawingTitleContainer {
+    padding: 0;
     width: 60%;
-    height: 55px;
+    height: 30px;
+  }
+
+  .focalProgressBar {
+    height: 3px;
+  }
+
+  .animatedDrawingsContainer {
+    height: 16em !important;
   }
 }
 

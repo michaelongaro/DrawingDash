@@ -31,6 +31,8 @@ const FocalAnimatedDrawings = (props) => {
   const { isLoading, isAuthenticated } = useAuth0();
   const location = useLocation();
 
+  const [mobileThresholdReached, setMobileThresholdReached] = useState(false);
+
   const [showPrompt, setShowPrompt] = useState([false, false, false]);
   const [randomDrawingIDs60, setRandomDrawingIDs60] = useState(null);
   const [randomDrawingIDs180, setRandomDrawingIDs180] = useState(null);
@@ -79,6 +81,28 @@ const FocalAnimatedDrawings = (props) => {
       forHomepage: props.forHomepage,
     };
   }
+
+  useEffect(() => {
+    // just for initial render
+    if (window.innerWidth < 450) {
+      setMobileThresholdReached(true);
+    } else {
+      setMobileThresholdReached(false);
+    }
+
+    function resizeHandler() {
+      console.log(window.innerWidth);
+      if (window.innerWidth < 450) {
+        setMobileThresholdReached(true);
+      } else {
+        setMobileThresholdReached(false);
+      }
+    }
+    window.addEventListener("resize", resizeHandler);
+    return () => {
+      window.removeEventListener("resize", resizeHandler);
+    };
+  }, []);
 
   useEffect(() => {
     getRandomDrawingIDs();
@@ -312,19 +336,20 @@ const FocalAnimatedDrawings = (props) => {
       style={{
         position: "relative",
         height: miscSettings.current.fullHeight,
-        // width: miscSettings.current.fullWidth,
         borderRadius: miscSettings.current.radius,
       }}
-      className={classes.fullWidth}
+      className={classes.animatedDrawingsContainer}
     >
       <div
         style={{ opacity: showPrompt[0] && drawingTitle60 ? 1 : 0 }}
         className={classes.drawingTitleContainer}
       >
         <div className={classes.durationContainer}>
-          <OneMinuteIcon
-            dimensions={window.innerWidth <= 900 ? "2.25em" : "3em"}
-          />
+          <div style={{ display: mobileThresholdReached ? "none" : "block" }}>
+            <OneMinuteIcon
+              dimensions={window.innerWidth <= 900 ? "2.25em" : "3em"}
+            />
+          </div>
           <div>{drawingTitle60}</div>
         </div>
         <div
@@ -339,9 +364,11 @@ const FocalAnimatedDrawings = (props) => {
         className={classes.drawingTitleContainer}
       >
         <div className={classes.durationContainer}>
-          <ThreeMinuteIcon
-            dimensions={window.innerWidth <= 900 ? "2.25em" : "3em"}
-          />
+          <div style={{ display: mobileThresholdReached ? "none" : "block" }}>
+            <ThreeMinuteIcon
+              dimensions={window.innerWidth <= 900 ? "2.25em" : "3em"}
+            />
+          </div>
           <div>{drawingTitle180}</div>
         </div>
         <div
@@ -356,9 +383,11 @@ const FocalAnimatedDrawings = (props) => {
         className={classes.drawingTitleContainer}
       >
         <div className={classes.durationContainer}>
-          <FiveMinuteIcon
-            dimensions={window.innerWidth <= 900 ? "2.25em" : "3em"}
-          />
+          <div style={{ display: mobileThresholdReached ? "none" : "block" }}>
+            <FiveMinuteIcon
+              dimensions={window.innerWidth <= 900 ? "2.25em" : "3em"}
+            />
+          </div>
           <div>{drawingTitle300}</div>
         </div>
         <div
