@@ -289,7 +289,7 @@ const Search = ({ dbPath, margin, idx, forModal }) => {
       }
 
       if (e.key === "Enter") {
-        if (showAdjResults) {
+        if (showAdjResults && adjIdx !== -1) {
           e.preventDefault();
 
           setShowAdjResults(false);
@@ -299,7 +299,7 @@ const Search = ({ dbPath, margin, idx, forModal }) => {
             adjResults[adjIdx],
             idx
           );
-        } else if (showNounResults) {
+        } else if (showNounResults && nounIdx !== -1) {
           e.preventDefault();
 
           setShowNounResults(false);

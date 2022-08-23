@@ -4,6 +4,8 @@
   align-items: center;
   gap: 2.5em;
 
+  scroll-margin: 2em;
+
   margin-top: 1.5em;
   margin-bottom: 3em;
 }
@@ -130,5 +132,6 @@ input {
   .formContainer {
     flex-direction: column;
     gap: 2.5em;
+    margin-bottom: 2em;
   }
 }
