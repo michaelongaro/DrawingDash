@@ -6,7 +6,6 @@ import React, {
   useCallback,
 } from "react";
 import { useAuth0 } from "@auth0/auth0-react";
-import { isEqual } from "lodash";
 
 import getBase64Image from "../../util/getBase64Image";
 import ImageCropModal from "./ImageCropModal";
@@ -36,8 +35,6 @@ import {
   getDownloadURL,
   getStorage,
   getMetadata,
-  updateMetadata,
-  put,
   ref as ref_storage,
   uploadBytes,
 } from "firebase/storage";
@@ -73,8 +70,6 @@ const Preferences = () => {
   const [hasChangedPicture, setHasChangedPicture] = useState(false);
 
   const [showEmailSentTooltip, setShowEmailSentTooltip] = useState(false);
-
-  // used to check and see if last
 
   const [editAvailable, setEditAvailable] = useState(true);
 
