@@ -5,6 +5,11 @@
   height: 2.5em;
   cursor: pointer;
   box-shadow: 0 4px 8px rgb(0 0 0 / 20%);
+  transition: all 200ms;
+}
+
+.pageSelectorButton:active {
+  transform: scale(0.95);
 }
 
 @media (hover: hover) and (pointer: fine) {
