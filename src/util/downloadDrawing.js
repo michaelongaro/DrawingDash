@@ -1,10 +1,10 @@
 function downloadDrawing(drawingLink, drawingTitle) {
-  var url = `${drawingLink}`;
-  var xhr = new XMLHttpRequest();
+  let url = `${drawingLink}`;
+  let xhr = new XMLHttpRequest();
   xhr.responseType = "blob";
 
   xhr.onload = function () {
-    var a = document.createElement("a");
+    let a = document.createElement("a");
     a.href = window.URL.createObjectURL(xhr.response);
     a.download = `${drawingTitle}.jpeg`;
     a.style.display = "none";

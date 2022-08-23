@@ -1,11 +1,10 @@
 import React from "react";
-import { useState, useEffect, useCallback, useContext, useRef } from "react";
+import { useState, useEffect, useContext, useRef } from "react";
 import { useLocation } from "react-router-dom";
 import { useAuth0 } from "@auth0/auth0-react";
 import { isEqual } from "lodash";
 
 import ProfilePicture from "./ProfilePicture";
-import downloadDrawing from "../../util/downloadDrawing";
 import SearchContext from "./SearchContext";
 import FavoritesContext from "./FavoritesContext";
 import UserModalOpenedContext from "./ModalContext";
@@ -31,17 +30,10 @@ import {
   onValue,
   remove,
   update,
-  set,
   child,
 } from "firebase/database";
 
-import {
-  getDownloadURL,
-  getStorage,
-  deleteObject,
-  ref as ref_storage,
-  uploadBytes,
-} from "firebase/storage";
+import { getStorage, deleteObject, ref as ref_storage } from "firebase/storage";
 
 import { app } from "../../util/init-firebase";
 
@@ -187,12 +179,6 @@ const DrawingModal = ({
   }, [drawingMetadata]);
 
   useEffect(() => {
-    if (imageElementLoaded) {
-      console.log(imageRef.current.width, drawingModalRef.current.width);
-    }
-  }, [imageElementLoaded]);
-
-  useEffect(() => {
     // just for initial render
     if (window.innerWidth > 1000) {
       setModalWidth("75vw");
@@ -241,8 +227,10 @@ const DrawingModal = ({
                 !mobileCopyToClipboardRef.current.contains(event.target) &&
                 !mobileDownloadRef.current.contains(event.target)
               ) {
+                console.log("6th");
                 modalCtx.setDrawingModalOpened(false);
               } else {
+                console.log("7th");
                 modalCtx.setDrawingModalOpened(false);
               }
             }
@@ -572,8 +560,8 @@ const DrawingModal = ({
             <div
               style={{
                 display: !imageElementLoaded ? "block" : "none",
-                width: "80%", //window.innerWidth / settings.widthRatio,    prob still need exact values here
-                height: "80%", //window.innerHeight / settings.heightRatio,
+                width: "80%",
+                height: "80%",
                 borderRadius: "1em 1em 0 0",
               }}
               className={classes.skeletonLoading}
@@ -592,8 +580,7 @@ const DrawingModal = ({
                       ? undefined
                       : "1em 1em 0 0"
                     : undefined,
-                  // minWidth: "100%",
-                  // minHeight: "100%",
+                  minWidth: "100%",
                 }}
                 src={drawing}
                 alt={drawingMetadata?.title ?? "drawing title"}
@@ -796,7 +783,8 @@ const DrawingModal = ({
                       width: "1.5em",
                       height: "1.5em",
                     }}
-                    onClick={() => {
+                    onClick={(ev) => {
+                      ev.stopPropagation();
                       if (!isLoading && !isAuthenticated) {
                         setShowTooltip(true);
                       } else if (!isLoading && isAuthenticated) {
@@ -811,7 +799,7 @@ const DrawingModal = ({
                     }}
                   >
                     {/* heart icon(s) */}
-                    <div style={{ cursor: "pointer" }}>
+                    <div style={{ cursor: "pointer", zIndex: 500 }}>
                       {hoveringOnHeart ? (
                         favoritesCtx.itemIsFavorite(
                           drawingID,
@@ -863,9 +851,14 @@ const DrawingModal = ({
                   <button
                     style={{ display: "flex", gap: "0.75em", fontSize: "16px" }}
                     className={`${baseClasses.activeButton} ${baseClasses.baseFlex}`}
-                    onClick={() =>
-                      downloadDrawing(drawing, drawingMetadata.title)
-                    }
+                    onClick={() => {
+                      fetch(drawing).then((response) => {
+                        response.blob().then((blob) => {
+                          var FileSaver = require("file-saver");
+                          FileSaver.saveAs(blob, drawingMetadata.title);
+                        });
+                      });
+                    }}
                   >
                     <div>Download</div>
                     <DownloadIcon color={"#FFF"} />
@@ -886,14 +879,25 @@ const DrawingModal = ({
         }}
         className={`${baseClasses.baseFlex} ${classes.mobileActionButtons}`}
       >
-        <div ref={mobileCopyToClipboardRef}>
+        <div
+          ref={mobileCopyToClipboardRef}
+          onClick={(ev) => ev.stopPropagation()}
+        >
           <CopyToClipboard url={drawing} />
         </div>
         <button
           ref={mobileDownloadRef}
           style={{ display: "flex", gap: "0.75em", fontSize: "16px" }}
           className={`${baseClasses.activeButton} ${baseClasses.baseFlex}`}
-          onClick={() => downloadDrawing(drawing, drawingMetadata.title)}
+          onClick={(ev) => {
+            ev.stopPropagation();
+            fetch(drawing).then((response) => {
+              response.blob().then((blob) => {
+                var FileSaver = require("file-saver");
+                FileSaver.saveAs(blob, drawingMetadata.title);
+              });
+            });
+          }}
         >
           <div>Download</div>
           <DownloadIcon color={"#FFF"} />
