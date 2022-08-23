@@ -98,8 +98,9 @@ const PinnedArtwork = () => {
         <div style={{ gap: "1em" }} className={baseClasses.baseVertFlex}>
           <OneMinuteIcon dimensions={"3em"} />
           <div
-            onClick={() => {
+            onClick={(ev) => {
               if (show60["display"] === "none") {
+                ev.stopPropagation();
                 pinnedCtx.setShow60(showModal);
               }
             }}
@@ -131,8 +132,9 @@ const PinnedArtwork = () => {
         <div style={{ gap: "1em" }} className={baseClasses.baseVertFlex}>
           <ThreeMinuteIcon dimensions={"3em"} />
           <div
-            onClick={() => {
+            onClick={(ev) => {
               if (show180["display"] === "none") {
+                ev.stopPropagation();
                 pinnedCtx.setShow180(showModal);
               }
             }}
@@ -164,8 +166,9 @@ const PinnedArtwork = () => {
           <FiveMinuteIcon dimensions={"3em"} />
 
           <div
-            onClick={() => {
+            onClick={(ev) => {
               if (show300["display"] === "none") {
+                ev.stopPropagation();
                 pinnedCtx.setShow300(showModal);
               }
             }}

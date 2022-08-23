@@ -2,6 +2,7 @@ import React from "react";
 import { useState, useEffect, useContext, useRef } from "react";
 import { useLocation } from "react-router-dom";
 import { useAuth0 } from "@auth0/auth0-react";
+import { debounce } from "debounce";
 
 import ProfilePicture from "./ProfilePicture";
 import downloadDrawing from "../../util/downloadDrawing";
@@ -63,9 +64,14 @@ const GallaryItem = ({
   const dbRef = ref(getDatabase(app));
   const storage = getStorage();
 
+  const [containerElement, setContainerElement] = useState(null);
+  const [titleElement, setTitleElement] = useState(null);
+
   const drawingRef = useRef(null);
   const drawingModalRef = useRef(null);
   const confirmDeleteModalRef = useRef();
+
+  const [displayWrappedTitle, setDisplayWrappedTitle] = useState(false);
 
   const [drawingTotalLikes, setDrawingTotalLikes] = useState(0);
   const [drawingDailyLikes, setDrawingDailyLikes] = useState(0);
@@ -161,6 +167,31 @@ const GallaryItem = ({
       window.removeEventListener("resize", resizeHandler);
     };
   }, []);
+
+  useEffect(() => {
+    if (containerElement && titleElement) {
+      setDisplayWrappedTitle(
+        titleElement.getBoundingClientRect().width /
+          containerElement.getBoundingClientRect().width >
+          0.25
+      );
+    }
+
+    function resizeHandler(ev) {
+      if (containerElement && titleElement) {
+        setDisplayWrappedTitle(
+          titleElement.getBoundingClientRect().width /
+            containerElement.getBoundingClientRect().width >
+            0.25
+        );
+      }
+    }
+    window.addEventListener("resize", debounce(resizeHandler, 200));
+
+    return () => {
+      window.removeEventListener("resize", debounce(resizeHandler, 200));
+    };
+  }, [containerElement, titleElement]);
 
   useEffect(() => {
     if (!modalCtx.userModalOpened) {
@@ -461,6 +492,7 @@ const GallaryItem = ({
 
   return (
     <div
+      ref={(newRef) => setContainerElement(newRef)}
       onMouseEnter={() => {
         setHoveringOnImage(true);
       }}
@@ -599,14 +631,17 @@ const GallaryItem = ({
                   : "none",
               width: settings.forPinnedShowcase ? "258px" : undefined,
               height: settings.forPinnedShowcase ? "125px" : undefined,
+              borderRadius: settings.forPinnedShowcase ? "1em" : "1em 1em 0 0",
+              overflow: "hidden",
             }}
-            onClick={() => {
+            onClick={(ev) => {
               if (
                 !settings.forHomepage &&
                 !settings.forPinnedShowcase &&
                 !settings.forPinnedItem &&
                 !hoveringOnDeleteButton // drawing modal doesn't show when delete clicked
               ) {
+                ev.stopPropagation();
                 if (openedFromUserModal) {
                   modalCtx.setDrawingModalFromUserOpened(true);
                   setShowDrawingModal(true);
@@ -626,9 +661,6 @@ const GallaryItem = ({
                     ? "block"
                     : "none",
                 cursor: settings.forHomepage ? "auto" : "pointer",
-                borderRadius: settings.forPinnedShowcase
-                  ? "1em"
-                  : "1em 1em 0 0",
                 maxWidth: "100%",
                 maxHeight: "100%",
               }}
@@ -740,7 +772,8 @@ const GallaryItem = ({
                       borderRadius: "50%",
                       boxShadow: "rgb(0 0 0 / 10%) 0 2px 4px",
                     }}
-                    onClick={() => {
+                    onClick={(ev) => {
+                      ev.stopPropagation();
                       if (!modalCtx.userModalOpened) {
                         setShowUserModal(true);
                         modalCtx.setUserModalOpened(true);
@@ -810,8 +843,27 @@ const GallaryItem = ({
                   className={classes.skeletonLoading}
                 ></div>
               ) : (
-                <div style={{ textAlign: "center" }}>
-                  {drawingDetails.title}
+                <div
+                  ref={(newRef) => setTitleElement(newRef)}
+                  // manually "wrapping" title since default wrapping resulted
+                  // in div being wider than necessary to fit text.
+                  style={{
+                    flexDirection: displayWrappedTitle ? "column" : "row",
+                  }}
+                  className={baseClasses.baseFlex}
+                >
+                  <>
+                    {displayWrappedTitle ? (
+                      <>
+                        <div>{drawingDetails.title.split(" ")[0]}</div>
+                        <div>{drawingDetails.title.split(" ")[1]}</div>
+                      </>
+                    ) : (
+                      <div style={{ textAlign: "center" }}>
+                        {drawingDetails.title}
+                      </div>
+                    )}
+                  </>
                 </div>
               )}
 
@@ -841,8 +893,9 @@ const GallaryItem = ({
                     width: "1.5em",
                     height: "1.5em",
                   }}
-                  onClick={() => {
+                  onClick={(ev) => {
                     console.log(0);
+                    ev.stopPropagation();
                     if (!isLoading && !isAuthenticated) {
                       setShowTooltip(true);
                     } else if (!isLoading && isAuthenticated) {

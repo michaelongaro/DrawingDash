@@ -21,6 +21,7 @@ const PinnedModal = React.forwardRef((props, modalRef) => {
 
   const [loadedDrawingIDs, setLoadedDrawingIDs] = useState(null);
   const [durationIcon, setDurationIcon] = useState();
+  const [dynamicBackground, setDynamicBackground] = useState(undefined);
 
   const { user } = useAuth0();
 
@@ -30,6 +31,19 @@ const PinnedModal = React.forwardRef((props, modalRef) => {
 
     pinnedCtx.setManuallyChangedSelectedDrawing(false);
 
+    if (props.seconds === 60) {
+      setDynamicBackground(
+        "linear-gradient(139deg, hsl(0deg 72% 65%), hsl(0deg 37% 40%))"
+      );
+    } else if (props.seconds === 180) {
+      setDynamicBackground(
+        "linear-gradient(139deg, hsl(60deg 72% 65%), hsl(60deg 37% 46%))"
+      );
+    } else if (props.seconds === 300) {
+      setDynamicBackground(
+        "linear-gradient(139deg, rgb(107 230 101), hsl(117deg 37% 40%))"
+      );
+    }
     // should fetch all user profile titles and save their vals (ids) in an array,
     // then loop through it down here and fetch the drawings from main /drawings/id
 
@@ -90,6 +104,7 @@ const PinnedModal = React.forwardRef((props, modalRef) => {
           height: "100%",
           paddingTop: "1em",
           justifyContent: "normal",
+          background: dynamicBackground,
         }}
         className={classes.innerModal}
       >
