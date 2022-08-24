@@ -580,7 +580,6 @@ const DrawingModal = ({
                       ? undefined
                       : "1em 1em 0 0"
                     : undefined,
-                  minWidth: "100%",
                 }}
                 src={drawing}
                 alt={drawingMetadata?.title ?? "drawing title"}

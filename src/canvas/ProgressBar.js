@@ -7,6 +7,7 @@ import { isEqual } from "lodash";
 import DrawingSelectionContext from "./DrawingSelectionContext";
 
 import classes from "./ProgressBar.module.css";
+import baseClasses from "../index.module.css";
 
 const ProgressBar = () => {
   const { isLoading, isAuthenticated } = useAuth0();
@@ -444,10 +445,7 @@ const ProgressBar = () => {
     <div ref={rectangleRef} className={classes.rectangle}>
       {/* select circle */}
       <div className={classes.circle}>
-        <div
-          style={{ width: "28px", minHeight: "28px" }}
-          className={classes.baseFlex}
-        >
+        <div className={`${classes.circleContainer} ${baseClasses.baseFlex}`}>
           <div id="select" className={classes.completedCircleSkeleton}></div>
         </div>
 
@@ -478,10 +476,7 @@ const ProgressBar = () => {
 
       {/* choose circle */}
       <div className={classes.circle}>
-        <div
-          style={{ width: "28px", minHeight: "28px" }}
-          className={classes.baseFlex}
-        >
+        <div className={`${classes.circleContainer} ${baseClasses.baseFlex}`}>
           <div id="choose" className={classes.completedCircleSkeleton}></div>
         </div>
 
@@ -503,10 +498,7 @@ const ProgressBar = () => {
 
       {/* draw circle */}
       <div className={classes.circle}>
-        <div
-          style={{ width: "28px", minHeight: "28px" }}
-          className={classes.baseFlex}
-        >
+        <div className={`${classes.circleContainer} ${baseClasses.baseFlex}`}>
           <div id="draw" className={classes.completedCircleSkeleton}></div>
         </div>
         <div id="drawText" className={classes.inactive}>

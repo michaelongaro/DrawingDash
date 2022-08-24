@@ -58,7 +58,7 @@ const Sidebar = ({ pageWrapId, outerContainerId }) => {
       setSidebarWidth("25%");
     }
 
-    function touchHandler(e) {
+    function closeSidebarHandler(e) {
       if (
         !burgerRef.current.contains(e.target) &&
         !sidebarRef.current.contains(e.target)
@@ -77,10 +77,12 @@ const Sidebar = ({ pageWrapId, outerContainerId }) => {
       }
     }
 
-    document.addEventListener("touchend", touchHandler);
+    document.addEventListener("click", closeSidebarHandler);
+    document.addEventListener("touchend", closeSidebarHandler);
     window.addEventListener("resize", resizeHandler);
     return () => {
-      document.removeEventListener("touchend", touchHandler);
+      document.removeEventListener("click", closeSidebarHandler);
+      document.removeEventListener("touchend", closeSidebarHandler);
       window.removeEventListener("resize", resizeHandler);
     };
   }, []);

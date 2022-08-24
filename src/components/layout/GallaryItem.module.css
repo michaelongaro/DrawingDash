@@ -107,12 +107,18 @@
   white-space: nowrap;
   z-index: 9;
   border: 0;
-  transition: box-shadow 0.2s;
+  transition: all 0.2s;
 }
 
 /* idk why this won't show up, last sweeping change you made was html { overflow: hidden } */
 .editButton:hover:enabled {
   box-shadow: rgba(253, 76, 0, 1) 0 3px 8px;
+  transform: scale(1.05);
+}
+
+.editButton:active:enabled {
+  box-shadow: rgba(253, 76, 0, 1) 0 3px 8px;
+  transform: scale(0.95);
 }
 
 .closeButton {
@@ -126,13 +132,18 @@
   background-image: linear-gradient(-180deg, #ebebeb, #c4c4c4);
   border-radius: 6px;
   box-shadow: rgba(0, 0, 0, 0.1) 0 2px 4px;
-  transition: box-shadow 0.2s;
+  transition: all 0.2s;
   padding: 0.75em 1em;
   margin-right: 0.5em;
 }
 
 .closeButton:hover {
   box-shadow: rgba(117, 117, 117, 0.5) 0 3px 5px;
+  transform: scale(1.05);
+}
+
+.closeButton:active {
+  transform: scale(0.95);
 }
 
 .likes {

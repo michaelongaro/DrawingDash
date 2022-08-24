@@ -199,6 +199,8 @@ const PromptSelection = () => {
   useEffect(() => {
     if (!isLoading) {
       if (showPromptsComingShortlyContainer || showCountdownTimer) {
+        setHidePlaceholderText(true);
+
         if (
           !isEqual(DSCtx.PBStates, {
             selectCircle: false,
@@ -210,6 +212,8 @@ const PromptSelection = () => {
           })
         ) {
           // change to all being false/default
+          console.log("spiraling"); // idk why this is getting perma rerun...
+          // shouldn't be that crazy tbh but think about it big picture first!!!
           DSCtx.setPBStates({
             selectCircle: false,
             chooseCircle: false,
@@ -222,9 +226,6 @@ const PromptSelection = () => {
           DSCtx.setRevertSelectCircle(true);
 
           setHidePlaceholderText(true);
-
-          // maybe don't need to separate these and just have opacity: 0 scale: 0
-          // etc, might be an issue with the top value changing though...
 
           // !DSCtx.drawingStatuses["extra"]
           if (isAuthenticated && showExtraPrompt) {
@@ -365,7 +366,13 @@ const PromptSelection = () => {
 
       DSCtx.setStartNewDailyWordsAnimation(false);
     }
-  }, [DSCtx.startNewDailyWordsAnimation, showExtraPrompt]);
+  }, [
+    DSCtx.startNewDailyWordsAnimation,
+    showPromptsComingShortlyContainer,
+    extraPromptHasBeenAnimated,
+    showRegisterContainer,
+    showExtraPrompt,
+  ]);
 
   useEffect(() => {
     if (!isLoading && isAuthenticated) {
@@ -702,7 +709,6 @@ const PromptSelection = () => {
             !DSCtx.drawingStatuses["300"] ||
             !DSCtx.drawingStatuses["extra"]
           ) {
-            // setHidePlaceholderText(false);
             DSCtx.updatePBStates("selectCircle", true);
           }
         } else if (!isLoading && !isAuthenticated) {
@@ -711,7 +717,6 @@ const PromptSelection = () => {
             !DSCtx.drawingStatuses["180"] ||
             !DSCtx.drawingStatuses["300"]
           ) {
-            // setHidePlaceholderText(false);
             DSCtx.updatePBStates("selectCircle", true);
           }
         }
@@ -900,6 +905,13 @@ const PromptSelection = () => {
 
     document.getElementById("root").scrollIntoView({ behavior: "smooth" });
 
+    const intervalID = setInterval(() => {
+      if (window.scrollY === 0) {
+        DSCtx.updatePBStates("selectToChooseBar", true);
+        clearInterval(intervalID);
+      }
+    }, 50);
+
     anime({
       targets: "#promptSelection",
       loop: false,
@@ -916,8 +928,6 @@ const PromptSelection = () => {
         DSCtx.setShowEndOverlay(false);
         DSCtx.setShowEndOutline(false);
         DSCtx.setShowPromptSelection(false);
-
-        DSCtx.updatePBStates("selectToChooseBar", true);
       },
     });
   }

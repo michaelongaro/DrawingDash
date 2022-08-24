@@ -223,7 +223,8 @@
   /* margin-top: 3em; */
 
   width: 82vw;
-  height: 95vh;
+  /* height: 95vh; */
+  height: 98vh;
 }
 
 .canvasBreathingBackground:after {

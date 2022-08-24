@@ -16,16 +16,22 @@
 
 .circle {
   display: flex;
-  /* justify-content: center; */
   align-items: center;
   flex-direction: column;
 
-  border: 2px solid black;
   width: 2em;
   height: 2em;
   border-radius: 50%;
   background-color: white;
 
+  z-index: 3;
+}
+
+.circleContainer {
+  width: 32px;
+  min-height: 32px;
+  border: 2px solid black;
+  border-radius: 50%;
   z-index: 3;
 }
 
@@ -40,12 +46,6 @@
   font-size: 1.25em;
   color: rgb(100, 100, 100);
   margin-top: 0.5em;
-}
-
-.baseFlex {
-  display: flex;
-  justify-content: center;
-  align-items: center;
 }
 
 .completedCircleSkeleton {

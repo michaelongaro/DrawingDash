@@ -117,7 +117,7 @@ const GallaryItem = ({
     useState(false);
 
   const [dynamicCardWidth, setDynamicCardWidth] = useState("100"); // be cautious of 100% here
-  const [gap, setGap] = useState(false);
+  // const [gap, setGap] = useState(false);
 
   useEffect(() => {
     if (!isLoading) {
@@ -309,12 +309,12 @@ const GallaryItem = ({
     // just for initial render
     if (window.innerWidth > 1250 && window.innerWidth < 1500) {
       setDynamicCardWidth("33");
-      setGap(false);
+      // setGap(false);
     } else if (window.innerWidth > 750 && window.innerWidth < 1250) {
       setDynamicCardWidth("50");
-      setGap(false);
+      // setGap(false);
     } else if (window.innerWidth < 775) {
-      setGap(true);
+      // setGap(true);
     } else if (window.innerWidth < 750) {
       setDynamicCardWidth("100");
     }
@@ -325,7 +325,7 @@ const GallaryItem = ({
       } else if (window.innerWidth > 750 && window.innerWidth < 1250) {
         setDynamicCardWidth("50");
       } else if (window.innerWidth < 775) {
-        setGap(true);
+        // setGap(true);
       } else if (window.innerWidth < 750) {
         setDynamicCardWidth("100");
       }
@@ -578,7 +578,7 @@ const GallaryItem = ({
               : modalCtx.drawingModalOpened)
               ? "auto"
               : "none",
-          gap: gap ? "1em" : 0,
+          // gap: gap ? "1em" : 0,
           transition: "all 200ms",
         }}
         className={classes.modal}
@@ -701,7 +701,10 @@ const GallaryItem = ({
               onMouseLeave={() => {
                 setHoveringOnDeleteButton(false);
               }}
-              onClick={() => setShowConfirmDeleteModal(true)}
+              onClick={(ev) => {
+                ev.stopPropagation();
+                setShowConfirmDeleteModal(true);
+              }}
             >
               <GarbageIcon dimensions={"1.25em"} />
             </button>

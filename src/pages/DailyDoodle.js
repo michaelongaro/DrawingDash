@@ -1,10 +1,20 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { motion } from "framer-motion";
 
 import { CanvasProvider } from "../canvas/CanvasContext";
 import { Canvas } from "../canvas/Canvas";
 
 function DailyDoodle() {
+  useEffect(() => {
+    // used to allow scroll height checking after using
+    // scrollIntoView when switching from different components
+    document.documentElement.style.overflow = "auto";
+
+    return () => {
+      document.documentElement.style.overflow = "hidden";
+    };
+  }, []);
+
   return (
     <motion.div
       key={"daily"}
@@ -12,7 +22,7 @@ function DailyDoodle() {
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
       transition={{ duration: 0.2 }}
-      style={{ height: "87.5vh" }} // was 100%, keep an eye on this
+      style={{ height: "87.5vh" }}
     >
       <CanvasProvider>
         <Canvas />

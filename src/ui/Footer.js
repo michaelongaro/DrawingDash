@@ -13,7 +13,7 @@ const Footer = () => {
 
   return (
     <footer
-      style={{ gap: "1em" }}
+      style={{ gap: "1rem" }}
       className={`${classes.footerContainer} ${baseClasses.baseFlex}`}
     >
       <div>Made with 💗 by</div>

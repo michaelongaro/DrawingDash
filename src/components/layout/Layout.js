@@ -16,7 +16,7 @@ function Layout(props) {
     // just for initial render, setTimeout so layout has time to fully settle
     setTimeout(() => {
       if (DSCtx.extendLayoutHeight) {
-        setDynamicHeight("115vh");
+        setDynamicHeight("107vh");
       } else if (DSCtx.showPromptSelection) {
         // was 778 i think
         if (window.innerWidth > 1200 && window.innerHeight > 900) {
@@ -47,18 +47,21 @@ function Layout(props) {
             window.innerHeight <= 929 &&
             window.innerWidth > 550)
         ) {
-          setDynamicHeight("88vh");
+          setDynamicHeight("82vh");
         } else if (window.innerHeight > 929) {
           setDynamicHeight("800px"); // trying to account for huge heights like an ipad..
         } else {
-          setDynamicHeight("100vh");
+          // setDynamicHeight("100vh");
+          setDynamicHeight(
+            `${window.innerHeight + (750 - window.innerHeight)}px`
+          );
         }
       }
     }, 500);
 
     function resizeHandler() {
       if (DSCtx.extendLayoutHeight) {
-        setDynamicHeight("115vh");
+        setDynamicHeight("107vh");
       } else if (DSCtx.showPromptSelection) {
         if (window.innerWidth > 1200 && window.innerHeight > 900) {
           setDynamicHeight("87.5vh");
@@ -88,11 +91,14 @@ function Layout(props) {
             window.innerHeight <= 929 &&
             window.innerWidth > 550)
         ) {
-          setDynamicHeight("87.5vh");
+          setDynamicHeight("82vh");
         } else if (window.innerHeight > 929) {
           setDynamicHeight("800px"); // trying to account for huge heights like an ipad..
         } else {
-          setDynamicHeight("100vh");
+          // setDynamicHeight(`${100 + (929 - window.innerHeight)}vh`);
+          setDynamicHeight(
+            `${window.innerHeight + (750 - window.innerHeight)}px`
+          );
         }
       }
     }
@@ -107,7 +113,7 @@ function Layout(props) {
     DSCtx.extendLayoutHeight,
     location.pathname,
   ]);
-  // debugger;
+
   return (
     <>
       <MainNavigation />
@@ -122,7 +128,9 @@ function Layout(props) {
               ? "87.5vh"
               : dynamicHeight,
           height:
-            location.pathname === "/daily-drawings" && !DSCtx.extendLayoutHeight
+            location.pathname === "/daily-drawings" &&
+            !DSCtx.extendLayoutHeight &&
+            !DSCtx.showPaletteChooser
               ? "87.5vh"
               : "",
           width: "100%",

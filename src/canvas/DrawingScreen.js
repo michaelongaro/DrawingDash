@@ -228,13 +228,6 @@ const DrawingScreen = () => {
 
   useEffect(() => {
     setInitComponentWidth(window.innerWidth);
-
-    // trying to hide mobile address bar to show max possible
-    // drawing space
-    if (matchMedia("(hover: none), (pointer: coarse)").matches) {
-      console.log("moved");
-      window.scrollTo(0, 1);
-    }
   }, []);
 
   useEffect(() => {
@@ -255,6 +248,8 @@ const DrawingScreen = () => {
           setMobileThresholdReached(false);
         }
       }
+
+      canvasContainerRef.current.scrollIntoView({ behavior: "smooth" });
     }
 
     window.addEventListener("resize", resizeHandler);
@@ -723,6 +718,14 @@ const DrawingScreen = () => {
   function drawAgain() {
     document.getElementById("root").scrollIntoView({ behavior: "smooth" });
 
+    const intervalID = setInterval(() => {
+      if (window.scrollY === 0) {
+        DSCtx.updatePBStates("resetToSelectBar", true);
+
+        clearInterval(intervalID);
+      }
+    }, 50);
+
     anime({
       targets: "#drawingScreen",
       loop: false,
@@ -732,7 +735,6 @@ const DrawingScreen = () => {
       duration: 500,
       easing: "easeInSine",
       complete: function () {
-        DSCtx.updatePBStates("resetToSelectBar", true);
         DSCtx.resetSelections();
       },
     });
@@ -759,7 +761,7 @@ const DrawingScreen = () => {
         <div
           ref={canvasContainerRef}
           style={{
-            scrollMargin: mobileThresholdReached ? 0 : "1em",
+            scrollMargin: mobileThresholdReached ? 0 : ".5em",
           }}
           className={classes.canvasBreathingBackground}
         >

@@ -1,11 +1,14 @@
 import React, { useState, useEffect, useContext, useRef } from "react";
 
+import { HexColorPicker } from "react-colorful";
 import anime from "animejs/lib/anime.es.js";
 import { isEqual } from "lodash";
 
 import DrawingSelectionContext from "./DrawingSelectionContext";
 
 import BackupPaletteIcon from "../svgs/BackupPaletteIcon";
+
+import "./ColorPickerStyles.css";
 
 import classes from "./PaletteChooser.module.css";
 import baseClasses from "../index.module.css";
@@ -24,11 +27,19 @@ const PaletteChooser = () => {
   const fifthColorRef = useRef(null);
 
   const [paletteColors, setPaletteColors] = useState([
-    "#FFFFFF",
-    "#FFFFFF",
-    "#FFFFFF",
-    "#FFFFFF",
-    "#FFFFFF",
+    "#000000",
+    "#000000",
+    "#000000",
+    "#000000",
+    "#000000",
+  ]);
+
+  const [colorPickerOpacity, setColorPickerOpacity] = useState([
+    false,
+    false,
+    false,
+    false,
+    false,
   ]);
 
   const [visibilityOfOverlays, setVisibilityOfOverlays] = useState([
@@ -92,19 +103,136 @@ const PaletteChooser = () => {
   }, []);
 
   useEffect(() => {
+    // function touchHandler(ev) {
+    //   firstColorRef.current.blur();
+    //   secondColorRef.current.blur();
+    //   thirdColorRef.current.blur();
+    //   fourthColorRef.current.blur();
+    //   fifthColorRef.current.blur();
+    // }
+
     function touchHandler(ev) {
-      firstColorRef.current.blur();
-      secondColorRef.current.blur();
-      thirdColorRef.current.blur();
-      fourthColorRef.current.blur();
-      fifthColorRef.current.blur();
+      if (!isEqual(colorPickerOpacity, [false, false, false, false, false])) {
+        if (
+          colorPickerOpacity[0] &&
+          !firstColorRef.current.contains(ev.target)
+        ) {
+          console.log("blurring first");
+          firstColorRef.current.blur();
+
+          updateColorPickerOpacity(false, 0);
+          updateCheckmarkStates(0);
+        } else if (
+          colorPickerOpacity[1] &&
+          !secondColorRef.current.contains(ev.target)
+        ) {
+          secondColorRef.current.blur();
+
+          updateColorPickerOpacity(false, 1);
+          updateCheckmarkStates(1);
+        } else if (
+          colorPickerOpacity[2] &&
+          !thirdColorRef.current.contains(ev.target)
+        ) {
+          thirdColorRef.current.blur();
+
+          updateColorPickerOpacity(false, 2);
+          updateCheckmarkStates(2);
+        } else if (
+          colorPickerOpacity[3] &&
+          !fourthColorRef.current.contains(ev.target)
+        ) {
+          fourthColorRef.current.blur();
+
+          updateColorPickerOpacity(false, 3);
+          updateCheckmarkStates(3);
+        } else if (
+          colorPickerOpacity[4] &&
+          !fifthColorRef.current.contains(ev.target)
+        ) {
+          fifthColorRef.current.blur();
+
+          updateColorPickerOpacity(false, 4);
+          updateCheckmarkStates(4);
+        }
+      }
     }
 
-    window.addEventListener("touchmove", touchHandler);
+    function mouseHandler(ev) {
+      if (!isEqual(colorPickerOpacity, [false, false, false, false, false])) {
+        if (
+          colorPickerOpacity[0] &&
+          !firstColorRef.current.contains(ev.target)
+        ) {
+          console.log("blurring first");
+          // firstColorRef.current.blur();
+
+          updateColorPickerOpacity(false, 0);
+          updateCheckmarkStates(0);
+        } else if (
+          colorPickerOpacity[1] &&
+          !secondColorRef.current.contains(ev.target)
+        ) {
+          // secondColorRef.current.blur();
+
+          updateColorPickerOpacity(false, 1);
+          updateCheckmarkStates(1);
+        } else if (
+          colorPickerOpacity[2] &&
+          !thirdColorRef.current.contains(ev.target)
+        ) {
+          // thirdColorRef.current.blur();
+
+          updateColorPickerOpacity(false, 2);
+          updateCheckmarkStates(2);
+        } else if (
+          colorPickerOpacity[3] &&
+          !fourthColorRef.current.contains(ev.target)
+        ) {
+          // fourthColorRef.current.blur();
+
+          updateColorPickerOpacity(false, 3);
+          updateCheckmarkStates(3);
+        } else if (
+          colorPickerOpacity[4] &&
+          !fifthColorRef.current.contains(ev.target)
+        ) {
+          // fifthColorRef.current.blur();
+
+          updateColorPickerOpacity(false, 4);
+          updateCheckmarkStates(4);
+        }
+      }
+    }
+
+    // window.addEventListener("touchmove", touchHandler);
+    window.addEventListener("touchstart", touchHandler);
+    window.addEventListener("mousedown", mouseHandler);
+
     return () => {
-      window.removeEventListener("touchmove", touchHandler);
+      // window.removeEventListener("touchmove", touchHandler);
+      window.removeEventListener("touchstart", touchHandler);
+      window.removeEventListener("mousedown", mouseHandler);
     };
-  }, []);
+  }, [colorPickerOpacity]);
+
+  function updateColorPickerOpacity(value, idx) {
+    const shallowCopyOpacities = [...colorPickerOpacity];
+    shallowCopyOpacities.splice(idx, 1, value);
+    setColorPickerOpacity(shallowCopyOpacities);
+  }
+
+  function updatePaletteColor(color, idx) {
+    const shallowCopyPalettes = [...paletteColors];
+    shallowCopyPalettes.splice(idx, 1, color);
+    setPaletteColors(shallowCopyPalettes);
+  }
+
+  function updateCheckmarkStates(idx) {
+    const shallowCheckmarks = [...statusOfCheckmarks];
+    shallowCheckmarks.splice(idx, 1, true);
+    setStatusOfCheckmarks(shallowCheckmarks);
+  }
 
   function updatePaletteAndCheckmarkStates(event, idx) {
     const shallowCopyPalettes = [...paletteColors];
@@ -124,6 +252,13 @@ const PaletteChooser = () => {
 
   function moveOntoDrawScreen() {
     document.getElementById("root").scrollIntoView({ behavior: "smooth" });
+
+    const intervalID = setInterval(() => {
+      if (window.scrollY === 0) {
+        DSCtx.updatePBStates("chooseToDrawBar", true);
+        clearInterval(intervalID);
+      }
+    }, 50);
 
     DSCtx.setExtendLayoutHeight(true);
 
@@ -189,16 +324,32 @@ const PaletteChooser = () => {
                 className={classes.flexContainer}
                 onClick={() => {
                   updateOverlayState(0);
+                  updateColorPickerOpacity(true, 0);
                 }}
               >
-                <input
-                  type="color"
-                  ref={firstColorRef}
-                  className={classes.colorInput}
-                  onBlur={(event) => {
-                    updatePaletteAndCheckmarkStates(event, 0);
-                  }}
-                />
+                <div ref={firstColorRef} className={classes.colorInput}>
+                  <div
+                    style={{
+                      width: "100%",
+                      height: "100%",
+                      backgroundColor: paletteColors[0],
+                      borderRadius: "50%",
+                    }}
+                  ></div>
+                  <div
+                    style={{
+                      opacity: colorPickerOpacity[0] ? 1 : 0,
+                      pointerEvents: colorPickerOpacity[0] ? "auto" : "none",
+                      zIndex: 50,
+                      transition: "all 10ms",
+                    }}
+                  >
+                    <HexColorPicker
+                      color={paletteColors[0]}
+                      onChange={(e) => updatePaletteColor(e, 0)}
+                    />
+                  </div>
+                </div>
                 <div
                   style={{ opacity: visibilityOfOverlays[0] ? 1 : 0 }}
                   className={classes.showOverlay}
@@ -232,16 +383,32 @@ const PaletteChooser = () => {
                 className={classes.flexContainer}
                 onClick={() => {
                   updateOverlayState(1);
+                  updateColorPickerOpacity(true, 1);
                 }}
               >
-                <input
-                  type="color"
-                  ref={secondColorRef}
-                  className={classes.colorInput}
-                  onBlur={(event) => {
-                    updatePaletteAndCheckmarkStates(event, 1);
-                  }}
-                />
+                <div ref={secondColorRef} className={classes.colorInput}>
+                  <div
+                    style={{
+                      width: "100%",
+                      height: "100%",
+                      backgroundColor: paletteColors[1],
+                      borderRadius: "50%",
+                    }}
+                  ></div>
+                  <div
+                    style={{
+                      opacity: colorPickerOpacity[1] ? 1 : 0,
+                      pointerEvents: colorPickerOpacity[1] ? "auto" : "none",
+                      zIndex: 50,
+                      transition: "all 10ms",
+                    }}
+                  >
+                    <HexColorPicker
+                      color={paletteColors[0]}
+                      onChange={(e) => updatePaletteColor(e, 1)}
+                    />
+                  </div>
+                </div>
                 <div
                   style={{ opacity: visibilityOfOverlays[1] ? 1 : 0 }}
                   className={classes.showOverlay}
@@ -275,16 +442,32 @@ const PaletteChooser = () => {
                 className={classes.flexContainer}
                 onClick={() => {
                   updateOverlayState(2);
+                  updateColorPickerOpacity(true, 2);
                 }}
               >
-                <input
-                  type="color"
-                  ref={thirdColorRef}
-                  className={classes.colorInput}
-                  onBlur={(event) => {
-                    updatePaletteAndCheckmarkStates(event, 2);
-                  }}
-                />
+                <div ref={thirdColorRef} className={classes.colorInput}>
+                  <div
+                    style={{
+                      width: "100%",
+                      height: "100%",
+                      backgroundColor: paletteColors[2],
+                      borderRadius: "50%",
+                    }}
+                  ></div>
+                  <div
+                    style={{
+                      opacity: colorPickerOpacity[2] ? 1 : 0,
+                      pointerEvents: colorPickerOpacity[2] ? "auto" : "none",
+                      zIndex: 50,
+                      transition: "all 10ms",
+                    }}
+                  >
+                    <HexColorPicker
+                      color={paletteColors[2]}
+                      onChange={(e) => updatePaletteColor(e, 2)}
+                    />
+                  </div>
+                </div>
                 <div
                   style={{ opacity: visibilityOfOverlays[2] ? 1 : 0 }}
                   className={classes.showOverlay}
@@ -319,24 +502,38 @@ const PaletteChooser = () => {
                 className={classes.flexContainer}
                 onClick={() => {
                   updateOverlayState(3);
+                  updateColorPickerOpacity(true, 3);
                 }}
               >
-                <input
-                  type="color"
-                  ref={fourthColorRef}
-                  className={classes.colorInput}
-                  onBlur={(event) => {
-                    updatePaletteAndCheckmarkStates(event, 3);
-                  }}
-                />
-
+                <div ref={fourthColorRef} className={classes.colorInput}>
+                  <div
+                    style={{
+                      width: "100%",
+                      height: "100%",
+                      backgroundColor: paletteColors[3],
+                      borderRadius: "50%",
+                    }}
+                  ></div>
+                  <div
+                    style={{
+                      opacity: colorPickerOpacity[3] ? 1 : 0,
+                      pointerEvents: colorPickerOpacity[3] ? "auto" : "none",
+                      zIndex: 50,
+                      transition: "all 10ms",
+                    }}
+                  >
+                    <HexColorPicker
+                      color={paletteColors[3]}
+                      onChange={(e) => updatePaletteColor(e, 3)}
+                    />
+                  </div>
+                </div>
                 <div
                   style={{ opacity: visibilityOfOverlays[3] ? 1 : 0 }}
                   className={classes.showOverlay}
                 >
                   ?
                 </div>
-
                 <div
                   className={classes.circle}
                   style={{
@@ -364,16 +561,32 @@ const PaletteChooser = () => {
                 className={classes.flexContainer}
                 onClick={() => {
                   updateOverlayState(4);
+                  updateColorPickerOpacity(true, 4);
                 }}
               >
-                <input
-                  type="color"
-                  ref={fifthColorRef}
-                  className={classes.colorInput}
-                  onBlur={(event) => {
-                    updatePaletteAndCheckmarkStates(event, 4);
-                  }}
-                />
+                <div ref={fifthColorRef} className={classes.colorInput}>
+                  <div
+                    style={{
+                      width: "100%",
+                      height: "100%",
+                      backgroundColor: paletteColors[4],
+                      borderRadius: "50%",
+                    }}
+                  ></div>
+                  <div
+                    style={{
+                      opacity: colorPickerOpacity[4] ? 1 : 0,
+                      pointerEvents: colorPickerOpacity[4] ? "auto" : "none",
+                      zIndex: 50,
+                      transition: "all 10ms",
+                    }}
+                  >
+                    <HexColorPicker
+                      color={paletteColors[0]}
+                      onChange={(e) => updatePaletteColor(e, 4)}
+                    />
+                  </div>
+                </div>
                 <div
                   style={{ opacity: visibilityOfOverlays[4] ? 1 : 0 }}
                   className={classes.showOverlay}
@@ -419,6 +632,13 @@ const PaletteChooser = () => {
                 .getElementById("root")
                 .scrollIntoView({ behavior: "smooth" });
 
+              const intervalID = setInterval(() => {
+                if (window.scrollY === 0) {
+                  DSCtx.updatePBStates("selectToChooseBar", false);
+                  clearInterval(intervalID);
+                }
+              }, 50);
+
               anime({
                 targets: "#paletteChooser",
                 loop: false,
@@ -429,7 +649,6 @@ const PaletteChooser = () => {
                 easing: "easeInSine",
                 complete: () => {
                   DSCtx.goBackToPromptSelection();
-                  DSCtx.updatePBStates("selectToChooseBar", false);
                 },
               });
             }}
@@ -442,7 +661,6 @@ const PaletteChooser = () => {
               !isEqual(statusOfCheckmarks, [true, true, true, true, true])
             }
             onClick={() => {
-              DSCtx.updatePBStates("chooseToDrawBar", true);
               moveOntoDrawScreen();
             }}
           >
