@@ -47,6 +47,10 @@
   pointer-events: none;
 }
 
+.timer>div>div>div>div {
+  text-shadow: 0 0 18px white, 0 0 18px white, 0 0 18px white, 0 0 18px white;
+}
+
 .durationButton {
   min-width: 50%;
   padding-top: 1.5em;

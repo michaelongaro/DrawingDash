@@ -317,6 +317,13 @@ h6 {
   }
 }
 
+@media (hover: none) and (pointer: coarse) {
+  .animatedRainbow {
+    animation-duration: 300s;
+    animation-play-state: running;
+  }
+}
+
 .hamburger-react {
   z-index: 900 !important;
 }
