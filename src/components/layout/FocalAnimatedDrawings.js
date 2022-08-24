@@ -91,7 +91,6 @@ const FocalAnimatedDrawings = (props) => {
     }
 
     function resizeHandler() {
-      console.log(window.innerWidth);
       if (window.innerWidth < 450) {
         setMobileThresholdReached(true);
       } else {
@@ -109,6 +108,8 @@ const FocalAnimatedDrawings = (props) => {
   }, []);
 
   useEffect(() => {
+    // maybe need to limit this further, seems to be getting called more than once,
+    // could be simple boolean
     if (randomDrawingIDs60 && randomDrawingIDs180 && randomDrawingIDs300) {
       getImagesFromIDs();
     }
@@ -197,50 +198,58 @@ const FocalAnimatedDrawings = (props) => {
       const drawings180 = Object.values(snapshot.val()["180"]);
       const drawings300 = Object.values(snapshot.val()["300"]);
 
-      const tempDrawingIDs60 = [],
-        tempDrawingIDs180 = [],
-        tempDrawingIDs300 = [];
+      const drawingIDs60 = [],
+        drawingIDs180 = [],
+        drawingIDs300 = [];
 
-      findRandomEligiblePrompt("60", titles60, drawings60, tempDrawingIDs60);
       findRandomEligiblePrompt(
-        "180",
-        titles180,
-        drawings180,
-        tempDrawingIDs180
+        titles60,
+        drawings60,
+        drawingIDs60,
+        setDrawingTitle60
       );
       findRandomEligiblePrompt(
-        "300",
+        titles180,
+        drawings180,
+        drawingIDs180,
+        setDrawingTitle180
+      );
+      findRandomEligiblePrompt(
         titles300,
         drawings300,
-        tempDrawingIDs300
+        drawingIDs300,
+        setDrawingTitle300
       );
 
       // setting states with proper IDs
-      setRandomDrawingIDs60(tempDrawingIDs60);
-      setRandomDrawingIDs180(tempDrawingIDs180);
-      setRandomDrawingIDs300(tempDrawingIDs300);
+      setRandomDrawingIDs60(drawingIDs60);
+      setRandomDrawingIDs180(drawingIDs180);
+      setRandomDrawingIDs300(drawingIDs300);
     });
   }
 
   // finds random prompt which has at least 10 submitted drawings
   function findRandomEligiblePrompt(
-    duration,
+    // duration,
     sourceTitles,
-    sourceArr,
-    tempArr
+    sourceDrawingIDs,
+    finalDrawingIDs,
+    setDrawingIDs
   ) {
     let loopComplete = false;
-    let drawingCounts = {};
+    let drawingsPerTitle = {};
     let searchedIndicies = [];
     let randomIndex;
 
     while (!loopComplete) {
       // if all indicies checked, defaults to true and skips while loop
-      let validIndexFound = searchedIndicies.length === sourceArr.length;
+      let validIndexFound = searchedIndicies.length === sourceDrawingIDs.length;
 
       // finding new random index
       while (!validIndexFound) {
-        let indexToBeChecked = Math.floor(Math.random() * sourceArr.length);
+        let indexToBeChecked = Math.floor(
+          Math.random() * sourceDrawingIDs.length
+        );
         if (!searchedIndicies.includes(indexToBeChecked)) {
           randomIndex = indexToBeChecked;
           searchedIndicies.push(randomIndex);
@@ -250,54 +259,64 @@ const FocalAnimatedDrawings = (props) => {
       }
 
       // checking if it has >= 10 drawings for that title
-      if (sourceArr[randomIndex]["drawingID"].length >= 10) {
+      if (sourceDrawingIDs[randomIndex]["drawingID"].length >= 10) {
         for (let i = 0; i < 10; i++) {
-          const actualID = sourceArr[randomIndex]["drawingID"][i];
+          const actualID = sourceDrawingIDs[randomIndex]["drawingID"][i];
 
-          tempArr.push(actualID);
+          finalDrawingIDs.push(actualID);
         }
 
         loopComplete = true;
       } else {
-        // if all indicies have been searched and none had >= 10 drawings, exit loop
-        drawingCounts[sourceArr[randomIndex]["drawingID"].length] = randomIndex;
+        drawingsPerTitle[randomIndex] =
+          sourceDrawingIDs[randomIndex]["drawingID"].length;
 
-        if (searchedIndicies.length === sourceArr.length) {
+        // if all indicies have been searched and none had >= 10 drawings, exit loop
+        if (searchedIndicies.length === sourceDrawingIDs.length) {
           loopComplete = true;
         }
       }
     }
 
     // if no ideal index has been found yet
-    if (tempArr.length === 0) {
+    if (finalDrawingIDs.length === 0) {
       // find the drawing index with the most drawings
-      let highestDrawings = Math.max(Object.keys(drawingCounts));
-      randomIndex = drawingCounts[highestDrawings];
-
-      // pushing all available ids from drawings array
-      for (let i = 0; i < highestDrawings; i++) {
-        const actualID = sourceArr[randomIndex]["drawingID"][i];
-
-        tempArr.push(actualID);
-      }
-
-      // selecting random id to fill in the remaining id slots
-      let randomDuplicatedIndicies = Math.floor(
-        Math.random() * highestDrawings
+      const highestDrawingsIndex = Object.values(drawingsPerTitle).reduce(
+        (a, b) => Math.max(a, b),
+        -Infinity
       );
 
-      for (let i = 0; i < 10 - highestDrawings; i++) {
-        const actualID =
-          sourceArr[randomIndex]["drawingID"][randomDuplicatedIndicies];
+      function getKeyByValue(object, value) {
+        return Object.keys(object).find((key) => object[key] === value);
+      }
 
-        tempArr.push(actualID);
+      randomIndex = getKeyByValue(drawingsPerTitle, highestDrawingsIndex);
+
+      // pushing all available ids from drawings array
+      for (let i = 0; i < highestDrawingsIndex; i++) {
+        const actualID = sourceDrawingIDs[randomIndex]["drawingID"][i];
+
+        finalDrawingIDs.push(actualID);
+      }
+
+      // returns index value that is scaled off of current loop i value
+      // that is within range of found drawings
+      const scale = (number, [inMin, inMax], [outMin, outMax]) => {
+        return Math.round(
+          ((number - inMin) / (inMax - inMin)) * (outMax - outMin) + outMin
+        );
+      };
+
+      for (let i = 0; i < 10 - highestDrawingsIndex; i++) {
+        const scaledID = scale(i, [0, 9], [0, highestDrawingsIndex - 1]);
+
+        const actualID = sourceDrawingIDs[randomIndex]["drawingID"][scaledID];
+
+        finalDrawingIDs.push(actualID);
       }
     }
 
-    // adding the title that corresponds with the images
-    if (duration === "60") setDrawingTitle60(sourceTitles[randomIndex]);
-    if (duration === "180") setDrawingTitle180(sourceTitles[randomIndex]);
-    if (duration === "300") setDrawingTitle300(sourceTitles[randomIndex]);
+    setDrawingIDs(sourceTitles[randomIndex]);
   }
 
   function getImagesFromIDs() {
