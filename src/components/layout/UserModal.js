@@ -227,7 +227,8 @@ const UserModal = ({ user }) => {
           <button
             style={{ top: "-2.45em", left: "1.5em" }}
             className={baseClasses.activeButton}
-            onClick={() => {
+            onClick={(ev) => {
+              ev.stopPropagation();
               // closing user modal
               modalCtx.setUserModalOpened(false);
             }}

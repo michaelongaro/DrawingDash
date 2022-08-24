@@ -569,6 +569,20 @@ const DrawingModal = ({
 
             {/* actual image */}
             <div
+              style={{
+                background: drawingMetadata.hasOwnProperty("averageColor")
+                  ? `linear-gradient(
+                                        \n
+                                        180deg,
+                                        \n
+                                        rgb(255, 255, 255) 0%,
+                                        \n
+                                        rgba(${drawingMetadata["averageColor"]["r"]}, 
+                                            ${drawingMetadata["averageColor"]["g"]}, 
+                                            ${drawingMetadata["averageColor"]["b"]}, .8)
+                                      )`
+                  : "linear-gradient(\n    145deg,\n    rgb(255, 255, 255) 0%,\n    #c2c2c2 125%\n  )",
+              }}
               className={`${classes.borderBackgroundContainer} ${baseClasses.baseFlex}`}
             >
               <img
@@ -697,7 +711,8 @@ const DrawingModal = ({
                     width: "50px",
                     height: "50px",
                   }}
-                  onClick={() => {
+                  onClick={(ev) => {
+                    ev.stopPropagation();
                     if (!modalCtx.userModalOpened) {
                       setShowUserModal(true);
                       modalCtx.setUserModalOpened(true);

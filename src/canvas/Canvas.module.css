@@ -48,7 +48,12 @@
 }
 
 .timer>div>div>div>div {
-  text-shadow: 0 0 18px white, 0 0 18px white, 0 0 18px white, 0 0 18px white;
+  text-shadow:
+    3px 3px 18px rgba(255, 255, 255, .6),
+    -1px -1px 18px rgba(255, 255, 255, .6),
+    1px -1px 18px rgba(255, 255, 255, .6),
+    -1px 1px 18px rgba(255, 255, 255, .6),
+    1px 1px 18px rgba(255, 255, 255, .6);
 }
 
 .durationButton {

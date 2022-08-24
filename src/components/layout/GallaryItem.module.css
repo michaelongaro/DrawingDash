@@ -194,7 +194,6 @@
 
 .borderBackgroundContainer {
   position: relative;
-  background: linear-gradient(15deg, rgb(175 175 175), rgb(255 255 255));
   border-radius: 1em 1em 0 0;
 }
 
