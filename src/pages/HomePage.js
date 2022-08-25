@@ -15,12 +15,12 @@ import baseClasses from "../index.module.css";
 function HomePage() {
   const { isLoading, isAuthenticated } = useAuth0();
 
-  const [showRegisterContainer, setShowRegisterContainer] = useState(true);
+  const [showRegisterContainer, setShowRegisterContainer] = useState(false);
   const [showHomePage, setShowHomePage] = useState(false);
 
   useEffect(() => {
-    if (!isLoading && isAuthenticated) {
-      setShowRegisterContainer(false);
+    if (!isLoading && !isAuthenticated) {
+      setShowRegisterContainer(true);
     }
   }, [isLoading, isAuthenticated]);
 

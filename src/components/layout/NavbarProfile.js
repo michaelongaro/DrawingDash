@@ -45,12 +45,23 @@ function NavbarProfile({ forSidebar }) {
   const [firstTimeVisiting, setFirstTimeVisiting] = useState(true);
 
   const [isFetching, setIsFetching] = useState(true);
+  const [showTempBaselineSkeleton, setShowTempBaselineSkeleton] =
+    useState(true);
+  const [imageElementLoaded, setImageElementLoaded] = useState(false);
 
   // to see if user is hovering on profile picture to show dropdown menu
   const [hoveringOnProfilePicture, setHoveringOnProfilePicture] =
     useState(false);
   const [hoveringOnProfileButton, setHoveringOnProfileButton] = useState(false);
   const [hoveringOnLogOutButton, setHoveringOnLogOutButton] = useState(false);
+
+  useEffect(() => {
+    const timerID = setTimeout(() => setShowTempBaselineSkeleton(false), 500);
+
+    return () => {
+      clearTimeout(timerID);
+    };
+  }, []);
 
   useEffect(() => {
     if (!isLoading && !isAuthenticated) {
@@ -165,9 +176,14 @@ function NavbarProfile({ forSidebar }) {
     <>
       {forSidebar ? (
         <div style={{ gap: ".5em" }} className={baseClasses.baseVertFlex}>
-          {isFetching ? (
+          {isFetching || showTempBaselineSkeleton ? (
             <div
               style={{
+                display:
+                  (isFetching || showTempBaselineSkeleton) &&
+                  !imageElementLoaded
+                    ? "block"
+                    : "none",
                 width: "3em",
                 height: "3em",
                 borderRadius: "50%",
@@ -182,14 +198,22 @@ function NavbarProfile({ forSidebar }) {
             >
               <img
                 style={{
+                  display:
+                    !isFetching &&
+                    !showTempBaselineSkeleton &&
+                    imageElementLoaded
+                      ? "block"
+                      : "none",
                   width: "5em",
                   height: "5em",
-
                   boxShadow: "rgb(0 0 0 / 30%) 0px 2px 4px 1px",
                 }}
                 className={classes.profilePicture}
                 src={image}
                 alt={"cropped profile"}
+                onLoad={() => {
+                  setImageElementLoaded(true);
+                }}
               />
             </Link>
           )}
@@ -242,9 +266,14 @@ function NavbarProfile({ forSidebar }) {
                 position: "absolute",
               }}
             >
-              {isFetching ? (
+              {isFetching || showTempBaselineSkeleton ? (
                 <div
                   style={{
+                    display:
+                      (isFetching || showTempBaselineSkeleton) &&
+                      !imageElementLoaded
+                        ? "block"
+                        : "none",
                     width: "3em",
                     height: "3em",
                     borderRadius: "50%",
@@ -255,11 +284,20 @@ function NavbarProfile({ forSidebar }) {
                 <Link to="/profile/preferences" ref={profilePictureRef}>
                   <img
                     style={{
+                      display:
+                        !isFetching &&
+                        !showTempBaselineSkeleton &&
+                        imageElementLoaded
+                          ? "block"
+                          : "none",
                       boxShadow: "rgb(0 0 0 / 30%) 0px 2px 4px 1px",
                     }}
                     className={classes.profilePicture}
                     src={image}
                     alt={"cropped profile"}
+                    onLoad={() => {
+                      setImageElementLoaded(true);
+                    }}
                   />
                 </Link>
               )}
