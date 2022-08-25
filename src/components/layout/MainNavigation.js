@@ -3,6 +3,10 @@ import React, { useEffect, useState } from "react";
 import { Link, NavLink } from "react-router-dom";
 import { useAuth0 } from "@auth0/auth0-react";
 
+import { getAuth, signInAnonymously } from "firebase/auth";
+
+import { app } from "../../util/init-firebase";
+
 import NavbarProfile from "./NavbarProfile";
 import LogInButton from "../../oauth/LogInButton";
 import Logo from "../../svgs/Logo.png";
@@ -18,6 +22,21 @@ function MainNavigation() {
   const { isLoading, isAuthenticated } = useAuth0();
 
   const [showDesktopNavbar, setShowDesktopNavbar] = useState(false);
+
+  useEffect(() => {
+    const auth = getAuth(app);
+    signInAnonymously(auth)
+      .then(() => {
+        // Signed in..
+        console.log("signed in!");
+      })
+      .catch((error) => {
+        const errorCode = error.code;
+        const errorMessage = error.message;
+        // ...
+        console.log(errorCode, errorMessage);
+      });
+  }, []);
 
   useEffect(() => {
     // just for initial render
