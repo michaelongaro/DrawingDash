@@ -25,17 +25,11 @@ function MainNavigation() {
 
   useEffect(() => {
     const auth = getAuth(app);
-    signInAnonymously(auth)
-      .then(() => {
-        // Signed in..
-        console.log("signed in!");
-      })
-      .catch((error) => {
-        const errorCode = error.code;
-        const errorMessage = error.message;
-        // ...
-        console.log(errorCode, errorMessage);
-      });
+    signInAnonymously(auth).catch((error) => {
+      const errorCode = error.code;
+      const errorMessage = error.message;
+      console.log(errorCode, errorMessage);
+    });
   }, []);
 
   useEffect(() => {

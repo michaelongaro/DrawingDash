@@ -468,7 +468,6 @@ const DrawingScreen = () => {
       currentStorageValues["dailyCompletedPrompts"] = tempUpdatedStatuses;
       // updating daily completed prompts in context
       DSCtx.setDrawingStatuses(tempUpdatedStatuses);
-      DSCtx.setDrawingStatusRefreshes((refreshes) => refreshes + 1);
     }
 
     // actually setting user localstorage with all updated values

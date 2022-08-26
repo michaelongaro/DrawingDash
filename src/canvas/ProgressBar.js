@@ -38,8 +38,7 @@ const ProgressBar = () => {
     // just for initial render
     setSelectOffset(
       rectangleRef.current.getBoundingClientRect().width / 2 -
-        selectTextRef.current.getBoundingClientRect().width / 2 -
-        7.5
+        selectTextRef.current.getBoundingClientRect().width / 2
     );
 
     if (document.getElementById("chooseTextContainer") !== null) {
@@ -178,13 +177,13 @@ const ProgressBar = () => {
               "-13px",
               `${
                 rectangleRef.current.getBoundingClientRect().width / 2 -
-                selectTextRef.current.getBoundingClientRect().width / 2 -
-                7.5
+                selectTextRef.current.getBoundingClientRect().width / 2
               }px`,
             ],
             top: ["20px", "140px"],
 
-            fontSize: ["1.25em", "1.5em"],
+            // fontSize: ["1.25em", "1.5em"],
+            scale: [1, 1.25],
             fontWeight: [400, 600],
             color: ["rgb(100, 100, 100)", "rgb(0, 0, 0)"],
             easing: "easeInSine",
@@ -206,7 +205,8 @@ const ProgressBar = () => {
             duration: 500,
             left: -13,
             top: 20,
-            fontSize: ["1.5em", "1.25em"],
+            // fontSize: ["1.5em", "1.25em"],
+            scale: [1.25, 1],
             fontWeight: [600, 400],
             color: ["rgb(0, 0, 0)", "rgb(100, 100, 100)"],
             easing: "easeInSine",
@@ -316,13 +316,13 @@ const ProgressBar = () => {
                   "-13px",
                   `${
                     rectangleRef.current.getBoundingClientRect().width / 2 -
-                    selectTextRef.current.getBoundingClientRect().width / 2 -
-                    7.5
+                    selectTextRef.current.getBoundingClientRect().width / 2
                   }px`,
                 ],
                 top: ["20px", "140px"],
 
-                fontSize: ["1.25em", "1.5em"],
+                // fontSize: ["1.25em", "1.5em"],
+                scale: [1, 1.25],
                 fontWeight: [400, 600],
                 color: ["rgb(100, 100, 100)", "rgb(0, 0, 0)"],
                 easing: "easeInSine",
@@ -413,14 +413,14 @@ const ProgressBar = () => {
           left: [
             `${
               rectangleRef.current.getBoundingClientRect().width / 2 -
-              selectTextRef.current.getBoundingClientRect().width / 2 -
-              7.5
+              selectTextRef.current.getBoundingClientRect().width / 2
             }px`,
             "-13px",
           ],
           top: ["140px", "20px"],
 
-          fontSize: ["1.5em", "1.25em"],
+          // fontSize: ["1.5em", "1.25em"],
+          scale: [1.25, 1],
           fontWeight: [600, 400],
           color: ["rgb(0, 0, 0)", "rgb(100, 100, 100)"],
           easing: "easeInSine",

@@ -184,8 +184,8 @@ function NavbarProfile({ forSidebar }) {
                   !imageElementLoaded
                     ? "block"
                     : "none",
-                width: "3em",
-                height: "3em",
+                width: "5em",
+                height: "5em",
                 borderRadius: "50%",
               }}
               className={baseClasses.skeletonLoading}
@@ -260,7 +260,6 @@ function NavbarProfile({ forSidebar }) {
               }
             }}
           >
-            {/* zIndex just to be able to click on the <Link> */}
             <div
               style={{
                 position: "absolute",

@@ -51,7 +51,8 @@ export function DrawingSelectionProvider(props) {
   const [showEndOutline, setShowEndOutline] = useState(false);
 
   const [extraPromptsShown, setExtraPromptsShown] = useState(false);
-  const [resetComplete, setResetComplete] = useState(false);
+  const [resetComplete, setResetComplete] = useState(null); //false
+  const [resetProcessStarted, setResetProcessStarted] = useState(false);
 
   const [revertSelectCircle, setRevertSelectCircle] = useState(false);
 
@@ -102,9 +103,6 @@ export function DrawingSelectionProvider(props) {
     }
   }, [currentColor]);
 
-  const [promptRefreshes, setPromptRefreshes] = useState(0);
-  const [drawingStatusRefreshes, setDrawingStatusRefreshes] = useState(0);
-
   useEffect(() => {
     // attaching firebase listener so that when prompts update from firebase
     // scheduler function it will update the context states here
@@ -120,8 +118,6 @@ export function DrawingSelectionProvider(props) {
       onValue(ref(db, `dailyPrompts`), (snapshot) => {
         if (snapshot.exists()) {
           setDailyPrompts(snapshot.val());
-
-          setPromptRefreshes((refreshes) => refreshes + 1);
 
           // storing current user localStorage data
           let currentUserInfo = JSON.parse(
@@ -143,9 +139,6 @@ export function DrawingSelectionProvider(props) {
                 "unregisteredUserInfo",
                 JSON.stringify(currentUserInfo)
               );
-
-              setPromptRefreshes(1);
-              setDrawingStatusRefreshes(1);
 
               setDrawingStatuses({
                 60: false,
@@ -171,12 +164,6 @@ export function DrawingSelectionProvider(props) {
       // when user finishes a drawing.
       if (currentUserInfo) {
         setDrawingStatuses(currentUserInfo.dailyCompletedPrompts);
-        setDrawingStatusRefreshes((refreshes) => refreshes + 1);
-      } else {
-        // if new user directly goes to /daily-drawings then currentUserInfo
-        // will still be null by time this is hit, so manually setting
-        // drawingStatusRefreshes for PromptSelection logic flow
-        if (drawingStatusRefreshes === 0) setDrawingStatusRefreshes(1);
       }
     }
 
@@ -186,8 +173,6 @@ export function DrawingSelectionProvider(props) {
         ref(db, `users/${user.sub}/completedDailyPrompts`),
         (snapshot) => {
           if (snapshot.exists()) {
-            setDrawingStatusRefreshes((refreshes) => refreshes + 1);
-
             setDrawingStatuses(snapshot.val());
           }
         }
@@ -202,24 +187,17 @@ export function DrawingSelectionProvider(props) {
   }, [isLoading, isAuthenticated]);
 
   useEffect(() => {
-    if (
-      resetComplete &&
-      promptRefreshes === 2 &&
-      (isEqual(drawingStatuses, {
-        60: false,
-        180: false,
-        300: false,
-        extra: false,
-      }) ||
-        isEqual(drawingStatuses, {
-          60: false,
-          180: false,
-          300: false,
-        }))
-    ) {
+    if (resetComplete === false) {
+      setResetProcessStarted(true);
+    }
+  }, [resetComplete]);
+
+  useEffect(() => {
+    if (resetComplete && resetProcessStarted) {
+      setResetProcessStarted(false);
       setStartNewDailyWordsAnimation(true);
     }
-  }, [resetComplete, drawingStatuses, promptRefreshes, drawingStatusRefreshes]);
+  }, [resetComplete, resetProcessStarted]);
 
   useEffect(() => {
     if (window.innerWidth < 1000) {
@@ -290,10 +268,6 @@ export function DrawingSelectionProvider(props) {
     extendLayoutHeight: extendLayoutHeight,
     setExtendLayoutHeight: setExtendLayoutHeight,
 
-    promptRefreshes: promptRefreshes,
-    setPromptRefreshes: setPromptRefreshes,
-    drawingStatusRefreshes: drawingStatusRefreshes,
-    setDrawingStatusRefreshes: setDrawingStatusRefreshes,
     extraPromptsShown: extraPromptsShown,
     setExtraPromptsShown: setExtraPromptsShown,
     resetComplete: resetComplete,

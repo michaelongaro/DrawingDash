@@ -27,11 +27,11 @@ const PaletteChooser = () => {
   const fifthColorRef = useRef(null);
 
   const [paletteColors, setPaletteColors] = useState([
-    "#000000",
-    "#000000",
-    "#000000",
-    "#000000",
-    "#000000",
+    "#7f4040",
+    "#7f4040",
+    "#7f4040",
+    "#7f4040",
+    "#7f4040",
   ]);
 
   const [colorPickerOpacity, setColorPickerOpacity] = useState([
@@ -103,55 +103,36 @@ const PaletteChooser = () => {
   }, []);
 
   useEffect(() => {
-    // function touchHandler(ev) {
-    //   firstColorRef.current.blur();
-    //   secondColorRef.current.blur();
-    //   thirdColorRef.current.blur();
-    //   fourthColorRef.current.blur();
-    //   fifthColorRef.current.blur();
-    // }
-
     function touchHandler(ev) {
       if (!isEqual(colorPickerOpacity, [false, false, false, false, false])) {
         if (
           colorPickerOpacity[0] &&
           !firstColorRef.current.contains(ev.target)
         ) {
-          console.log("blurring first");
-          firstColorRef.current.blur();
-
           updateColorPickerOpacity(false, 0);
           updateCheckmarkStates(0);
         } else if (
           colorPickerOpacity[1] &&
           !secondColorRef.current.contains(ev.target)
         ) {
-          secondColorRef.current.blur();
-
           updateColorPickerOpacity(false, 1);
           updateCheckmarkStates(1);
         } else if (
           colorPickerOpacity[2] &&
           !thirdColorRef.current.contains(ev.target)
         ) {
-          thirdColorRef.current.blur();
-
           updateColorPickerOpacity(false, 2);
           updateCheckmarkStates(2);
         } else if (
           colorPickerOpacity[3] &&
           !fourthColorRef.current.contains(ev.target)
         ) {
-          fourthColorRef.current.blur();
-
           updateColorPickerOpacity(false, 3);
           updateCheckmarkStates(3);
         } else if (
           colorPickerOpacity[4] &&
           !fifthColorRef.current.contains(ev.target)
         ) {
-          fifthColorRef.current.blur();
-
           updateColorPickerOpacity(false, 4);
           updateCheckmarkStates(4);
         }
@@ -164,53 +145,40 @@ const PaletteChooser = () => {
           colorPickerOpacity[0] &&
           !firstColorRef.current.contains(ev.target)
         ) {
-          console.log("blurring first");
-          // firstColorRef.current.blur();
-
           updateColorPickerOpacity(false, 0);
           updateCheckmarkStates(0);
         } else if (
           colorPickerOpacity[1] &&
           !secondColorRef.current.contains(ev.target)
         ) {
-          // secondColorRef.current.blur();
-
           updateColorPickerOpacity(false, 1);
           updateCheckmarkStates(1);
         } else if (
           colorPickerOpacity[2] &&
           !thirdColorRef.current.contains(ev.target)
         ) {
-          // thirdColorRef.current.blur();
-
           updateColorPickerOpacity(false, 2);
           updateCheckmarkStates(2);
         } else if (
           colorPickerOpacity[3] &&
           !fourthColorRef.current.contains(ev.target)
         ) {
-          // fourthColorRef.current.blur();
-
           updateColorPickerOpacity(false, 3);
           updateCheckmarkStates(3);
         } else if (
           colorPickerOpacity[4] &&
           !fifthColorRef.current.contains(ev.target)
         ) {
-          // fifthColorRef.current.blur();
-
           updateColorPickerOpacity(false, 4);
           updateCheckmarkStates(4);
         }
       }
     }
 
-    // window.addEventListener("touchmove", touchHandler);
     window.addEventListener("touchstart", touchHandler);
     window.addEventListener("mousedown", mouseHandler);
 
     return () => {
-      // window.removeEventListener("touchmove", touchHandler);
       window.removeEventListener("touchstart", touchHandler);
       window.removeEventListener("mousedown", mouseHandler);
     };
@@ -229,16 +197,6 @@ const PaletteChooser = () => {
   }
 
   function updateCheckmarkStates(idx) {
-    const shallowCheckmarks = [...statusOfCheckmarks];
-    shallowCheckmarks.splice(idx, 1, true);
-    setStatusOfCheckmarks(shallowCheckmarks);
-  }
-
-  function updatePaletteAndCheckmarkStates(event, idx) {
-    const shallowCopyPalettes = [...paletteColors];
-    shallowCopyPalettes.splice(idx, 1, event.target.value);
-    setPaletteColors(shallowCopyPalettes);
-
     const shallowCheckmarks = [...statusOfCheckmarks];
     shallowCheckmarks.splice(idx, 1, true);
     setStatusOfCheckmarks(shallowCheckmarks);
@@ -404,7 +362,7 @@ const PaletteChooser = () => {
                     }}
                   >
                     <HexColorPicker
-                      color={paletteColors[0]}
+                      color={paletteColors[1]}
                       onChange={(e) => updatePaletteColor(e, 1)}
                     />
                   </div>
@@ -582,7 +540,7 @@ const PaletteChooser = () => {
                     }}
                   >
                     <HexColorPicker
-                      color={paletteColors[0]}
+                      color={paletteColors[4]}
                       onChange={(e) => updatePaletteColor(e, 4)}
                     />
                   </div>
