@@ -516,6 +516,7 @@ const DrawingModal = ({
                 onClick={() => {
                   if (showConfirmDeleteModal) setShowConfirmDeleteModal(false);
                 }}
+                aria-label="Close"
               >
                 <ExitIcon />
               </button>
@@ -602,6 +603,7 @@ const DrawingModal = ({
 
               {/* delete drawing button */}
               <button
+                aria-label="Delete"
                 className={classes.deleteButton}
                 style={{
                   display: imageElementLoaded ? "flex" : "none",

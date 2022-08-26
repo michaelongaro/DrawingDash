@@ -664,6 +664,7 @@ const Preferences = () => {
                         setIsEditingImage(true);
                         setShowCropModal(true);
                       }}
+                      aria-label="Close"
                     >
                       <div className={classes.buttonOperationContainer}>
                         <div>Resize</div>
@@ -751,6 +752,7 @@ const Preferences = () => {
                   setInputWasChanged(false);
                   setAbleToPost(false);
                 }}
+                aria-label="Close"
               >
                 <ExitIcon />
               </button>

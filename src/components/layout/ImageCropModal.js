@@ -66,6 +66,7 @@ const ImageCropModal = ({
             <button
               className={baseClasses.closeButton}
               onClick={discardChanges}
+              aria-label="Close"
             >
               <ExitIcon />
             </button>

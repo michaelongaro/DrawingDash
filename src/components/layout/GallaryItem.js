@@ -530,6 +530,7 @@ const GallaryItem = ({
               onClick={() => {
                 if (showConfirmDeleteModal) setShowConfirmDeleteModal(false);
               }}
+              aria-label="Close"
             >
               <ExitIcon />
             </button>
@@ -673,6 +674,7 @@ const GallaryItem = ({
 
             {/* delete drawing button */}
             <button
+              aria-label="Delete"
               className={classes.deleteButton}
               style={{
                 display:
