@@ -61,6 +61,9 @@ const Preferences = () => {
 
   const [username, setUsername] = useState("Username");
   const [status, setStatus] = useState("Your Status Here");
+  const [fetchedUsername, setFetchedUsername] = useState("");
+  const [fetchedStatus, setFetchedStatus] = useState("");
+
   const [userEmail, setUserEmail] = useState("");
   const [imageAltInfo, setImageAltInfo] = useState("username");
   const [image, setImage] = useState(null);
@@ -218,6 +221,11 @@ const Preferences = () => {
         if (snapshot.exists()) {
           setUsername(snapshot.val()["username"]);
           setStatus(snapshot.val()["status"]);
+
+          // used to compare whether input has changed from db value
+          setFetchedUsername(snapshot.val()["username"]);
+          setFetchedStatus(snapshot.val()["status"]);
+
           if (snapshot.val()["profileCropMetadata"]) {
             setDBCropData(
               snapshot.val()["profileCropMetadata"]["croppedAreaPixels"]
@@ -286,13 +294,16 @@ const Preferences = () => {
 
   useEffect(() => {
     if (inputWasChanged) {
-      if (username.length > 0 && status.length > 0) {
+      if (
+        (username.length > 0 && username !== fetchedUsername) ||
+        (status.length > 0 && status !== fetchedStatus)
+      ) {
         setAbleToPost(true);
       } else {
         setAbleToPost(false);
       }
     }
-  }, [inputWasChanged, username, status]);
+  }, [inputWasChanged, username, fetchedUsername, status, fetchedStatus]);
 
   // return save to true after pushing to db
   function handleSubmit(event) {
@@ -347,6 +358,11 @@ const Preferences = () => {
         // check if !isEqual for all of these below
         setUsername(snapshot.val()["username"]);
         setStatus(snapshot.val()["status"]);
+
+        // used to compare whether input has changed from db value
+        setFetchedUsername(snapshot.val()["username"]);
+        setFetchedStatus(snapshot.val()["status"]);
+
         if (snapshot.val()["profileCropMetadata"]) {
           setDBCropData(
             snapshot.val()["profileCropMetadata"]["croppedAreaPixels"]
@@ -462,13 +478,22 @@ const Preferences = () => {
               ) : (
                 <div style={{ position: "relative" }}>
                   <input
-                    className={classes.setUsername}
+                    className={`${classes.setUsername} ${classes.usernameStatusInputs}`}
                     value={username}
                     minLength={1}
                     maxLength={25}
+                    style={{
+                      boxShadow:
+                        username !== fetchedUsername
+                          ? "0 0 4px 1px #008b04"
+                          : "none",
+                    }}
                     onChange={(e) => {
                       setUsername(e.target.value);
-                      if (e.target.value.length > 0) {
+                      if (
+                        e.target.value.length > 0 &&
+                        e.target.value !== fetchedUsername
+                      ) {
                         setInputWasChanged(true);
                       }
                     }}
@@ -502,13 +527,22 @@ const Preferences = () => {
               ) : (
                 <div style={{ position: "relative" }}>
                   <input
-                    className={classes.setStatus}
+                    className={`${classes.setStatus} ${classes.usernameStatusInputs}`}
                     value={status}
                     minLength={1}
                     maxLength={40}
+                    style={{
+                      boxShadow:
+                        status !== fetchedStatus
+                          ? "0 0 4px 1px #008b04"
+                          : "none",
+                    }}
                     onChange={(e) => {
                       setStatus(e.target.value);
-                      if (e.target.value.length > 0) {
+                      if (
+                        e.target.value.length > 0 &&
+                        e.target.value !== fetchedStatus
+                      ) {
                         setInputWasChanged(true);
                       }
                     }}

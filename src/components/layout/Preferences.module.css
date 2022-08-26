@@ -80,8 +80,19 @@
       rgba(255, 255, 255, 0));
 }
 
+.usernameStatusInputs {
+  border-radius: 1em;
+  border: 1px solid #7c7c7c;
+  padding-left: 10px;
+  transition: box-shadow 200ms;
+}
+
 .setStatus {
   width: 15em;
+}
+
+.setUsername {
+  width: 12em;
 }
 
 .maxChars {
@@ -146,7 +157,6 @@
       rgb(36, 231, 62) 100%);
 
   z-index: 950;
-
 }
 
 .uploadOverlay {
