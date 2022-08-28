@@ -75,6 +75,7 @@ const ProgressBar = () => {
   useEffect(() => {
     if (cleanupAllStates) {
       DSCtx.resetProgressBar();
+      setCleanupAllStates(false);
     }
   }, [cleanupAllStates]);
 

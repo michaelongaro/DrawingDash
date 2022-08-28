@@ -86,16 +86,13 @@ const PromptSelection = () => {
   const [showRegisterContainer, setShowRegisterContainer] = useState(false);
   const [showCountdownTimer, setShowCountdownTimer] = useState(false);
   const [resetAtDate, setResetAtDate] = useState(
-    "January 01, 2030 00:00:00 GMT+03:00"
+    "January 01, 2090 00:00:00 GMT+03:00"
   );
 
   // once all of these are true then make "Next" button available
   const [customDurationClicked, setCustomDurationClicked] = useState(false);
   const [customAdjectiveClicked, setCustomAdjectiveClicked] = useState(false);
   const [customNounClicked, setCustomNounClicked] = useState(false);
-
-  const [comingShortlyTimeoutComplete, setComingShortlyTimeoutComplete] =
-    useState(false);
 
   const [
     showPromptsComingShortlyContainer,
@@ -117,31 +114,13 @@ const PromptSelection = () => {
     }),
   };
 
-  // could probably make resetComplete initialized with null and then
-  // check if it is !== false and you could eliminate this extra useEffect
   useEffect(() => {
-    // if (comingShortlyTimeoutComplete)
+    // maybe do resetProcessStarted? idk exactly what difference is
     if (DSCtx.resetComplete === false && !showCountdownTimer) {
       // making sure to get up to date values of context
       setShowPromptsComingShortlyContainer(true);
     }
-    // }
-  }, [DSCtx.resetComplete, showCountdownTimer, comingShortlyTimeoutComplete]);
-
-  // useEffect(() => {
-  //   let comingShortlyTimeoutID;
-  //   if (!DSCtx.resetComplete && !showCountdownTimer) {
-  //     setTimeout(() => {
-  //       setComingShortlyTimeoutComplete(true);
-  //     }, 1500);
-  //   }
-
-  //   return () => {
-  //     if (comingShortlyTimeoutID) {
-  //       clearTimeout(comingShortlyTimeoutID);
-  //     }
-  //   };
-  // }, [DSCtx.resetComplete, showCountdownTimer]);
+  }, [DSCtx.resetComplete, showCountdownTimer]);
 
   useEffect(() => {
     if (!isLoading) {
@@ -175,7 +154,11 @@ const PromptSelection = () => {
 
   useEffect(() => {
     if (!isLoading) {
-      if (showPromptsComingShortlyContainer || showCountdownTimer) {
+      // do you need DSCtx.resetComplete === false here below too?
+      if (
+        (showPromptsComingShortlyContainer || showCountdownTimer) &&
+        DSCtx.resetComplete === false
+      ) {
         setHidePlaceholderText(true);
 
         if (
@@ -190,21 +173,9 @@ const PromptSelection = () => {
         ) {
           // change to all being false/default
           console.log("spiraling"); // idk why this is getting perma rerun...
-          // shouldn't be that crazy tbh but think about it big picture first!!!
-          DSCtx.setPBStates({
-            selectCircle: false,
-            chooseCircle: false,
-            drawCircle: false,
-            selectToChooseBar: false,
-            chooseToDrawBar: false,
-            resetToSelectBar: false,
-          });
-
+          DSCtx.resetProgressBar();
           DSCtx.setRevertSelectCircle(true);
 
-          setHidePlaceholderText(true);
-
-          // !DSCtx.drawingStatuses["extra"]
           if (isAuthenticated && showExtraPrompt) {
             anime({
               targets: "#extraPromptText",
@@ -249,18 +220,13 @@ const PromptSelection = () => {
     isAuthenticated,
     showExtraPrompt,
     DSCtx.PBStates,
+    DSCtx.resetComplete,
     showCountdownTimer,
     showPromptsComingShortlyContainer,
   ]);
 
   useEffect(() => {
     if (DSCtx.startNewDailyWordsAnimation) {
-      // setAdjustedDrawingStatuses({
-      //   60: true,
-      //   180: true,
-      //   300: true,
-      // });
-
       // animate signup/login container down out of view if it is showing
       if (showPromptsComingShortlyContainer) {
         if (showRegisterContainer) {
@@ -1338,7 +1304,7 @@ const PromptSelection = () => {
             id={"countdownContainer"}
             style={{
               position: "absolute",
-              width: "100%",
+              width: window.innerWidth < 500 ? "75%" : "100%",
               height: "100%",
               opacity: showCountdownTimer ? 1 : 0,
               userSelect: showCountdownTimer ? "auto" : "none",
@@ -1363,7 +1329,7 @@ const PromptSelection = () => {
             id={"promptsRefreshingShortlyContainer"}
             style={{
               position: "absolute",
-              width: "100%",
+              width: window.innerWidth < 500 ? "75%" : "100%",
               height: "100%",
               gap: "1em",
               opacity: showPromptsComingShortlyContainer ? 1 : 0,
@@ -1375,7 +1341,6 @@ const PromptSelection = () => {
             <div
               style={{
                 fontSize: window.innerWidth < 500 ? ".85em" : "1em",
-                color: "#EEEEEE",
               }}
             >
               New prompts coming shortly

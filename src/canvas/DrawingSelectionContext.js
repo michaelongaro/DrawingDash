@@ -51,7 +51,8 @@ export function DrawingSelectionProvider(props) {
   const [showEndOutline, setShowEndOutline] = useState(false);
 
   const [extraPromptsShown, setExtraPromptsShown] = useState(false);
-  const [resetComplete, setResetComplete] = useState(null); //false
+
+  const [resetComplete, setResetComplete] = useState(null);
   const [resetProcessStarted, setResetProcessStarted] = useState(false);
 
   const [revertSelectCircle, setRevertSelectCircle] = useState(false);
@@ -104,15 +105,17 @@ export function DrawingSelectionProvider(props) {
   }, [currentColor]);
 
   useEffect(() => {
-    // attaching firebase listener so that when prompts update from firebase
-    // scheduler function it will update the context states here
-
     // setting listener for when database reset function has completed
     onValue(ref(db, "resetComplete"), (snapshot) => {
       if (snapshot.exists()) {
         setResetComplete(snapshot.val());
       }
     });
+  }, []);
+
+  useEffect(() => {
+    // attaching firebase listener so that when prompts update from firebase
+    // scheduler function it will update the context states here
 
     if (!isLoading) {
       onValue(ref(db, `dailyPrompts`), (snapshot) => {
