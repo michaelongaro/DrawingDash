@@ -204,7 +204,7 @@ const Preferences = () => {
     if (showEmailSentTooltip) {
       timeoutID = setTimeout(() => {
         setShowEmailSentTooltip(false);
-      }, 1500);
+      }, 3000);
     }
 
     return () => {
