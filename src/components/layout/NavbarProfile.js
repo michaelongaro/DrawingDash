@@ -64,58 +64,6 @@ function NavbarProfile({ forSidebar }) {
   }, []);
 
   useEffect(() => {
-    if (!isLoading && !isAuthenticated) {
-      let currentPrompts;
-
-      let currentUserInfo = JSON.parse(
-        localStorage.getItem("unregisteredUserInfo")
-      );
-
-      get(child(dbRef, "dailyPrompts"))
-        .then((snapshot) => {
-          if (snapshot.exists()) {
-            currentPrompts = snapshot.val();
-          }
-        })
-        .then(() => {
-          if (currentUserInfo) {
-            // do check here if words are different
-            if (!isEqual(currentUserInfo["lastSeenPrompts"], currentPrompts)) {
-              // allowing user to draw if the day's drawings have reset
-              // and updating lastSeenPrompts value
-              currentUserInfo.dailyCompletedPrompts = {
-                60: false,
-                180: false,
-                300: false,
-              };
-
-              currentUserInfo["lastSeenPrompts"] = currentPrompts;
-
-              localStorage.setItem(
-                "unregisteredUserInfo",
-                JSON.stringify(currentUserInfo)
-              );
-            }
-          } else {
-            // initializing new user localstorage data
-            const userInfo = {
-              drawingMetadata: {},
-              drawings: {},
-              dailyCompletedPrompts: {
-                60: false,
-                180: false,
-                300: false,
-              },
-              lastSeenPrompts: currentPrompts,
-            };
-            localStorage.setItem(
-              "unregisteredUserInfo",
-              JSON.stringify(userInfo)
-            );
-          }
-        });
-    }
-
     if (!isLoading && isAuthenticated) {
       onValue(ref_database(db, `users/${user.sub}/preferences`), (snapshot) => {
         if (snapshot.exists()) {
@@ -217,7 +165,20 @@ function NavbarProfile({ forSidebar }) {
               />
             </Link>
           )}
-          {username && <div>{username}</div>}
+
+          {isFetching || showTempBaselineSkeleton ? (
+            <div
+              style={{
+                width: "10em",
+                height: "1.5em",
+              }}
+              className={baseClasses.skeletonLoading}
+            ></div>
+          ) : (
+            <div style={{ textAlign: "center" }}>{`Welcome${
+              firstTimeVisiting ? "," : " back,"
+            }${username ? ` ${username}!` : "!"}`}</div>
+          )}
         </div>
       ) : (
         <div
@@ -236,7 +197,7 @@ function NavbarProfile({ forSidebar }) {
                   overflow: "hidden",
                   whiteSpace: "nowrap",
                 }}
-              >{`Welcome ${firstTimeVisiting ? "" : "back"},${
+              >{`Welcome${firstTimeVisiting ? "," : " back,"}${
                 username ? ` ${username}!` : "!"
               }`}</div>
             )}

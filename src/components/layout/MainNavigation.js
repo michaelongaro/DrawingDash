@@ -2,8 +2,18 @@ import React, { useEffect, useState } from "react";
 
 import { Link, NavLink } from "react-router-dom";
 import { useAuth0 } from "@auth0/auth0-react";
+import { isEqual } from "lodash";
 
 import { getAuth, signInAnonymously } from "firebase/auth";
+
+import {
+  getDatabase,
+  ref as ref_database,
+  set,
+  onValue,
+  child,
+  get,
+} from "firebase/database";
 
 import { app } from "../../util/init-firebase";
 
@@ -21,6 +31,8 @@ import baseClasses from "../../index.module.css";
 function MainNavigation() {
   const { isLoading, isAuthenticated } = useAuth0();
 
+  const dbRef = ref_database(getDatabase(app));
+
   const [showDesktopNavbar, setShowDesktopNavbar] = useState(false);
 
   useEffect(() => {
@@ -31,6 +43,64 @@ function MainNavigation() {
       console.log(errorCode, errorMessage);
     });
   }, []);
+
+  useEffect(() => {
+    if (!isLoading && !isAuthenticated) {
+      let currentPrompts;
+
+      let currentUserInfo = JSON.parse(
+        localStorage.getItem("unregisteredUserInfo")
+      );
+
+      get(child(dbRef, "dailyPrompts"))
+        .then((snapshot) => {
+          if (snapshot.exists()) {
+            currentPrompts = snapshot.val();
+          }
+        })
+        .then(() => {
+          if (currentUserInfo) {
+            // do check here if words are different
+            if (!isEqual(currentUserInfo["lastSeenPrompts"], currentPrompts)) {
+              // allowing user to draw if the day's drawings have reset
+              // and updating lastSeenPrompts value
+              currentUserInfo.dailyCompletedPrompts = {
+                60: false,
+                180: false,
+                300: false,
+              };
+
+              currentUserInfo["lastSeenPrompts"] = currentPrompts;
+
+              console.log("was userinfo and setting");
+              localStorage.setItem(
+                "unregisteredUserInfo",
+                JSON.stringify(currentUserInfo)
+              );
+            }
+          } else {
+            // initializing new user localstorage data
+            const userInfo = {
+              drawingMetadata: {},
+              drawings: {},
+              dailyCompletedPrompts: {
+                60: false,
+                180: false,
+                300: false,
+              },
+              lastSeenPrompts: currentPrompts,
+            };
+
+            console.log("no userinfo and setting");
+
+            localStorage.setItem(
+              "unregisteredUserInfo",
+              JSON.stringify(userInfo)
+            );
+          }
+        });
+    }
+  }, [isLoading, isAuthenticated]);
 
   useEffect(() => {
     // just for initial render
