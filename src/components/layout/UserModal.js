@@ -52,8 +52,8 @@ const UserModal = ({ user }) => {
   const [showTempBaselineSkeleton, setShowTempBaselineSkeleton] =
     useState(true);
 
-  const [pinnedMetadata, setPinnedMetadata] = useState();
-  const [pinnedDrawings, setPinnedDrawings] = useState();
+  const [pinnedMetadata, setPinnedMetadata] = useState([]);
+  const [pinnedDrawings, setPinnedDrawings] = useState([]);
 
   useEffect(() => {
     const timerID = setTimeout(() => setShowTempBaselineSkeleton(false), 500);
@@ -139,7 +139,9 @@ const UserModal = ({ user }) => {
   }, [image]);
 
   useEffect(() => {
-    if (pinnedMetadata && pinnedDrawings) setIsFetchingPinnedDrawings(false);
+    if (pinnedMetadata && pinnedDrawings) {
+      setIsFetchingPinnedDrawings(false);
+    }
   }, [pinnedMetadata, pinnedDrawings]);
 
   function fetchPinnedMetadata(ids) {
@@ -280,18 +282,19 @@ const UserModal = ({ user }) => {
           </div>
 
           <div className={classes.rightSide}>
-            {isFetchingPinnedDrawings ? (
+            {/* {isFetchingPinnedDrawings ? (
               <div
                 style={{ width: "5em", height: "50%" }}
                 className={classes.skeletonLoading}
               ></div>
-            ) : (
-              <SlideShow
-                pinnedDrawings={pinnedDrawings}
-                pinnedMetadata={pinnedMetadata}
-                username={username}
-              />
-            )}
+            ) : ( */}
+            <SlideShow
+              isFetchingPinnedDrawings={isFetchingPinnedDrawings}
+              pinnedDrawings={pinnedDrawings}
+              pinnedMetadata={pinnedMetadata}
+              username={username}
+            />
+            {/* )} */}
           </div>
         </div>
 

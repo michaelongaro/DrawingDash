@@ -12,7 +12,12 @@ import "./SlideShowStyles.css";
 import classes from "./SlideShow.module.css";
 import baseClasses from "../../index.module.css";
 
-const SlideShow = ({ pinnedDrawings, pinnedMetadata, username }) => {
+const SlideShow = ({
+  isFetchingPinnedDrawings,
+  pinnedDrawings,
+  pinnedMetadata,
+  username,
+}) => {
   const [currentSlideshowTitle, setCurrentSlideshowTitle] = useState("");
 
   const [showTempBaselineSkeleton, setShowTempBaselineSkeleton] =
@@ -98,16 +103,16 @@ const SlideShow = ({ pinnedDrawings, pinnedMetadata, username }) => {
   };
 
   useEffect(() => {
-    console.log((pinnedDrawings, pinnedMetadata));
-
-    setCurrentSlideshowTitle(
-      pinnedMetadata[0] === "" ? "" : pinnedMetadata[0].title
-    );
-  }, []);
+    if (!isFetchingPinnedDrawings) {
+      setCurrentSlideshowTitle(
+        pinnedMetadata[0] === undefined ? "" : pinnedMetadata[0].title
+      );
+    }
+  }, [isFetchingPinnedDrawings, pinnedMetadata]);
 
   return (
     <>
-      {showTempBaselineSkeleton ? (
+      {showTempBaselineSkeleton || isFetchingPinnedDrawings ? (
         <div style={{ gap: "1.5em" }} className={baseClasses.baseVertFlex}>
           <div
             style={{
@@ -154,17 +159,16 @@ const SlideShow = ({ pinnedDrawings, pinnedMetadata, username }) => {
                 aspectRatio: "16/7.75",
                 width: "100%",
               }}
-              className={drawing === "" ? "" : baseClasses.baseFlex}
+              className={drawing === undefined ? "" : baseClasses.baseFlex}
               key={index}
             >
-              {drawing === "" ? (
+              {drawing === undefined ? (
                 <div
                   style={{
                     gap: ".5em",
 
                     backgroundColor: fallbackBackgroundColors[index],
                     borderRadius: "1em",
-                    // height: "12.0625em",
                     height: "100%",
                     userSelect: "none",
                   }}
@@ -195,7 +199,7 @@ const SlideShow = ({ pinnedDrawings, pinnedMetadata, username }) => {
         </Slide>
       )}
 
-      {showTempBaselineSkeleton && pinnedDrawings[0] !== "" ? (
+      {showTempBaselineSkeleton || isFetchingPinnedDrawings ? (
         <div
           style={{
             margin: "1em auto 0 auto",
