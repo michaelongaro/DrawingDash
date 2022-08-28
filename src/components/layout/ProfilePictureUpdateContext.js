@@ -36,7 +36,7 @@ export function ProfilePictureUpdateProvider(props) {
           error.code === "storage/unknown"
         ) {
           // defaulting to auth0 image
-          get(child(dbRef, "dailyPrompts")).then((snapshot) => {
+          get(child(dbRef, `users/${userID}/preferences`)).then((snapshot) => {
             if (snapshot.exists()) {
               setImage(snapshot.val()["defaultProfilePicture"]);
             }
