@@ -98,9 +98,12 @@
   font-size: 18px;
   padding: 0.5em 0;
   border-radius: 1em;
-  background: linear-gradient(354deg,
-      rgb(131 131 131) 0%,
-      rgb(231 231 231) 100%);
+  background: linear-gradient(0deg, rgb(80 79 79) 0%, rgb(200 200 200) 100%);
+}
+
+.promptRefreshTimer>div,
+span {
+  color: #EEEEEE;
 }
 
 .canvasOutline {
@@ -331,6 +334,8 @@
   align-items: center;
   gap: 1em;
 
+  margin: 4em 0 1em 0;
+
   background-color: white;
   height: 9em;
 
@@ -558,7 +563,7 @@
 
 @media (max-width: 600px) {
   .registerPromoContainer {
-    width: 80%;
+    /* width: 80%; */
   }
 }
 
@@ -596,6 +601,6 @@
   }
 
   .registerPromoContainer {
-    width: 70%;
+    /* width: 70%; */
   }
 }
