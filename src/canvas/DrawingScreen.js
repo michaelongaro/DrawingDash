@@ -358,7 +358,6 @@ const DrawingScreen = () => {
       if (DSCtx.seconds > 0) {
         setTimeout(() => DSCtx.setSeconds(DSCtx.seconds - 1), 1000);
       } else {
-        // setShowCountdownOverlay(classes.hide);
         setShowCanvasOutline(classes.hide);
 
         clearCanvas();
@@ -376,7 +375,6 @@ const DrawingScreen = () => {
 
     // drawingTime will only be non-zero when coming from palette selection page
     // all other renders of this effect w/ zero values are not run
-
     if (DSCtx.drawingTime !== 0) {
       if (!isLoading && isAuthenticated) {
         id = setTimeout(sendToDB, DSCtx.drawingTime * 1000 + 3600);
@@ -958,10 +956,7 @@ const DrawingScreen = () => {
                 )}
 
                 {!isLoading && !isAuthenticated ? (
-                  <button
-                    style={{ margin: "1em 0" }}
-                    className={classes.registerPromoContainer}
-                  >
+                  <button className={classes.registerPromoContainer}>
                     <div
                       style={{ gap: "1em" }}
                       className={`${classes.signInButtonContainer} ${baseClasses.baseFlex}`}

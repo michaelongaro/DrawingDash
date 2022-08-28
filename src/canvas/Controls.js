@@ -40,13 +40,8 @@ const Controls = () => {
   ]);
   const [prevClickedColor, setPrevClickedColor] = useState(0);
 
-  // brush states
-  const [brushSizeStyles, setBrushSizeStyles] = useState([
-    classes.hide,
-    classes.hide,
-    classes.hide,
-  ]);
-  const [prevBrushSize, setPrevBrushSize] = useState(1);
+  // brush size state
+  const [brushSizeStyles, setBrushSizeStyles] = useState([false, false, false]);
 
   // tool states
   const [toolStatuses, setToolStatuses] = useState([true, false, false]);
@@ -125,7 +120,7 @@ const Controls = () => {
     return () => {
       document.removeEventListener("wheel", updateCursorSize);
     };
-  }, [currentCursorSize, floodFillStatus]);
+  }, [currentCursorSize, floodFillStatus, DSCtx.seconds]);
 
   function updateSelectedColor(brushID, updateCurrentlySelectedTool) {
     if (DSCtx.seconds === 0) {
@@ -170,13 +165,11 @@ const Controls = () => {
 
   function updateSelectedBrushSize(brushID) {
     if (DSCtx.seconds === 0) {
-      let tempArr = brushSizeStyles;
+      let tempArr = [false, false, false];
 
-      tempArr[prevBrushSize] = classes.hide;
-      tempArr[brushID] = classes.show;
+      tempArr[brushID] = true;
 
       setBrushSizeStyles(tempArr);
-      setPrevBrushSize(brushID);
     }
   }
 
@@ -321,7 +314,9 @@ const Controls = () => {
           }}
         >
           <div
-            className={`${classes.innerBrushBorder} ${classes.smallFilled} ${brushSizeStyles[0]}`}
+            className={`${classes.innerBrushBorder} ${classes.smallFilled} ${
+              brushSizeStyles[0] ? classes.show : classes.hide
+            }`}
           ></div>
         </button>
         <button
@@ -335,7 +330,9 @@ const Controls = () => {
           }}
         >
           <div
-            className={`${classes.innerBrushBorder} ${classes.mediumFilled} ${brushSizeStyles[1]}`}
+            className={`${classes.innerBrushBorder} ${classes.mediumFilled} ${
+              brushSizeStyles[1] ? classes.show : classes.hide
+            }`}
           ></div>
         </button>
         <button
@@ -349,7 +346,9 @@ const Controls = () => {
           }}
         >
           <div
-            className={`${classes.innerBrushBorder} ${classes.largeFilled} ${brushSizeStyles[2]}`}
+            className={`${classes.innerBrushBorder} ${classes.largeFilled} ${
+              brushSizeStyles[2] ? classes.show : classes.hide
+            }`}
           ></div>
         </button>
       </div>
