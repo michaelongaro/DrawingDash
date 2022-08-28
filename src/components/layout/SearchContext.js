@@ -130,22 +130,6 @@ export function SearchProvider(props) {
       fetchAll = true;
     }
 
-    // if (
-    //   // searchValues["adjSearch"][idx] === "" &&
-    //   // searchValues["nounSearch"][idx] === ""
-    //   searchValues["requestedAdjectives"][idx].length === 0 &&
-    //   searchValues["requestedNouns"][idx].length === 0
-
-    //   // AHHHHHHHHHH take deep fresh start tommorrow you are lahoosing your moind!!!
-    //   // but don't worry I am 99% sure this isn't actually complex so you should be gucci ;3
-    // ) {
-    //   if (idx !== 0) {
-    //     fetchAll = true;
-    //   } else {
-    //     return;
-    //   }
-    // }
-
     let fullQuery = `${searchValues["adjSearch"][idx]} ${searchValues["nounSearch"][idx]}`;
 
     let gallaryResults = { 60: [], 180: [], 300: [] };

@@ -417,8 +417,8 @@ const Search = ({ dbPath, margin, idx, forModal }) => {
         if (
           searchCtx.searchValues["requestedAdjectives"][
             idx
-          ][0].toLowerCase() !==
-          adjectiveInputRef.current.value.trim().toLowerCase()
+          ][0]?.toLowerCase() !==
+          adjectiveInputRef.current.value.trim()?.toLowerCase()
         ) {
           setShowAdjResults(true);
         }
