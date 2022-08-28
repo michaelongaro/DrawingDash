@@ -84,6 +84,6 @@
 
 @media (max-width: 500px) {
   .buttonContainer {
-    gap: .5em;
+    gap: .75em;
   }
 }

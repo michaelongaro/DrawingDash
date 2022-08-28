@@ -133,17 +133,24 @@ const GallaryList = ({
       forDailyFeatured
     ) {
       setDyanmicWidth("90");
-    } else if (window.innerWidth < 750 && forDailyFeatured) {
+    } else if (
+      window.innerWidth < 750 &&
+      window.innerWidth > 500 &&
+      forDailyFeatured
+    ) {
       setDyanmicWidth("100");
+    } else if (window.innerWidth < 500 && forDailyFeatured) {
+      setDyanmicWidth("90");
     }
 
     if (forModal) {
       setDyanmicWidth("100");
     }
 
-    if (window.innerWidth <= 500) {
+    if (window.innerWidth <= 500 && !forDailyFeatured) {
+      setDyanmicWidth("100");
       setMinMobileWidthReached(true);
-    } else {
+    } else if (window.innerWidth > 500 && !forDailyFeatured) {
       setMinMobileWidthReached(false);
     }
 
@@ -162,17 +169,24 @@ const GallaryList = ({
         forDailyFeatured
       ) {
         setDyanmicWidth("90");
-      } else if (window.innerWidth < 750 && forDailyFeatured) {
+      } else if (
+        window.innerWidth < 750 &&
+        window.innerWidth > 500 &&
+        forDailyFeatured
+      ) {
         setDyanmicWidth("100");
+      } else if (window.innerWidth < 500 && forDailyFeatured) {
+        setDyanmicWidth("90");
       }
 
       if (forModal) {
         setDyanmicWidth("100");
       }
 
-      if (window.innerWidth <= 500) {
+      if (window.innerWidth <= 500 && !forDailyFeatured) {
+        setDyanmicWidth("100");
         setMinMobileWidthReached(true);
-      } else {
+      } else if (window.innerWidth > 500 && !forDailyFeatured) {
         setMinMobileWidthReached(false);
       }
     }
@@ -307,6 +321,7 @@ const GallaryList = ({
                   opacity: redOpacity,
                   border: "solid red",
                   borderWidth: "2px 2px 0 2px",
+                  top: "-2px",
                 }}
                 className={`${classes.durationButtonPositioning} ${classes.baseButtonFlex} ${classes.durationIconContainer} ${classes.hoverRed}`}
               >
@@ -370,6 +385,7 @@ const GallaryList = ({
                   opacity: yellowOpacity,
                   border: "solid yellow",
                   borderWidth: "2px 2px 0 2px",
+                  top: "-2px",
                 }}
                 className={`${classes.durationButtonPositioning} ${classes.baseButtonFlex} ${classes.durationIconContainer} ${classes.hoverYellow}`}
               >
@@ -432,6 +448,7 @@ const GallaryList = ({
                   opacity: greenOpacity,
                   border: "solid green",
                   borderWidth: "2px 2px 0 2px",
+                  top: "-2px",
                 }}
                 className={`${classes.durationButtonPositioning} ${classes.baseButtonFlex} ${classes.durationIconContainer} ${classes.hoverGreen}`}
               >
@@ -450,6 +467,8 @@ const GallaryList = ({
             {durationStates[0] && (
               <div
                 style={{
+                  padding:
+                    window.innerWidth < 1500 && forDailyFeatured ? 0 : "1em",
                   gridTemplateColumns: forDailyFeatured
                     ? "repeat(1, minmax(210px, 3fr))"
                     : "undefined",
@@ -482,6 +501,8 @@ const GallaryList = ({
             {durationStates[1] && (
               <div
                 style={{
+                  padding:
+                    window.innerWidth < 1500 && forDailyFeatured ? 0 : "1em",
                   gridTemplateColumns: forDailyFeatured
                     ? "repeat(1, minmax(210px, 3fr))"
                     : "undefined",
@@ -514,6 +535,8 @@ const GallaryList = ({
             {durationStates[2] && (
               <div
                 style={{
+                  padding:
+                    window.innerWidth < 1500 && forDailyFeatured ? 0 : "1em",
                   gridTemplateColumns: forDailyFeatured
                     ? "repeat(1, minmax(210px, 3fr))"
                     : "undefined",
