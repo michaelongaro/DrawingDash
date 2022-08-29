@@ -71,6 +71,8 @@ const DrawingModal = ({
 
   const [fullyFinishedLoading, setFullyFinishedLoading] = useState(false);
 
+  const [heartScale, setHeartScale] = useState(1);
+
   const [showUserModal, setShowUserModal] = useState(false);
   const [closeButtonClicked, setCloseButtonClicked] = useState(false);
 
@@ -806,16 +808,38 @@ const DrawingModal = ({
                       } else if (!isLoading && isAuthenticated) {
                         toggleFavoriteStatusHandler();
                       }
+
+                      if (ev.nativeEvent.pointerType === "touch") {
+                        setTimeout(() => {
+                          setHeartScale(1);
+                          setHoveringOnHeart(false);
+                        }, 50);
+                      }
+                    }}
+                    onMouseDown={() => {
+                      setHeartScale(0.95);
+                    }}
+                    onMouseUp={() => {
+                      setHeartScale(1);
                     }}
                     onMouseEnter={() => {
                       setHoveringOnHeart(true);
+                      setHeartScale(1.05);
                     }}
                     onMouseLeave={() => {
                       setHoveringOnHeart(false);
+                      setHeartScale(0.95);
                     }}
                   >
                     {/* heart icon(s) */}
-                    <div style={{ cursor: "pointer", zIndex: 500 }}>
+                    <div
+                      style={{
+                        cursor: "pointer",
+                        transform: `scale(${heartScale})`,
+                        transition: "all 200ms",
+                        zIndex: 500,
+                      }}
+                    >
                       {hoveringOnHeart ? (
                         favoritesCtx.itemIsFavorite(
                           drawingID,

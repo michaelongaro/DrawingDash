@@ -899,37 +899,31 @@ const GallaryItem = ({
                     height: "1.5em",
                   }}
                   onClick={(ev) => {
-                    console.log(0);
                     ev.stopPropagation();
                     if (!isLoading && !isAuthenticated) {
                       setShowTooltip(true);
                     } else if (!isLoading && isAuthenticated) {
                       toggleFavoriteStatusHandler();
                     }
+
+                    if (ev.nativeEvent.pointerType === "touch") {
+                      setTimeout(() => {
+                        setHeartScale(1);
+                        setHoveringOnHeart(false);
+                      }, 50);
+                    }
                   }}
                   onMouseDown={() => {
-                    console.log(1);
                     setHeartScale(0.95);
                   }}
                   onMouseUp={() => {
-                    console.log(2);
-                    setHeartScale(1);
-                  }}
-                  onTouchStart={() => {
-                    console.log(3);
-                    setHeartScale(0.95);
-                  }}
-                  onTouchEnd={() => {
-                    console.log(4);
                     setHeartScale(1);
                   }}
                   onMouseEnter={() => {
-                    console.log(5);
                     setHoveringOnHeart(true);
                     setHeartScale(1.05);
                   }}
                   onMouseLeave={() => {
-                    console.log(6);
                     setHoveringOnHeart(false);
                     setHeartScale(0.95);
                   }}
