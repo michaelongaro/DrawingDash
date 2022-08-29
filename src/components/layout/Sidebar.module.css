@@ -12,7 +12,7 @@
   top: 0;
   height: 100vh;
   width: 0;
-  background: linear-gradient(230deg, hsl(130deg 100% 17%), hsl(130deg 100% 38%));
+  background: linear-gradient(230deg, hsl(130deg 100% 20%), hsl(130deg 100% 38%));
   z-index: 998;
   transition-property: width, opacity;
   transition-duration: 300ms, 300ms;
