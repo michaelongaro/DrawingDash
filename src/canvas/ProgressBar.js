@@ -3,6 +3,7 @@ import React, { useContext, useState, useEffect, useRef } from "react";
 import anime from "animejs/lib/anime.es.js";
 import { useAuth0 } from "@auth0/auth0-react";
 import { isEqual } from "lodash";
+import { debounce } from "debounce";
 
 import DrawingSelectionContext from "./DrawingSelectionContext";
 
@@ -23,6 +24,8 @@ const ProgressBar = () => {
   const [chooseMoved, setChooseMoved] = useState(false);
   const [chooseOffset, setChooseOffset] = useState(0);
 
+  const [initInnerHeight, setInitInnerHeight] = useState(0);
+
   const [localPBStates, setLocalPBStates] = useState({
     selectCircle: false,
     chooseCircle: false,
@@ -41,29 +44,12 @@ const ProgressBar = () => {
         selectTextRef.current.getBoundingClientRect().width / 2
     );
 
-    if (document.getElementById("chooseTextContainer") !== null) {
-      setChooseOffset(
-        document.getElementById("chooseTextContainer").getBoundingClientRect()
-          .top -
-          169 -
-          15
-      );
-    }
-
     function resizeHandler() {
       setSelectOffset(
         rectangleRef.current.getBoundingClientRect().width / 2 -
-          selectTextRef.current.getBoundingClientRect().width / 2
-      );
-
-      if (document.getElementById("chooseTextContainer") !== null) {
-        setChooseOffset(
-          document.getElementById("chooseTextContainer").getBoundingClientRect()
-            .top -
-            169 -
-            15
-        );
-      }
+          selectTextRef.current.getBoundingClientRect().width / 2 +
+          7
+      ); // 7 is offset for text size changing from font size increase
     }
 
     window.addEventListener("resize", resizeHandler);
@@ -71,6 +57,44 @@ const ProgressBar = () => {
       window.removeEventListener("resize", resizeHandler);
     };
   }, []);
+
+  useEffect(() => {
+    // just for initial render
+    if (document.getElementById("chooseTextContainer") !== null) {
+      setChooseOffset(
+        document.getElementById("chooseTextContainer").getBoundingClientRect()
+          .top -
+          169 -
+          15
+      );
+
+      setInitInnerHeight(window.innerHeight);
+    }
+
+    function resizeHandler() {
+      if (document.getElementById("chooseTextContainer") !== null) {
+        // don't respond to viewport changes when mobile addressbar shows/hides
+        // ignore restriction if on desktop
+        if (
+          (matchMedia("(hover: none), (pointer: coarse)").matches &&
+            window.innerHeight === initInnerHeight) ||
+          matchMedia("(hover: hover), (pointer: pointer)").matches
+        )
+          setChooseOffset(
+            document
+              .getElementById("chooseTextContainer")
+              .getBoundingClientRect().top -
+              169 -
+              15
+          );
+      }
+    }
+
+    window.addEventListener("resize", resizeHandler);
+    return () => {
+      window.removeEventListener("resize", resizeHandler);
+    };
+  }, [initInnerHeight]);
 
   useEffect(() => {
     if (cleanupAllStates) {
