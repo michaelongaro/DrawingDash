@@ -841,7 +841,7 @@ const PromptSelection = () => {
         DSCtx.updatePBStates("selectToChooseBar", true);
         clearInterval(intervalID);
       }
-    }, 50);
+    }, 200);
 
     anime({
       targets: "#promptSelection",
