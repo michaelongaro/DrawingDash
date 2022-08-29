@@ -8,6 +8,7 @@
 
 .spinner .face2 {
   transform: rotateY(-90deg);
+  z-index: -500;
 }
 
 .spinner {
