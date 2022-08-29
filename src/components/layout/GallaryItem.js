@@ -604,8 +604,6 @@ const GallaryItem = ({
         ref={drawingModalRef}
       >
         <Card width={dynamicCardWidth} fullWidth={true}>
-          {/* ------ imageinfo -------- */}
-
           {/* image loading skeleton */}
           <div
             style={{

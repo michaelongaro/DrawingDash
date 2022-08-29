@@ -4,7 +4,6 @@ import { Link } from "react-router-dom";
 import { useAuth0 } from "@auth0/auth0-react";
 
 import anime from "animejs/lib/anime.es";
-import isEqual from "lodash/isEqual";
 
 import ProfilePictureUpdateContext from "./ProfilePictureUpdateContext";
 
@@ -158,7 +157,7 @@ function NavbarProfile({ forSidebar }) {
                 }}
                 className={classes.profilePicture}
                 src={image}
-                alt={"cropped profile"}
+                alt={"profile"}
                 onLoad={() => {
                   setImageElementLoaded(true);
                 }}
@@ -254,7 +253,7 @@ function NavbarProfile({ forSidebar }) {
                     }}
                     className={classes.profilePicture}
                     src={image}
-                    alt={"cropped profile"}
+                    alt={"profile"}
                     onLoad={() => {
                       setImageElementLoaded(true);
                     }}
