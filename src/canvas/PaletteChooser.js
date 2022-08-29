@@ -250,7 +250,7 @@ const PaletteChooser = () => {
       className={classes.vertContain}
     >
       <div id={"chooseTextContainer"} className={classes.textVert}>
-        <div>{`A Color Palette For`}</div>
+        <div>{`Your Color Palette For`}</div>
         <div>{`"${DSCtx.chosenPrompt}"`}</div>
       </div>
 
