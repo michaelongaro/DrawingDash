@@ -21,7 +21,7 @@ function CardContainer() {
 
       <div className={classes.card}>
         <div
-          style={{ backgroundColor: "#e0ee90" }}
+          style={{ backgroundColor: "hsl(69deg 88% 75%)" }}
           className={classes.iconContain}
         >
           <DailyIcon />
