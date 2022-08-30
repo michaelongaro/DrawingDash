@@ -154,7 +154,6 @@ const PromptSelection = () => {
 
   useEffect(() => {
     if (!isLoading) {
-      // do you need DSCtx.resetComplete === false here below too?
       if (
         (showPromptsComingShortlyContainer || showCountdownTimer) &&
         DSCtx.resetComplete === false
@@ -315,139 +314,145 @@ const PromptSelection = () => {
   ]);
 
   useEffect(() => {
-    if (!isLoading && isAuthenticated) {
-      // for logged in users
+    if (DSCtx.resetComplete) {
+      if (!isLoading && isAuthenticated) {
+        // for logged in users
 
-      if (
-        DSCtx.drawingStatuses["60"] &&
-        DSCtx.drawingStatuses["180"] &&
-        DSCtx.drawingStatuses["300"] &&
-        DSCtx.drawingStatuses["extra"]
-      ) {
-        setShowCountdownTimer(true);
+        if (
+          DSCtx.drawingStatuses["60"] &&
+          DSCtx.drawingStatuses["180"] &&
+          DSCtx.drawingStatuses["300"] &&
+          DSCtx.drawingStatuses["extra"]
+        ) {
+          setShowCountdownTimer(true);
+        }
+
+        if (
+          DSCtx.drawingStatuses["60"] &&
+          DSCtx.drawingStatuses["180"] &&
+          DSCtx.drawingStatuses["300"] &&
+          !DSCtx.drawingStatuses["extra"]
+        ) {
+          setShowExtraPrompt(true);
+        }
+
+        if (DSCtx.drawingStatuses?.["extra"] !== undefined) {
+          setStylingButtonClasses([
+            adjustedDrawingStatuses["60"] ? classes.disabled : classes.pointer,
+            adjustedDrawingStatuses["180"] ? classes.disabled : classes.pointer,
+            adjustedDrawingStatuses["300"] ? classes.disabled : classes.pointer,
+            adjustedDrawingStatuses["extra"]
+              ? classes.disabled
+              : classes.pointer,
+          ]);
+        }
+
+        setDurationOptions([
+          {
+            value: 60,
+            label: "One Minute",
+            disabled: false,
+          },
+          {
+            value: 180,
+            label: "Three Minutes",
+            disabled: false,
+          },
+          {
+            value: 300,
+            label: "Five Minutes",
+            disabled: false,
+          },
+        ]);
+
+        setAdjectiveOptions([
+          {
+            value: 60,
+            label: DSCtx.dailyPrompts["60"].split(" ")[0],
+            disabled: false,
+          },
+          {
+            value: 180,
+            label: DSCtx.dailyPrompts["180"].split(" ")[0],
+            disabled: false,
+          },
+          {
+            value: 300,
+            label: DSCtx.dailyPrompts["300"].split(" ")[0],
+            disabled: false,
+          },
+        ]);
+
+        setNounOptions([
+          {
+            value: 60,
+            label: DSCtx.dailyPrompts["60"].split(" ")[1],
+            disabled: false,
+          },
+          {
+            value: 180,
+            label: DSCtx.dailyPrompts["180"].split(" ")[1],
+            disabled: false,
+          },
+          {
+            value: 300,
+            label: DSCtx.dailyPrompts["300"].split(" ")[1],
+            disabled: false,
+          },
+        ]);
+
+        setDefaultDurationOption({
+          value: 60,
+          label: "One Minute",
+        });
+
+        setDefaultAdjectiveOption({
+          value: 180,
+          label: DSCtx.dailyPrompts["180"].split(" ")[0],
+        });
+
+        setDefaultNounOption({
+          value: 300,
+          label: DSCtx.dailyPrompts["300"].split(" ")[1],
+        });
+
+        setSelectedDurationOption({
+          value: 60,
+          label: "One Minute",
+        });
+
+        setSelectedAdjectiveOption({
+          value: 180,
+          label: DSCtx.dailyPrompts["180"].split(" ")[0],
+        });
+
+        setSelectedNounOption({
+          value: 300,
+          label: DSCtx.dailyPrompts["300"].split(" ")[1],
+        });
       }
+      // for unregistered users
+      else if (!isLoading && !isAuthenticated) {
+        if (
+          DSCtx.drawingStatuses["60"] &&
+          DSCtx.drawingStatuses["180"] &&
+          DSCtx.drawingStatuses["300"]
+        ) {
+          setShowCountdownTimer(true);
+        }
 
-      if (
-        DSCtx.drawingStatuses["60"] &&
-        DSCtx.drawingStatuses["180"] &&
-        DSCtx.drawingStatuses["300"] &&
-        !DSCtx.drawingStatuses["extra"]
-      ) {
-        setShowExtraPrompt(true);
-      }
-
-      if (DSCtx.drawingStatuses?.["extra"] !== undefined) {
         setStylingButtonClasses([
           adjustedDrawingStatuses["60"] ? classes.disabled : classes.pointer,
           adjustedDrawingStatuses["180"] ? classes.disabled : classes.pointer,
           adjustedDrawingStatuses["300"] ? classes.disabled : classes.pointer,
-          adjustedDrawingStatuses["extra"] ? classes.disabled : classes.pointer,
         ]);
       }
-
-      setDurationOptions([
-        {
-          value: 60,
-          label: "One Minute",
-          disabled: false,
-        },
-        {
-          value: 180,
-          label: "Three Minutes",
-          disabled: false,
-        },
-        {
-          value: 300,
-          label: "Five Minutes",
-          disabled: false,
-        },
-      ]);
-
-      setAdjectiveOptions([
-        {
-          value: 60,
-          label: DSCtx.dailyPrompts["60"].split(" ")[0],
-          disabled: false,
-        },
-        {
-          value: 180,
-          label: DSCtx.dailyPrompts["180"].split(" ")[0],
-          disabled: false,
-        },
-        {
-          value: 300,
-          label: DSCtx.dailyPrompts["300"].split(" ")[0],
-          disabled: false,
-        },
-      ]);
-
-      setNounOptions([
-        {
-          value: 60,
-          label: DSCtx.dailyPrompts["60"].split(" ")[1],
-          disabled: false,
-        },
-        {
-          value: 180,
-          label: DSCtx.dailyPrompts["180"].split(" ")[1],
-          disabled: false,
-        },
-        {
-          value: 300,
-          label: DSCtx.dailyPrompts["300"].split(" ")[1],
-          disabled: false,
-        },
-      ]);
-
-      setDefaultDurationOption({
-        value: 60,
-        label: "One Minute",
-      });
-
-      setDefaultAdjectiveOption({
-        value: 180,
-        label: DSCtx.dailyPrompts["180"].split(" ")[0],
-      });
-
-      setDefaultNounOption({
-        value: 300,
-        label: DSCtx.dailyPrompts["300"].split(" ")[1],
-      });
-
-      setSelectedDurationOption({
-        value: 60,
-        label: "One Minute",
-      });
-
-      setSelectedAdjectiveOption({
-        value: 180,
-        label: DSCtx.dailyPrompts["180"].split(" ")[0],
-      });
-
-      setSelectedNounOption({
-        value: 300,
-        label: DSCtx.dailyPrompts["300"].split(" ")[1],
-      });
-    }
-    // for unregistered users
-    else if (!isLoading && !isAuthenticated) {
-      if (
-        DSCtx.drawingStatuses["60"] &&
-        DSCtx.drawingStatuses["180"] &&
-        DSCtx.drawingStatuses["300"]
-      ) {
-        setShowCountdownTimer(true);
-      }
-
-      setStylingButtonClasses([
-        adjustedDrawingStatuses["60"] ? classes.disabled : classes.pointer,
-        adjustedDrawingStatuses["180"] ? classes.disabled : classes.pointer,
-        adjustedDrawingStatuses["300"] ? classes.disabled : classes.pointer,
-      ]);
     }
   }, [
     isLoading,
     isAuthenticated,
+    DSCtx.resetComplete,
+    DSCtx.dailyPrompts,
     DSCtx.drawingStatuses,
     adjustedDrawingStatuses,
   ]);
@@ -897,7 +902,12 @@ const PromptSelection = () => {
               height: "25px",
               top: 0,
               textAlign: "center",
-              opacity: !showCountdownTimer && !showExtraPrompt ? 1 : 0,
+              opacity:
+                !showCountdownTimer &&
+                !showPromptsComingShortlyContainer &&
+                !showExtraPrompt
+                  ? 1
+                  : 0,
             }}
           >
             A Drawing Prompt
@@ -910,7 +920,12 @@ const PromptSelection = () => {
               height: "25px",
               top: 0,
               textAlign: "center",
-              opacity: !showCountdownTimer && showExtraPrompt ? 1 : 0,
+              opacity:
+                !showCountdownTimer &&
+                !showPromptsComingShortlyContainer &&
+                showExtraPrompt
+                  ? 1
+                  : 0,
             }}
           >
             An Extra Prompt
