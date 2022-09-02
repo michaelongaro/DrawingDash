@@ -13,6 +13,10 @@
 
 .spinner {
   transform-style: preserve-3d;
+
+  perspective: 2500rem;
+  /* large perspective added to try and fix safari stacking/z-index issue */
+
   display: inline-flex;
   position: relative;
   width: 100%;
