@@ -55,7 +55,6 @@ const PinnedArtwork = () => {
       ) {
         if (ref60.current) {
           if (!ref60.current.contains(ev.target)) {
-            console.log("diddn't click inside");
             pinnedCtx.setShow60({ display: "none" });
             pinnedCtx.resetAllAndHighlightNewInit();
           }

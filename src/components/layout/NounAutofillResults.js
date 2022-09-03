@@ -33,7 +33,6 @@ const NounAutofillResults = ({ titles, checkForPair, idx }) => {
     if (titles === null) return;
 
     for (const duration of Object.values(titles)) {
-      // console.log(duration);
       // sorting titles for each 60/180/300 duration by one's with the most entries first
       let descendingEntries = [];
       let highestEntries = 0;
@@ -43,7 +42,6 @@ const NounAutofillResults = ({ titles, checkForPair, idx }) => {
         descendingEntries = duration;
       } else {
         for (const title of Object.keys(duration)) {
-          // console.log(title);
           if (duration[title]["drawingID"].length > highestEntries) {
             descendingEntries.unshift(title);
           } else {
@@ -125,7 +123,6 @@ const NounAutofillResults = ({ titles, checkForPair, idx }) => {
     if (titles === null) return;
 
     for (const duration of Object.values(titles)) {
-      // console.log(duration);
       // sorting titles for each 60/180/300 duration by one's with the most entries first
       let descendingEntries = [];
       let highestEntries = 0;
@@ -135,7 +132,6 @@ const NounAutofillResults = ({ titles, checkForPair, idx }) => {
         descendingEntries = duration;
       } else {
         for (const title of Object.keys(duration)) {
-          // console.log(title);
           if (duration[title]["drawingID"].length > highestEntries) {
             descendingEntries.unshift(title);
           } else {
@@ -143,8 +139,6 @@ const NounAutofillResults = ({ titles, checkForPair, idx }) => {
           }
         }
       }
-
-      // console.log(descendingEntries);
 
       // finding the titles that match or at least contain the user input
       for (const title of descendingEntries) {

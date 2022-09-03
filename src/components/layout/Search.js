@@ -129,7 +129,6 @@ const Search = ({ dbPath, margin, idx, forModal }) => {
 
   useEffect(() => {
     if (resultsPerPage !== 0) {
-      console.log("entered up top", getSubmittedInputValues());
       if (
         idx !== 0 &&
         getSubmittedInputValues()["subAdjs"].length === 0 &&

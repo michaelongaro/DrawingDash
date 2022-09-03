@@ -229,10 +229,8 @@ const DrawingModal = ({
                 !mobileCopyToClipboardRef.current.contains(event.target) &&
                 !mobileDownloadRef.current.contains(event.target)
               ) {
-                console.log("6th");
                 modalCtx.setDrawingModalOpened(false);
               } else {
-                console.log("7th");
                 modalCtx.setDrawingModalOpened(false);
               }
             }

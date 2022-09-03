@@ -144,7 +144,6 @@ const Preferences = () => {
         setIsFetching(false);
       }
     } catch (e) {
-      console.log(e);
       setShowCropModal(false);
     }
   };
@@ -317,7 +316,6 @@ const Preferences = () => {
           storage,
           `users/${user.sub}/croppedProfile`
         );
-        console.log(croppedImage);
 
         getFileBlob(croppedImage, (blob) => {
           uploadBytes(croppedPhotoRef, blob, {

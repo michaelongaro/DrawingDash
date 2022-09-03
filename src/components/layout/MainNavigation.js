@@ -72,7 +72,6 @@ function MainNavigation() {
 
               currentUserInfo["lastSeenPrompts"] = currentPrompts;
 
-              console.log("was userinfo and setting");
               localStorage.setItem(
                 "unregisteredUserInfo",
                 JSON.stringify(currentUserInfo)
@@ -90,8 +89,6 @@ function MainNavigation() {
               },
               lastSeenPrompts: currentPrompts,
             };
-
-            console.log("no userinfo and setting");
 
             localStorage.setItem(
               "unregisteredUserInfo",

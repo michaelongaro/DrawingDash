@@ -22,16 +22,6 @@ let floodFill = (function () {
     area,
     toleranceFade
   ) {
-    console.log(
-      posX,
-      posY,
-      tolerance,
-      context2D,
-      diagonal,
-      area,
-      toleranceFade
-    );
-
     var w,
       h,
       painted,
@@ -349,7 +339,6 @@ let floodFill = (function () {
       ctx.putImageData(colImgDat, 0, 0);
     }
     if (!keepMask) {
-      console.log("puttin this ish down");
       context2D.drawImage(canvas, area.x, area.y, w, h);
     }
     return true;

@@ -46,15 +46,6 @@ const ProfilePicture = ({ user, size }) => {
     }
   }, [image]);
 
-  // useEffect(() => {
-  //   console.log(
-  //     "2nd",
-  //     isFetching,
-  //     showTempBaselineSkeleton,
-  //     imageElementLoaded
-  //   );
-  // }, [isFetching, showTempBaselineSkeleton, imageElementLoaded]);
-
   return (
     <>
       {isFetching || showTempBaselineSkeleton ? (

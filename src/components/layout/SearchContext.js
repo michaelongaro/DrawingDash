@@ -126,7 +126,6 @@ export function SearchProvider(props) {
       searchValues["submittedAdjectives"][idx].length === 0 &&
       searchValues["submittedNouns"][idx].length === 0
     ) {
-      console.log("fetching all");
       fetchAll = true;
     }
 
@@ -328,7 +327,6 @@ export function SearchProvider(props) {
         }
       })
       .then(() => {
-        console.log("context", gallaryResults, totalDrawings);
         updateSearchValues("gallary", gallaryResults, idx);
 
         updatePageSelectorDetails(
