@@ -99,6 +99,7 @@
   padding: 0.5em 0;
   border-radius: 1em;
   background: linear-gradient(0deg, rgb(80 79 79) 0%, rgb(200 200 200) 100%);
+  box-shadow: 0 4px 8px 2px rgb(0 0 0 / 20%);
 }
 
 .promptRefreshTimer>div,
