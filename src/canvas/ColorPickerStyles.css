@@ -4,6 +4,8 @@
   top: 5px;
   height: 150px !important;
 
+  cursor: pointer;
+
   border: 2px solid white;
   border-radius: 1.1em 1.1em 1em 1em;
   box-shadow: rgba(0, 0, 0, 1) 0 3px 15px;
