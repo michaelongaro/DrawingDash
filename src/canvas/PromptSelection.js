@@ -135,12 +135,24 @@ const PromptSelection = () => {
             300: true,
             extra: true,
           });
+
+          setStylingButtonClasses([
+            classes.disabled,
+            classes.disabled,
+            classes.disabled,
+            classes.disabled,
+          ]);
         } else if (!isAuthenticated) {
           setAdjustedDrawingStatuses({
             60: true,
             180: true,
             300: true,
           });
+          setStylingButtonClasses([
+            classes.disabled,
+            classes.disabled,
+            classes.disabled,
+          ]);
         }
       }
     }
@@ -160,6 +172,47 @@ const PromptSelection = () => {
       ) {
         setHidePlaceholderText(true);
 
+        // hiding normal/extra prompt text (whichever is showing at the time)
+        // note: could probably change this to useEffect that runs whenever
+        // showPromptsComingShortlyContainer || showCountdownTimer...
+        if (isAuthenticated && showExtraPrompt) {
+          anime({
+            targets: "#extraPromptText",
+            top: [0, "-25px"],
+            opacity: [1, 0],
+            scale: [1, 0],
+            pointerEvents: ["none", "auto"],
+            direction: "normal",
+            duration: 200,
+
+            loop: false,
+            easing: "easeInSine",
+          });
+
+          anime({
+            targets: "#nextButton",
+            loop: false,
+            opacity: [1, 0],
+            direction: "normal",
+            duration: 200,
+            easing: "easeInSine",
+          });
+        } else {
+          console.log("hiding reg prompt text");
+          anime({
+            targets: "#regularPromptText",
+            top: [0, "-25px"],
+            opacity: [1, 0],
+            scale: [1, 0],
+            pointerEvents: ["none", "auto"],
+            direction: "normal",
+            duration: 200,
+
+            loop: false,
+            easing: "easeInSine",
+          });
+        }
+
         if (
           !isEqual(DSCtx.PBStates, {
             selectCircle: false,
@@ -171,46 +224,9 @@ const PromptSelection = () => {
           })
         ) {
           // change to all being false/default
-          console.log("spiraling"); // idk why this is getting perma rerun...
+          console.log("resetting progressbar");
           DSCtx.resetProgressBar();
           DSCtx.setRevertSelectCircle(true);
-
-          if (isAuthenticated && showExtraPrompt) {
-            anime({
-              targets: "#extraPromptText",
-              top: [0, "-25px"],
-              opacity: [1, 0],
-              scale: [1, 0],
-              pointerEvents: ["none", "auto"],
-              direction: "normal",
-              duration: 200,
-
-              loop: false,
-              easing: "easeInSine",
-            });
-
-            anime({
-              targets: "#nextButton",
-              loop: false,
-              opacity: [1, 0],
-              direction: "normal",
-              duration: 200,
-              easing: "easeInSine",
-            });
-          } else {
-            anime({
-              targets: "#regularPromptText",
-              top: [0, "-25px"],
-              opacity: [1, 0],
-              scale: [1, 0],
-              pointerEvents: ["none", "auto"],
-              direction: "normal",
-              duration: 200,
-
-              loop: false,
-              easing: "easeInSine",
-            });
-          }
         }
       }
     }
@@ -549,7 +565,6 @@ const PromptSelection = () => {
         anime({
           targets: "#extraPromptContainer",
           translateY: ["-225px", 0],
-          // delay: 200,
           opacity: [0, 1],
           scale: [0, 1],
           delay: 500,
