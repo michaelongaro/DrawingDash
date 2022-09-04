@@ -62,9 +62,9 @@
   padding: 0;
   border: none;
   outline: none;
-  cursor: pointer;
-  pointer-events: auto;
-  /* z-index: 2; */
+  box-shadow: 0 0 0px 0px rgba(255, 255, 255, 0.7);
+  animation: pulse 1.75s linear infinite both;
+  animation-play-state: paused;
 }
 
 .colorInput::-webkit-color-swatch-wrapper {
@@ -133,3 +133,37 @@
   margin-bottom: 2em;
   width: 75%;
 }
+
+
+@-webkit-keyframes pulse {
+  0% {
+    -webkit-box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.7);
+  }
+
+  70% {
+    -webkit-box-shadow: 0 0 0 5px rgba(204, 169, 44, 0);
+  }
+
+  100% {
+    -webkit-box-shadow: 0 0 0 0 rgba(204, 169, 44, 0);
+  }
+}
+
+@keyframes pulse {
+  0% {
+    -moz-box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.7);
+    box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.7);
+  }
+
+  70% {
+    -moz-box-shadow: 0 0 0 5px rgba(204, 169, 44, 0);
+    box-shadow: 0 0 0 20px rgba(204, 169, 44, 0);
+  }
+
+  100% {
+    -moz-box-shadow: 0 0 0 0 rgba(204, 169, 44, 0);
+    box-shadow: 0 0 0 0 rgba(204, 169, 44, 0);
+  }
+}
+
+/* may need to lower 40px to 20 or something on smaller screens */

@@ -26,6 +26,12 @@ const PaletteChooser = () => {
   const fourthColorRef = useRef(null);
   const fifthColorRef = useRef(null);
 
+  const [currentColorSelectorID, setCurrentColorSelectorID] = useState(0);
+
+  useEffect(() => {
+    console.log(currentColorSelectorID, typeof currentColorSelectorID);
+  }, [currentColorSelectorID]);
+
   const [paletteColors, setPaletteColors] = useState([
     "#7f4040",
     "#7f4040",
@@ -103,7 +109,55 @@ const PaletteChooser = () => {
   }, []);
 
   useEffect(() => {
-    function touchHandler(ev) {
+    // function touchHandler(ev) {
+    //   if (!isEqual(colorPickerOpacity, [false, false, false, false, false])) {
+    //     if (
+    //       colorPickerOpacity[0] &&
+    //       !firstColorRef.current.contains(ev.target)
+    //     ) {
+    //       updateColorPickerOpacity(false, 0);
+    //       updateCheckmarkStates(0);
+    //       if (currentColorSelectorID < 1) {
+    //         setCurrentColorSelectorID(1);
+    //       }
+    //     } else if (
+    //       colorPickerOpacity[1] &&
+    //       !secondColorRef.current.contains(ev.target)
+    //     ) {
+    //       updateColorPickerOpacity(false, 1);
+    //       updateCheckmarkStates(1);
+    //       if (currentColorSelectorID < 2) {
+    //         setCurrentColorSelectorID(2);
+    //       }
+    //     } else if (
+    //       colorPickerOpacity[2] &&
+    //       !thirdColorRef.current.contains(ev.target)
+    //     ) {
+    //       updateColorPickerOpacity(false, 2);
+    //       updateCheckmarkStates(2);
+    //       if (currentColorSelectorID < 3) {
+    //         setCurrentColorSelectorID(3);
+    //       }
+    //     } else if (
+    //       colorPickerOpacity[3] &&
+    //       !fourthColorRef.current.contains(ev.target)
+    //     ) {
+    //       updateColorPickerOpacity(false, 3);
+    //       updateCheckmarkStates(3);
+    //       if (currentColorSelectorID < 4) {
+    //         setCurrentColorSelectorID(4);
+    //       }
+    //     } else if (
+    //       colorPickerOpacity[4] &&
+    //       !fifthColorRef.current.contains(ev.target)
+    //     ) {
+    //       updateColorPickerOpacity(false, 4);
+    //       updateCheckmarkStates(4);
+    //     }
+    //   }
+    // }
+
+    function colorHandler(ev) {
       if (!isEqual(colorPickerOpacity, [false, false, false, false, false])) {
         if (
           colorPickerOpacity[0] &&
@@ -111,24 +165,36 @@ const PaletteChooser = () => {
         ) {
           updateColorPickerOpacity(false, 0);
           updateCheckmarkStates(0);
+          if (currentColorSelectorID < 1) {
+            setCurrentColorSelectorID(1);
+          }
         } else if (
           colorPickerOpacity[1] &&
           !secondColorRef.current.contains(ev.target)
         ) {
           updateColorPickerOpacity(false, 1);
           updateCheckmarkStates(1);
+          if (currentColorSelectorID < 2) {
+            setCurrentColorSelectorID(2);
+          }
         } else if (
           colorPickerOpacity[2] &&
           !thirdColorRef.current.contains(ev.target)
         ) {
           updateColorPickerOpacity(false, 2);
           updateCheckmarkStates(2);
+          if (currentColorSelectorID < 3) {
+            setCurrentColorSelectorID(3);
+          }
         } else if (
           colorPickerOpacity[3] &&
           !fourthColorRef.current.contains(ev.target)
         ) {
           updateColorPickerOpacity(false, 3);
           updateCheckmarkStates(3);
+          if (currentColorSelectorID < 4) {
+            setCurrentColorSelectorID(4);
+          }
         } else if (
           colorPickerOpacity[4] &&
           !fifthColorRef.current.contains(ev.target)
@@ -139,50 +205,14 @@ const PaletteChooser = () => {
       }
     }
 
-    function mouseHandler(ev) {
-      if (!isEqual(colorPickerOpacity, [false, false, false, false, false])) {
-        if (
-          colorPickerOpacity[0] &&
-          !firstColorRef.current.contains(ev.target)
-        ) {
-          updateColorPickerOpacity(false, 0);
-          updateCheckmarkStates(0);
-        } else if (
-          colorPickerOpacity[1] &&
-          !secondColorRef.current.contains(ev.target)
-        ) {
-          updateColorPickerOpacity(false, 1);
-          updateCheckmarkStates(1);
-        } else if (
-          colorPickerOpacity[2] &&
-          !thirdColorRef.current.contains(ev.target)
-        ) {
-          updateColorPickerOpacity(false, 2);
-          updateCheckmarkStates(2);
-        } else if (
-          colorPickerOpacity[3] &&
-          !fourthColorRef.current.contains(ev.target)
-        ) {
-          updateColorPickerOpacity(false, 3);
-          updateCheckmarkStates(3);
-        } else if (
-          colorPickerOpacity[4] &&
-          !fifthColorRef.current.contains(ev.target)
-        ) {
-          updateColorPickerOpacity(false, 4);
-          updateCheckmarkStates(4);
-        }
-      }
-    }
-
-    window.addEventListener("touchstart", touchHandler);
-    window.addEventListener("mousedown", mouseHandler);
+    window.addEventListener("touchstart", colorHandler);
+    window.addEventListener("mousedown", colorHandler);
 
     return () => {
-      window.removeEventListener("touchstart", touchHandler);
-      window.removeEventListener("mousedown", mouseHandler);
+      window.removeEventListener("touchstart", colorHandler);
+      window.removeEventListener("mousedown", colorHandler);
     };
-  }, [colorPickerOpacity]);
+  }, [colorPickerOpacity, currentColorSelectorID]);
 
   function updateColorPickerOpacity(value, idx) {
     const shallowCopyOpacities = [...colorPickerOpacity];
@@ -281,11 +311,24 @@ const PaletteChooser = () => {
               <div
                 className={classes.flexContainer}
                 onClick={() => {
-                  updateOverlayState(0);
-                  updateColorPickerOpacity(true, 0);
+                  if (currentColorSelectorID >= 0) {
+                    updateOverlayState(0);
+                    updateColorPickerOpacity(true, 0);
+                  }
                 }}
               >
-                <div ref={firstColorRef} className={classes.colorInput}>
+                <div
+                  ref={firstColorRef}
+                  style={{
+                    cursor: currentColorSelectorID >= 0 ? "pointer" : "auto",
+                    animationPlayState:
+                      currentColorSelectorID >= 0 ? "running" : "paused",
+                    animationIterationCount: statusOfCheckmarks[0]
+                      ? 1
+                      : "infinite",
+                  }}
+                  className={classes.colorInput}
+                >
                   <div
                     style={{
                       width: "100%",
@@ -340,11 +383,24 @@ const PaletteChooser = () => {
               <div
                 className={classes.flexContainer}
                 onClick={() => {
-                  updateOverlayState(1);
-                  updateColorPickerOpacity(true, 1);
+                  if (currentColorSelectorID >= 1) {
+                    updateOverlayState(1);
+                    updateColorPickerOpacity(true, 1);
+                  }
                 }}
               >
-                <div ref={secondColorRef} className={classes.colorInput}>
+                <div
+                  ref={secondColorRef}
+                  style={{
+                    cursor: currentColorSelectorID >= 1 ? "pointer" : "auto",
+                    animationPlayState:
+                      currentColorSelectorID >= 1 ? "running" : "paused",
+                    animationIterationCount: statusOfCheckmarks[1]
+                      ? 1
+                      : "infinite",
+                  }}
+                  className={classes.colorInput}
+                >
                   <div
                     style={{
                       width: "100%",
@@ -399,11 +455,24 @@ const PaletteChooser = () => {
               <div
                 className={classes.flexContainer}
                 onClick={() => {
-                  updateOverlayState(2);
-                  updateColorPickerOpacity(true, 2);
+                  if (currentColorSelectorID >= 2) {
+                    updateOverlayState(2);
+                    updateColorPickerOpacity(true, 2);
+                  }
                 }}
               >
-                <div ref={thirdColorRef} className={classes.colorInput}>
+                <div
+                  ref={thirdColorRef}
+                  style={{
+                    cursor: currentColorSelectorID >= 2 ? "pointer" : "auto",
+                    animationPlayState:
+                      currentColorSelectorID >= 2 ? "running" : "paused",
+                    animationIterationCount: statusOfCheckmarks[2]
+                      ? 1
+                      : "infinite",
+                  }}
+                  className={classes.colorInput}
+                >
                   <div
                     style={{
                       width: "100%",
@@ -459,11 +528,24 @@ const PaletteChooser = () => {
               <div
                 className={classes.flexContainer}
                 onClick={() => {
-                  updateOverlayState(3);
-                  updateColorPickerOpacity(true, 3);
+                  if (currentColorSelectorID >= 3) {
+                    updateOverlayState(3);
+                    updateColorPickerOpacity(true, 3);
+                  }
                 }}
               >
-                <div ref={fourthColorRef} className={classes.colorInput}>
+                <div
+                  ref={fourthColorRef}
+                  style={{
+                    cursor: currentColorSelectorID >= 3 ? "pointer" : "auto",
+                    animationPlayState:
+                      currentColorSelectorID >= 3 ? "running" : "paused",
+                    animationIterationCount: statusOfCheckmarks[3]
+                      ? 1
+                      : "infinite",
+                  }}
+                  className={classes.colorInput}
+                >
                   <div
                     style={{
                       width: "100%",
@@ -518,11 +600,24 @@ const PaletteChooser = () => {
               <div
                 className={classes.flexContainer}
                 onClick={() => {
-                  updateOverlayState(4);
-                  updateColorPickerOpacity(true, 4);
+                  if (currentColorSelectorID >= 4) {
+                    updateOverlayState(4);
+                    updateColorPickerOpacity(true, 4);
+                  }
                 }}
               >
-                <div ref={fifthColorRef} className={classes.colorInput}>
+                <div
+                  ref={fifthColorRef}
+                  style={{
+                    cursor: currentColorSelectorID >= 4 ? "pointer" : "auto",
+                    animationPlayState:
+                      currentColorSelectorID >= 4 ? "running" : "paused",
+                    animationIterationCount: statusOfCheckmarks[4]
+                      ? 1
+                      : "infinite",
+                  }}
+                  className={classes.colorInput}
+                >
                   <div
                     style={{
                       width: "100%",
