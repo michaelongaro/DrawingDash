@@ -55,17 +55,18 @@ function HomePage() {
               <div>
                 <Card width={100}>
                   <div className={classes.firstTimePromo}>
-                    <div className={classes.flexContainColumn}>
-                      <LogInButton forceShowSignUp={true} />
-                      <LogInButton forceShowSignUp={false} />
+                    <div
+                      style={{ gap: ".5rem" }}
+                      className={baseClasses.baseVertFlex}
+                    >
+                      <div style={{ textAlign: "center" }}>
+                        “Art is the elimination of the unnecessary.”
+                      </div>
+                      <div>- Pablo Picasso</div>
                     </div>
 
-                    <div className={classes.fadingOrContainer}>
-                      <div className={classes.leadingLine}></div>
-                      <div className={classes.or}>OR</div>
-                      <div className={classes.trailingLine}></div>
-                    </div>
                     <div
+                      style={{ maxHeight: "8rem" }}
                       className={`${baseClasses.animatedRainbow} ${classes.animatedRainbowMargin}`}
                     >
                       <Link
