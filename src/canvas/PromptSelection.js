@@ -925,7 +925,7 @@ const PromptSelection = () => {
                   : 0,
             }}
           >
-            A Drawing Prompt
+            a drawing prompt
           </div>
           <div
             id={"extraPromptText"}
@@ -943,7 +943,7 @@ const PromptSelection = () => {
                   : 0,
             }}
           >
-            An Extra Prompt
+            an extra prompt
           </div>
         </div>
 

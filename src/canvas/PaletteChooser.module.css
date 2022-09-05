@@ -76,6 +76,28 @@
   border-radius: 50%;
 }
 
+.randomButton {
+  position: absolute;
+
+  border-radius: 50%;
+  padding: 1em;
+  color: white;
+  background-color: rgb(150, 150, 150);
+  cursor: pointer;
+  user-select: none;
+  transition: all 200ms ease 0s;
+}
+
+.randomButton:hover {
+  transform: scale(1.05);
+  filter: brightness(1.05);
+}
+
+.randomButton:active {
+  transform: scale(.95);
+  filter: brightness(.95);
+}
+
 .flexContainer {
   display: flex;
   justify-content: center;

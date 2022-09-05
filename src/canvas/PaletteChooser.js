@@ -5,8 +5,10 @@ import anime from "animejs/lib/anime.es.js";
 import { isEqual } from "lodash";
 
 import DrawingSelectionContext from "./DrawingSelectionContext";
+import getRandomPaletteColors from "../util/getRandomPaletteColors";
 
 import BackupPaletteIcon from "../svgs/BackupPaletteIcon";
+import RandomizeColorsIcon from "../svgs/RandomizeColorsIcon";
 
 import "./ColorPickerStyles.css";
 
@@ -27,10 +29,7 @@ const PaletteChooser = () => {
   const fifthColorRef = useRef(null);
 
   const [currentColorSelectorID, setCurrentColorSelectorID] = useState(0);
-
-  useEffect(() => {
-    console.log(currentColorSelectorID, typeof currentColorSelectorID);
-  }, [currentColorSelectorID]);
+  const [paletteWasRandomized, setPaletteWasRandomized] = useState(false);
 
   const [paletteColors, setPaletteColors] = useState([
     "#7f4040",
@@ -109,54 +108,6 @@ const PaletteChooser = () => {
   }, []);
 
   useEffect(() => {
-    // function touchHandler(ev) {
-    //   if (!isEqual(colorPickerOpacity, [false, false, false, false, false])) {
-    //     if (
-    //       colorPickerOpacity[0] &&
-    //       !firstColorRef.current.contains(ev.target)
-    //     ) {
-    //       updateColorPickerOpacity(false, 0);
-    //       updateCheckmarkStates(0);
-    //       if (currentColorSelectorID < 1) {
-    //         setCurrentColorSelectorID(1);
-    //       }
-    //     } else if (
-    //       colorPickerOpacity[1] &&
-    //       !secondColorRef.current.contains(ev.target)
-    //     ) {
-    //       updateColorPickerOpacity(false, 1);
-    //       updateCheckmarkStates(1);
-    //       if (currentColorSelectorID < 2) {
-    //         setCurrentColorSelectorID(2);
-    //       }
-    //     } else if (
-    //       colorPickerOpacity[2] &&
-    //       !thirdColorRef.current.contains(ev.target)
-    //     ) {
-    //       updateColorPickerOpacity(false, 2);
-    //       updateCheckmarkStates(2);
-    //       if (currentColorSelectorID < 3) {
-    //         setCurrentColorSelectorID(3);
-    //       }
-    //     } else if (
-    //       colorPickerOpacity[3] &&
-    //       !fourthColorRef.current.contains(ev.target)
-    //     ) {
-    //       updateColorPickerOpacity(false, 3);
-    //       updateCheckmarkStates(3);
-    //       if (currentColorSelectorID < 4) {
-    //         setCurrentColorSelectorID(4);
-    //       }
-    //     } else if (
-    //       colorPickerOpacity[4] &&
-    //       !fifthColorRef.current.contains(ev.target)
-    //     ) {
-    //       updateColorPickerOpacity(false, 4);
-    //       updateCheckmarkStates(4);
-    //     }
-    //   }
-    // }
-
     function colorHandler(ev) {
       if (!isEqual(colorPickerOpacity, [false, false, false, false, false])) {
         if (
@@ -280,7 +231,7 @@ const PaletteChooser = () => {
       className={classes.vertContain}
     >
       <div id={"chooseTextContainer"} className={classes.textVert}>
-        <div>{`Your Color Palette For`}</div>
+        <div>{`your color palette for`}</div>
         <div>{`"${DSCtx.chosenPrompt}"`}</div>
       </div>
 
@@ -296,6 +247,25 @@ const PaletteChooser = () => {
         {/* containing div for svg and inputs */}
         <div style={{ position: "relative" }}>
           <BackupPaletteIcon dimensions={dyanmicIconDimensions} />
+
+          {/* randomize color palette button */}
+          <div
+            style={{
+              transform: `scale(${dynamicButtonDimensions})`,
+              bottom: dynamicButtonDimensions === 1 ? "4em" : "2.75em",
+              right: dynamicButtonDimensions === 1 ? "8em" : "5.75em",
+            }}
+            className={`${classes.randomButton} ${baseClasses.baseFlex}`}
+            onClick={() => {
+              setPaletteWasRandomized(true);
+              setPaletteColors(getRandomPaletteColors());
+              setVisibilityOfOverlays([false, false, false, false, false]);
+              setStatusOfCheckmarks([true, true, true, true, true]);
+            }}
+          >
+            <RandomizeColorsIcon dimensions={"1em"} />
+          </div>
+
           <div
             style={{
               position: "absolute",
@@ -311,7 +281,7 @@ const PaletteChooser = () => {
               <div
                 className={classes.flexContainer}
                 onClick={() => {
-                  if (currentColorSelectorID >= 0) {
+                  if (currentColorSelectorID >= 0 || paletteWasRandomized) {
                     updateOverlayState(0);
                     updateColorPickerOpacity(true, 0);
                   }
@@ -320,12 +290,18 @@ const PaletteChooser = () => {
                 <div
                   ref={firstColorRef}
                   style={{
-                    cursor: currentColorSelectorID >= 0 ? "pointer" : "auto",
+                    cursor:
+                      currentColorSelectorID >= 0 || paletteWasRandomized
+                        ? "pointer"
+                        : "auto",
                     animationPlayState:
-                      currentColorSelectorID >= 0 ? "running" : "paused",
-                    animationIterationCount: statusOfCheckmarks[0]
-                      ? 1
-                      : "infinite",
+                      currentColorSelectorID >= 0 && !paletteWasRandomized
+                        ? "running"
+                        : "paused",
+                    animationIterationCount:
+                      statusOfCheckmarks[0] || paletteWasRandomized
+                        ? 1
+                        : "infinite",
                   }}
                   className={classes.colorInput}
                 >
@@ -383,7 +359,7 @@ const PaletteChooser = () => {
               <div
                 className={classes.flexContainer}
                 onClick={() => {
-                  if (currentColorSelectorID >= 1) {
+                  if (currentColorSelectorID >= 1 || paletteWasRandomized) {
                     updateOverlayState(1);
                     updateColorPickerOpacity(true, 1);
                   }
@@ -392,12 +368,18 @@ const PaletteChooser = () => {
                 <div
                   ref={secondColorRef}
                   style={{
-                    cursor: currentColorSelectorID >= 1 ? "pointer" : "auto",
+                    cursor:
+                      currentColorSelectorID >= 1 || paletteWasRandomized
+                        ? "pointer"
+                        : "auto",
                     animationPlayState:
-                      currentColorSelectorID >= 1 ? "running" : "paused",
-                    animationIterationCount: statusOfCheckmarks[1]
-                      ? 1
-                      : "infinite",
+                      currentColorSelectorID >= 1 && !paletteWasRandomized
+                        ? "running"
+                        : "paused",
+                    animationIterationCount:
+                      statusOfCheckmarks[1] || paletteWasRandomized
+                        ? 1
+                        : "infinite",
                   }}
                   className={classes.colorInput}
                 >
@@ -455,7 +437,7 @@ const PaletteChooser = () => {
               <div
                 className={classes.flexContainer}
                 onClick={() => {
-                  if (currentColorSelectorID >= 2) {
+                  if (currentColorSelectorID >= 2 || paletteWasRandomized) {
                     updateOverlayState(2);
                     updateColorPickerOpacity(true, 2);
                   }
@@ -464,12 +446,18 @@ const PaletteChooser = () => {
                 <div
                   ref={thirdColorRef}
                   style={{
-                    cursor: currentColorSelectorID >= 2 ? "pointer" : "auto",
+                    cursor:
+                      currentColorSelectorID >= 2 || paletteWasRandomized
+                        ? "pointer"
+                        : "auto",
                     animationPlayState:
-                      currentColorSelectorID >= 2 ? "running" : "paused",
-                    animationIterationCount: statusOfCheckmarks[2]
-                      ? 1
-                      : "infinite",
+                      currentColorSelectorID >= 2 && !paletteWasRandomized
+                        ? "running"
+                        : "paused",
+                    animationIterationCount:
+                      statusOfCheckmarks[2] || paletteWasRandomized
+                        ? 1
+                        : "infinite",
                   }}
                   className={classes.colorInput}
                 >
@@ -528,7 +516,7 @@ const PaletteChooser = () => {
               <div
                 className={classes.flexContainer}
                 onClick={() => {
-                  if (currentColorSelectorID >= 3) {
+                  if (currentColorSelectorID >= 3 || paletteWasRandomized) {
                     updateOverlayState(3);
                     updateColorPickerOpacity(true, 3);
                   }
@@ -537,12 +525,18 @@ const PaletteChooser = () => {
                 <div
                   ref={fourthColorRef}
                   style={{
-                    cursor: currentColorSelectorID >= 3 ? "pointer" : "auto",
+                    cursor:
+                      currentColorSelectorID >= 3 || paletteWasRandomized
+                        ? "pointer"
+                        : "auto",
                     animationPlayState:
-                      currentColorSelectorID >= 3 ? "running" : "paused",
-                    animationIterationCount: statusOfCheckmarks[3]
-                      ? 1
-                      : "infinite",
+                      currentColorSelectorID >= 3 && !paletteWasRandomized
+                        ? "running"
+                        : "paused",
+                    animationIterationCount:
+                      statusOfCheckmarks[3] || paletteWasRandomized
+                        ? 1
+                        : "infinite",
                   }}
                   className={classes.colorInput}
                 >
@@ -600,7 +594,7 @@ const PaletteChooser = () => {
               <div
                 className={classes.flexContainer}
                 onClick={() => {
-                  if (currentColorSelectorID >= 4) {
+                  if (currentColorSelectorID >= 4 || paletteWasRandomized) {
                     updateOverlayState(4);
                     updateColorPickerOpacity(true, 4);
                   }
@@ -609,12 +603,18 @@ const PaletteChooser = () => {
                 <div
                   ref={fifthColorRef}
                   style={{
-                    cursor: currentColorSelectorID >= 4 ? "pointer" : "auto",
+                    cursor:
+                      currentColorSelectorID >= 4 || paletteWasRandomized
+                        ? "pointer"
+                        : "auto",
                     animationPlayState:
-                      currentColorSelectorID >= 4 ? "running" : "paused",
-                    animationIterationCount: statusOfCheckmarks[4]
-                      ? 1
-                      : "infinite",
+                      currentColorSelectorID >= 4 && !paletteWasRandomized
+                        ? "running"
+                        : "paused",
+                    animationIterationCount:
+                      statusOfCheckmarks[4] || paletteWasRandomized
+                        ? 1
+                        : "infinite",
                   }}
                   className={classes.colorInput}
                 >
