@@ -251,7 +251,10 @@ const PaletteChooser = () => {
           {/* randomize color palette button */}
           <div
             style={{
-              transform: `scale(${dynamicButtonDimensions})`,
+              transform:
+                dynamicButtonDimensions === 1
+                  ? undefined
+                  : `scale(${dynamicButtonDimensions})`,
               bottom: dynamicButtonDimensions === 1 ? "4em" : "2.75em",
               right: dynamicButtonDimensions === 1 ? "8em" : "5.75em",
             }}
