@@ -65,7 +65,7 @@ const ProgressBar = () => {
         document.getElementById("chooseTextContainer").getBoundingClientRect()
           .top -
           169 -
-          15
+          7
       );
 
       setInitInnerHeight(window.innerHeight);
@@ -85,7 +85,7 @@ const ProgressBar = () => {
               .getElementById("chooseTextContainer")
               .getBoundingClientRect().top -
               169 -
-              15
+              7
           );
       }
     }
@@ -205,7 +205,7 @@ const ProgressBar = () => {
                 selectTextRef.current.getBoundingClientRect().width / 2
               }px`,
             ],
-            top: ["20px", "140px"],
+            top: ["20px", "148px"],
 
             // fontSize: ["1.25em", "1.5em"],
             scale: [1, 1.25],
@@ -243,7 +243,7 @@ const ProgressBar = () => {
                   .getElementById("chooseTextContainer")
                   .getBoundingClientRect().top -
                   169 -
-                  15
+                  7
               );
 
               anime({
@@ -258,7 +258,7 @@ const ProgressBar = () => {
                       .getElementById("chooseTextContainer")
                       .getBoundingClientRect().top -
                     169 -
-                    15
+                    7
                   }`,
                 ],
                 fontSize: ["1.25em", "1.5em"],
@@ -344,7 +344,7 @@ const ProgressBar = () => {
                     selectTextRef.current.getBoundingClientRect().width / 2
                   }px`,
                 ],
-                top: ["20px", "140px"],
+                top: ["20px", "148px"],
 
                 // fontSize: ["1.25em", "1.5em"],
                 scale: [1, 1.25],
@@ -442,7 +442,7 @@ const ProgressBar = () => {
             }px`,
             "-13px",
           ],
-          top: ["140px", "20px"],
+          top: ["148px", "20px"],
 
           // fontSize: ["1.5em", "1.25em"],
           scale: [1.25, 1],
@@ -489,7 +489,7 @@ const ProgressBar = () => {
                   position: "absolute",
 
                   left: `${selectOffset}px`,
-                  top: "140px",
+                  top: "148px",
                 }
               : { position: "absolute", left: -13, top: 20 }
           }
