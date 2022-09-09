@@ -41,7 +41,7 @@ const Likes = () => {
               <Search
                 dbPath={`users/${user.sub}/likes`}
                 margin={"0"}
-                idx={2}
+                idx={3}
                 forModal={false}
               />
             </div>

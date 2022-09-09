@@ -33,6 +33,7 @@ const GallaryList = ({
 
   const [dynamicWidth, setDyanmicWidth] = useState(0);
 
+  const [resultsPerPage, setResultsPerPage] = useState(0);
   const [showEmptyResults, setShowEmptyResults] = useState(false);
 
   const [durationStates, setDurationStates] = useState([false, false, false]);
@@ -46,16 +47,40 @@ const GallaryList = ({
   const [yellowOpacity, setYellowOpacity] = useState(0);
   const [greenOpacity, setGreenOpacity] = useState(0);
 
-  const [skeletonRatio, setSkeletonRatio] = useState(1);
-
   const [minMobileWidthReached, setMinMobileWidthReached] = useState(false);
 
-  // will prob want to change the 60 below to be empty then have logic down below to handle
   const [currentlyShownDuration, setCurrentlyShownDuration] = useState();
 
   useEffect(() => {
     return () => {
       searchCtx.resetPageSelectorDetails(idx);
+    };
+  }, [idx]);
+
+  useEffect(() => {
+    // inital render
+    if (window.innerWidth > 1250) {
+      setResultsPerPage(16);
+    } else if (window.innerWidth > 750) {
+      setResultsPerPage(10);
+    } else {
+      setResultsPerPage(6);
+    }
+
+    function resizeHandler(ev) {
+      if (window.innerWidth > 1250) {
+        setResultsPerPage(16);
+      } else if (window.innerWidth > 750) {
+        setResultsPerPage(10);
+      } else {
+        setResultsPerPage(6);
+      }
+    }
+
+    window.addEventListener("resize", resizeHandler);
+
+    return () => {
+      window.removeEventListener("resize", resizeHandler);
     };
   }, []);
 
@@ -74,14 +99,6 @@ const GallaryList = ({
         ]);
 
         updateDurationOpacities();
-
-        if (forModal) {
-          setSkeletonRatio(4.341);
-        } else if (idx === 1 || idx === 2) {
-          setSkeletonRatio(6.275);
-        } else if (idx === 0) {
-          setSkeletonRatio(3.5);
-        }
 
         // used if want to load a different page other than the default order (60->180->300)
         if (searchCtx.pageSelectorDetails["durationToManuallyLoad"][idx]) {
@@ -113,8 +130,13 @@ const GallaryList = ({
         }
       }
     }
-    // below dep was only drawingIDs
-  }, [drawingIDs, forModal, idx, searchCtx.pageSelectorDetails]);
+  }, [
+    drawingIDs,
+    forModal,
+    idx,
+    resultsPerPage,
+    searchCtx.pageSelectorDetails,
+  ]);
 
   useEffect(() => {
     // just for initial render
@@ -312,7 +334,13 @@ const GallaryList = ({
                     idx
                   );
 
-                  searchCtx.getGallary(0, 6, 6, idx, databasePath);
+                  searchCtx.getGallary(
+                    0,
+                    resultsPerPage,
+                    resultsPerPage,
+                    idx,
+                    databasePath
+                  );
                 }
               }}
             >
@@ -376,7 +404,13 @@ const GallaryList = ({
                     idx
                   );
 
-                  searchCtx.getGallary(0, 6, 6, idx, databasePath);
+                  searchCtx.getGallary(
+                    0,
+                    resultsPerPage,
+                    resultsPerPage,
+                    idx,
+                    databasePath
+                  );
                 }
               }}
             >
@@ -439,7 +473,13 @@ const GallaryList = ({
                     idx
                   );
 
-                  searchCtx.getGallary(0, 6, 6, idx, databasePath);
+                  searchCtx.getGallary(
+                    0,
+                    resultsPerPage,
+                    resultsPerPage,
+                    idx,
+                    databasePath
+                  );
                 }
               }}
             >

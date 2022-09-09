@@ -7,22 +7,22 @@ const SearchContext = createContext(null);
 
 export function SearchProvider(props) {
   const [searchValues, setSearchValues] = useState({
-    adjSearch: ["", "", ""],
-    nounSearch: ["", "", ""],
-    autofilledAdjectiveInput: ["", "", ""],
-    autofilledNounInput: ["", "", ""],
-    requestedAdjectives: [[], [], []],
-    requestedNouns: [[], [], []],
-    submittedAdjectives: [[], [], []],
-    submittedNouns: [[], [], []],
-    adjKeyboardNavigationIndex: [-1, -1, -1],
-    nounKeyboardNavigationIndex: [-1, -1, -1],
-    anInputIsFocused: [false, false, false],
-    gallary: [null, null, null],
+    adjSearch: ["", "", "", ""],
+    nounSearch: ["", "", "", ""],
+    autofilledAdjectiveInput: ["", "", "", ""],
+    autofilledNounInput: ["", "", "", ""],
+    requestedAdjectives: [[], [], [], []],
+    requestedNouns: [[], [], [], []],
+    submittedAdjectives: [[], [], [], []],
+    submittedNouns: [[], [], [], []],
+    adjKeyboardNavigationIndex: [-1, -1, -1, -1],
+    nounKeyboardNavigationIndex: [-1, -1, -1, -1],
+    anInputIsFocused: [false, false, false, false],
+    gallary: [null, null, null, null],
   });
 
   const [pageSelectorDetails, setPageSelectorDetails] = useState({
-    currentPageNumber: [1, 1, 1],
+    currentPageNumber: [1, 1, 1, 1],
     totalDrawingsByDuration: [
       {
         60: 0,
@@ -39,8 +39,13 @@ export function SearchProvider(props) {
         180: 0,
         300: 0,
       },
+      {
+        60: 0,
+        180: 0,
+        300: 0,
+      },
     ],
-    durationToManuallyLoad: [null, null, null],
+    durationToManuallyLoad: [null, null, null, null],
   });
 
   function manuallyLoadDurations(idx) {

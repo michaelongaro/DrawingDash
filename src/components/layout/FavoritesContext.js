@@ -2,7 +2,6 @@ import React, { createContext, useContext, useEffect, useState } from "react";
 
 import { isEqual } from "lodash";
 import { useAuth0 } from "@auth0/auth0-react";
-import { useLocation } from "react-router-dom";
 
 import SearchContext from "./SearchContext";
 
@@ -20,8 +19,6 @@ import { app } from "../../util/init-firebase";
 const FavoritesContext = createContext(null);
 
 export function FavoritesProvider(props) {
-  const location = useLocation();
-
   // cannot access context from another context
   const searchCtx = useContext(SearchContext);
 
@@ -32,6 +29,8 @@ export function FavoritesProvider(props) {
   });
 
   const [totalFavorites, setTotalFavorites] = useState(0);
+
+  const [favoriteWasRemoved, setFavoriteWasRemoved] = useState(false);
 
   const { user, isLoading, isAuthenticated } = useAuth0();
 
@@ -53,21 +52,6 @@ export function FavoritesProvider(props) {
           }
 
           setTotalFavorites(tempTotalFavorites);
-
-          // set manuallyLoad[2] to null and currentPagenumber to be 1 if empty
-          // [1,0,2]
-          if (location.pathname === "/profile/likes") {
-            let currentPageNumber =
-              searchCtx.pageSelectorDetails["currentPageNumber"][2];
-
-            searchCtx.getGallary(
-              (currentPageNumber - 1) * 6,
-              currentPageNumber * 6,
-              6,
-              2,
-              `users/${user.sub}/likes`
-            );
-          }
         }
       });
     }
@@ -149,7 +133,9 @@ export function FavoritesProvider(props) {
           );
         }
 
-        set(ref(db, `users/${user.sub}/likes/`), tempLikes);
+        set(ref(db, `users/${user.sub}/likes/`), tempLikes).then(() => {
+          setFavoriteWasRemoved(true);
+        });
       }
     });
 
@@ -177,6 +163,8 @@ export function FavoritesProvider(props) {
   const context = {
     favorites: userFavorites,
     totalFavorites: totalFavorites,
+    favoriteWasRemoved: favoriteWasRemoved,
+    setFavoriteWasRemoved: setFavoriteWasRemoved,
     addFavorite: addFavorite,
     removeFavorite: removeFavorite,
     itemIsFavorite: itemIsFavorite,

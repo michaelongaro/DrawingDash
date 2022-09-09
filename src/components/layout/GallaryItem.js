@@ -380,6 +380,57 @@ const GallaryItem = ({
     }
   }
 
+  useEffect(() => {
+    if (favoritesCtx.favoriteWasRemoved && drawingDetails && idx === 3) {
+      // if removing like would leave no drawings on current page, then
+      // shift currentPageNumber down by one.
+      if (
+        (searchCtx.pageSelectorDetails["totalDrawingsByDuration"][idx][
+          drawingDetails.seconds
+        ] -
+          1) %
+          resultsPerPage ===
+        0
+      ) {
+        searchCtx.getGallary(
+          (searchCtx.pageSelectorDetails["currentPageNumber"][idx] - 2) *
+            resultsPerPage,
+          (searchCtx.pageSelectorDetails["currentPageNumber"][idx] - 1) *
+            resultsPerPage,
+          resultsPerPage,
+          idx,
+          dbPath
+        );
+
+        // updating page number to reflect change
+        searchCtx.updatePageSelectorDetails(
+          "currentPageNumber",
+          searchCtx.pageSelectorDetails["currentPageNumber"][idx] - 1,
+          idx
+        );
+      } else {
+        searchCtx.getGallary(
+          (searchCtx.pageSelectorDetails["currentPageNumber"][idx] - 1) *
+            resultsPerPage,
+          searchCtx.pageSelectorDetails["currentPageNumber"][idx] *
+            resultsPerPage,
+          resultsPerPage,
+          idx,
+          dbPath
+        );
+      }
+
+      favoritesCtx.setFavoriteWasRemoved(false);
+    }
+  }, [
+    favoritesCtx.favoriteWasRemoved,
+    searchCtx.pageSelectorDetails,
+    drawingDetails,
+    resultsPerPage,
+    idx,
+    dbPath,
+  ]);
+
   function deleteDrawing() {
     const title = drawingDetails.title;
     const seconds = drawingDetails.seconds;
@@ -826,7 +877,6 @@ const GallaryItem = ({
                           cursor: "pointer",
                           left: 0,
                           top: "70px",
-                          padding: "2em",
                         }}
                         className={classes.usernameTooltip}
                       >
