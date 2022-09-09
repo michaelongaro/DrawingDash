@@ -171,7 +171,7 @@ const Sidebar = ({ pageWrapId, outerContainerId }) => {
             <div
               className={`${classes.unregisteredContainer} ${profileClasses.vertContain}`}
             >
-              <div style={{ gap: "1em" }} className={baseClasses.baseVertFlex}>
+              <div style={{ gap: ".5em" }} className={baseClasses.baseVertFlex}>
                 <LogInButton forceShowSignUp={true} />
                 <div style={{ transform: "scale(.85)" }}>OR</div>
                 <LogInButton forceShowSignUp={false} />
