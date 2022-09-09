@@ -23,8 +23,14 @@ const SlideShow = ({
   const [showTempBaselineSkeleton, setShowTempBaselineSkeleton] =
     useState(true);
 
+  const [imagesFinishedLoading, setImagesFinishedLoading] = useState([
+    false,
+    false,
+    false,
+  ]);
+
   useEffect(() => {
-    const timerID = setTimeout(() => setShowTempBaselineSkeleton(false), 500);
+    const timerID = setTimeout(() => setShowTempBaselineSkeleton(false), 1000);
 
     return () => {
       clearTimeout(timerID);
@@ -186,12 +192,20 @@ const SlideShow = ({
               ) : (
                 <img
                   style={{
+                    display: imagesFinishedLoading[index] ? "block" : "none",
                     maxWidth: "100%",
                     maxHeight: "100%",
                   }}
                   draggable="false"
                   src={drawing}
-                  alt="Slideshow"
+                  alt="Pinned drawing"
+                  onLoad={() => {
+                    setImagesFinishedLoading((prevImages) => {
+                      let newImages = [...prevImages];
+                      newImages[index] = true;
+                      return newImages;
+                    });
+                  }}
                 />
               )}
             </div>

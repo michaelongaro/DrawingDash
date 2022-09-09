@@ -6,16 +6,17 @@
   bottom: auto;
 }
 
-.spinner .face2 {
+/* .spinner */
+.face2 {
   transform: rotateY(-90deg);
-  z-index: -500;
 }
 
 .spinner {
   transform-style: preserve-3d;
 
-  perspective: 2500rem;
-  /* large perspective added to try and fix safari stacking/z-index issue */
+  /* attempt to show properly stacked 3d animation on safari */
+  /* perspective: 2500rem; */
+  /* z-index: 150; */
 
   display: inline-flex;
   position: relative;
