@@ -33,7 +33,7 @@
 
   border-radius: 1em;
   border-width: 2px;
-  border-color: rgba(0, 0, 0, .3);
+  border-color: rgba(0, 0, 0, 0.3);
 
   opacity: 0;
   cursor: pointer;
@@ -248,7 +248,8 @@
 
   box-shadow: rgb(0 0 0 / 30%) 2px 4px 8px 0px;
   text-align: center;
-  padding: 0.5em;
+  padding: 1em;
+  white-space: nowrap;
 
   border-radius: 1em;
   z-index: 400;

@@ -186,10 +186,7 @@ const DrawingModal = ({
       setModalWidth("75vw");
     } else if (window.innerWidth > 775 && window.innerWidth < 1000) {
       setModalWidth("95vw");
-    } else if (
-      matchMedia("(hover: none), (pointer: coarse)").matches &&
-      window.innerWidth < 775
-    ) {
+    } else if (window.innerWidth < 775) {
       setModalWidth("95vw");
       setShowMobileButtons(true);
     } else {
@@ -267,10 +264,7 @@ const DrawingModal = ({
       } else if (window.innerWidth > 775 && window.innerWidth < 1000) {
         setModalWidth("95vw");
         setShowMobileButtons(false);
-      } else if (
-        matchMedia("(hover: none), (pointer: coarse)").matches &&
-        window.innerWidth < 775
-      ) {
+      } else if (window.innerWidth < 775) {
         setModalWidth("95vw");
         setShowMobileButtons(true);
       } else {
@@ -759,7 +753,6 @@ const DrawingModal = ({
                         cursor: "pointer",
                         left: 0,
                         top: "70px",
-                        padding: "2em",
                       }}
                       className={classes.usernameTooltip}
                     >
