@@ -2,6 +2,7 @@ import React, { createContext, useContext, useEffect, useState } from "react";
 
 import { isEqual } from "lodash";
 import { useAuth0 } from "@auth0/auth0-react";
+import { useLocation } from "react-router-dom";
 
 import SearchContext from "./SearchContext";
 
@@ -21,6 +22,7 @@ const FavoritesContext = createContext(null);
 export function FavoritesProvider(props) {
   // cannot access context from another context
   const searchCtx = useContext(SearchContext);
+  const location = useLocation();
 
   const [userFavorites, setUserFavorites] = useState({
     60: false,
@@ -134,7 +136,8 @@ export function FavoritesProvider(props) {
         }
 
         set(ref(db, `users/${user.sub}/likes/`), tempLikes).then(() => {
-          setFavoriteWasRemoved(true);
+          if (location.pathname === "/profile/likes")
+            setFavoriteWasRemoved(true);
         });
       }
     });
