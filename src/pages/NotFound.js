@@ -1,8 +1,6 @@
 import React from "react";
 import { motion } from "framer-motion";
 
-import Footer from "../ui/Footer";
-
 import NotFoundIcon from "../svgs/NotFoundIcon";
 
 import baseClasses from "../index.module.css";
@@ -28,10 +26,10 @@ const NotFound = () => {
       transition={{ duration: 0.2 }}
     >
       <div style={styles} className={baseClasses.baseVertFlex}>
-        <div style={{ gap: ".5em" }} className={baseClasses.baseFlex}>
+        <div style={{ gap: ".4em" }} className={baseClasses.baseFlex}>
           <div
             style={{
-              transform: "rotate(-45deg)",
+              transform: "rotate(-30deg)",
               fontSize: "35px",
               userSelect: "none",
             }}
@@ -41,7 +39,7 @@ const NotFound = () => {
           <NotFoundIcon dimensions={"3em"} />
           <div
             style={{
-              transform: "rotate(45deg)",
+              transform: "rotate(30deg)",
               fontSize: "35px",
               userSelect: "none",
             }}
@@ -49,7 +47,9 @@ const NotFound = () => {
             ?
           </div>
         </div>
-        <div>The requested URL does not exist.</div>
+        <div style={{ textAlign: "center" }}>
+          The requested URL does not exist.
+        </div>
       </div>
     </motion.div>
   );
