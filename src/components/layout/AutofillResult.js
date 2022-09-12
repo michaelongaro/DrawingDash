@@ -49,6 +49,8 @@ const AutofillResult = (props) => {
     );
 
     setLocalNouns(searchCtx.searchValues["requestedNouns"][props.idx]);
+
+    // okay so here and in fillText function maybe add user equivalents here
   }, [props, searchCtx.searchValues]);
 
   useEffect(() => {

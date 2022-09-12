@@ -9,7 +9,7 @@ const PreferencesIcon = ({ dimensions, color }) => {
       viewBox="0 0 28 28"
       style={{
         fill: color,
-        transition: "all 300ms",
+        transition: "all 200ms",
       }}
     >
       <g id="Layer_2" data-name="Layer 2">

@@ -1,3 +1,11 @@
+.searchTypeSelectorButton {
+  border-radius: 1em;
+  border: none;
+  padding: 1em;
+  cursor: pointer;
+  transition: all 200ms;
+}
+
 .formContainer {
   display: flex;
   justify-content: center;

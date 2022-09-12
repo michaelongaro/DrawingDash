@@ -21,6 +21,16 @@ export function SearchProvider(props) {
     gallary: [null, null, null, null],
   });
 
+  const [userSearchValues, setUserSearchValues] = useState({
+    userSearch: "",
+    autofilledUserInput: "",
+    requestedUsers: [],
+    submittedUsers: [],
+    userKeyboardNavigationIndex: -1,
+    inputIsFocused: false,
+    userGallary: null,
+  });
+
   const [pageSelectorDetails, setPageSelectorDetails] = useState({
     currentPageNumber: [1, 1, 1, 1],
     totalDrawingsByDuration: [
@@ -91,6 +101,7 @@ export function SearchProvider(props) {
     setPageSelectorDetails(tempPageSelectorDetails);
   }
 
+  // below three should be DRY
   function updateSearchValues(key, value, idx) {
     let tempValues = { ...searchValues };
     let newValue = tempValues[key];
@@ -98,6 +109,15 @@ export function SearchProvider(props) {
 
     tempValues[key] = newValue;
     setSearchValues(tempValues);
+  }
+
+  function updateUserSearchValues(key, value) {
+    let tempValues = { ...userSearchValues };
+    let newValue = tempValues[key];
+    newValue = value;
+
+    tempValues[key] = newValue;
+    setUserSearchValues(tempValues);
   }
 
   function updatePageSelectorDetails(key, value, idx) {
@@ -344,6 +364,8 @@ export function SearchProvider(props) {
 
   const context = {
     searchValues: searchValues,
+    userSearchValues: userSearchValues,
+    updateUserSearchValues: updateUserSearchValues,
     manuallyLoadDurations: manuallyLoadDurations,
     pageSelectorDetails: pageSelectorDetails,
     updatePageSelectorDetails: updatePageSelectorDetails,

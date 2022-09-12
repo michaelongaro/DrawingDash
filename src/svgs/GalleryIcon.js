@@ -14,7 +14,7 @@ const GalleryIcon = ({ dimensions, color }) => {
       style={{
         enableBackground: "new 0 0 430.23 430.23",
         fill: color,
-        transition: "all 300ms",
+        transition: "all 200ms",
       }}
     >
       <g>

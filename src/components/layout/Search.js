@@ -1,11 +1,16 @@
 import React, { useRef, useEffect, useState, useContext } from "react";
 
-import { isEqual } from "lodash";
+import { useLocation } from "react-router-dom";
 
 import SearchContext from "./SearchContext";
 import GallaryList from "./GallaryList";
 import AdjAutofillResults from "./AdjAutofillResults";
 import NounAutofillResults from "./NounAutofillResults";
+import UserList from "./UserList";
+import UserResults from "./UserResults";
+
+import GalleryIcon from "../../svgs/GalleryIcon";
+import DefaultUserIcon from "../../svgs/DefaultUserIcon";
 
 import {
   getDatabase,
@@ -23,15 +28,18 @@ import classes from "./Search.module.css";
 import baseClasses from "../../index.module.css";
 
 const Search = ({ dbPath, margin, idx, forModal }) => {
+  const location = useLocation();
   const searchCtx = useContext(SearchContext);
   const db = getDatabase(app);
 
   const [resultsPerPage, setResultsPerPage] = useState(0);
 
   const [dbTitles, setDBTitles] = useState(null);
+  const [users, setUsers] = useState(null);
 
   const [showAdjResults, setShowAdjResults] = useState(false);
   const [showNounResults, setShowNounResults] = useState(false);
+  const [showUserResults, setShowUserResults] = useState(false);
 
   const [checkAdjPair, setCheckAdjPair] = useState(false);
   const [checkNounPair, setCheckNounPair] = useState(false);
@@ -41,21 +49,33 @@ const Search = ({ dbPath, margin, idx, forModal }) => {
   const formContainerRef = useRef(null);
   const adjectiveInputRef = useRef();
   const nounInputRef = useRef();
+  const userInputRef = useRef();
 
   const [dynamicNounMargin, setDynamicNounMargin] = useState(0);
   const [dynamicSearchMargin, setDynamicSearchMargin] = useState(0);
 
   const [adjInputFocused, setAdjInputFocused] = useState(false);
   const [nounInputFocused, setNounInputFocused] = useState(false);
+  const [userInputFocused, setUserInputFocused] = useState(false);
 
   const [mobileWidthReached, setMobileWidthReached] = useState(false);
   const [inputsWereSubmitted, setInputsWereSubmitted] = useState(false);
 
+  const [hoveringOnDrawingsSelector, setHoveringOnDrawingsSelector] =
+    useState(false);
+  const [hoveringOnUsersSelector, setHoveringOnUsersSelector] = useState(false);
+
+  const [showDrawings, setShowDrawings] = useState(true);
+  const [showUsers, setShowUsers] = useState(false);
+
   useEffect(() => {
-    if ((adjInputFocused || nounInputFocused) && mobileWidthReached) {
+    if (
+      (adjInputFocused || nounInputFocused || userInputFocused) &&
+      mobileWidthReached
+    ) {
       formContainerRef.current.scrollIntoView({ behavior: "smooth" });
     }
-  }, [adjInputFocused, nounInputFocused, mobileWidthReached]);
+  }, [adjInputFocused, nounInputFocused, userInputFocused, mobileWidthReached]);
 
   const refreshAdjSearch = (event) => {
     searchCtx.updateSearchValues("adjSearch", event.target.value.trim(), idx);
@@ -76,6 +96,17 @@ const Search = ({ dbPath, margin, idx, forModal }) => {
 
     if (event.target.value === "") {
       setShowNounResults(false);
+    }
+  };
+
+  const refreshUserSearch = (event) => {
+    searchCtx.updateUserSearchValues("userSearch", event.target.value.trim());
+
+    searchCtx.updateUserSearchValues("userKeyboardNavigationIndex", -1);
+    setShowUserResults(true);
+
+    if (event.target.value === "") {
+      setShowUserResults(false);
     }
   };
 
@@ -159,6 +190,10 @@ const Search = ({ dbPath, margin, idx, forModal }) => {
       idx
     );
   }, [adjInputFocused, nounInputFocused, idx]);
+
+  useEffect(() => {
+    searchCtx.updateUserSearchValues("inputIsFocused", userInputFocused);
+  }, [userInputFocused]);
 
   useEffect(() => {
     if (formContainerRef.current !== null) {
@@ -327,22 +362,37 @@ const Search = ({ dbPath, margin, idx, forModal }) => {
   }, [showAdjResults, showNounResults, searchCtx.searchValues]);
 
   useEffect(() => {
-    onValue(ref(db, dbPath), (snapshot) => {
-      if (snapshot.exists()) {
-        setDBTitles(snapshot.val());
-      }
-    });
+    if (showDrawings) {
+      onValue(ref(db, dbPath), (snapshot) => {
+        if (snapshot.exists()) {
+          setDBTitles(snapshot.val());
+        }
+      });
 
-    adjectiveInputRef.current.addEventListener("input", refreshAdjSearch);
-    nounInputRef.current.addEventListener("input", refreshNounSearch);
+      adjectiveInputRef.current.addEventListener("input", refreshAdjSearch);
+      nounInputRef.current.addEventListener("input", refreshNounSearch);
 
-    let cleanupAdjInputRef = adjectiveInputRef.current;
-    let cleanupNInpRef = nounInputRef.current;
-    return () => {
-      cleanupAdjInputRef.removeEventListener("input", refreshAdjSearch);
-      cleanupNInpRef.removeEventListener("input", refreshNounSearch);
-    };
-  }, []);
+      let cleanupAdjInputRef = adjectiveInputRef.current;
+      let cleanupNInpRef = nounInputRef.current;
+      return () => {
+        cleanupAdjInputRef.removeEventListener("input", refreshAdjSearch);
+        cleanupNInpRef.removeEventListener("input", refreshNounSearch);
+      };
+    } else {
+      onValue(ref(db, "users"), (snapshot) => {
+        if (snapshot.exists()) {
+          setUsers(snapshot.val());
+        }
+      });
+
+      userInputRef.current.addEventListener("input", refreshUserSearch);
+
+      let cleanupUserInputRef = userInputRef.current;
+      return () => {
+        cleanupUserInputRef.addEventListener("input", refreshUserSearch);
+      };
+    }
+  }, [showDrawings]);
 
   useEffect(() => {
     if (searchCtx.searchValues["autofilledAdjectiveInput"][idx].length > 0) {
@@ -374,81 +424,119 @@ const Search = ({ dbPath, margin, idx, forModal }) => {
     }
   }, [searchCtx.searchValues["autofilledNounInput"][idx]]);
 
-  let autofillHandler = (event, isFocusing = null, forAdj = null) => {
-    let focusedInsideAdjInput, focusedInsideNounInput;
+  let autofillHandler = (event, isFocusing = null, target = null) => {
+    let focusedInsideAdjInput, focusedInsideNounInput, focusedInsideUserInput;
 
     if (isFocusing) {
-      if (forAdj) {
+      if (target === "adj") {
         focusedInsideAdjInput = true;
-      } else {
+      } else if (target === "noun") {
         focusedInsideNounInput = true;
+      } else if (target === "user") {
+        focusedInsideUserInput = true;
       }
     } else if (isFocusing === false) {
-      if (forAdj) {
+      if (target === "adj") {
         focusedInsideAdjInput = false;
-      } else {
+      } else if (target === "noun") {
         focusedInsideNounInput = false;
+      } else if (target === "user") {
+        focusedInsideUserInput = false;
       }
     } else {
-      focusedInsideAdjInput = adjectiveInputRef.current.contains(event.target);
-      focusedInsideNounInput = nounInputRef.current.contains(event.target);
+      console.log(
+        showDrawings,
+        showUsers,
+        focusedInsideAdjInput,
+        focusedInsideNounInput,
+        focusedInsideUserInput,
+        isFocusing,
+        target
+      );
+      if (showDrawings) {
+        focusedInsideAdjInput = adjectiveInputRef.current.contains(
+          event.target
+        );
+        focusedInsideNounInput = nounInputRef.current.contains(event.target);
+      } else if (showUsers) {
+        focusedInsideUserInput = userInputRef.current.contains(event.target);
+      }
     }
-    // adjective handling
 
-    // hiding results and resetting context
-    if (!focusedInsideAdjInput) {
-      setShowAdjResults(false);
-      setCheckAdjPair(false);
-      searchCtx.updateSearchValues("adjKeyboardNavigationIndex", -1, idx);
-    } else {
-      if (
-        adjectiveInputRef.current.value.trim().length === 0 &&
-        nounInputRef.current.value.trim().length !== 0
-      ) {
-        setCheckAdjPair(true);
-        setShowAdjResults(true);
-      } else if (
-        adjectiveInputRef.current.value.trim().length !== 0 &&
-        nounInputRef.current.value.trim().length === 0
-      ) {
-        // checking to see if currently input value is equal to the one that is going to be suggested,
-        // if it isn't, show the suggestion
-        if (
-          searchCtx.searchValues["requestedAdjectives"][
-            idx
-          ][0]?.toLowerCase() !==
-          adjectiveInputRef.current.value.trim()?.toLowerCase()
-        ) {
-          setShowAdjResults(true);
+    // user handling
+
+    if (target === "user") {
+      if (!focusedInsideUserInput) {
+        setShowUserResults(false);
+        searchCtx.updateUserSearchValues("userKeyboardNavigationIndex", -1);
+      } else {
+        if (userInputRef.current.value.trim().length !== 0) {
+          if (
+            searchCtx.userSearchValues["requestedUsers"][0]?.toLowerCase() !==
+            userInputRef.current.value.trim()?.toLowerCase()
+          ) {
+            setShowUserResults(true);
+          }
         }
       }
-    }
-
-    // noun handling
-
-    // hiding results and resetting context
-    if (!focusedInsideNounInput) {
-      setShowNounResults(false);
-      setCheckNounPair(false);
-      searchCtx.updateSearchValues("nounKeyboardNavigationIndex", -1, idx);
     } else {
-      if (
-        nounInputRef.current.value.trim().length === 0 &&
-        adjectiveInputRef.current.value.trim().length !== 0
-      ) {
-        setCheckNounPair(true);
-        setShowNounResults(true);
-      } else if (
-        nounInputRef.current.value.trim().length !== 0 &&
-        adjectiveInputRef.current.value.trim().length === 0
-      ) {
-        // checking to see if currently input value is equal to the one that is going to be suggested,
-        // if it isn't, show the suggestion
+      // adjective handling
+
+      // hiding results and resetting context
+      if (!focusedInsideAdjInput) {
+        setShowAdjResults(false);
+        setCheckAdjPair(false);
+        searchCtx.updateSearchValues("adjKeyboardNavigationIndex", -1, idx);
+      } else {
         if (
-          searchCtx.searchValues["requestedNouns"][idx][0].toLowerCase() !==
-          nounInputRef.current.value.trim().toLowerCase()
+          adjectiveInputRef.current.value.trim().length === 0 &&
+          nounInputRef.current.value.trim().length !== 0
         ) {
+          setCheckAdjPair(true);
+          setShowAdjResults(true);
+        } else if (
+          adjectiveInputRef.current.value.trim().length !== 0 &&
+          nounInputRef.current.value.trim().length === 0
+        ) {
+          // checking to see if currently input value is equal to the one that is going to be suggested,
+          // if it isn't, show the suggestion
+          if (
+            searchCtx.searchValues["requestedAdjectives"][
+              idx
+            ][0]?.toLowerCase() !==
+            adjectiveInputRef.current.value.trim()?.toLowerCase()
+          ) {
+            setShowAdjResults(true);
+          }
+        }
+      }
+
+      // noun handling
+
+      // hiding results and resetting context
+      if (!focusedInsideNounInput) {
+        setShowNounResults(false);
+        setCheckNounPair(false);
+        searchCtx.updateSearchValues("nounKeyboardNavigationIndex", -1, idx);
+      } else {
+        if (
+          nounInputRef.current.value.trim().length === 0 &&
+          adjectiveInputRef.current.value.trim().length !== 0
+        ) {
+          setCheckNounPair(true);
           setShowNounResults(true);
+        } else if (
+          nounInputRef.current.value.trim().length !== 0 &&
+          adjectiveInputRef.current.value.trim().length === 0
+        ) {
+          // checking to see if currently input value is equal to the one that is going to be suggested,
+          // if it isn't, show the suggestion
+          if (
+            searchCtx.searchValues["requestedNouns"][idx][0].toLowerCase() !==
+            nounInputRef.current.value.trim().toLowerCase()
+          ) {
+            setShowNounResults(true);
+          }
         }
       }
     }
@@ -459,7 +547,7 @@ const Search = ({ dbPath, margin, idx, forModal }) => {
     return () => {
       document.removeEventListener("mousedown", autofillHandler);
     };
-  }, []);
+  }, [showDrawings, showUsers]);
 
   useEffect(() => {
     if (inputsWereSubmitted) {
@@ -523,87 +611,222 @@ const Search = ({ dbPath, margin, idx, forModal }) => {
 
   return (
     <>
-      <form
-        ref={formContainerRef}
-        className={classes.formContainer}
-        onSubmit={prepGallarySearch}
-      >
-        <div className={classes.searchContainer}>
-          <input
-            className={classes.searchInput}
-            id="adj"
-            ref={adjectiveInputRef}
-            onFocus={(e) => {
-              setAdjInputFocused(true);
-              autofillHandler(e, true, true);
-            }}
-            onBlur={(e) => {
-              setAdjInputFocused(false);
-              autofillHandler(e, false, true);
-            }}
-            autoComplete="off"
-            required
-          ></input>
-          <label>Adjective</label>
-          <div className={showAdjResults ? classes.show : classes.hide}>
-            <AdjAutofillResults
-              titles={dbTitles}
-              checkForPair={checkAdjPair}
-              idx={idx}
-            />
-          </div>
-        </div>
-        <div
-          style={{
-            marginTop: dynamicNounMargin,
-            transition: "all 200ms",
-          }}
-          className={classes.searchContainer}
-        >
-          <input
-            className={classes.searchInput}
-            id="noun"
-            ref={nounInputRef}
-            onFocus={(e) => {
-              setNounInputFocused(true);
-              autofillHandler(e, true, false);
-            }}
-            onBlur={(e) => {
-              setNounInputFocused(false);
-              autofillHandler(e, false, false);
-            }}
-            autoComplete="off"
-            required
-          ></input>
-          <label>Noun</label>
-          <div className={showNounResults ? classes.show : classes.hide}>
-            <NounAutofillResults
-              titles={dbTitles}
-              checkForPair={checkNounPair}
-              idx={idx}
-            />
-          </div>
-        </div>
-        <button
-          style={{
-            marginTop: dynamicSearchMargin,
-            transition: "all 200ms",
-          }}
-          formNoValidate
-          className={baseClasses.activeButton}
-        >
-          Search
-        </button>
-      </form>
+      {location.pathname === "/explore" && (
+        <div style={{ gap: "2em" }} className={baseClasses.baseFlex}>
+          <button
+            style={{
+              gap: ".5em",
 
-      <GallaryList
-        drawingIDs={searchCtx.searchValues["gallary"][idx]}
-        title={gallaryListStaticTitle}
-        margin={margin}
-        databasePath={dbPath}
-        idx={idx}
-        forModal={forModal}
-      />
+              backgroundColor:
+                showDrawings || hoveringOnDrawingsSelector
+                  ? "#ff7e31"
+                  : "rgb(240,240,240)",
+              transition: "all 200ms",
+            }}
+            className={`${classes.searchTypeSelectorButton} ${baseClasses.baseFlex}`}
+            onClick={() => {
+              setShowDrawings(true);
+              setShowUsers(false);
+              setHoveringOnUsersSelector(false);
+            }}
+            onMouseEnter={() => {
+              setHoveringOnDrawingsSelector(true);
+            }}
+            onMouseLeave={() => {
+              if (!showDrawings) {
+                setHoveringOnDrawingsSelector(false);
+              }
+            }}
+          >
+            <GalleryIcon
+              dimensions={"1.25em"}
+              color={
+                showDrawings || hoveringOnDrawingsSelector ? "white" : "black"
+              }
+            />
+
+            <div
+              style={{
+                color:
+                  showDrawings || hoveringOnDrawingsSelector
+                    ? "white"
+                    : "black",
+                transition: "all 200ms",
+              }}
+            >
+              Drawings
+            </div>
+          </button>
+
+          <button
+            style={{
+              gap: ".5em",
+
+              backgroundColor:
+                showUsers || hoveringOnUsersSelector
+                  ? "#ff7e31"
+                  : "rgb(240,240,240)",
+              transition: "all 200ms",
+            }}
+            className={`${classes.searchTypeSelectorButton} ${baseClasses.baseFlex}`}
+            onClick={() => {
+              setShowUsers(true);
+              setShowDrawings(false);
+              setHoveringOnDrawingsSelector(false);
+            }}
+            onMouseEnter={() => {
+              setHoveringOnUsersSelector(true);
+            }}
+            onMouseLeave={() => {
+              if (!showUsers) {
+                setHoveringOnUsersSelector(false);
+              }
+            }}
+          >
+            <DefaultUserIcon
+              dimensions={"1.25em"}
+              color={showUsers || hoveringOnUsersSelector ? "white" : "black"}
+            />
+            <div
+              style={{
+                color: showUsers || hoveringOnUsersSelector ? "white" : "black",
+                transition: "all 200ms",
+              }}
+            >
+              Users
+            </div>
+          </button>
+        </div>
+      )}
+
+      {showDrawings ? (
+        <>
+          <form
+            ref={formContainerRef}
+            className={classes.formContainer}
+            onSubmit={prepGallarySearch}
+          >
+            <div className={classes.searchContainer}>
+              <input
+                className={classes.searchInput}
+                id="adj"
+                ref={adjectiveInputRef}
+                onFocus={(e) => {
+                  setAdjInputFocused(true);
+                  autofillHandler(e, true, "adj");
+                }}
+                onBlur={(e) => {
+                  setAdjInputFocused(false);
+                  autofillHandler(e, false, "adj");
+                }}
+                autoComplete="off"
+                required
+              ></input>
+              <label>Adjective</label>
+              <div className={showAdjResults ? classes.show : classes.hide}>
+                <AdjAutofillResults
+                  titles={dbTitles}
+                  checkForPair={checkAdjPair}
+                  idx={idx}
+                />
+              </div>
+            </div>
+            <div
+              style={{
+                marginTop: dynamicNounMargin,
+                transition: "all 200ms",
+              }}
+              className={classes.searchContainer}
+            >
+              <input
+                className={classes.searchInput}
+                id="noun"
+                ref={nounInputRef}
+                onFocus={(e) => {
+                  setNounInputFocused(true);
+                  autofillHandler(e, true, "noun");
+                }}
+                onBlur={(e) => {
+                  setNounInputFocused(false);
+                  autofillHandler(e, false, "noun");
+                }}
+                autoComplete="off"
+                required
+              ></input>
+              <label>Noun</label>
+              <div className={showNounResults ? classes.show : classes.hide}>
+                <NounAutofillResults
+                  titles={dbTitles}
+                  checkForPair={checkNounPair}
+                  idx={idx}
+                />
+              </div>
+            </div>
+            <button
+              style={{
+                marginTop: dynamicSearchMargin,
+                transition: "all 200ms",
+              }}
+              formNoValidate
+              className={baseClasses.activeButton}
+            >
+              Search
+            </button>
+          </form>
+
+          <GallaryList
+            drawingIDs={searchCtx.searchValues["gallary"][idx]}
+            title={gallaryListStaticTitle}
+            margin={margin}
+            databasePath={dbPath}
+            idx={idx}
+            forModal={forModal}
+          />
+        </>
+      ) : (
+        <>
+          <form
+            ref={formContainerRef}
+            className={classes.formContainer}
+            onSubmit={prepGallarySearch}
+          >
+            <div className={classes.searchContainer}>
+              <input
+                className={classes.searchInput}
+                id="username"
+                ref={userInputRef}
+                onFocus={(e) => {
+                  setUserInputFocused(true);
+                  autofillHandler(e, true, "user");
+                }}
+                onBlur={(e) => {
+                  setUserInputFocused(false);
+                  autofillHandler(e, false, "user");
+                }}
+                autoComplete="off"
+                required
+              ></input>
+              <label>Username</label>
+              <div className={showUserResults ? classes.show : classes.hide}>
+                <UserResults users={users} />
+              </div>
+            </div>
+
+            <button
+              style={{
+                marginTop: dynamicSearchMargin,
+                transition: "all 200ms",
+              }}
+              formNoValidate
+              className={baseClasses.activeButton}
+            >
+              Search
+            </button>
+          </form>
+
+          <UserList />
+        </>
+      )}
     </>
   );
 };
