@@ -210,7 +210,18 @@ export function SearchProvider(props) {
       fetchAll = true;
     }
 
-    let fullQuery = `${searchValues["adjSearch"][idx]} ${searchValues["nounSearch"][idx]}`;
+    const formattedAdj = `${searchValues["adjSearch"][idx]
+      .charAt(0)
+      .toUpperCase()}${searchValues["adjSearch"][idx]
+      .substring(1)
+      .toLowerCase()}`;
+    const formattedNoun = `${searchValues["nounSearch"][idx]
+      .charAt(0)
+      .toUpperCase()}${searchValues["nounSearch"][idx]
+      .substring(1)
+      .toLowerCase()}`;
+
+    let fullQuery = `${formattedAdj} ${formattedNoun}`;
 
     let gallaryResults = { 60: [], 180: [], 300: [] };
     let totalDrawings = { 60: 0, 180: 0, 300: 0 };

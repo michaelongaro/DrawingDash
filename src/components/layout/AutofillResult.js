@@ -34,7 +34,7 @@ const AutofillResult = ({ word, type, idx }) => {
         cleanupResultRef.removeEventListener("mousedown", fillText);
       }
     };
-  }, []);
+  }, [word]);
 
   useEffect(() => {
     setLocalAdjIdx(searchCtx.searchValues["adjKeyboardNavigationIndex"][idx]);
@@ -58,6 +58,7 @@ const AutofillResult = ({ word, type, idx }) => {
         setPostHighlightedText(word.substring(userLength));
       }
 
+      // don't think these do anything atm
       if (highlightedUserIndex > 0) {
         setPreHighlightedText(word.substring(0, highlightedUserIndex));
         setHighlightedText(

@@ -100,7 +100,7 @@ const Search = ({ dbPath, margin, idx, forModal }) => {
   }
 
   function refreshUserSearch(event) {
-    searchCtx.updateUserSearchValues("userSearch", event.target.value.trim());
+    searchCtx.updateUserSearchValues("userSearch", event.target.value); // .trim()
 
     searchCtx.updateUserSearchValues("userKeyboardNavigationIndex", -1);
     setShowUserResults(true);
@@ -346,35 +346,41 @@ const Search = ({ dbPath, margin, idx, forModal }) => {
       }
 
       if (e.key === "Enter") {
-        if (showAdjResults && adjIdx !== -1) {
+        if (showAdjResults) {
           e.preventDefault();
 
           setShowAdjResults(false);
 
-          searchCtx.updateSearchValues(
-            "autofilledAdjectiveInput",
-            adjResults[adjIdx],
-            idx
-          );
-        } else if (showNounResults && nounIdx !== -1) {
+          if (adjIdx !== -1) {
+            searchCtx.updateSearchValues(
+              "autofilledAdjectiveInput",
+              adjResults[adjIdx],
+              idx
+            );
+          }
+        } else if (showNounResults) {
           e.preventDefault();
 
           setShowNounResults(false);
 
-          searchCtx.updateSearchValues(
-            "autofilledNounInput",
-            nounResults[nounIdx],
-            idx
-          );
-        } else if (showUserResults && userIdx !== -1) {
+          if (nounIdx !== -1) {
+            searchCtx.updateSearchValues(
+              "autofilledNounInput",
+              nounResults[nounIdx],
+              idx
+            );
+          }
+        } else if (showUserResults) {
           e.preventDefault();
 
           setShowUserResults(false);
 
-          searchCtx.updateUserSearchValues(
-            "autofilledUserInput",
-            userResults[userIdx]
-          );
+          if (userIdx !== -1) {
+            searchCtx.updateUserSearchValues(
+              "autofilledUserInput",
+              userResults[userIdx]
+            );
+          }
         }
       }
 

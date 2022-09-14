@@ -29,6 +29,10 @@
   padding: 0.25em 0 0.25em 0;
 }
 
+.autofillFormatting div {
+  white-space: pre;
+}
+
 .autofillRelatedDivider {
   display: flex;
   justify-content: center;
