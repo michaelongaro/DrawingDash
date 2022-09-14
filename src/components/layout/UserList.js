@@ -16,7 +16,7 @@ const UserList = ({
   idx = null,
   forModal = null,
 }) => {
-  const [dynamicWidth, setDynamicWidth] = useState(90);
+  const [dynamicWidth, setDynamicWidth] = useState(0);
   const [showEmptyResults, setShowEmptyResults] = useState(false);
 
   useEffect(() => {
@@ -30,7 +30,32 @@ const UserList = ({
     }
   }, [userIDs, forModal]);
 
-  // maybe just deal with widths n shiii after you have working prototype...
+  useEffect(() => {
+    // just for initial render
+    if (window.innerWidth > 1250) {
+      setDynamicWidth("90");
+    }
+    if (window.innerWidth > 750 && window.innerWidth <= 1250) {
+      setDynamicWidth("85");
+    } else {
+      setDynamicWidth("90");
+    }
+    function resizeHandler() {
+      if (window.innerWidth > 1250) {
+        setDynamicWidth("90");
+      }
+      if (window.innerWidth > 750 && window.innerWidth <= 1250) {
+        setDynamicWidth("85");
+      } else {
+        setDynamicWidth("90");
+      }
+    }
+
+    window.addEventListener("resize", resizeHandler);
+    return () => {
+      window.removeEventListener("resize", resizeHandler);
+    };
+  }, []);
 
   return (
     <>

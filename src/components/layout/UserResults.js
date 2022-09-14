@@ -1,3 +1,4 @@
+import { fromPairs } from "lodash";
 import React, { useEffect, useContext } from "react";
 import AutofillResult from "./AutofillResult";
 
@@ -12,7 +13,7 @@ const UserResults = ({ users }) => {
     if (searchCtx.userSearchValues["userSearch"] !== "") {
       getUsers();
     } else {
-      searchCtx.updateUserSearchValues("requestedUsers", []);
+      searchCtx.updateUserSearchValues({ requestedUsers: [] });
     }
   }, [searchCtx.userSearchValues["userSearch"]]);
 
@@ -60,12 +61,11 @@ const UserResults = ({ users }) => {
       }
 
       // updating context
-      searchCtx.updateUserSearchValues(
-        "requestedUsers",
-        ...new Set(totalResults)
-      );
+      searchCtx.updateUserSearchValues({
+        requestedUsers: Array.from(new Set(totalResults))[0],
+      });
     } else {
-      searchCtx.updateUserSearchValues("requestedUsers", []);
+      searchCtx.updateUserSearchValues({ requestedUsers: [] });
     }
   }
 

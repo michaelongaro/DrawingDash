@@ -31,7 +31,7 @@ const GallaryList = ({
 
   const location = useLocation();
 
-  const [dynamicWidth, setDyanmicWidth] = useState(0);
+  const [dynamicWidth, setDynamicWidth] = useState(0);
 
   const [resultsPerPage, setResultsPerPage] = useState(0);
   const [showEmptyResults, setShowEmptyResults] = useState(false);
@@ -142,35 +142,35 @@ const GallaryList = ({
     // just for initial render
 
     if (window.innerWidth > 1500 && !forDailyFeatured && !forModal) {
-      setDyanmicWidth("90");
+      setDynamicWidth("90");
     } else if (
       window.innerWidth < 1500 &&
       window.innerWidth > 1000 &&
       forDailyFeatured
     ) {
-      setDyanmicWidth("80");
+      setDynamicWidth("80");
     } else if (
       window.innerWidth < 1000 &&
       window.innerWidth > 750 &&
       forDailyFeatured
     ) {
-      setDyanmicWidth("90");
+      setDynamicWidth("90");
     } else if (
       window.innerWidth < 750 &&
       window.innerWidth > 500 &&
       forDailyFeatured
     ) {
-      setDyanmicWidth("100");
+      setDynamicWidth("100");
     } else if (window.innerWidth < 500 && forDailyFeatured) {
-      setDyanmicWidth("90");
+      setDynamicWidth("90");
     }
 
     if (forModal) {
-      setDyanmicWidth("100");
+      setDynamicWidth("100");
     }
 
     if (window.innerWidth <= 500 && !forDailyFeatured) {
-      setDyanmicWidth("100");
+      setDynamicWidth("100");
       setMinMobileWidthReached(true);
     } else if (window.innerWidth > 500 && !forDailyFeatured) {
       setMinMobileWidthReached(false);
@@ -178,35 +178,35 @@ const GallaryList = ({
 
     function resizeHandler() {
       if (window.innerWidth > 1500 && !forDailyFeatured && !forModal) {
-        setDyanmicWidth("90");
+        setDynamicWidth("90");
       } else if (
         window.innerWidth < 1500 &&
         window.innerWidth > 1000 &&
         forDailyFeatured
       ) {
-        setDyanmicWidth("80");
+        setDynamicWidth("80");
       } else if (
         window.innerWidth < 1000 &&
         window.innerWidth > 750 &&
         forDailyFeatured
       ) {
-        setDyanmicWidth("90");
+        setDynamicWidth("90");
       } else if (
         window.innerWidth < 750 &&
         window.innerWidth > 500 &&
         forDailyFeatured
       ) {
-        setDyanmicWidth("100");
+        setDynamicWidth("100");
       } else if (window.innerWidth < 500 && forDailyFeatured) {
-        setDyanmicWidth("90");
+        setDynamicWidth("90");
       }
 
       if (forModal) {
-        setDyanmicWidth("100");
+        setDynamicWidth("100");
       }
 
       if (window.innerWidth <= 500 && !forDailyFeatured) {
-        setDyanmicWidth("100");
+        setDynamicWidth("100");
         setMinMobileWidthReached(true);
       } else if (window.innerWidth > 500 && !forDailyFeatured) {
         setMinMobileWidthReached(false);

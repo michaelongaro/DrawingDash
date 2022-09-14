@@ -123,9 +123,12 @@ export function SearchProvider(props) {
     setSearchValues(tempValues);
   }
 
-  function updateUserSearchValues(key, newValue) {
+  function updateUserSearchValues(newValues) {
     let tempValues = { ...userSearchValues };
-    tempValues[key] = newValue;
+
+    for (const key of Object.keys(newValues)) {
+      tempValues[key] = newValues[key];
+    }
 
     setUserSearchValues(tempValues);
   }
@@ -189,7 +192,7 @@ export function SearchProvider(props) {
           }
         }
 
-        updateUserSearchValues("userIDList", userIDs.concat(relatedUserIDs));
+        updateUserSearchValues({ userIDList: userIDs.concat(relatedUserIDs) });
       }
     });
   }
@@ -432,6 +435,7 @@ export function SearchProvider(props) {
     searchValues: searchValues,
     userSearchValues: userSearchValues,
     pageSelectorDetails: pageSelectorDetails,
+    setUserSearchValues: setUserSearchValues,
     updateSearchValues: updateSearchValues,
     updateUserSearchValues: updateUserSearchValues,
     updatePageSelectorDetails: updatePageSelectorDetails,

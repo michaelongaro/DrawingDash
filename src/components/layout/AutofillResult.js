@@ -136,7 +136,7 @@ const AutofillResult = ({ word, type, idx }) => {
     } else if (type === "noun") {
       searchCtx.updateSearchValues("autofilledNounInput", word, idx);
     } else if (type === "user") {
-      searchCtx.updateUserSearchValues("autofilledUserInput", word);
+      searchCtx.updateUserSearchValues({ autofilledUserInput: word });
     }
   }
 

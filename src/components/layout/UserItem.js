@@ -17,6 +17,8 @@ const UserItem = ({ userID, settings, idx, dbPath, openedFromUserModal }) => {
 
   const dbRef = ref(getDatabase(app));
 
+  const [dynamicWidth, setDynamicWidth] = useState(0);
+
   const [isFetching, setIsFetching] = useState(true);
   const [username, setUsername] = useState(null);
   const [status, setStatus] = useState(null);
@@ -58,8 +60,29 @@ const UserItem = ({ userID, settings, idx, dbPath, openedFromUserModal }) => {
     }
   }, [hoveringOnProfilePicture]);
 
+  useEffect(() => {
+    // just for initial render
+    if (window.innerWidth > 750) {
+      setDynamicWidth("85");
+    } else {
+      setDynamicWidth("100");
+    }
+    function resizeHandler() {
+      if (window.innerWidth > 750) {
+        setDynamicWidth("85");
+      } else {
+        setDynamicWidth("100");
+      }
+    }
+
+    window.addEventListener("resize", resizeHandler);
+    return () => {
+      window.removeEventListener("resize", resizeHandler);
+    };
+  }, []);
+
   return (
-    <Card>
+    <Card width={dynamicWidth}>
       <div
         style={{
           gap: ".5em",

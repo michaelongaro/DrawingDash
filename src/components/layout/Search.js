@@ -100,9 +100,11 @@ const Search = ({ dbPath, margin, idx, forModal }) => {
   }
 
   function refreshUserSearch(event) {
-    searchCtx.updateUserSearchValues("userSearch", event.target.value); // .trim()
+    searchCtx.updateUserSearchValues({
+      userSearch: event.target.value,
+      userKeyboardNavigationIndex: -1,
+    });
 
-    searchCtx.updateUserSearchValues("userKeyboardNavigationIndex", -1);
     setShowUserResults(true);
 
     if (event.target.value === "") {
@@ -195,7 +197,7 @@ const Search = ({ dbPath, margin, idx, forModal }) => {
   }, [adjInputFocused, nounInputFocused, idx]);
 
   useEffect(() => {
-    searchCtx.updateUserSearchValues("inputIsFocused", userInputFocused);
+    searchCtx.updateUserSearchValues({ inputIsFocused: userInputFocused });
   }, [userInputFocused]);
 
   useEffect(() => {
@@ -290,10 +292,9 @@ const Search = ({ dbPath, margin, idx, forModal }) => {
           e.preventDefault();
 
           if (userIdx < userResults.length - 1) {
-            searchCtx.updateUserSearchValues(
-              "userKeyboardNavigationIndex",
-              userIdx + 1
-            );
+            searchCtx.updateUserSearchValues({
+              userKeyboardNavigationIndex: userIdx + 1,
+            });
           }
         }
       } else if (e.key === "ArrowUp") {
@@ -337,10 +338,9 @@ const Search = ({ dbPath, margin, idx, forModal }) => {
           e.preventDefault();
 
           if (userIdx > 0 && userIdx < userResults.length) {
-            searchCtx.updateUserSearchValues(
-              "userKeyboardNavigationIndex",
-              userIdx - 1
-            );
+            searchCtx.updateUserSearchValues({
+              userKeyboardNavigationIndex: userIdx - 1,
+            });
           }
         }
       }
@@ -376,10 +376,9 @@ const Search = ({ dbPath, margin, idx, forModal }) => {
           setShowUserResults(false);
 
           if (userIdx !== -1) {
-            searchCtx.updateUserSearchValues(
-              "autofilledUserInput",
-              userResults[userIdx]
-            );
+            searchCtx.updateUserSearchValues({
+              autofilledUserInput: userResults[userIdx],
+            });
           }
         }
       }
@@ -485,12 +484,10 @@ const Search = ({ dbPath, margin, idx, forModal }) => {
         userInputRef.current.value =
           searchCtx.userSearchValues["autofilledUserInput"];
 
-        searchCtx.updateUserSearchValues(
-          "userSearch",
-          searchCtx.userSearchValues["autofilledUserInput"]
-        );
-
-        searchCtx.updateUserSearchValues("autofilledUserInput", "");
+        searchCtx.updateUserSearchValues({
+          userSearch: searchCtx.userSearchValues["autofilledUserInput"],
+          autofilledUserInput: "",
+        });
       }
     }
   }, [searchCtx.userSearchValues["autofilledUserInput"], showUsers]);
@@ -529,7 +526,7 @@ const Search = ({ dbPath, margin, idx, forModal }) => {
     if (target === "user") {
       if (!focusedInsideUserInput) {
         setShowUserResults(false);
-        searchCtx.updateUserSearchValues("userKeyboardNavigationIndex", -1);
+        searchCtx.updateUserSearchValues({ userKeyboardNavigationIndex: -1 });
       } else {
         if (userInputRef.current.value.trim().length !== 0) {
           if (
@@ -669,18 +666,19 @@ const Search = ({ dbPath, margin, idx, forModal }) => {
   function prepUserSearch(event) {
     event.preventDefault();
 
-    searchCtx.updateUserSearchValues(
-      "submittedUsers",
-      userInputRef.current.value
-    );
+    searchCtx.updateUserSearchValues({
+      submittedUsers: userInputRef.current.value,
+    });
 
     // maybe do && searchCtx.userSearchValues("requestedUsers").length === 0 too?
     if (userInputRef.current.value.length !== 0) {
       searchCtx.getUsers();
 
       // clearing autofill + related context values
-      searchCtx.updateUserSearchValues("autofilledUserInput", "");
-      searchCtx.updateUserSearchValues("requestedUsers", []);
+      searchCtx.updateUserSearchValues({
+        autofilledUserInput: "",
+        requestedUsers: [],
+      });
     } else {
       searchCtx.resetUserSearchValues();
     }
