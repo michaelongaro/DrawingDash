@@ -1,15 +1,15 @@
-import React from "react";
-import { useState, useEffect, useContext, useRef } from "react";
+import React, { useState, useEffect, useContext, useRef } from "react";
 import { useLocation } from "react-router-dom";
 import { useAuth0 } from "@auth0/auth0-react";
 import { debounce } from "debounce";
 
-import ProfilePicture from "./ProfilePicture";
 import downloadDrawing from "../../util/downloadDrawing";
+
 import SearchContext from "./SearchContext";
 import FavoritesContext from "./FavoritesContext";
 import ModalContext from "./ModalContext";
 
+import ProfilePicture from "./ProfilePicture";
 import DrawingModal from "./DrawingModal";
 import UserModal from "./UserModal";
 import Card from "../../ui/Card";
@@ -122,11 +122,9 @@ const GallaryItem = ({
     if (!isLoading) {
       if (!isAuthenticated || (isAuthenticated && drawingDetails)) {
         if (location.pathname === "/" || location.pathname === "/explore") {
-          if (!ableToShowProfilePicture) {
-            setAbleToShowProfilePicture(
-              modalCtx.drawingModalOpened || !modalCtx.userModalOpened
-            );
-          }
+          setAbleToShowProfilePicture(
+            modalCtx.drawingModalOpened || !modalCtx.userModalOpened
+          );
         }
       }
     }
@@ -801,8 +799,8 @@ const GallaryItem = ({
               className={classes.bottomContain}
             >
               {/* profile image */}
-              {ableToShowProfilePicture ? (
-                showTempBaselineSkeleton || isFetching ? (
+              {ableToShowProfilePicture &&
+                (showTempBaselineSkeleton || isFetching ? (
                   <div
                     style={{
                       width: "3.3em",
@@ -823,6 +821,10 @@ const GallaryItem = ({
                     }}
                     onClick={(ev) => {
                       ev.stopPropagation();
+
+                      setHoveringOnProfilePicture(false);
+                      setHoveringOnUsernameTooltip(false);
+
                       if (!modalCtx.userModalOpened) {
                         setShowUserModal(true);
                         modalCtx.setUserModalOpened(true);
@@ -871,7 +873,7 @@ const GallaryItem = ({
                               : "scale(0)",
                           cursor: "pointer",
                           left: 0,
-                          top: "70px",
+                          top: "65px",
                         }}
                         className={classes.usernameTooltip}
                       >
@@ -879,8 +881,7 @@ const GallaryItem = ({
                       </div>
                     </div>
                   </div>
-                )
-              ) : null}
+                ))}
 
               {/* ----- drawingID data ----- */}
 

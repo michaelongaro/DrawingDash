@@ -3,7 +3,13 @@
   border: none;
   padding: 1em;
   cursor: pointer;
+  box-shadow: rgb(0 0 0 / 35%) 0 2px 4px;
   transition: all 200ms;
+}
+
+.searchTypeSelectorButton:active {
+  transform: scale(0.95);
+  filter: brightness(0.95);
 }
 
 .formContainer {

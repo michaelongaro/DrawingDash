@@ -706,6 +706,8 @@ const DrawingModal = ({
                     cursor: "pointer",
                     width: "50px",
                     height: "50px",
+                    borderRadius: "50%",
+                    boxShadow: "rgb(0 0 0 / 10%) 0 2px 4px",
                   }}
                   onClick={(ev) => {
                     ev.stopPropagation();
@@ -752,7 +754,7 @@ const DrawingModal = ({
                             : "scale(0)",
                         cursor: "pointer",
                         left: 0,
-                        top: "70px",
+                        top: "65px",
                       }}
                       className={classes.usernameTooltip}
                     >

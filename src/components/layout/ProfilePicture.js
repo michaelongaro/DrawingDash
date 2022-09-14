@@ -17,6 +17,8 @@ const ProfilePicture = ({ user, size }) => {
   const [shimmerStyle, setShimmerStyle] = useState(size);
   const [roundedProfileStyle, setRoundedProfileStyle] = useState(size);
 
+  const [exactSize, setExactSize] = useState(0);
+
   useEffect(() => {
     const timerID = setTimeout(() => setShowTempBaselineSkeleton(false), 500);
 
@@ -27,12 +29,15 @@ const ProfilePicture = ({ user, size }) => {
 
   useEffect(() => {
     if (size === "small") {
+      setExactSize("50px");
       setShimmerStyle(classes.shimmerSmall);
       setRoundedProfileStyle(classes.roundedProfileSmall);
     } else if (size === "medium") {
+      setExactSize("65px");
       setShimmerStyle(classes.shimmerMedium);
       setRoundedProfileStyle(classes.roundedProfileMedium);
-    } else {
+    } else if (size === "large") {
+      setExactSize("175px");
       setShimmerStyle(classes.shimmerLarge);
       setRoundedProfileStyle(classes.roundedProfileLarge);
     }
@@ -55,8 +60,8 @@ const ProfilePicture = ({ user, size }) => {
               (isFetching || showTempBaselineSkeleton) && !imageElementLoaded
                 ? "block"
                 : "none",
-            width: size === "small" ? "50px" : "65px",
-            height: size === "small" ? "50px" : "65px",
+            width: exactSize,
+            height: exactSize,
             borderRadius: "50%",
           }}
           className={baseClasses.skeletonLoading}

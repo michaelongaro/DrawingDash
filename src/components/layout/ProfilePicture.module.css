@@ -84,3 +84,46 @@
   width: 65px;
   height: 65px;
 }
+
+/* large styles */
+
+.shimmerLarge {
+  position: relative;
+  width: 175px;
+  height: 175px;
+  overflow: hidden;
+  border-radius: 50%;
+  box-shadow: rgb(0 0 0 / 30%) 0 2px 4px;
+  z-index: 200;
+}
+
+.shimmerLarge:hover:before {
+  position: absolute;
+  top: 0;
+  left: -275px;
+  content: "";
+  width: 100px;
+  height: 175px;
+  background: rgba(255, 255, 255, 0.6);
+  transform: skew(45deg);
+  /* transition: 0.1s; */
+  animation: shineLarge 0.6s ease;
+  animation-play-state: var(--shimmerPlayState);
+}
+
+@keyframes shineLarge {
+  from {
+    left: -250px;
+  }
+
+  to {
+    left: 250px;
+  }
+}
+
+.roundedProfileLarge {
+  border-radius: 50%;
+  object-fit: cover;
+  width: 175px;
+  height: 175px;
+}

@@ -78,9 +78,12 @@ const NounAutofillResults = ({ titles, checkForPair, idx }) => {
 
         // checking for related words (only applicable if there is text in noun input)
         if (
-          noun.includes(searchCtx.searchValues["nounSearch"][idx].toLowerCase())
+          noun.includes(
+            searchCtx.searchValues["nounSearch"][idx].toLowerCase()
+          ) &&
+          searchCtx.searchValues["nounSearch"][idx].length > 0
         ) {
-          if (!results.includes(noun)) {
+          if (!results.includes(noun) && !related_results.includes(noun)) {
             related_results.push(noun);
           }
         }
@@ -161,7 +164,7 @@ const NounAutofillResults = ({ titles, checkForPair, idx }) => {
         if (
           noun.includes(searchCtx.searchValues["nounSearch"][idx].toLowerCase())
         ) {
-          if (!results.includes(noun)) {
+          if (!results.includes(noun) && !related_results.includes(noun)) {
             related_results.push(noun);
           }
         }

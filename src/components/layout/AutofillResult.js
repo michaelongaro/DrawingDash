@@ -4,10 +4,8 @@ import SearchContext from "./SearchContext";
 
 import classes from "./AutofillResult.module.css";
 
-const AutofillResult = (props) => {
+const AutofillResult = ({ word, type, idx }) => {
   const searchCtx = useContext(SearchContext);
-
-  let idx = props.idx;
 
   const resultRef = useRef();
 
@@ -19,114 +17,131 @@ const AutofillResult = (props) => {
 
   const [localAdjIdx, setLocalAdjIdx] = useState(0);
   const [localNounIdx, setLocalNounIdx] = useState(0);
+  const [localUserIdx, setLocalUserIdx] = useState(0);
 
   const [localAdjectives, setLocalAdjectives] = useState([]);
   const [localNouns, setLocalNouns] = useState([]);
+  const [localUsers, setLocalUsers] = useState([]);
 
   useEffect(() => {
-    if (props.word !== "related") {
+    if (word !== "related") {
       resultRef.current.addEventListener("mousedown", fillText);
     }
 
     let cleanupResultRef = resultRef.current;
     return () => {
-      if (props.word !== "related") {
+      if (word !== "related") {
         cleanupResultRef.removeEventListener("mousedown", fillText);
       }
     };
   }, []);
 
   useEffect(() => {
-    setLocalAdjIdx(
-      searchCtx.searchValues["adjKeyboardNavigationIndex"][props.idx]
-    );
-    setLocalNounIdx(
-      searchCtx.searchValues["nounKeyboardNavigationIndex"][props.idx]
-    );
+    setLocalAdjIdx(searchCtx.searchValues["adjKeyboardNavigationIndex"][idx]);
+    setLocalNounIdx(searchCtx.searchValues["nounKeyboardNavigationIndex"][idx]);
+    setLocalUserIdx(searchCtx.userSearchValues["userKeyboardNavigationIndex"]);
 
-    setLocalAdjectives(
-      searchCtx.searchValues["requestedAdjectives"][props.idx]
-    );
-
-    setLocalNouns(searchCtx.searchValues["requestedNouns"][props.idx]);
-
-    // okay so here and in fillText function maybe add user equivalents here
-  }, [props, searchCtx.searchValues]);
+    setLocalAdjectives(searchCtx.searchValues["requestedAdjectives"][idx]);
+    setLocalNouns(searchCtx.searchValues["requestedNouns"][idx]);
+    setLocalUsers(searchCtx.userSearchValues["requestedUsers"]);
+  }, [idx, searchCtx.searchValues, searchCtx.userSearchValues]);
 
   useEffect(() => {
-    let highlightedAdjIndex = props.word
-      .toLowerCase()
-      .indexOf(searchCtx.searchValues["adjSearch"][idx].toLowerCase());
-    let highlightedNounIndex = props.word
-      .toLowerCase()
-      .indexOf(searchCtx.searchValues["nounSearch"][idx].toLowerCase());
+    if (type === "user") {
+      let highlightedUserIndex = word
+        .toLowerCase()
+        .indexOf(searchCtx.userSearchValues["userSearch"].toLowerCase());
+      let userLength = searchCtx.userSearchValues["userSearch"].length;
 
-    let adjLength = searchCtx.searchValues["adjSearch"][idx].length;
-    let nounLength = searchCtx.searchValues["nounSearch"][idx].length;
+      if (highlightedUserIndex === 0) {
+        setHighlightedText(word.substring(0, userLength));
+        setPostHighlightedText(word.substring(userLength));
+      }
 
-    // adjective highlighting
-    if (props.type === "adj" && highlightedAdjIndex === 0) {
-      setHighlightedText(props.word.substring(0, adjLength));
-      setPostHighlightedText(props.word.substring(adjLength));
+      if (highlightedUserIndex > 0) {
+        setPreHighlightedText(word.substring(0, highlightedUserIndex));
+        setHighlightedText(
+          word.substring(
+            highlightedUserIndex,
+            highlightedUserIndex + userLength
+          )
+        );
+        setPostHighlightedText(
+          word.substring(highlightedUserIndex + userLength)
+        );
+      }
+    } else {
+      let highlightedAdjIndex = word
+        .toLowerCase()
+        .indexOf(searchCtx.searchValues["adjSearch"][idx].toLowerCase());
+      let highlightedNounIndex = word
+        .toLowerCase()
+        .indexOf(searchCtx.searchValues["nounSearch"][idx].toLowerCase());
+
+      let adjLength = searchCtx.searchValues["adjSearch"][idx].length;
+      let nounLength = searchCtx.searchValues["nounSearch"][idx].length;
+
+      // adjective highlighting
+      if (type === "adj" && highlightedAdjIndex === 0) {
+        setHighlightedText(word.substring(0, adjLength));
+        setPostHighlightedText(word.substring(adjLength));
+      }
+
+      if (type === "adj" && highlightedAdjIndex > 0) {
+        setPreHighlightedText(word.substring(0, highlightedAdjIndex));
+        setHighlightedText(
+          word.substring(highlightedAdjIndex, highlightedAdjIndex + adjLength)
+        );
+        setPostHighlightedText(word.substring(highlightedAdjIndex + adjLength));
+      }
+
+      // noun highlighting
+      if (type === "noun" && highlightedNounIndex === 0) {
+        setHighlightedText(word.substring(0, nounLength));
+        setPostHighlightedText(word.substring(nounLength));
+      }
+
+      if (type === "noun" && highlightedNounIndex > 0) {
+        setPreHighlightedText(word.substring(0, highlightedNounIndex));
+        setHighlightedText(
+          word.substring(
+            highlightedNounIndex,
+            highlightedNounIndex + nounLength
+          )
+        );
+        setPostHighlightedText(
+          word.substring(highlightedNounIndex + nounLength)
+        );
+      }
+
+      // for suggested related word
+      if (type === "adj" && adjLength === 0) {
+        setPreHighlightedText("");
+        setHighlightedText(word);
+        setPostHighlightedText("");
+      }
+
+      if (type === "noun" && nounLength === 0) {
+        setPreHighlightedText("");
+        setHighlightedText(word);
+        setPostHighlightedText("");
+      }
     }
-
-    if (props.type === "adj" && highlightedAdjIndex > 0) {
-      setPreHighlightedText(props.word.substring(0, highlightedAdjIndex));
-      setHighlightedText(
-        props.word.substring(
-          highlightedAdjIndex,
-          highlightedAdjIndex + adjLength
-        )
-      );
-      setPostHighlightedText(
-        props.word.substring(highlightedAdjIndex + adjLength)
-      );
-    }
-
-    // noun highlighting
-    if (props.type === "noun" && highlightedNounIndex === 0) {
-      setHighlightedText(props.word.substring(0, nounLength));
-      setPostHighlightedText(props.word.substring(nounLength));
-    }
-
-    if (props.type === "noun" && highlightedNounIndex > 0) {
-      setPreHighlightedText(props.word.substring(0, highlightedNounIndex));
-      setHighlightedText(
-        props.word.substring(
-          highlightedNounIndex,
-          highlightedNounIndex + nounLength
-        )
-      );
-      setPostHighlightedText(
-        props.word.substring(highlightedNounIndex + nounLength)
-      );
-    }
-
-    // for suggested related word
-    if (props.type === "adj" && adjLength === 0) {
-      setPreHighlightedText("");
-      setHighlightedText(props.word);
-      setPostHighlightedText("");
-    }
-
-    if (props.type === "noun" && nounLength === 0) {
-      setPreHighlightedText("");
-      setHighlightedText(props.word);
-      setPostHighlightedText("");
-    }
-  }, [searchCtx.searchValues, props, idx]);
+  }, [searchCtx.searchValues, searchCtx.userSearchValues, word, type, idx]);
 
   function fillText() {
-    if (props.type === "adj") {
-      searchCtx.updateSearchValues("autofilledAdjectiveInput", props.word, idx);
-    } else {
-      searchCtx.updateSearchValues("autofilledNounInput", props.word, idx);
+    if (type === "adj") {
+      searchCtx.updateSearchValues("autofilledAdjectiveInput", word, idx);
+    } else if (type === "noun") {
+      searchCtx.updateSearchValues("autofilledNounInput", word, idx);
+    } else if (type === "user") {
+      searchCtx.updateUserSearchValues("autofilledUserInput", word);
     }
   }
 
   return (
     <>
-      {props.word === "related" ? (
+      {word === "related" ? (
         <div className={classes.autofillRelatedDivider}>
           <div className={classes.leadingLine}></div>
           <div>Related</div>
@@ -136,11 +151,12 @@ const AutofillResult = (props) => {
         <div
           style={{
             backgroundColor:
-              props.type === "adj"
-                ? localAdjectives[localAdjIdx] === props.word || hovering
-                  ? "#d7d7d7"
-                  : "#eeeeee"
-                : localNouns[localNounIdx] === props.word || hovering
+              (type === "adj" &&
+                (localAdjectives[localAdjIdx] === word || hovering)) ||
+              (type === "noun" &&
+                (localNouns[localNounIdx] === word || hovering)) ||
+              (type === "user" &&
+                (localUsers[localUserIdx] === word || hovering))
                 ? "#d7d7d7"
                 : "#eeeeee",
           }}

@@ -282,19 +282,12 @@ const UserModal = ({ user }) => {
           </div>
 
           <div className={classes.rightSide}>
-            {/* {isFetchingPinnedDrawings ? (
-              <div
-                style={{ width: "5em", height: "50%" }}
-                className={classes.skeletonLoading}
-              ></div>
-            ) : ( */}
             <SlideShow
               isFetchingPinnedDrawings={isFetchingPinnedDrawings}
               pinnedDrawings={pinnedDrawings}
               pinnedMetadata={pinnedMetadata}
               username={username}
             />
-            {/* )} */}
           </div>
         </div>
 

@@ -242,13 +242,13 @@
   justify-content: center;
   align-items: center;
 
-  width: 9em;
-  height: 5em;
+  max-width: 12em;
+  height: 4em;
   background: white;
 
   box-shadow: rgb(0 0 0 / 30%) 2px 4px 8px 0px;
   text-align: center;
-  padding: 1em;
+  padding: 0 1em;
   white-space: nowrap;
 
   border-radius: 1em;

@@ -4,9 +4,9 @@ import { useLocation } from "react-router-dom";
 
 import SearchContext from "./SearchContext";
 import GallaryList from "./GallaryList";
+import UserList from "./UserList";
 import AdjAutofillResults from "./AdjAutofillResults";
 import NounAutofillResults from "./NounAutofillResults";
-import UserList from "./UserList";
 import UserResults from "./UserResults";
 
 import GalleryIcon from "../../svgs/GalleryIcon";
@@ -77,7 +77,7 @@ const Search = ({ dbPath, margin, idx, forModal }) => {
     }
   }, [adjInputFocused, nounInputFocused, userInputFocused, mobileWidthReached]);
 
-  const refreshAdjSearch = (event) => {
+  function refreshAdjSearch(event) {
     searchCtx.updateSearchValues("adjSearch", event.target.value.trim(), idx);
 
     searchCtx.updateSearchValues("adjKeyboardNavigationIndex", -1, idx);
@@ -86,9 +86,9 @@ const Search = ({ dbPath, margin, idx, forModal }) => {
     if (event.target.value === "") {
       setShowAdjResults(false);
     }
-  };
+  }
 
-  const refreshNounSearch = (event) => {
+  function refreshNounSearch(event) {
     searchCtx.updateSearchValues("nounSearch", event.target.value.trim(), idx);
 
     searchCtx.updateSearchValues("nounKeyboardNavigationIndex", -1, idx);
@@ -97,9 +97,9 @@ const Search = ({ dbPath, margin, idx, forModal }) => {
     if (event.target.value === "") {
       setShowNounResults(false);
     }
-  };
+  }
 
-  const refreshUserSearch = (event) => {
+  function refreshUserSearch(event) {
     searchCtx.updateUserSearchValues("userSearch", event.target.value.trim());
 
     searchCtx.updateUserSearchValues("userKeyboardNavigationIndex", -1);
@@ -108,7 +108,7 @@ const Search = ({ dbPath, margin, idx, forModal }) => {
     if (event.target.value === "") {
       setShowUserResults(false);
     }
-  };
+  }
 
   useEffect(() => {
     // inital render
@@ -151,11 +151,14 @@ const Search = ({ dbPath, margin, idx, forModal }) => {
 
   useEffect(() => {
     if (
-      adjectiveInputRef.current.value === "" &&
-      nounInputRef.current.value === ""
+      adjectiveInputRef.current?.value === "" &&
+      nounInputRef.current?.value === ""
     ) {
       searchCtx.resetAllValues(idx);
     }
+    return () => {
+      searchCtx.resetUserSearchValues();
+    };
   }, []);
 
   useEffect(() => {
@@ -241,9 +244,11 @@ const Search = ({ dbPath, margin, idx, forModal }) => {
       // copying context values into smaller, more managable variable names
       let adjIdx = searchCtx.searchValues["adjKeyboardNavigationIndex"][idx];
       let nounIdx = searchCtx.searchValues["nounKeyboardNavigationIndex"][idx];
+      let userIdx = searchCtx.userSearchValues["userKeyboardNavigationIndex"];
 
       let adjResults = searchCtx.searchValues["requestedAdjectives"][idx];
       let nounResults = searchCtx.searchValues["requestedNouns"][idx];
+      let userResults = searchCtx.userSearchValues["requestedUsers"];
 
       if (e.key === "ArrowDown") {
         if (showAdjResults) {
@@ -280,6 +285,15 @@ const Search = ({ dbPath, margin, idx, forModal }) => {
                 idx
               );
             }
+          }
+        } else if (showUserResults) {
+          e.preventDefault();
+
+          if (userIdx < userResults.length - 1) {
+            searchCtx.updateUserSearchValues(
+              "userKeyboardNavigationIndex",
+              userIdx + 1
+            );
           }
         }
       } else if (e.key === "ArrowUp") {
@@ -319,6 +333,15 @@ const Search = ({ dbPath, margin, idx, forModal }) => {
               );
             }
           }
+        } else if (showUserResults) {
+          e.preventDefault();
+
+          if (userIdx > 0 && userIdx < userResults.length) {
+            searchCtx.updateUserSearchValues(
+              "userKeyboardNavigationIndex",
+              userIdx - 1
+            );
+          }
         }
       }
 
@@ -343,6 +366,15 @@ const Search = ({ dbPath, margin, idx, forModal }) => {
             nounResults[nounIdx],
             idx
           );
+        } else if (showUserResults && userIdx !== -1) {
+          e.preventDefault();
+
+          setShowUserResults(false);
+
+          searchCtx.updateUserSearchValues(
+            "autofilledUserInput",
+            userResults[userIdx]
+          );
         }
       }
 
@@ -351,6 +383,7 @@ const Search = ({ dbPath, margin, idx, forModal }) => {
 
         setShowAdjResults(false);
         setShowNounResults(false);
+        setShowUserResults(false);
       }
     }
 
@@ -359,10 +392,22 @@ const Search = ({ dbPath, margin, idx, forModal }) => {
     return () => {
       document.removeEventListener("keydown", arrowKeyHandler);
     };
-  }, [showAdjResults, showNounResults, searchCtx.searchValues]);
+  }, [
+    idx,
+    showAdjResults,
+    showNounResults,
+    showUserResults,
+    searchCtx.searchValues,
+    searchCtx.userSearchValues,
+  ]);
 
   useEffect(() => {
-    if (showDrawings) {
+    if (showDrawings && !showUsers) {
+      adjectiveInputRef.current.value = "";
+      nounInputRef.current.value = "";
+
+      searchCtx.resetAllValues(idx);
+
       onValue(ref(db, dbPath), (snapshot) => {
         if (snapshot.exists()) {
           setDBTitles(snapshot.val());
@@ -378,7 +423,11 @@ const Search = ({ dbPath, margin, idx, forModal }) => {
         cleanupAdjInputRef.removeEventListener("input", refreshAdjSearch);
         cleanupNInpRef.removeEventListener("input", refreshNounSearch);
       };
-    } else {
+    } else if (!showDrawings && showUsers) {
+      userInputRef.current.value = "";
+
+      searchCtx.resetUserSearchValues();
+
       onValue(ref(db, "users"), (snapshot) => {
         if (snapshot.exists()) {
           setUsers(snapshot.val());
@@ -389,10 +438,10 @@ const Search = ({ dbPath, margin, idx, forModal }) => {
 
       let cleanupUserInputRef = userInputRef.current;
       return () => {
-        cleanupUserInputRef.addEventListener("input", refreshUserSearch);
+        cleanupUserInputRef.removeEventListener("input", refreshUserSearch);
       };
     }
-  }, [showDrawings]);
+  }, [dbPath, idx, showDrawings, showUsers]);
 
   useEffect(() => {
     if (searchCtx.searchValues["autofilledAdjectiveInput"][idx].length > 0) {
@@ -407,7 +456,7 @@ const Search = ({ dbPath, margin, idx, forModal }) => {
 
       searchCtx.updateSearchValues("autofilledAdjectiveInput", "", idx);
     }
-  }, [searchCtx.searchValues["autofilledAdjectiveInput"][idx]]);
+  }, [searchCtx.searchValues["autofilledAdjectiveInput"][idx], idx]);
 
   useEffect(() => {
     if (searchCtx.searchValues["autofilledNounInput"][idx].length > 0) {
@@ -422,7 +471,23 @@ const Search = ({ dbPath, margin, idx, forModal }) => {
 
       searchCtx.updateSearchValues("autofilledNounInput", "", idx);
     }
-  }, [searchCtx.searchValues["autofilledNounInput"][idx]]);
+  }, [searchCtx.searchValues["autofilledNounInput"][idx], idx]);
+
+  useEffect(() => {
+    if (showUsers) {
+      if (searchCtx.userSearchValues["autofilledUserInput"].length > 0) {
+        userInputRef.current.value =
+          searchCtx.userSearchValues["autofilledUserInput"];
+
+        searchCtx.updateUserSearchValues(
+          "userSearch",
+          searchCtx.userSearchValues["autofilledUserInput"]
+        );
+
+        searchCtx.updateUserSearchValues("autofilledUserInput", "");
+      }
+    }
+  }, [searchCtx.userSearchValues["autofilledUserInput"], showUsers]);
 
   let autofillHandler = (event, isFocusing = null, target = null) => {
     let focusedInsideAdjInput, focusedInsideNounInput, focusedInsideUserInput;
@@ -444,27 +509,17 @@ const Search = ({ dbPath, margin, idx, forModal }) => {
         focusedInsideUserInput = false;
       }
     } else {
-      console.log(
-        showDrawings,
-        showUsers,
-        focusedInsideAdjInput,
-        focusedInsideNounInput,
-        focusedInsideUserInput,
-        isFocusing,
-        target
-      );
-      if (showDrawings) {
+      if (showDrawings && !showUsers) {
         focusedInsideAdjInput = adjectiveInputRef.current.contains(
           event.target
         );
         focusedInsideNounInput = nounInputRef.current.contains(event.target);
-      } else if (showUsers) {
+      } else if (!showDrawings && showUsers) {
         focusedInsideUserInput = userInputRef.current.contains(event.target);
       }
     }
 
     // user handling
-
     if (target === "user") {
       if (!focusedInsideUserInput) {
         setShowUserResults(false);
@@ -555,11 +610,7 @@ const Search = ({ dbPath, margin, idx, forModal }) => {
 
       searchCtx.updatePageSelectorDetails("durationToManuallyLoad", null, idx);
 
-      if (idx !== 0) {
-        searchCtx.getGallary(0, resultsPerPage, resultsPerPage, idx, dbPath);
-      } else {
-        searchCtx.getGallary(0, resultsPerPage, resultsPerPage, idx, dbPath);
-      }
+      searchCtx.getGallary(0, resultsPerPage, resultsPerPage, idx, dbPath);
 
       setGallaryListStaticTitle(
         `${searchCtx.searchValues["adjSearch"][idx]} ${searchCtx.searchValues["nounSearch"][idx]}`
@@ -609,9 +660,29 @@ const Search = ({ dbPath, margin, idx, forModal }) => {
     }
   }
 
+  function prepUserSearch(event) {
+    event.preventDefault();
+
+    searchCtx.updateUserSearchValues(
+      "submittedUsers",
+      userInputRef.current.value
+    );
+
+    // maybe do && searchCtx.userSearchValues("requestedUsers").length === 0 too?
+    if (userInputRef.current.value.length !== 0) {
+      searchCtx.getUsers();
+
+      // clearing autofill + related context values
+      searchCtx.updateUserSearchValues("autofilledUserInput", "");
+      searchCtx.updateUserSearchValues("requestedUsers", []);
+    } else {
+      searchCtx.resetUserSearchValues();
+    }
+  }
+
   return (
     <>
-      {location.pathname === "/explore" && (
+      {location.pathname === "/explore" && !forModal && (
         <div style={{ gap: "2em" }} className={baseClasses.baseFlex}>
           <button
             style={{
@@ -788,7 +859,7 @@ const Search = ({ dbPath, margin, idx, forModal }) => {
           <form
             ref={formContainerRef}
             className={classes.formContainer}
-            onSubmit={prepGallarySearch}
+            onSubmit={prepUserSearch}
           >
             <div className={classes.searchContainer}>
               <input
@@ -804,6 +875,7 @@ const Search = ({ dbPath, margin, idx, forModal }) => {
                   autofillHandler(e, false, "user");
                 }}
                 autoComplete="off"
+                spellCheck="false"
                 required
               ></input>
               <label>Username</label>
@@ -824,7 +896,13 @@ const Search = ({ dbPath, margin, idx, forModal }) => {
             </button>
           </form>
 
-          <UserList />
+          <UserList
+            userIDs={searchCtx.userSearchValues["userIDList"]}
+            username={"test"} // change this to be actual username prob
+            margin={margin}
+            databasePath={dbPath}
+            idx={idx}
+          />
         </>
       )}
     </>

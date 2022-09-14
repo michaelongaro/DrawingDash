@@ -78,9 +78,13 @@ const AdjAutofillResults = ({ titles, checkForPair, idx }) => {
         if (
           adjective.includes(
             searchCtx.searchValues["adjSearch"][idx].toLowerCase()
-          )
+          ) &&
+          searchCtx.searchValues["adjSearch"][idx].length > 0
         ) {
-          if (!results.includes(adjective)) {
+          if (
+            !results.includes(adjective) &&
+            !related_results.includes(adjective)
+          ) {
             related_results.push(adjective);
           }
         }
@@ -163,7 +167,10 @@ const AdjAutofillResults = ({ titles, checkForPair, idx }) => {
             searchCtx.searchValues["adjSearch"][idx].toLowerCase()
           )
         ) {
-          if (!results.includes(adjective)) {
+          if (
+            !results.includes(adjective) &&
+            !related_results.includes(adjective)
+          ) {
             related_results.push(adjective);
           }
         }
