@@ -174,9 +174,17 @@ function NavbarProfile({ forSidebar }) {
               className={baseClasses.skeletonLoading}
             ></div>
           ) : (
-            <div style={{ textAlign: "center" }}>{`Welcome${
-              firstTimeVisiting ? "," : " back,"
-            }${username ? ` ${username}!` : "!"}`}</div>
+            <div
+              style={{
+                textAlign: "center",
+                marginTop: ".25em",
+                background: "rgba(255,255,255,0.5)",
+                borderRadius: "1em",
+                padding: "0.15em 0.5em",
+              }}
+            >{`Welcome${firstTimeVisiting ? "," : " back,"}${
+              username ? ` ${username}!` : "!"
+            }`}</div>
           )}
         </div>
       ) : (
@@ -195,6 +203,9 @@ function NavbarProfile({ forSidebar }) {
                 style={{
                   overflow: "hidden",
                   whiteSpace: "nowrap",
+                  background: "rgba(255,255,255,0.5)",
+                  borderRadius: "1em",
+                  padding: "0.15em 0.5em",
                 }}
               >{`Welcome${firstTimeVisiting ? "," : " back,"}${
                 username ? ` ${username}!` : "!"
