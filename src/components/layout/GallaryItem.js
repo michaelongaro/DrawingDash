@@ -123,7 +123,8 @@ const GallaryItem = ({
       if (!isAuthenticated || (isAuthenticated && drawingDetails)) {
         if (location.pathname === "/" || location.pathname === "/explore") {
           setAbleToShowProfilePicture(
-            modalCtx.drawingModalOpened || !modalCtx.userModalOpened
+            (modalCtx.drawingModalOpened && !openedFromUserModal) ||
+              !modalCtx.userModalOpened
           );
         }
       }
@@ -133,6 +134,7 @@ const GallaryItem = ({
     isAuthenticated,
     location,
     ableToShowProfilePicture,
+    openedFromUserModal,
     modalCtx.drawingModalOpened,
     modalCtx.userModalOpened,
     drawingDetails,
