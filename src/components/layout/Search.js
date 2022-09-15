@@ -12,15 +12,7 @@ import UserResults from "./UserResults";
 import GalleryIcon from "../../svgs/GalleryIcon";
 import DefaultUserIcon from "../../svgs/DefaultUserIcon";
 
-import {
-  getDatabase,
-  ref,
-  set,
-  child,
-  get,
-  onValue,
-  update,
-} from "firebase/database";
+import { getDatabase, ref, onValue } from "firebase/database";
 
 import { app } from "../../util/init-firebase";
 
@@ -851,6 +843,7 @@ const Search = ({ dbPath, margin, idx, forModal }) => {
 
           <GallaryList
             drawingIDs={searchCtx.searchValues["gallary"][idx]}
+            dbPath={dbPath}
             title={gallaryListStaticTitle}
             margin={margin}
             databasePath={dbPath}

@@ -24,7 +24,7 @@ const UserList = ({
       if (userIDs.length === 0) {
         setShowEmptyResults(true);
       } else {
-        // hiding empty results if they are currently being shown
+        // hiding empty results if currently being shown
         setShowEmptyResults(false);
       }
     }
@@ -69,22 +69,7 @@ const UserList = ({
               className={classes.gridListContain}
             >
               {userIDs.map((userID, i) => (
-                <UserItem
-                  key={i}
-                  userID={userID}
-                  settings={{
-                    width: 100,
-                    forHomepage: false,
-                    forPinnedShowcase: false,
-                    forPinnedItem: false,
-                    skeleHeight: "10em",
-                    skeleDateWidth: "6em",
-                    skeleTitleWidth: "6em",
-                  }}
-                  idx={idx}
-                  dbPath={databasePath}
-                  openedFromUserModal={false}
-                />
+                <UserItem key={i} userID={userID} />
               ))}
             </div>
 

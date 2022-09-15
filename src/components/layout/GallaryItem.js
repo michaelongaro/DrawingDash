@@ -605,7 +605,7 @@ const GallaryItem = ({
         }}
         className={classes.modal}
       >
-        {loadUserModal && <UserModal user={drawingDetails.drawnBy} />}
+        {loadUserModal && <UserModal userID={drawingDetails.drawnBy} />}
       </div>
 
       {/* drawing modal */}

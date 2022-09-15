@@ -109,9 +109,9 @@ const SlideShow = ({
   };
 
   useEffect(() => {
-    if (!isFetchingPinnedDrawings) {
+    if (!isFetchingPinnedDrawings && pinnedMetadata) {
       setCurrentSlideshowTitle(
-        pinnedMetadata[0] === undefined ? "" : pinnedMetadata[0].title
+        pinnedMetadata[0] === "" ? "" : pinnedMetadata[0].title
       );
     }
   }, [isFetchingPinnedDrawings, pinnedMetadata]);

@@ -1,4 +1,3 @@
-import { fromPairs } from "lodash";
 import React, { useEffect, useContext } from "react";
 import AutofillResult from "./AutofillResult";
 
@@ -55,9 +54,9 @@ const UserResults = ({ users }) => {
     related_results.sort().splice(3);
 
     if (results.length !== 0) {
+      totalResults.push(results);
       if (related_results.length !== 0) {
-      } else {
-        totalResults.push(results);
+        totalResults.push(related_results);
       }
 
       // updating context

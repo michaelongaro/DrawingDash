@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef, useContext } from "react";
 
+import { isEqual } from "lodash";
 import SlideShow from "./SlideShow";
 
 import Search from "./Search";
@@ -11,7 +12,6 @@ import ProfilePictureUpdateContext from "./ProfilePictureUpdateContext";
 import {
   getDatabase,
   ref as ref_database,
-  onValue,
   child,
   get,
 } from "firebase/database";
@@ -19,7 +19,6 @@ import {
 import {
   getDownloadURL,
   getStorage,
-  getMetadata,
   ref as ref_storage,
 } from "firebase/storage";
 
@@ -28,7 +27,7 @@ import { app } from "../../util/init-firebase";
 import classes from "./UserModal.module.css";
 import baseClasses from "../../index.module.css";
 
-const UserModal = ({ user }) => {
+const UserModal = ({ userID }) => {
   const modalCtx = useContext(ModalContext);
   const searchCtx = useContext(SearchContext);
   const PFPUpdateCtx = useContext(ProfilePictureUpdateContext);
@@ -52,8 +51,8 @@ const UserModal = ({ user }) => {
   const [showTempBaselineSkeleton, setShowTempBaselineSkeleton] =
     useState(true);
 
-  const [pinnedMetadata, setPinnedMetadata] = useState([]);
-  const [pinnedDrawings, setPinnedDrawings] = useState([]);
+  const [pinnedMetadata, setPinnedMetadata] = useState(null);
+  const [pinnedDrawings, setPinnedDrawings] = useState(null);
 
   useEffect(() => {
     const timerID = setTimeout(() => setShowTempBaselineSkeleton(false), 500);
@@ -114,12 +113,12 @@ const UserModal = ({ user }) => {
 
   useEffect(() => {
     // fetch data from db if it is present
-    get(child(dbRef, `users/${user}/preferences`)).then((snapshot) => {
+    get(child(dbRef, `users/${userID}/preferences`)).then((snapshot) => {
       if (snapshot.exists()) {
         setUsername(snapshot.val()["username"]);
         setStatus(snapshot.val()["status"]);
 
-        get(child(dbRef, `users/${user}/pinnedArt`)).then((snapshot2) => {
+        get(child(dbRef, `users/${userID}/pinnedArt`)).then((snapshot2) => {
           if (snapshot2.exists()) {
             // for the time being just doing this
             fetchPinnedMetadata(Object.values(snapshot2.val()));
@@ -129,7 +128,7 @@ const UserModal = ({ user }) => {
       }
     });
 
-    PFPUpdateCtx.fetchProfilePicture(user, setImage);
+    PFPUpdateCtx.fetchProfilePicture(userID, setImage);
   }, []);
 
   useEffect(() => {
@@ -145,6 +144,11 @@ const UserModal = ({ user }) => {
   }, [pinnedMetadata, pinnedDrawings]);
 
   function fetchPinnedMetadata(ids) {
+    if (isEqual(ids, ["", "", ""])) {
+      setPinnedMetadata(["", "", ""]);
+      return;
+    }
+
     const tempMetadata = ["", "", ""];
 
     get(child(dbRef, `drawings/${ids[0]}`))
@@ -185,7 +189,12 @@ const UserModal = ({ user }) => {
   }
 
   function fetchPinnedDrawings(ids) {
-    const tempDrawings = ["", "", ""];
+    if (isEqual(ids, ["", "", ""])) {
+      setPinnedDrawings([undefined, undefined, undefined]);
+      return;
+    }
+
+    const tempDrawings = [undefined, undefined, undefined];
 
     getDownloadURL(ref_storage(storage, `drawings/${ids[0]}.jpg`))
       .then((url) => {
@@ -291,7 +300,7 @@ const UserModal = ({ user }) => {
           </div>
         </div>
 
-        <Search dbPath={`users/${user}/titles`} idx={1} forModal={true} />
+        <Search dbPath={`users/${userID}/titles`} idx={1} forModal={true} />
       </div>
     </div>
   );

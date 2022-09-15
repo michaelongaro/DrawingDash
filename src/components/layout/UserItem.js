@@ -12,7 +12,7 @@ import { app } from "../../util/init-firebase";
 
 import baseClasses from "../../index.module.css";
 
-const UserItem = ({ userID, settings, idx, dbPath, openedFromUserModal }) => {
+const UserItem = ({ userID }) => {
   const modalCtx = useContext(ModalContext);
 
   const dbRef = ref(getDatabase(app));
@@ -191,7 +191,7 @@ const UserItem = ({ userID, settings, idx, dbPath, openedFromUserModal }) => {
         }}
         className={baseClasses.modal}
       >
-        {loadUserModal && <UserModal user={userID} />}
+        {loadUserModal && <UserModal userID={userID} />}
       </div>
     </Card>
   );

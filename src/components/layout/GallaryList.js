@@ -1,9 +1,7 @@
 import React, { useState, useEffect, useContext } from "react";
 
-import { useAuth0 } from "@auth0/auth0-react";
 import { isEqual } from "lodash";
 import { Link } from "react-router-dom";
-import { useLocation } from "react-router-dom";
 
 import SearchContext from "./SearchContext";
 import Card from "../../ui/Card";
@@ -16,15 +14,7 @@ import OneMinuteIcon from "../../svgs/OneMinuteIcon";
 import ThreeMinuteIcon from "../../svgs/ThreeMinuteIcon";
 import MagnifyingGlassIcon from "../../svgs/MagnifyingGlassIcon";
 
-import {
-  getDatabase,
-  ref,
-  set,
-  child,
-  get,
-  onValue,
-  update,
-} from "firebase/database";
+import { getDatabase, ref, child, get } from "firebase/database";
 
 import { app } from "../../util/init-firebase";
 
@@ -33,6 +23,7 @@ import baseClasses from "../../index.module.css";
 
 const GallaryList = ({
   drawingIDs,
+  dbPath = null,
   title = null,
   margin = null,
   databasePath = null,
@@ -41,11 +32,8 @@ const GallaryList = ({
   forDailyFeatured = false,
 }) => {
   const dbRef = ref(getDatabase(app));
-  const { isLoading, isAuthenticated, user } = useAuth0();
 
   const searchCtx = useContext(SearchContext);
-
-  const location = useLocation();
 
   const [dynamicWidth, setDynamicWidth] = useState(0);
 
@@ -157,18 +145,14 @@ const GallaryList = ({
   ]);
 
   useEffect(() => {
-    if (
-      !isLoading &&
-      isAuthenticated &&
-      location.pathname === "/profile/gallery"
-    ) {
-      get(child(dbRef, `users/${user.sub}/titles`)).then((snapshot) => {
+    if (dbPath) {
+      get(child(dbRef, dbPath)).then((snapshot) => {
         if (!snapshot.exists()) {
           setNoUserTitlesExist(true);
         }
       });
     }
-  }, [isLoading, isAuthenticated, user, location.pathname]);
+  }, [dbPath]);
 
   useEffect(() => {
     // just for initial render
@@ -646,24 +630,39 @@ const GallaryList = ({
                 }}
                 className={baseClasses.baseVertFlex}
               >
-                {noUserTitlesExist &&
-                location.pathname === "/profile/gallery" ? (
+                {noUserTitlesExist ? (
                   <>
-                    <div style={{ fontSize: "20px" }}>No drawings found</div>
-                    <div
-                      style={{ height: "125px" }}
-                      className={baseClasses.animatedRainbow}
-                    >
-                      <Link
-                        to="/daily-drawings"
-                        className={baseClasses.baseFlex}
-                      >
-                        Start Your First Drawing!
-                      </Link>
-                    </div>
-                    <div style={{ fontSize: "20px", textAlign: "center" }}>
-                      and return here to view your masterpiece!
-                    </div>
+                    {idx !== 2 ? (
+                      <>
+                        <MagnifyingGlassIcon
+                          dimensions={"4.5em"}
+                          color={"black"}
+                        />
+                        <div style={{ fontSize: "20px" }}>
+                          No drawings found
+                        </div>
+                      </>
+                    ) : (
+                      <>
+                        <div style={{ fontSize: "20px" }}>
+                          No drawings found
+                        </div>
+                        <div
+                          style={{ height: "125px" }}
+                          className={baseClasses.animatedRainbow}
+                        >
+                          <Link
+                            to="/daily-drawings"
+                            className={baseClasses.baseFlex}
+                          >
+                            Start Your First Drawing!
+                          </Link>
+                        </div>
+                        <div style={{ fontSize: "20px", textAlign: "center" }}>
+                          and return here to view your masterpiece!
+                        </div>
+                      </>
+                    )}
                   </>
                 ) : (
                   <>

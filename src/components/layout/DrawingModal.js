@@ -539,7 +539,7 @@ const DrawingModal = ({
           }}
           className={classes.modal}
         >
-          {loadUserModal && <UserModal user={drawingMetadata.drawnBy} />}
+          {loadUserModal && <UserModal userID={drawingMetadata.drawnBy} />}
         </div>
 
         {/* image container */}
