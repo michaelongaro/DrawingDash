@@ -25,16 +25,11 @@ import classes from "./MainNavigation.module.css";
 import baseClasses from "../../index.module.css";
 
 function NavbarProfile({ forSidebar }) {
+  const { user, isLoading, isAuthenticated } = useAuth0();
+  const db = getDatabase(app);
+
   // context to determine whether profile picture needs to be refetched
   const PFPUpdateCtx = useContext(ProfilePictureUpdateContext);
-
-  // auth0 states
-  const { user, isLoading, isAuthenticated } = useAuth0();
-
-  // firebase references
-  const db = getDatabase(app);
-  const dbRef = ref_database(getDatabase(app));
-  // const storage = getStorage();
 
   const profilePictureRef = useRef(null);
 
@@ -64,28 +59,41 @@ function NavbarProfile({ forSidebar }) {
 
   useEffect(() => {
     if (!isLoading && isAuthenticated) {
+      let timerID;
+
       onValue(ref_database(db, `users/${user.sub}/preferences`), (snapshot) => {
         if (snapshot.exists()) {
           setUsername(snapshot.val()["username"]);
         }
       });
 
-      get(child(dbRef, `users/${user.sub}/firstTimeVisiting`)).then(
+      onValue(
+        ref_database(db, `users/${user.sub}/firstTimeVisiting`),
         (snapshot) => {
           if (snapshot.exists()) {
             if (snapshot.val()) {
+              console.log("was able to find it");
+              // delay to allow base pfp to be uploaded to storage
+              timerID = setTimeout(() => {
+                PFPUpdateCtx.fetchProfilePicture(user.sub, setImage);
+              }, 1000);
+
               set(
                 ref_database(db, `users/${user.sub}/firstTimeVisiting`),
                 false
               );
             } else {
               setFirstTimeVisiting(false);
+
+              PFPUpdateCtx.fetchProfilePicture(user.sub, setImage);
             }
           }
         }
       );
 
-      PFPUpdateCtx.fetchProfilePicture(user.sub, setImage);
+      return () => {
+        clearTimeout(timerID);
+      };
     }
   }, [isLoading, isAuthenticated]);
 

@@ -2,13 +2,8 @@ import { useState, useEffect } from "react";
 
 import { useAuth0 } from "@auth0/auth0-react";
 
-import { getDatabase, ref, set, child, get, update } from "firebase/database";
-import {
-  getDownloadURL,
-  getStorage,
-  ref as ref_storage,
-  uploadBytes,
-} from "firebase/storage";
+import { getDatabase, ref, set, child, get } from "firebase/database";
+import { getStorage, ref as ref_storage, uploadBytes } from "firebase/storage";
 
 import { app } from "../util/init-firebase";
 
@@ -102,7 +97,7 @@ const LogOutButton = ({ borderRadius = "0 0 1em 1em", gap = ".5em" }) => {
                 });
 
                 // adding drawing to user titles
-                set(ref(db, `users/${user.sub}/titles/${seconds}/${id}`), {
+                set(ref(db, `users/${user.sub}/titles/${seconds}/${title}`), {
                   drawingID: [id],
                 });
               }
@@ -153,7 +148,6 @@ const LogOutButton = ({ borderRadius = "0 0 1em 1em", gap = ".5em" }) => {
             createExtraPrompt();
 
             // setting default preferences (username, status, profile picture)
-
             fetch(
               "https://random-word-form.herokuapp.com/random/adjective"
             ).then((res) =>

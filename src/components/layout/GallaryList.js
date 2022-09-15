@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useContext } from "react";
 
+import { useAuth0 } from "@auth0/auth0-react";
 import { isEqual } from "lodash";
 import { Link } from "react-router-dom";
 import { useLocation } from "react-router-dom";
@@ -15,6 +16,18 @@ import OneMinuteIcon from "../../svgs/OneMinuteIcon";
 import ThreeMinuteIcon from "../../svgs/ThreeMinuteIcon";
 import MagnifyingGlassIcon from "../../svgs/MagnifyingGlassIcon";
 
+import {
+  getDatabase,
+  ref,
+  set,
+  child,
+  get,
+  onValue,
+  update,
+} from "firebase/database";
+
+import { app } from "../../util/init-firebase";
+
 import classes from "./GallaryList.module.css";
 import baseClasses from "../../index.module.css";
 
@@ -27,6 +40,9 @@ const GallaryList = ({
   forModal = null,
   forDailyFeatured = false,
 }) => {
+  const dbRef = ref(getDatabase(app));
+  const { isLoading, isAuthenticated, user } = useAuth0();
+
   const searchCtx = useContext(SearchContext);
 
   const location = useLocation();
@@ -50,6 +66,8 @@ const GallaryList = ({
   const [minMobileWidthReached, setMinMobileWidthReached] = useState(false);
 
   const [currentlyShownDuration, setCurrentlyShownDuration] = useState();
+
+  const [noUserTitlesExist, setNoUserTitlesExist] = useState(false);
 
   useEffect(() => {
     return () => {
@@ -137,6 +155,20 @@ const GallaryList = ({
     resultsPerPage,
     searchCtx.pageSelectorDetails,
   ]);
+
+  useEffect(() => {
+    if (
+      !isLoading &&
+      isAuthenticated &&
+      location.pathname === "/profile/gallery"
+    ) {
+      get(child(dbRef, `users/${user.sub}/titles`)).then((snapshot) => {
+        if (!snapshot.exists()) {
+          setNoUserTitlesExist(true);
+        }
+      });
+    }
+  }, [isLoading, isAuthenticated, user, location.pathname]);
 
   useEffect(() => {
     // just for initial render
@@ -614,15 +646,22 @@ const GallaryList = ({
                 }}
                 className={baseClasses.baseVertFlex}
               >
-                {idx === 1 && location.pathname === "/profile/gallery" ? (
+                {noUserTitlesExist &&
+                location.pathname === "/profile/gallery" ? (
                   <>
                     <div style={{ fontSize: "20px" }}>No drawings found</div>
-                    <div className={baseClasses.animatedRainbow}>
-                      <Link to="/daily-drawings">
+                    <div
+                      style={{ height: "125px" }}
+                      className={baseClasses.animatedRainbow}
+                    >
+                      <Link
+                        to="/daily-drawings"
+                        className={baseClasses.baseFlex}
+                      >
                         Start Your First Drawing!
                       </Link>
                     </div>
-                    <div style={{ fontSize: "20px" }}>
+                    <div style={{ fontSize: "20px", textAlign: "center" }}>
                       and return here to view your masterpiece!
                     </div>
                   </>
