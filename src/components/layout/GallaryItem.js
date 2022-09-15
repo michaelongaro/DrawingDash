@@ -388,8 +388,7 @@ const GallaryItem = ({
   }, [favoritesCtx.favoriteWasRemoved, idx]);
 
   function updateGallaryListAndPageSelector() {
-    // if removing like would leave no drawings on current page, then
-    // shift currentPageNumber down by one.
+    // if removing like would leave no drawings on current page
     if (
       (searchCtx.pageSelectorDetails["totalDrawingsByDuration"][idx][
         drawingDetails.seconds
@@ -398,22 +397,43 @@ const GallaryItem = ({
         resultsPerPage ===
       0
     ) {
-      searchCtx.getGallary(
-        (searchCtx.pageSelectorDetails["currentPageNumber"][idx] - 2) *
-          resultsPerPage,
-        (searchCtx.pageSelectorDetails["currentPageNumber"][idx] - 1) *
-          resultsPerPage,
-        resultsPerPage,
-        idx,
-        dbPath
-      );
+      // if there are now no drawings left for that duration
+      if (
+        searchCtx.pageSelectorDetails["totalDrawingsByDuration"][idx][
+          drawingDetails.seconds
+        ] -
+          1 ===
+        0
+      ) {
+        searchCtx.getGallary(0, resultsPerPage, resultsPerPage, idx, dbPath);
 
-      // updating page number to reflect change
-      searchCtx.updatePageSelectorDetails(
-        "currentPageNumber",
-        searchCtx.pageSelectorDetails["currentPageNumber"][idx] - 1,
-        idx
-      );
+        // updating page number + manual loaded field to reflect change
+        searchCtx.updatePageSelectorDetails(
+          "durationToManuallyLoad",
+          null,
+          idx
+        );
+
+        searchCtx.updatePageSelectorDetails("currentPageNumber", 1, idx);
+      } else {
+        // if there are still extra drawings for that duration
+        searchCtx.getGallary(
+          (searchCtx.pageSelectorDetails["currentPageNumber"][idx] - 2) *
+            resultsPerPage,
+          (searchCtx.pageSelectorDetails["currentPageNumber"][idx] - 1) *
+            resultsPerPage,
+          resultsPerPage,
+          idx,
+          dbPath
+        );
+
+        // updating page number to reflect change
+        searchCtx.updatePageSelectorDetails(
+          "currentPageNumber",
+          searchCtx.pageSelectorDetails["currentPageNumber"][idx] - 1,
+          idx
+        );
+      }
     } else {
       searchCtx.getGallary(
         (searchCtx.pageSelectorDetails["currentPageNumber"][idx] - 1) *
