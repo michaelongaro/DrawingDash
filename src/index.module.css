@@ -338,8 +338,19 @@ h6 {
 
 @media (hover: none) and (pointer: coarse) {
   .animatedRainbow {
-    animation-duration: 300s;
+    background-size: 1000%;
+    animation-duration: 25s;
     animation-play-state: running;
+  }
+
+  @keyframes colors {
+    0% {
+      background-position: 0% 0%;
+    }
+
+    100% {
+      background-position: 100% 100%;
+    }
   }
 }
 
