@@ -315,7 +315,7 @@ h6 {
   background-size: 100000px;
   background-repeat: repeat;
   animation-name: colors;
-  animation-duration: 150s;
+  animation-duration: 100s;
   animation-iteration-count: infinite;
   animation-direction: normal;
   animation-play-state: paused;
@@ -339,7 +339,6 @@ h6 {
 @media (hover: none) and (pointer: coarse) {
   .animatedRainbow {
     background-size: 10000px;
-    animation-duration: 100s;
     animation-play-state: running;
   }
 
