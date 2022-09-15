@@ -275,7 +275,7 @@ const UserModal = ({ user }) => {
               />
             )}
 
-            <div style={{ marginTop: "1em" }}>{username}</div>
+            <div style={{ marginTop: "1em", fontWeight: 600 }}>{username}</div>
             <div style={{ textAlign: "center" }}>
               <i>"{status}"</i>
             </div>

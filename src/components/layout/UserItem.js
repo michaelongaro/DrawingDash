@@ -159,6 +159,7 @@ const UserItem = ({ userID, settings, idx, dbPath, openedFromUserModal }) => {
           <div
             style={{
               marginTop: "1em",
+              fontWeight: 600,
             }}
           >
             {username}

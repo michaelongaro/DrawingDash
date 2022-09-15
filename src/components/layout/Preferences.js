@@ -738,7 +738,7 @@ const Preferences = () => {
                   className={baseClasses.skeletonLoading}
                 ></div>
               ) : (
-                <div>{username}</div>
+                <div style={{ fontWeight: 600 }}>{username}</div>
               )}
             </div>
             <div style={{ marginTop: "0.5em" }}>
