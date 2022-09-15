@@ -33,7 +33,7 @@ const Likes = () => {
             >
               <div>You haven't liked any drawings yet.</div>
               <div style={{ gap: ".5em" }} className={baseClasses.baseFlex}>
-                <HeartFilledIcon dimensions={"2em"} /> some to view them here!
+                <HeartFilledIcon dimensions={"1.5em"} /> some to view them here!
               </div>
             </div>
           ) : (
