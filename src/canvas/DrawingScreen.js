@@ -450,7 +450,6 @@ const DrawingScreen = () => {
       title: title,
       seconds: DSCtx.drawingTime,
       date: `${month}/${day}/${year}`,
-      drawnBy: null,
       averageColor: averageImageRGB,
       index: uniqueID,
     };

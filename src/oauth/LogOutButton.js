@@ -62,10 +62,10 @@ const LogOutButton = ({ borderRadius = "0 0 1em 1em", gap = ".5em" }) => {
                 });
 
                 // adding to drawings
-                set(
-                  ref(db, `drawings/${id}`),
-                  Object.values(currentUserInfo["drawingMetadata"])[index]
-                );
+                set(ref(db, `drawings/${id}`), {
+                  ...Object.values(currentUserInfo["drawingMetadata"])[index],
+                  drawnBy: user.sub,
+                });
 
                 // adding drawing object to storage
                 fetch(Object.values(currentUserInfo["drawings"])[index])
