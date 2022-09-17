@@ -57,7 +57,7 @@ function Layout(props) {
           );
         }
       }
-    }, 1600);
+    }, 500);
 
     function resizeHandler() {
       if (DSCtx.extendLayoutHeight) {
