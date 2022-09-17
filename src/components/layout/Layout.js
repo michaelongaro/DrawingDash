@@ -11,14 +11,15 @@ function Layout(props) {
   const DSCtx = useContext(DrawingSelectionContext);
 
   const [dynamicHeight, setDynamicHeight] = useState("87.5vh");
-  // debugger;
+
   useEffect(() => {
     // just for initial render, setTimeout so layout has time to fully settle
+    // this is workaround that should be fixed, either by automatically showing larger height
+    // and shrinking once it can "find" element which should never leave the DOM...
     setTimeout(() => {
       if (DSCtx.extendLayoutHeight) {
         setDynamicHeight("107vh");
       } else if (DSCtx.showPromptSelection) {
-        // was 778 i think
         if (window.innerWidth > 1200 && window.innerHeight > 900) {
           setDynamicHeight("87.5vh");
         } else {
@@ -51,13 +52,12 @@ function Layout(props) {
         } else if (window.innerHeight > 929) {
           setDynamicHeight("800px"); // trying to account for huge heights like an ipad..
         } else {
-          // setDynamicHeight("100vh");
           setDynamicHeight(
             `${window.innerHeight + (750 - window.innerHeight)}px`
           );
         }
       }
-    }, 500);
+    }, 1600);
 
     function resizeHandler() {
       if (DSCtx.extendLayoutHeight) {
@@ -95,7 +95,6 @@ function Layout(props) {
         } else if (window.innerHeight > 929) {
           setDynamicHeight("800px"); // trying to account for huge heights like an ipad..
         } else {
-          // setDynamicHeight(`${100 + (929 - window.innerHeight)}vh`);
           setDynamicHeight(
             `${window.innerHeight + (750 - window.innerHeight)}px`
           );
