@@ -175,7 +175,7 @@ const UserItem = ({ userID }) => {
             className={baseClasses.skeletonLoading}
           ></div>
         ) : (
-          <div>
+          <div style={{ textAlign: "center" }}>
             <i>"{status}"</i>
           </div>
         )}
