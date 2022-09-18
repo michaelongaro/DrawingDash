@@ -13,51 +13,47 @@ function Layout(props) {
   const [dynamicHeight, setDynamicHeight] = useState("87.5vh");
 
   useEffect(() => {
-    // just for initial render, setTimeout so layout has time to fully settle
-    // this is workaround that should be fixed, either by automatically showing larger height
-    // and shrinking once it can "find" element which should never leave the DOM...
-    setTimeout(() => {
-      if (DSCtx.extendLayoutHeight) {
-        setDynamicHeight("107vh");
-      } else if (DSCtx.showPromptSelection) {
-        if (window.innerWidth > 1200 && window.innerHeight > 900) {
-          setDynamicHeight("87.5vh");
+    // just for initial (re)render
+    if (DSCtx.extendLayoutHeight) {
+      setDynamicHeight("107vh");
+    } else if (DSCtx.showPromptSelection) {
+      if (window.innerWidth > 1200 && window.innerHeight > 900) {
+        setDynamicHeight("87.5vh");
+      } else {
+        if (DSCtx.extraPromptsShown) {
+          if (document.getElementById("extraPromptContainer")) {
+            setDynamicHeight(
+              document
+                .getElementById("extraPromptContainer")
+                .getBoundingClientRect().height + 392
+            );
+          }
         } else {
-          if (DSCtx.extraPromptsShown) {
-            if (document.getElementById("extraPromptContainer")) {
-              setDynamicHeight(
-                document
-                  .getElementById("extraPromptContainer")
-                  .getBoundingClientRect().height + 392
-              );
-            }
-          } else {
-            if (document.getElementById("normalPromptContainer")) {
-              setDynamicHeight(
-                document
-                  .getElementById("normalPromptContainer")
-                  .getBoundingClientRect().height + 392
-              );
-            }
+          if (document.getElementById("normalPromptContainer")) {
+            setDynamicHeight(
+              document
+                .getElementById("normalPromptContainer")
+                .getBoundingClientRect().height + 392
+            );
           }
         }
-      } else if (DSCtx.showPaletteChooser) {
-        if (
-          window.innerWidth <= 550 ||
-          (window.innerHeight > 778 &&
-            window.innerHeight <= 929 &&
-            window.innerWidth > 550)
-        ) {
-          setDynamicHeight("82vh");
-        } else if (window.innerHeight > 929) {
-          setDynamicHeight("800px"); // trying to account for huge heights like an ipad..
-        } else {
-          setDynamicHeight(
-            `${window.innerHeight + (750 - window.innerHeight)}px`
-          );
-        }
       }
-    }, 500);
+    } else if (DSCtx.showPaletteChooser) {
+      if (
+        window.innerWidth <= 550 ||
+        (window.innerHeight > 778 &&
+          window.innerHeight <= 929 &&
+          window.innerWidth > 550)
+      ) {
+        setDynamicHeight("82vh");
+      } else if (window.innerHeight > 929) {
+        setDynamicHeight("800px");
+      } else {
+        setDynamicHeight(
+          `${window.innerHeight + (750 - window.innerHeight)}px`
+        );
+      }
+    }
 
     function resizeHandler() {
       if (DSCtx.extendLayoutHeight) {
