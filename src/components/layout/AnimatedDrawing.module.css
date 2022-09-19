@@ -6,17 +6,16 @@
   bottom: auto;
 }
 
-/* .spinner */
-.face2 {
+.rotate {
   transform: rotateY(-90deg);
 }
 
 .spinner {
   transform-style: preserve-3d;
 
-  /* attempt to show properly stacked 3d animation on safari */
-  /* perspective: 2500rem; */
-  /* z-index: 150; */
+  /* attempt to show properly stacked 3d animation on safari/ios */
+  perspective: 100000vw;
+  z-index: 100;
 
   display: inline-flex;
   position: relative;

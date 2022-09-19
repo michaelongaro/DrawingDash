@@ -292,6 +292,7 @@
 
 @media (max-width: 450px) {
   .drawingTitleContainer {
+    top: .35em;
     padding: 0;
     width: 60%;
     height: 30px;

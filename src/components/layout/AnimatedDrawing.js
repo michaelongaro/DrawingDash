@@ -30,6 +30,7 @@ const AnimatedDrawing = (props) => {
       style={{
         width: "100%",
         height: "100%",
+        position: "relative",
       }}
       className={baseClasses.baseFlex}
     >
@@ -48,8 +49,8 @@ const AnimatedDrawing = (props) => {
               : undefined,
             height: "100%",
           }}
-          className={classes.face2}
-          alt={"randomly selected animated revealing focal drawing"}
+          className={classes.rotate}
+          alt={"randomly selected rotating focal drawing"}
           src={props.drawing}
           onLoad={() => {
             setImageElementLoaded(true);
