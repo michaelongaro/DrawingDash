@@ -94,6 +94,9 @@ const PromptSelection = () => {
   const [customAdjectiveClicked, setCustomAdjectiveClicked] = useState(false);
   const [customNounClicked, setCustomNounClicked] = useState(false);
 
+  // workaround to prevent "next" button from showing over noun dropdown
+  const [customNounShowing, setCustomNounShowing] = useState(false);
+
   const [
     showPromptsComingShortlyContainer,
     setShowPromptsComingShortlyContainer,
@@ -1236,6 +1239,10 @@ const PromptSelection = () => {
                   onChange={(e) => {
                     setSelectedNounOption(e);
                     setCustomNounClicked(true);
+                    setCustomNounShowing(false);
+                  }}
+                  onFocus={() => {
+                    setCustomNounShowing(true);
                   }}
                 />
               </div>
@@ -1251,10 +1258,14 @@ const PromptSelection = () => {
               width: "75px",
               height: "40px",
               opacity: showExtraPrompt ? 1 : 0,
+              zIndex: customNounShowing ? "-1" : "1",
+              pointerEvents: customNounShowing ? "none" : "auto",
             }}
           >
             <button
-              style={{ fontSize: "16px" }}
+              style={{
+                fontSize: "16px",
+              }}
               className={baseClasses.activeButton}
               disabled={nextDisabled}
               onClick={() => {
@@ -1265,7 +1276,7 @@ const PromptSelection = () => {
                 const title =
                   selectedExtraPrompt === "normal"
                     ? DSCtx.extraPrompt.title
-                    : `${selectedAdjectiveOption.label}  ${selectedNounOption.label}`;
+                    : `${selectedAdjectiveOption.label} ${selectedNounOption.label}`;
                 updateStatesAndShowNextComponent(seconds, title, true);
               }}
             >

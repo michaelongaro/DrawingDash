@@ -23,18 +23,12 @@ function Layout(props) {
         if (DSCtx.extraPromptsShown) {
           if (document.getElementById("extraPromptContainer")) {
             setDynamicHeight(
-              document
-                .getElementById("extraPromptContainer")
-                .getBoundingClientRect().height + 392
+              setDynamicHeight(588 + 392) // height of container + extra offset for padding
             );
           }
         } else {
           if (document.getElementById("normalPromptContainer")) {
-            setDynamicHeight(
-              document
-                .getElementById("normalPromptContainer")
-                .getBoundingClientRect().height + 392
-            );
+            setDynamicHeight(870 + 392); // height of container + extra offset for padding
           }
         }
       }
@@ -64,19 +58,11 @@ function Layout(props) {
         } else {
           if (DSCtx.extraPromptsShown) {
             if (document.getElementById("extraPromptContainer")) {
-              setDynamicHeight(
-                document
-                  .getElementById("extraPromptContainer")
-                  .getBoundingClientRect().height + 392
-              );
+              setDynamicHeight(588 + 392); // height of container + extra offset for padding
             }
           } else {
             if (document.getElementById("normalPromptContainer")) {
-              setDynamicHeight(
-                document
-                  .getElementById("normalPromptContainer")
-                  .getBoundingClientRect().height + 392
-              );
+              setDynamicHeight(870 + 392); // height of container + extra offset for padding
             }
           }
         }
