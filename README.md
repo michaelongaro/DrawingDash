@@ -8,7 +8,7 @@ Drawing app created with React and Firebase with daily updated random prompts. F
 
 <!-- screenshot of homepage here -->
 
-![Screenshot of website](https://i.gyazo.com/514de4173276f3b07c811ec94849ec59.png)
+![Screenshot of website](https://i.gyazo.com/e84ac7ddacc9abd46b2e7b4484fdc41c.png)
 
 ## Available Scripts
 
