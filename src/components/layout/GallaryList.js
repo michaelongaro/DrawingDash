@@ -66,7 +66,7 @@ const GallaryList = ({
   useEffect(() => {
     // inital render
     if (window.innerWidth > 1250) {
-      setResultsPerPage(16);
+      setResultsPerPage(15);
     } else if (window.innerWidth > 750) {
       setResultsPerPage(10);
     } else {
@@ -75,7 +75,7 @@ const GallaryList = ({
 
     function resizeHandler(ev) {
       if (window.innerWidth > 1250) {
-        setResultsPerPage(16);
+        setResultsPerPage(15);
       } else if (window.innerWidth > 750) {
         setResultsPerPage(10);
       } else {
