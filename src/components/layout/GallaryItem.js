@@ -505,30 +505,46 @@ const GallaryItem = ({
       }
     );
 
-    // Removing from /users/user.sub/likes (if it exists there)
-    get(child(dbRef, `users/${user}/likes/${seconds}`)).then((snapshot) => {
+    // Checking all user's likes and removing if it exists
+    get(child(dbRef, "users")).then((snapshot) => {
       if (snapshot.exists()) {
-        // checking to see if drawing was liked by user
-        if (Object.keys(snapshot.val()).includes(title)) {
-          let numberOfTitles = Object.keys(snapshot.val()).length;
-          let drawingIDs = snapshot.val()[title]["drawingID"];
+        for (const userID of Object.keys(snapshot.val())) {
+          get(child(dbRef, `users/${userID}/likes/${seconds}`)).then(
+            (userSnapshot) => {
+              if (userSnapshot.exists()) {
+                // checking to see if drawing was liked by user
+                if (Object.keys(userSnapshot.val()).includes(title)) {
+                  let numberOfTitles = Object.keys(userSnapshot.val()).length;
+                  let drawingIDs = userSnapshot.val()[title]["drawingID"];
 
-          // removing the index that has the corresponding drawingID
-          drawingIDs.splice(drawingIDs.indexOf(uniqueID), 1);
+                  // removing the index that has the corresponding drawingID
+                  drawingIDs.splice(drawingIDs.indexOf(uniqueID), 1);
 
-          if (drawingIDs.length === 0) {
-            // if that image was the last liked image for current duration, revert value of
-            // duration object to false
-            if (numberOfTitles !== 1) {
-              remove(ref(db, `users/${user}/likes/${seconds}/${title}`));
-            } else {
-              update(ref(db, `users/${user}/likes/${seconds}`), false);
+                  if (drawingIDs.length === 0) {
+                    // if that image was the last liked image for current duration, revert value of
+                    // duration object to false
+                    if (numberOfTitles !== 1) {
+                      remove(
+                        ref(db, `users/${userID}/likes/${seconds}/${title}`)
+                      );
+                    } else {
+                      update(
+                        ref(db, `users/${userID}/likes/${seconds}`),
+                        false
+                      );
+                    }
+                  } else {
+                    update(
+                      ref(db, `users/${userID}/likes/${seconds}/${title}`),
+                      {
+                        drawingID: drawingIDs,
+                      }
+                    );
+                  }
+                }
+              }
             }
-          } else {
-            update(ref(db, `users/${user}/likes/${seconds}/${title}`), {
-              drawingID: drawingIDs,
-            });
-          }
+          );
         }
       }
     });
