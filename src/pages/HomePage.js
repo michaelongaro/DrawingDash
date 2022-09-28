@@ -3,9 +3,9 @@ import { Link } from "react-router-dom";
 import { useAuth0 } from "@auth0/auth0-react";
 import { motion } from "framer-motion";
 
-import CardContainer from "../components/layout/CardContainer";
-import FeaturedLikes from "../components/layout/FeaturedLikes";
-import FocalAnimatedDrawings from "../components/layout/FocalAnimatedDrawings";
+import CardContainer from "../components/homepage/CardContainer";
+import FeaturedLikes from "../components/homepage/FeaturedLikes";
+import FocalAnimatedDrawings from "../components/animatedDrawings/FocalAnimatedDrawings";
 import Card from "../ui/Card";
 import LogInButton from "../oauth/LogInButton";
 

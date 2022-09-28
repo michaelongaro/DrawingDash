@@ -1,10 +1,10 @@
 import React, { useState, useContext, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
-import SearchContext from "../components/layout/SearchContext";
+import SearchContext from "../components/search/SearchContext";
 
-import Search from "../components/layout/Search";
-import FocalAnimatedDrawings from "../components/layout/FocalAnimatedDrawings";
+import Search from "../components/search/Search";
+import FocalAnimatedDrawings from "../components/animatedDrawings/FocalAnimatedDrawings";
 
 import classes from "./Explore.module.css";
 

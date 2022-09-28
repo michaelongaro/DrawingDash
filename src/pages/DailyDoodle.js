@@ -1,8 +1,8 @@
 import React, { useEffect } from "react";
 import { motion } from "framer-motion";
 
-import { CanvasProvider } from "../canvas/CanvasContext";
-import { Canvas } from "../canvas/Canvas";
+import { CanvasProvider } from "../components/canvas/CanvasContext";
+import { Canvas } from "../components/canvas/Canvas";
 
 function DailyDoodle() {
   useEffect(() => {

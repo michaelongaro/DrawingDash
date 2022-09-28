@@ -1,0 +1,603 @@
+@import "../../index.module.css";
+
+.flexContain {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.baseFlex {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1em;
+}
+
+.horizContain {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 2em;
+  user-select: none;
+  transition: all 200ms;
+}
+
+.horizContain>div {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  /* gap: 1em; */
+}
+
+.flexContain>div>div>canvas {
+  border-top-width: none;
+  border-bottom-width: none;
+  border-left: 1px solid black;
+  border-right: 1px solid black;
+  border-radius: 5px;
+}
+
+.timer {
+  position: absolute;
+  right: 1em;
+  top: 1em;
+
+  pointer-events: none;
+}
+
+.timer>div {
+  background-color: rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+}
+
+.durationButton {
+  min-width: 50%;
+  padding-top: 1.5em;
+  border-radius: 1em;
+  /* gap: 0 !important; */
+  box-shadow: 0 4px 8px 2px rgba(0, 0, 0, 0.2);
+}
+
+.durationButton:hover {
+  background-position: 100px;
+}
+
+.timeBorder {
+  margin-top: 0.25em;
+  text-shadow: 2px 3px 8px black;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.promptTextMargin {
+  margin: 1em 1.5em 1.5em 1.5em;
+  text-shadow: 2px 3px 8px black;
+  color: white;
+  text-align: center;
+}
+
+.hide {
+  display: none;
+}
+
+.timerSelectionsModal {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  font-size: 1.5em;
+}
+
+.promptRefreshTimer {
+  width: 100%;
+  font-size: 18px;
+  padding: 0.5em 0;
+  border-radius: 1em;
+  background: linear-gradient(0deg, rgb(80 79 79) 0%, rgb(200 200 200) 100%);
+  box-shadow: 0 4px 8px 2px rgb(0 0 0 / 20%);
+}
+
+.promptRefreshTimer>div,
+span {
+  color: #eeeeee;
+}
+
+.canvasOutline {
+  width: 100%;
+  height: 80vh;
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  align-items: center;
+  font-size: 3em;
+  background-color: white;
+  border-top-width: 0px;
+  border-bottom-width: 0px;
+  border-radius: 5px;
+
+  transition-property: opacity, transform, background-color;
+  transition-duration: 500ms, 500ms, 50ms;
+  transition-delay: 0ms, 0ms, 450ms;
+}
+
+.canvasBorder {
+  width: 100%;
+  height: 100%;
+  border-top-width: 0px;
+  border-bottom-width: 0px;
+  border-radius: 5px;
+}
+
+.pointer {
+  cursor: pointer;
+}
+
+.disabled {
+  opacity: 0.4;
+  pointer-events: none;
+}
+
+.leadingLine {
+  height: 1px;
+  width: 3em;
+  margin-right: 0.5em;
+  background-image: linear-gradient(to right,
+      rgba(255, 255, 255, 0),
+      rgba(0, 0, 0, 1));
+}
+
+.trailingLine {
+  height: 1px;
+  width: 3em;
+  margin-left: 0.5em;
+  background-image: linear-gradient(to right,
+      rgba(0, 0, 0, 1),
+      rgba(255, 255, 255, 0));
+}
+
+.download {
+  border-radius: 1em;
+  background-color: rgb(239, 239, 239);
+  padding: 0.75em;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.75em;
+}
+
+.overlayBreathingBackground {
+  background: linear-gradient(0deg,
+      rgba(64, 64, 64, 1) 0%,
+      rgba(204, 204, 204, 1) 100%);
+  border-radius: 25px;
+  display: grid;
+  place-items: end center;
+  margin-bottom: 4em;
+  margin-top: 3em;
+  width: 77%;
+}
+
+.infoModal {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  background: #c2c2c2;
+  width: 125px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  top: 8px;
+  height: 50px;
+  opacity: 0;
+  padding: 1.75em;
+  font-size: 0.85em;
+  border-radius: 1em;
+  transition: all 250ms;
+}
+
+.infoModal:after {
+  bottom: 100%;
+  left: 50%;
+  border: solid transparent;
+  content: "";
+  height: 0;
+  width: 0;
+  position: absolute;
+  pointer-events: none;
+  border-color: rgba(194, 194, 194, 0);
+  border-bottom-color: #c2c2c2;
+  border-width: 10px;
+  margin-left: -10px;
+}
+
+.canvasBreathingBackground {
+  position: relative;
+  background: linear-gradient(0deg,
+      rgb(70, 70, 70) 10%,
+      rgba(255, 255, 255, 0) 40%);
+
+  border-radius: 25px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  /* margin-top: 2em; */
+  /* margin-bottom: 4em; */
+  /* margin-top: 3em; */
+
+  width: 82vw;
+  /* height: 95vh; */
+  height: 98vh;
+}
+
+.canvasBreathingBackground:after {
+  content: "";
+  position: absolute;
+  left: 0px;
+  top: 0px;
+  right: 0px;
+  border-radius: 25px;
+  bottom: 0px;
+  z-index: -1;
+  background-image: linear-gradient(0deg,
+      var(--light-animated-gradient-color),
+      var(--dark-animated-gradient-color),
+      var(--dark-animated-gradient-color),
+      var(--dark-animated-gradient-color),
+      var(--dark-animated-gradient-color),
+      var(--dark-animated-gradient-color),
+      var(--light-animated-gradient-color),
+      var(--dark-animated-gradient-color),
+      var(--dark-animated-gradient-color),
+      var(--dark-animated-gradient-color),
+      var(--dark-animated-gradient-color),
+      var(--dark-animated-gradient-color),
+      var(--light-animated-gradient-color));
+  background-size: 800px 800px;
+  background-position: 0px 0px;
+  animation: move 15s infinite linear;
+  opacity: 0.8;
+}
+
+@keyframes move {
+  from {
+    background-position: 0px 0px;
+  }
+
+  to {
+    background-position: 800px 800px;
+  }
+}
+
+.sharedContain {
+  position: relative;
+  width: 80vw;
+  min-height: 80vh;
+}
+
+.rounded {
+  border-radius: 5px;
+}
+
+.canvasStyles {
+  position: absolute;
+  left: 0px;
+  top: 0px;
+  width: 100%;
+  height: 100%;
+  z-index: 200;
+  border-radius: 5px;
+  overflow: hidden;
+}
+
+.startScreen {
+  position: absolute;
+  left: 0px;
+  top: 0px;
+  width: 100%;
+  height: 100%;
+  z-index: 300;
+}
+
+.endScreen {
+  position: absolute;
+  left: 0px;
+  top: 0px;
+  width: 100%;
+  height: 100%;
+  z-index: 400;
+  font-size: 1em;
+  background-color: rgb(255, 255, 255, 0);
+}
+
+.endButtonContainer {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 3em 3em 1em 3em;
+  background-color: rgba(255, 255, 255, 0.95);
+  border-radius: 1em;
+  box-shadow: rgb(0 0 0 / 20%) 0 3px 10px 2px;
+  transition: all 500ms;
+}
+
+.registerPromoContainer {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 1em;
+
+  margin: 4em 0 1em 0;
+
+  background-color: white;
+  height: 9em;
+
+  border-radius: 1em;
+  border: 0;
+  box-shadow: rgb(0 0 0 / 20%) 0 2px 4px 1px;
+  transition: all 200ms;
+}
+
+.drawAgainButton {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.5em;
+
+  padding: 1em 3em 1em 3em;
+
+  background-image: linear-gradient(-180deg, #ff7e31, #e62c03);
+  border-radius: 6px;
+  box-shadow: rgba(0, 0, 0, 0.1) 0 2px 4px;
+  color: #ffffff;
+  cursor: pointer;
+  border: 0;
+
+  transition: box-shadow 0.2s;
+}
+
+.orSeparator {
+  display: flex;
+
+  justify-content: center;
+  align-items: center;
+
+  margin-top: 2.5rem;
+  margin-bottom: 2.5rem;
+}
+
+.drawAgainButton:hover {
+  box-shadow: rgba(253, 76, 0, 0.5) 0 3px 8px;
+}
+
+.fadingVerticalLine {
+  height: 2.5em;
+  width: 1px;
+  background-image: linear-gradient(to bottom,
+      rgba(255, 255, 255, 0),
+      rgba(0, 0, 0, 1),
+      rgba(255, 255, 255, 0));
+}
+
+.redBackground {
+  background: linear-gradient(#ffffff, rgb(255, 0, 0));
+
+  background-size: 1px 500px;
+
+  transition: all 0.5s ease-out;
+}
+
+.yellowBackground {
+  background: linear-gradient(#ffffff, rgb(247, 247, 0));
+
+  background-size: 1px 500px;
+
+  transition: all 0.5s ease-out;
+}
+
+.greenBackground {
+  background: linear-gradient(#ffffff, rgb(0, 250, 0));
+
+  background-size: 1px 500px;
+
+  transition: all 0.5s ease-out;
+}
+
+/* loading circle svg */
+.mainLoader .loader {
+  position: relative;
+  margin: 0px auto;
+  width: 2.5em;
+  height: 2.5em;
+}
+
+.mainLoader .loader:before {
+  content: "";
+  display: block;
+  padding-top: 100%;
+}
+
+.circularLoader {
+  -webkit-animation: rotate 2s linear infinite;
+  animation: rotate 2s linear infinite;
+  height: 100%;
+  -webkit-transform-origin: center center;
+  -ms-transform-origin: center center;
+  transform-origin: center center;
+  width: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  margin: auto;
+}
+
+.loaderPath {
+  stroke-dasharray: 150, 200;
+  stroke-dashoffset: -10;
+  -webkit-animation: dash 1.5s ease-in-out infinite,
+    color 6s ease-in-out infinite;
+  animation: dash 1.5s ease-in-out infinite, color 6s ease-in-out infinite;
+  stroke-linecap: round;
+}
+
+@-webkit-keyframes rotate {
+  100% {
+    -webkit-transform: rotate(360deg);
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes rotate {
+  100% {
+    -webkit-transform: rotate(360deg);
+    transform: rotate(360deg);
+  }
+}
+
+@-webkit-keyframes dash {
+  0% {
+    stroke-dasharray: 1, 200;
+    stroke-dashoffset: 0;
+  }
+
+  50% {
+    stroke-dasharray: 89, 200;
+    stroke-dashoffset: -35;
+  }
+
+  100% {
+    stroke-dasharray: 89, 200;
+    stroke-dashoffset: -124;
+  }
+}
+
+@keyframes dash {
+  0% {
+    stroke-dasharray: 1, 200;
+    stroke-dashoffset: 0;
+  }
+
+  50% {
+    stroke-dasharray: 89, 200;
+    stroke-dashoffset: -35;
+  }
+
+  100% {
+    stroke-dasharray: 89, 200;
+    stroke-dashoffset: -124;
+  }
+}
+
+@-webkit-keyframes color {
+  0% {
+    stroke: #eeeeee;
+  }
+
+  40% {
+    stroke: #eeeeee;
+  }
+
+  66% {
+    stroke: #eeeeee;
+  }
+
+  80%,
+  90% {
+    stroke: #eeeeee;
+  }
+}
+
+@keyframes color {
+  0% {
+    stroke: #eeeeee;
+  }
+
+  40% {
+    stroke: #eeeeee;
+  }
+
+  66% {
+    stroke: #eeeeee;
+  }
+
+  80%,
+  90% {
+    stroke: #eeeeee;
+  }
+}
+
+@media (max-width: 1300px) {
+  .canvasBreathingBackground {
+    height: 100vh;
+  }
+}
+
+@media (max-width: 750px) {
+  .endButtonContainer {
+    width: 90%;
+  }
+}
+
+@media (max-width: 720px) {
+  .registerContainer {
+    transform: scale(0.8);
+  }
+}
+
+@media (max-width: 603px) {
+  .endButtonContainer {
+    padding: 2em 1em 0 1em;
+  }
+
+  .drawAgainButton {
+    padding: 1em;
+  }
+}
+
+@media (max-width: 600px) {
+  .registerPromoContainer {
+    /* width: 80%; */
+  }
+}
+
+@media (max-width: 550px) {
+  .durationButton {
+    min-width: 40%;
+    padding-top: 1.5em;
+  }
+
+  .promptTextMargin {
+    margin: 0.5em 0.5em 1em 0.5em;
+  }
+}
+
+@media (max-width: 525px) {
+  .canvasBreathingBackground {
+    width: 100vw;
+  }
+
+  .sharedContain {
+    width: 98vw;
+  }
+}
+
+@media (max-width: 487px) {
+  .registerContainer {
+    transform: scale(0.7);
+  }
+}
+
+@media (max-width: 400px) {
+  .signInButtonContainer>button {
+    width: 6.5em !important;
+    height: 2.5em !important;
+  }
+
+  .registerPromoContainer {
+    /* width: 70%; */
+  }
+}

@@ -1,10 +1,10 @@
 import { useState, useEffect, useContext } from "react";
 import { useLocation } from "react-router-dom";
 
-import DrawingSelectionContext from "../../canvas/DrawingSelectionContext";
+import DrawingSelectionContext from "../canvas/DrawingSelectionContext";
 
 import Footer from "../../ui/Footer";
-import MainNavigation from "./MainNavigation";
+import MainNavigation from "../navigation/MainNavigation";
 
 function Layout(props) {
   const location = useLocation();

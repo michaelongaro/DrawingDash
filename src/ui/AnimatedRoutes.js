@@ -6,9 +6,9 @@ import HomePage from "../pages/HomePage";
 import DailyDoodle from "../pages/DailyDoodle";
 import Explore from "../pages/Explore";
 import Profile from "../pages/Profile";
-import Preferences from "../components/layout/Preferences";
-import Gallary from "../components/layout/Gallary";
-import Likes from "../components/layout/Likes";
+import Preferences from "../components/profile/Preferences";
+import Gallary from "../components/profile/Gallery";
+import Likes from "../components/profile/Likes";
 
 import { AnimatePresence } from "framer-motion";
 import NotFound from "../pages/NotFound";

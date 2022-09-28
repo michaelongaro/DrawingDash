@@ -4,9 +4,9 @@ import { useLocation } from "react-router-dom";
 import { Outlet } from "react-router";
 import { motion, AnimatePresence } from "framer-motion";
 
-import ProfileNavigation from "../components/layout/ProfileNavigation";
+import ProfileNavigation from "../components/navigation/ProfileNavigation";
 
-import classes from "../components/layout/ProfileLayout.module.css";
+import classes from "../components/profile/ProfileLayout.module.css";
 
 const Profile = () => {
   const location = useLocation();
