@@ -46,14 +46,17 @@
 
 .hoverRed {
   background: linear-gradient(170deg, #ffffff, rgb(255 0 0 / 90%));
+  box-shadow: red 0px 0px 2px 0px;
 }
 
 .hoverYellow {
   background: linear-gradient(170deg, #ffffff, rgb(255 255 0 / 90%));
+  box-shadow: yellow 0px 0px 2px 0px;
 }
 
 .hoverGreen {
   background: linear-gradient(170deg, #ffffff, rgb(0 255 0 / 90%));
+  box-shadow: green 0px 0px 2px 0px;
 }
 
 .darken {
