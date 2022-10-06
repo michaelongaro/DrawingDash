@@ -8,13 +8,15 @@ import classes from "../search/SharedAutofillResults.module.css";
 const UserResults = ({ users }) => {
   const searchCtx = useContext(SearchContext);
 
+  const userSearch = searchCtx.userSearchValues["userSearch"];
+
   useEffect(() => {
-    if (searchCtx.userSearchValues["userSearch"] !== "") {
+    if (userSearch !== "") {
       getUsers();
     } else {
       searchCtx.updateUserSearchValues({ requestedUsers: [] });
     }
-  }, [searchCtx.userSearchValues["userSearch"]]);
+  }, [userSearch]);
 
   function getUsers() {
     let results = [],
@@ -40,9 +42,9 @@ const UserResults = ({ users }) => {
 
       // checking for related usernames
       if (
-        username.includes(
-          searchCtx.userSearchValues["userSearch"].toLowerCase()
-        )
+        username
+          .toLowerCase()
+          .includes(searchCtx.userSearchValues["userSearch"].toLowerCase())
       ) {
         if (!results.includes(username)) {
           related_results.push(username);
@@ -53,15 +55,11 @@ const UserResults = ({ users }) => {
     results.sort().splice(5);
     related_results.sort().splice(3);
 
-    if (results.length !== 0) {
-      totalResults.push(results);
-      if (related_results.length !== 0) {
-        totalResults.push(related_results);
-      }
-
+    totalResults = totalResults.concat(results).concat(related_results);
+    if (totalResults.length !== 0) {
       // updating context
       searchCtx.updateUserSearchValues({
-        requestedUsers: Array.from(new Set(totalResults))[0],
+        requestedUsers: Array.from(new Set(totalResults)),
       });
     } else {
       searchCtx.updateUserSearchValues({ requestedUsers: [] });

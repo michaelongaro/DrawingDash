@@ -12,18 +12,20 @@ const NounAutofillResults = ({ titles, checkForPair, idx }) => {
   // eventually refactor this + nounautofillresults to be one component that
   // has all relevant adj/noun fields assigned properly to neutral-named vars
 
+  const nounSearch = searchCtx.searchValues["nounSearch"][idx];
+
   useEffect(() => {
     if (searchCtx.searchValues["adjSearch"][idx] !== "") {
       getPairedAdjectives();
       setShowPairedResults(true);
-    } else if (searchCtx.searchValues["nounSearch"][idx] === "") {
+    } else if (nounSearch === "") {
       searchCtx.updateSearchValues("requestedNouns", [], idx);
       setShowPairedResults(false);
     } else {
       getNouns();
       setShowPairedResults(false);
     }
-  }, [searchCtx.searchValues["nounSearch"][idx], checkForPair]);
+  }, [nounSearch, idx, checkForPair]);
 
   function getPairedAdjectives() {
     let results = [],
@@ -104,13 +106,13 @@ const NounAutofillResults = ({ titles, checkForPair, idx }) => {
       return elem.charAt(0).toUpperCase() + elem.substring(1).toLowerCase();
     });
 
-    if (results.length !== 0) {
-      totalResults.push(results);
+    totalResults = totalResults.concat(results).concat(related_results);
 
+    if (totalResults.length !== 0) {
       // updating context
       searchCtx.updateSearchValues(
         "requestedNouns",
-        ...new Set(totalResults),
+        [...new Set(totalResults)],
         idx
       );
     } else {
@@ -185,17 +187,13 @@ const NounAutofillResults = ({ titles, checkForPair, idx }) => {
       return elem.charAt(0).toUpperCase() + elem.substring(1).toLowerCase();
     });
 
-    if (results.length !== 0) {
-      if (related_results.length !== 0) {
-        totalResults.push(results.concat(["related"]).concat(related_results));
-      } else {
-        totalResults.push(results);
-      }
+    totalResults = totalResults.concat(results).concat(related_results);
 
+    if (totalResults.length !== 0) {
       // updating context
       searchCtx.updateSearchValues(
         "requestedNouns",
-        ...new Set(totalResults),
+        [...new Set(totalResults)],
         idx
       );
     } else {

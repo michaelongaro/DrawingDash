@@ -12,18 +12,20 @@ const AdjAutofillResults = ({ titles, checkForPair, idx }) => {
   // eventually refactor this + nounautofillresults to be one component that
   // has all relevant adj/noun fields assigned properly to neutral-named vars
 
+  const adjSearch = searchCtx.searchValues["adjSearch"][idx];
+
   useEffect(() => {
     if (searchCtx.searchValues["nounSearch"][idx] !== "") {
       getPairedNouns();
       setShowPairedResults(true);
-    } else if (searchCtx.searchValues["adjSearch"][idx] === "") {
+    } else if (adjSearch === "") {
       searchCtx.updateSearchValues("requestedAdjectives", [], idx);
       setShowPairedResults(false);
     } else {
       getAdjectives();
       setShowPairedResults(false);
     }
-  }, [searchCtx.searchValues["adjSearch"][idx], checkForPair]);
+  }, [adjSearch, idx, checkForPair]);
 
   function getPairedNouns() {
     let results = [],
@@ -105,13 +107,13 @@ const AdjAutofillResults = ({ titles, checkForPair, idx }) => {
       return elem.charAt(0).toUpperCase() + elem.substring(1).toLowerCase();
     });
 
-    if (results.length !== 0) {
-      totalResults.push(results);
+    totalResults = totalResults.concat(results).concat(related_results);
 
+    if (totalResults.length !== 0) {
       // updating context
       searchCtx.updateSearchValues(
         "requestedAdjectives",
-        ...new Set(totalResults),
+        [...new Set(totalResults)],
         idx
       );
     } else {
@@ -191,17 +193,13 @@ const AdjAutofillResults = ({ titles, checkForPair, idx }) => {
       return elem.charAt(0).toUpperCase() + elem.substring(1).toLowerCase();
     });
 
-    if (results.length !== 0) {
-      if (related_results.length !== 0) {
-        totalResults.push(results.concat(["related"]).concat(related_results));
-      } else {
-        totalResults.push(results);
-      }
+    totalResults = totalResults.concat(results).concat(related_results);
 
+    if (totalResults.length !== 0) {
       // updating context
       searchCtx.updateSearchValues(
         "requestedAdjectives",
-        ...new Set(totalResults),
+        [...new Set(totalResults)],
         idx
       );
     } else {
