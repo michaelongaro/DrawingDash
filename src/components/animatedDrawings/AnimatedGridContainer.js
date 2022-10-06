@@ -245,15 +245,3 @@ const AnimatedGridContainer = ({
 };
 
 export default AnimatedGridContainer;
-
-// {/* <div
-//   style={
-//     {
-//       // position: "relative",
-//       // aspectRatio: "16/7.75",
-//       // height: "106.67px",
-//     }
-//   }
-// >
-
-// </div> */}
