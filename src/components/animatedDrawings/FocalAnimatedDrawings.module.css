@@ -12,6 +12,10 @@
   justify-content: center;
   align-items: center;
 
+  /* box-shadow: rgb(0 0 0 / 48%) 1px 2px 5px 0px; */
+  box-shadow: 0 3px 6px rgb(0 0 0 / 35%);
+
+
   -webkit-animation: backgroundFade 6s ease infinite;
   -moz-animation: backgroundFade 6s ease infinite;
   animation: backgroundFade 6s ease infinite;
@@ -38,6 +42,7 @@
   background-color: white;
   border: 1px solid rgba(0, 0, 0, 0.2);
   z-index: 600;
+  box-shadow: rgb(0 0 0 / 33%) 0 2px 8px 0px;
   transition: all 200ms;
 }
 

@@ -6,6 +6,10 @@
   list-style: none;
 }
 
+.sideContain>div {
+  box-shadow: rgb(0 0 0 / 30%) 0px 2px 4px;
+}
+
 .baseFlex {
   display: flex;
   justify-content: center;

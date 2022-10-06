@@ -150,6 +150,9 @@ function NavbarProfile({ forSidebar }) {
               to="/profile/preferences"
               ref={profilePictureRef}
               className={`${classes.sidebarProfileContainer} ${classes.shimmerMedium}`}
+              style={{
+                boxShadow: "hsl(130deg 80% 15%) 0px 2px 7px 0px",
+              }}
             >
               <img
                 style={{
@@ -161,7 +164,6 @@ function NavbarProfile({ forSidebar }) {
                       : "none",
                   width: "5em",
                   height: "5em",
-                  boxShadow: "rgb(0 0 0 / 30%) 0px 2px 4px 1px",
                 }}
                 className={classes.profilePicture}
                 src={image}
@@ -189,6 +191,7 @@ function NavbarProfile({ forSidebar }) {
                 background: "rgba(255,255,255,0.5)",
                 borderRadius: "1em",
                 padding: "0.15em 0.5em",
+                boxShadow: "hsl(130deg 80% 20%) 0px 1px 4px 0px",
               }}
             >{`Welcome${firstTimeVisiting ? "," : " back,"}${
               username ? ` ${username}!` : "!"
@@ -214,6 +217,7 @@ function NavbarProfile({ forSidebar }) {
                   background: "rgba(255,255,255,0.5)",
                   borderRadius: "1em",
                   padding: "0.15em 0.5em",
+                  boxShadow: "hsla(130deg, 80%, 35%, 80%) 0px 1px 4px 0px",
                 }}
               >{`Welcome${firstTimeVisiting ? "," : " back,"}${
                 username ? ` ${username}!` : "!"
@@ -268,7 +272,7 @@ function NavbarProfile({ forSidebar }) {
                         imageElementLoaded
                           ? "block"
                           : "none",
-                      boxShadow: "rgb(0 0 0 / 30%) 0px 2px 4px 1px",
+                      boxShadow: "hsl(130deg 80% 23%) 0px 3px 3px 0px",
                     }}
                     className={classes.profilePicture}
                     src={image}

@@ -10,6 +10,7 @@
 
   border: 2px solid rgba(0, 0, 0, 0.2);
   border-radius: 1em;
+  box-shadow: rgb(0 0 0 / 33%) 0 2px 8px 0px;
 }
 
 .bannerLogo {
