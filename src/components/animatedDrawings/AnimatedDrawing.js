@@ -4,18 +4,18 @@ import anime from "animejs/lib/anime.es.js";
 import classes from "./AnimatedDrawing.module.css";
 import baseClasses from "../../index.module.css";
 
-const AnimatedDrawing = (props) => {
+const AnimatedDrawing = ({ id, drawing, delay }) => {
   const imageRef = useRef(null);
 
   const [imageElementLoaded, setImageElementLoaded] = useState(false);
 
   useEffect(() => {
     anime({
-      targets: `#drawing${props.id}`,
+      targets: `#drawing${id}`,
 
       rotateY: "90deg",
 
-      delay: props.delay,
+      delay: delay,
       endDelay: 1000,
 
       duration: 1000,
@@ -23,7 +23,7 @@ const AnimatedDrawing = (props) => {
       direction: "alternate",
       easing: "easeInSine",
     });
-  }, []);
+  }, [id, delay]);
 
   return (
     <div
@@ -35,7 +35,7 @@ const AnimatedDrawing = (props) => {
       className={baseClasses.baseFlex}
     >
       <div
-        id={`drawing${props.id}`}
+        id={`drawing${id}`}
         className={`${classes.spinner} ${baseClasses.baseFlex}`}
         style={{
           pointerEvents: "none",
@@ -51,7 +51,7 @@ const AnimatedDrawing = (props) => {
           }}
           className={classes.rotate}
           alt={"randomly selected rotating focal drawing"}
-          src={props.drawing}
+          src={drawing}
           onLoad={() => {
             setImageElementLoaded(true);
           }}
