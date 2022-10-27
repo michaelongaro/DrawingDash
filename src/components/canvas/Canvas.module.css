@@ -77,7 +77,7 @@
 
 .promptTextMargin {
   margin: 1em 1.5em 1.5em 1.5em;
-  text-shadow: 2px 3px 8px black;
+  text-shadow: 1px 2px 6px #000;
   color: white;
   text-align: center;
 }
