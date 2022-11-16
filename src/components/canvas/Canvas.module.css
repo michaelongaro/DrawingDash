@@ -71,13 +71,13 @@
 
 .timeBorder {
   margin-top: 0.25em;
-  text-shadow: 2px 3px 8px black;
+  text-shadow: 2px 2px 6px #000;
   color: rgba(255, 255, 255, 0.9);
 }
 
 .promptTextMargin {
   margin: 1em 1.5em 1.5em 1.5em;
-  text-shadow: 1px 2px 6px #000;
+  text-shadow: 2px 2px 6px #000;
   color: white;
   text-align: center;
 }
