@@ -16,7 +16,7 @@ const Footer = () => {
       style={{ gap: "1rem" }}
       className={`${classes.footerContainer} ${baseClasses.baseFlex}`}
     >
-      <div>Made with 💗 by</div>
+      <div>Made by</div>
       <div
         className={`${classes.githubContainer} ${baseClasses.baseFlex}`}
         onClick={() => openInNewTab("https://github.com/michaelongaro")}
