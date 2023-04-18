@@ -201,7 +201,7 @@ const Sidebar = ({ pageWrapId, outerContainerId }) => {
                     onClick={() => changeSelectedTab(0)}
                     onMouseEnter={() => setGreenHovered(true)}
                     onMouseDown={() => setGreenPressed(true)}
-                    onTouchStart={() => setGreenPressed(true)}
+                    onTouchStart={() => setGreenHovered(true)}
                     onMouseUp={() => {
                       setGreenHovered(false);
                       setGreenPressed(false);
@@ -259,7 +259,7 @@ const Sidebar = ({ pageWrapId, outerContainerId }) => {
                     onClick={() => changeSelectedTab(1)}
                     onMouseEnter={() => setYellowHovered(true)}
                     onMouseDown={() => setYellowPressed(true)}
-                    onTouchStart={() => setYellowPressed(true)}
+                    onTouchStart={() => setYellowHovered(true)}
                     onMouseUp={() => {
                       setYellowHovered(false);
                       setYellowPressed(false);
@@ -316,7 +316,7 @@ const Sidebar = ({ pageWrapId, outerContainerId }) => {
                     onClick={() => changeSelectedTab(2)}
                     onMouseEnter={() => setRedHovered(true)}
                     onMouseDown={() => setRedPressed(true)}
-                    onTouchStart={() => setRedPressed(true)}
+                    onTouchStart={() => setRedHovered(true)}
                     onMouseUp={() => {
                       setRedHovered(false);
                       setRedPressed(false);
