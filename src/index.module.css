@@ -170,7 +170,7 @@ h6 {
   transform: scale(1);
   transition-duration: 0.2s, 0.1s;
   transition-property: box-shadow, filter;
-  transition: transform 200ms;
+  transition: all 200ms;
 }
 
 .activeButton:disabled {

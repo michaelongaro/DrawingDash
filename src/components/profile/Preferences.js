@@ -852,7 +852,7 @@ const Preferences = () => {
           opacity: showCropModal ? 1 : 0,
           pointerEvents: showCropModal ? "auto" : "none",
         }}
-        className={classes.modal}
+        className={baseClasses.modal}
       >
         <div className={classes.cropImageModal}>
           <ImageCropModal
@@ -874,7 +874,7 @@ const Preferences = () => {
           opacity: showInvalidFileTypeModal ? 1 : 0,
           pointerEvents: showInvalidFileTypeModal ? "auto" : "none",
         }}
-        className={classes.modal}
+        className={baseClasses.modal}
       >
         <div
           ref={invalidFileTypeModalRef}

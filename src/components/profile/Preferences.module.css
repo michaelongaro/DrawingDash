@@ -115,21 +115,6 @@
   transition: box-shadow 0.2s;
 }
 
-.modal {
-  position: absolute;
-  left: 0;
-  top: 0;
-  width: 100vw;
-  height: 100vh;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  background-color: rgba(0, 0, 0, 0.5);
-  z-index: 500;
-  transition: all 200ms;
-}
-
 .cropImageModal {
   position: fixed;
   width: 65vw;

@@ -110,7 +110,7 @@ const PinnedArtwork = () => {
                 opacity: isEqual(show60, showModal) ? 1 : 0,
                 pointerEvents: isEqual(show60, showModal) ? "auto" : "none",
               }}
-              className={classes.modal}
+              className={baseClasses.modal}
             >
               <div style={show60} className={baseClasses.baseFlex}>
                 {isEqual(show60, showModal) && (
@@ -143,7 +143,7 @@ const PinnedArtwork = () => {
                 opacity: isEqual(show180, showModal) ? 1 : 0,
                 pointerEvents: isEqual(show180, showModal) ? "auto" : "none",
               }}
-              className={classes.modal}
+              className={baseClasses.modal}
             >
               <div style={show180} className={baseClasses.baseFlex}>
                 {isEqual(show180, showModal) && (
@@ -177,7 +177,7 @@ const PinnedArtwork = () => {
                 opacity: isEqual(show300, showModal) ? 1 : 0,
                 pointerEvents: isEqual(show300, showModal) ? "auto" : "none",
               }}
-              className={classes.modal}
+              className={baseClasses.modal}
             >
               <div style={show300} className={baseClasses.baseFlex}>
                 {isEqual(show300, showModal) && (
