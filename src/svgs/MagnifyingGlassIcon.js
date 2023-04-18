@@ -11,7 +11,10 @@ const MagnifyingGlassIcon = ({ dimensions, color }) => {
       width={dimensions}
       height={dimensions}
       viewBox="0 0 485.104 485.104"
-      style={{ enableBackground: "new 0 0 485.104 485.104" }}
+      style={{
+        enableBackground: "new 0 0 485.104 485.104",
+        filter: "drop-shadow(1px 2px 3px hsl(0deg 0% 0% / 40%))",
+      }}
     >
       <g>
         <path

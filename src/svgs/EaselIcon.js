@@ -7,6 +7,9 @@ const EaselIcon = ({ dimensions }) => {
       height={dimensions}
       viewBox="-75 0 511 511.99844"
       xmlns="http://www.w3.org/2000/svg"
+      style={{
+        filter: "drop-shadow(1px 2px 3px hsl(0deg 0% 0% / 40%))",
+      }}
     >
       <path
         style={{ fill: "#fff" }}
