@@ -181,18 +181,6 @@ const DrawingModal = ({
   }, [drawingMetadata]);
 
   useEffect(() => {
-    // just for initial render
-    if (window.innerWidth > 1000) {
-      setModalWidth("75vw");
-    } else if (window.innerWidth > 775 && window.innerWidth < 1000) {
-      setModalWidth("95vw");
-    } else if (window.innerWidth < 775) {
-      setModalWidth("95vw");
-      setShowMobileButtons(true);
-    } else {
-      setShowMobileButtons(false);
-    }
-
     function modalHandler(event) {
       if (fullyFinishedLoading && !hoveringOnDeleteButton && showDrawingModal) {
         if (showConfirmDeleteModal) {
@@ -272,6 +260,8 @@ const DrawingModal = ({
       }
     }
 
+    resizeHandler();
+
     document.addEventListener("click", modalHandler);
     document.addEventListener("keydown", escapeHandler);
     window.addEventListener("resize", resizeHandler);
@@ -284,6 +274,7 @@ const DrawingModal = ({
   }, [
     fullyFinishedLoading,
     openedFromUserModal,
+    modalCtx,
     modalCtx.drawingModalOpened,
     modalCtx.drawingModalFromUserOpened,
     modalCtx.userModalOpened,
@@ -488,7 +479,7 @@ const DrawingModal = ({
             opacity: showConfirmDeleteModal ? 1 : 0,
             pointerEvents: showConfirmDeleteModal ? "auto" : "none",
           }}
-          className={classes.modal}
+          className={baseClasses.modal}
         >
           <div
             className={classes.confirmDeleteText}
@@ -537,7 +528,7 @@ const DrawingModal = ({
               showUserModal && modalCtx.userModalOpened ? "auto" : "none",
             transition: "all 200ms",
           }}
-          className={classes.modal}
+          className={baseClasses.modal}
         >
           {loadUserModal && <UserModal userID={drawingMetadata.drawnBy} />}
         </div>

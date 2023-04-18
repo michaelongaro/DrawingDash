@@ -13,42 +13,6 @@ function Layout(props) {
   const [dynamicHeight, setDynamicHeight] = useState("87.5vh");
 
   useEffect(() => {
-    // just for initial (re)render
-    if (DSCtx.extendLayoutHeight) {
-      setDynamicHeight("107vh");
-    } else if (DSCtx.showPromptSelection) {
-      if (window.innerWidth > 1200 && window.innerHeight > 900) {
-        setDynamicHeight("87.5vh");
-      } else {
-        if (DSCtx.extraPromptsShown) {
-          if (document.getElementById("extraPromptContainer")) {
-            setDynamicHeight(
-              setDynamicHeight(588 + 392) // height of container + extra offset for padding
-            );
-          }
-        } else {
-          if (document.getElementById("normalPromptContainer")) {
-            setDynamicHeight(870 + 392); // height of container + extra offset for padding
-          }
-        }
-      }
-    } else if (DSCtx.showPaletteChooser) {
-      if (
-        window.innerWidth <= 550 ||
-        (window.innerHeight > 778 &&
-          window.innerHeight <= 929 &&
-          window.innerWidth > 550)
-      ) {
-        setDynamicHeight("82vh");
-      } else if (window.innerHeight > 929) {
-        setDynamicHeight("800px");
-      } else {
-        setDynamicHeight(
-          `${window.innerHeight + (750 - window.innerHeight)}px`
-        );
-      }
-    }
-
     function resizeHandler() {
       if (DSCtx.extendLayoutHeight) {
         setDynamicHeight("107vh");
@@ -83,6 +47,9 @@ function Layout(props) {
         }
       }
     }
+
+    resizeHandler();
+
     window.addEventListener("resize", resizeHandler);
     return () => {
       window.removeEventListener("resize", resizeHandler);

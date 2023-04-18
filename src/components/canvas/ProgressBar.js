@@ -38,12 +38,6 @@ const ProgressBar = () => {
   const [cleanupAllStates, setCleanupAllStates] = useState(false);
 
   useEffect(() => {
-    // just for initial render
-    setSelectOffset(
-      rectangleRef.current.getBoundingClientRect().width / 2 -
-        selectTextRef.current.getBoundingClientRect().width / 2
-    );
-
     function resizeHandler() {
       setSelectOffset(
         rectangleRef.current.getBoundingClientRect().width / 2 -
@@ -52,6 +46,8 @@ const ProgressBar = () => {
       ); // 7 is offset for text size changing from font size increase
     }
 
+    resizeHandler();
+
     window.addEventListener("resize", resizeHandler);
     return () => {
       window.removeEventListener("resize", resizeHandler);
@@ -59,18 +55,6 @@ const ProgressBar = () => {
   }, []);
 
   useEffect(() => {
-    // just for initial render
-    if (document.getElementById("chooseTextContainer") !== null) {
-      setChooseOffset(
-        document.getElementById("chooseTextContainer").getBoundingClientRect()
-          .top -
-          169 -
-          7
-      );
-
-      setInitInnerHeight(window.innerHeight);
-    }
-
     function resizeHandler() {
       if (document.getElementById("chooseTextContainer") !== null) {
         // don't respond to viewport changes when mobile addressbar shows/hides
@@ -89,6 +73,8 @@ const ProgressBar = () => {
           );
       }
     }
+
+    resizeHandler();
 
     window.addEventListener("resize", resizeHandler);
     return () => {

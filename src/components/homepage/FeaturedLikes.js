@@ -20,7 +20,9 @@ const FeaturedLikes = () => {
   const [currentDrawing, setCurrentDrawing] = useState(0);
   const [selected, setSelected] = useState([classes.highlighted, "", ""]);
 
-  const [currentWindowWidth, setCurrentWindowWidth] = useState(null);
+  const [currentWindowWidth, setCurrentWindowWidth] = useState(
+    window.innerWidth
+  );
 
   useEffect(() => {
     const db = getDatabase(app);
@@ -47,12 +49,10 @@ const FeaturedLikes = () => {
   }, []);
 
   useEffect(() => {
-    // just for initial render
-    setCurrentWindowWidth(window.innerWidth);
-
     function resizeHandler() {
       setCurrentWindowWidth(window.innerWidth);
     }
+
     window.addEventListener("resize", resizeHandler);
     return () => {
       window.removeEventListener("resize", resizeHandler);

@@ -688,53 +688,6 @@ const PromptSelection = () => {
   ]);
 
   useEffect(() => {
-    // just for initial render
-    if (window.innerWidth <= 1200) {
-      setFlexDirection("column");
-      setShowRegisterContainer(false);
-
-      if (window.innerWidth <= 800) {
-        setExtraPromptsFlexDirection("column");
-      } else {
-        setExtraPromptsFlexDirection("row");
-      }
-    } else {
-      setFlexDirection("row");
-      setExtraPromptsFlexDirection("row");
-
-      if (
-        DSCtx.drawingStatuses["60"] &&
-        DSCtx.drawingStatuses["180"] &&
-        DSCtx.drawingStatuses["300"] &&
-        Object.keys(DSCtx.drawingStatuses).length === 3
-      ) {
-        // blurring out the regular prompts
-        if (window.innerWidth > 1200) {
-          setShowRegisterContainer(true);
-        }
-      }
-    }
-
-    if (
-      document.getElementById("normalPromptContainer") !== null &&
-      document.getElementById("registerPromoContainer") !== null
-    ) {
-      setDynamicRegisterHeight(
-        `${
-          document
-            .getElementById("normalPromptContainer")
-            .getBoundingClientRect().height /
-            2 -
-          document
-            .getElementById("registerPromoContainer")
-            .getBoundingClientRect().height /
-            2.2
-        }px`
-      );
-    } else {
-      setDynamicRegisterHeight(0);
-    }
-
     function resizeHandler() {
       if (window.innerWidth <= 1200) {
         setFlexDirection("column");
@@ -783,11 +736,13 @@ const PromptSelection = () => {
       }
     }
 
+    resizeHandler();
+
     window.addEventListener("resize", resizeHandler);
     return () => {
       window.removeEventListener("resize", resizeHandler);
     };
-  }, [DSCtx.showPromptSelection, DSCtx.drawingStatuses]);
+  }, [DSCtx.drawingStatuses]);
 
   useEffect(() => {
     setInitInnerWidth(window.innerWidth);

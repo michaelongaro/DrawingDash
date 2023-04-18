@@ -25,55 +25,6 @@ const AnimatedGridContainer = ({
   const [randomStaticTileIndicies, setRandomStaticTileIndicies] = useState([]);
 
   useEffect(() => {
-    // just for initial render
-    if (!isLoading && !isAuthenticated && location.pathname === "/") {
-      if (window.innerWidth > 1400) {
-        setShownIndicies(27);
-        setMaxDrawingsToShow(10);
-      } else if (window.innerWidth > 1300 && window.innerWidth < 1400) {
-        setShownIndicies(24);
-        setMaxDrawingsToShow(10);
-      } else if (window.innerWidth > 1150 && window.innerWidth < 1300) {
-        setShownIndicies(21);
-        setMaxDrawingsToShow(10);
-      } else if (window.innerWidth > 800 && window.innerWidth < 1150) {
-        setShownIndicies(18);
-        setMaxDrawingsToShow(10);
-      } else if (window.innerWidth > 600 && window.innerWidth < 800) {
-        setShownIndicies(15);
-        setMaxDrawingsToShow(7);
-      } else if (window.innerWidth > 400 && window.innerWidth < 600) {
-        setShownIndicies(12);
-        setMaxDrawingsToShow(8);
-      } else if (window.innerWidth < 400) {
-        setShownIndicies(9);
-        setMaxDrawingsToShow(5);
-      }
-    } else if (!isLoading) {
-      if (window.innerWidth > 1400) {
-        setShownIndicies(27);
-        setMaxDrawingsToShow(10);
-      } else if (window.innerWidth > 1200 && window.innerWidth < 1400) {
-        setShownIndicies(24);
-        setMaxDrawingsToShow(10);
-      } else if (window.innerWidth > 1000 && window.innerWidth < 1200) {
-        setShownIndicies(21);
-        setMaxDrawingsToShow(10);
-      } else if (window.innerWidth > 800 && window.innerWidth < 1000) {
-        setShownIndicies(18);
-        setMaxDrawingsToShow(10);
-      } else if (window.innerWidth > 600 && window.innerWidth < 800) {
-        setShownIndicies(15);
-        setMaxDrawingsToShow(7);
-      } else if (window.innerWidth > 400 && window.innerWidth < 600) {
-        setShownIndicies(12);
-        setMaxDrawingsToShow(8);
-      } else if (window.innerWidth < 400) {
-        setShownIndicies(9);
-        setMaxDrawingsToShow(5);
-      }
-    }
-
     function resizeHandler() {
       if (!isLoading && !isAuthenticated && location.pathname === "/") {
         if (window.innerWidth > 1400) {
@@ -124,11 +75,13 @@ const AnimatedGridContainer = ({
       }
     }
 
+    resizeHandler();
+
     window.addEventListener("resize", resizeHandler);
     return () => {
       window.removeEventListener("resize", resizeHandler);
     };
-  }, [isLoading, isAuthenticated, location.pathname, displayDrawings]);
+  }, [isLoading, isAuthenticated, location.pathname]);
 
   useEffect(() => {
     if (shownIndicies !== 0 && maxDrawingsToShow !== 0 && displayDrawings) {

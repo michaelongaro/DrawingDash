@@ -155,43 +155,6 @@ const GalleryList = ({
   }, [dbPath]);
 
   useEffect(() => {
-    // just for initial render
-
-    if (window.innerWidth > 1500 && !forDailyFeatured && !forModal) {
-      setDynamicWidth("90");
-    } else if (
-      window.innerWidth < 1500 &&
-      window.innerWidth > 1000 &&
-      forDailyFeatured
-    ) {
-      setDynamicWidth("80");
-    } else if (
-      window.innerWidth < 1000 &&
-      window.innerWidth > 750 &&
-      forDailyFeatured
-    ) {
-      setDynamicWidth("90");
-    } else if (
-      window.innerWidth < 750 &&
-      window.innerWidth > 500 &&
-      forDailyFeatured
-    ) {
-      setDynamicWidth("100");
-    } else if (window.innerWidth < 500 && forDailyFeatured) {
-      setDynamicWidth("90");
-    }
-
-    if (forModal) {
-      setDynamicWidth("100");
-    }
-
-    if (window.innerWidth <= 500 && !forDailyFeatured) {
-      setDynamicWidth("100");
-      setMinMobileWidthReached(true);
-    } else if (window.innerWidth > 500 && !forDailyFeatured) {
-      setMinMobileWidthReached(false);
-    }
-
     function resizeHandler() {
       if (window.innerWidth > 1500 && !forDailyFeatured && !forModal) {
         setDynamicWidth("90");
@@ -228,6 +191,8 @@ const GalleryList = ({
         setMinMobileWidthReached(false);
       }
     }
+
+    resizeHandler();
 
     window.addEventListener("resize", resizeHandler);
     return () => {

@@ -231,15 +231,6 @@ const DrawingScreen = () => {
   }, []);
 
   useEffect(() => {
-    // just for initial render
-    if (mobileThresholdReached !== null) {
-      if (window.innerWidth < 1300) {
-        setMobileThresholdReached(true);
-      } else {
-        setMobileThresholdReached(false);
-      }
-    }
-
     function resizeHandler() {
       if (mobileThresholdReached !== null) {
         if (window.innerWidth < 1300) {
@@ -251,6 +242,8 @@ const DrawingScreen = () => {
 
       canvasContainerRef.current.scrollIntoView({ behavior: "smooth" });
     }
+
+    resizeHandler();
 
     window.addEventListener("resize", resizeHandler);
     return () => {

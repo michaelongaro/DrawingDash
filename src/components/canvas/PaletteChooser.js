@@ -78,15 +78,6 @@ const PaletteChooser = () => {
   }, []);
 
   useEffect(() => {
-    // just for initial render
-    if (window.innerWidth <= 550) {
-      setDynamicButtonDimensions(0.7);
-      setDyanmicIconDimensions("20em");
-    } else {
-      setDynamicButtonDimensions(1);
-      setDyanmicIconDimensions("27em");
-    }
-
     function resizeHandler() {
       if (window.innerWidth <= 550) {
         setDynamicButtonDimensions(0.7);
@@ -96,6 +87,8 @@ const PaletteChooser = () => {
         setDyanmicIconDimensions("27em");
       }
     }
+
+    resizeHandler();
 
     window.addEventListener("resize", resizeHandler);
     return () => {

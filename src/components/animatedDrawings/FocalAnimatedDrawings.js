@@ -83,13 +83,6 @@ const FocalAnimatedDrawings = (props) => {
   }
 
   useEffect(() => {
-    // just for initial render
-    if (window.innerWidth < 450) {
-      setMobileThresholdReached(true);
-    } else {
-      setMobileThresholdReached(false);
-    }
-
     function resizeHandler() {
       if (window.innerWidth < 450) {
         setMobileThresholdReached(true);
@@ -97,6 +90,9 @@ const FocalAnimatedDrawings = (props) => {
         setMobileThresholdReached(false);
       }
     }
+
+    resizeHandler();
+
     window.addEventListener("resize", resizeHandler);
     return () => {
       window.removeEventListener("resize", resizeHandler);

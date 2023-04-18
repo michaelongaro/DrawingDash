@@ -61,12 +61,6 @@ const UserItem = ({ userID }) => {
   }, [hoveringOnProfilePicture]);
 
   useEffect(() => {
-    // just for initial render
-    if (window.innerWidth > 750) {
-      setDynamicWidth("85");
-    } else {
-      setDynamicWidth("100");
-    }
     function resizeHandler() {
       if (window.innerWidth > 750) {
         setDynamicWidth("85");
@@ -74,6 +68,8 @@ const UserItem = ({ userID }) => {
         setDynamicWidth("100");
       }
     }
+
+    resizeHandler();
 
     window.addEventListener("resize", resizeHandler);
     return () => {

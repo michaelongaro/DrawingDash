@@ -31,15 +31,6 @@ const UserList = ({
   }, [userIDs, forModal]);
 
   useEffect(() => {
-    // just for initial render
-    if (window.innerWidth > 1250) {
-      setDynamicWidth("90");
-    }
-    if (window.innerWidth > 750 && window.innerWidth <= 1250) {
-      setDynamicWidth("85");
-    } else {
-      setDynamicWidth("90");
-    }
     function resizeHandler() {
       if (window.innerWidth > 1250) {
         setDynamicWidth("90");
@@ -50,6 +41,8 @@ const UserList = ({
         setDynamicWidth("90");
       }
     }
+
+    resizeHandler();
 
     window.addEventListener("resize", resizeHandler);
     return () => {

@@ -100,16 +100,6 @@ function MainNavigation() {
   }, [isLoading, isAuthenticated]);
 
   useEffect(() => {
-    // just for initial render
-    if (
-      window.innerWidth > 1200 &&
-      matchMedia("(hover: hover), (pointer: pointer)").matches
-    ) {
-      setShowDesktopNavbar(true);
-    } else {
-      setShowDesktopNavbar(false);
-    }
-
     function resizeHandler() {
       if (
         window.innerWidth > 1200 &&
@@ -120,6 +110,9 @@ function MainNavigation() {
         setShowDesktopNavbar(false);
       }
     }
+
+    resizeHandler();
+
     window.addEventListener("resize", resizeHandler);
     return () => {
       window.removeEventListener("resize", resizeHandler);

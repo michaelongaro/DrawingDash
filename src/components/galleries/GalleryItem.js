@@ -305,35 +305,23 @@ const GalleryItem = ({
   });
 
   useEffect(() => {
-    // just for initial render
-    if (window.innerWidth > 1250 && window.innerWidth < 1500) {
-      setDynamicCardWidth("33");
-      // setGap(false);
-    } else if (window.innerWidth > 750 && window.innerWidth < 1250) {
-      setDynamicCardWidth("50");
-      // setGap(false);
-    } else if (window.innerWidth < 775) {
-      // setGap(true);
-    } else if (window.innerWidth < 750) {
-      setDynamicCardWidth("100");
-    }
-
     function resizeHandler() {
       if (window.innerWidth > 1250 && window.innerWidth < 1500) {
         setDynamicCardWidth("33");
       } else if (window.innerWidth > 750 && window.innerWidth < 1250) {
         setDynamicCardWidth("50");
-      } else if (window.innerWidth < 775) {
-        // setGap(true);
       } else if (window.innerWidth < 750) {
         setDynamicCardWidth("100");
       }
     }
+
+    resizeHandler();
+
     window.addEventListener("resize", resizeHandler);
     return () => {
       window.removeEventListener("resize", resizeHandler);
     };
-  }, [imageElementLoaded]);
+  }, []);
 
   useEffect(() => {
     if (deletionCheckpointReached) {
@@ -593,7 +581,7 @@ const GalleryItem = ({
           opacity: showConfirmDeleteModal ? 1 : 0,
           pointerEvents: showConfirmDeleteModal ? "auto" : "none",
         }}
-        className={classes.modal}
+        className={baseClasses.modal}
       >
         <div className={classes.confirmDeleteText} ref={confirmDeleteModalRef}>
           <div>
@@ -639,7 +627,7 @@ const GalleryItem = ({
             showUserModal && modalCtx.userModalOpened ? "auto" : "none",
           transition: "all 200ms",
         }}
-        className={classes.modal}
+        className={baseClasses.modal}
       >
         {loadUserModal && <UserModal userID={drawingDetails.drawnBy} />}
       </div>
@@ -664,7 +652,7 @@ const GalleryItem = ({
           // gap: gap ? "1em" : 0,
           transition: "all 200ms",
         }}
-        className={classes.modal}
+        className={baseClasses.modal}
       >
         <DrawingModal
           drawingID={drawingID}
