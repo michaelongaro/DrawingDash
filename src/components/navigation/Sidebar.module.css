@@ -5,14 +5,13 @@
   z-index: 999;
 }
 
-
 .sidebarBody {
   position: fixed;
   right: 0;
   top: 0;
   height: 100vh;
   width: 0;
-  background: linear-gradient(230deg, hsl(130deg 100% 20%), hsl(130deg 100% 38%));
+  background-color: hsl(130 80% 44% / 1);
   box-shadow: -2px 0px 5px 0px rgb(0 0 0 / 50%);
   z-index: 998;
   transition-property: width, opacity;
@@ -42,17 +41,17 @@
 
 .linkFlexContainer {
   gap: 1em;
-  padding: .25em;
+  padding: 0.25em;
 }
 
 @media (max-width: 415px) {
   .unregisteredContainer {
-    transform: scale(.85);
+    transform: scale(0.85);
   }
 }
 
 @media (max-width: 400px) {
   .linkFlexContainer {
-    gap: .5em;
+    gap: 0.5em;
   }
 }

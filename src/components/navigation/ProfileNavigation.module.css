@@ -121,14 +121,14 @@
   left: 0;
   width: var(--yellowNavbuttonWidth);
   height: 100%;
-  background-color: hsl(60deg 95% 39%);
+  background-color: hsl(60deg 95% 44%);
   transition: all 0.3s;
   border-radius: 10rem;
   z-index: -1;
 }
 
 .yellowActive {
-  background-color: hsl(60deg 95% 39%);
+  background-color: hsl(60deg 95% 44%);
 }
 
 /* /////////////////////////////////////////////////////// */

@@ -51,13 +51,13 @@
 }
 
 .completedCircleSkeleton {
-  background-color: #18d638;
+  background-color: hsl(130 80% 44% / 1);
   border-radius: 50%;
 }
 
 .completedProgressSkeleton {
   min-height: 12px;
-  background-color: #18d638;
+  background-color: hsl(130 80% 44% / 1);
   z-index: 2;
 }
 
