@@ -31,9 +31,13 @@ const Sidebar = ({ pageWrapId, outerContainerId }) => {
   const [yellowActive, setYellowActive] = useState(false);
   const [redActive, setRedActive] = useState(false);
 
-  const [greenTouched, setGreenTouched] = useState(false);
-  const [yellowTouched, setYellowTouched] = useState(false);
-  const [redTouched, setRedTouched] = useState(false);
+  const [greenHovered, setGreenHovered] = useState(false);
+  const [yellowHovered, setYellowHovered] = useState(false);
+  const [redHovered, setRedHovered] = useState(false);
+
+  const [greenPressed, setGreenPressed] = useState(false);
+  const [yellowPressed, setYellowPressed] = useState(false);
+  const [redPressed, setRedPressed] = useState(false);
 
   useEffect(() => {
     if (location.pathname === "/profile/preferences") {
@@ -48,15 +52,6 @@ const Sidebar = ({ pageWrapId, outerContainerId }) => {
   }, [location.pathname]);
 
   useEffect(() => {
-    // just for initial render
-    if (window.innerWidth < 750) {
-      setSidebarWidth("75%");
-    } else if (window.innerWidth >= 750 && window.innerWidth < 1350) {
-      setSidebarWidth("33%");
-    } else {
-      setSidebarWidth("25%");
-    }
-
     function closeSidebarHandler(e) {
       if (
         !burgerRef.current.contains(e.target) &&
@@ -75,6 +70,8 @@ const Sidebar = ({ pageWrapId, outerContainerId }) => {
         setSidebarWidth("25%");
       }
     }
+
+    resizeHandler();
 
     document.addEventListener("click", closeSidebarHandler);
     document.addEventListener("touchend", closeSidebarHandler);
@@ -198,14 +195,25 @@ const Sidebar = ({ pageWrapId, outerContainerId }) => {
                   <div
                     style={{
                       width: "100%",
-                      filter: greenTouched ? "brightness(.5)" : "brightness(1)",
+                      filter: greenPressed ? "brightness(.5)" : "brightness(1)",
                     }}
                     className={profileClasses.greenNavlink}
                     onClick={() => changeSelectedTab(0)}
-                    onMouseDown={() => setGreenTouched(true)}
-                    onTouchStart={() => setGreenTouched(true)}
-                    onMouseUp={() => setGreenTouched(false)}
-                    onTouchEnd={() => setGreenTouched(false)}
+                    onMouseEnter={() => setGreenHovered(true)}
+                    onMouseDown={() => setGreenPressed(true)}
+                    onTouchStart={() => setGreenPressed(true)}
+                    onMouseUp={() => {
+                      setGreenHovered(false);
+                      setGreenPressed(false);
+                    }}
+                    onMouseLeave={() => {
+                      setGreenHovered(false);
+                      setGreenPressed(false);
+                    }}
+                    onTouchEnd={() => {
+                      setGreenHovered(false);
+                      setGreenPressed(false);
+                    }}
                   >
                     <Link
                       to="/profile/preferences"
@@ -217,11 +225,14 @@ const Sidebar = ({ pageWrapId, outerContainerId }) => {
                       >
                         <PreferencesIcon
                           dimensions={"1.75em"}
-                          color={greenActive ? "#fafafa" : "black"}
+                          color={
+                            greenActive || greenHovered ? "#fafafa" : "black"
+                          }
                         />
                         <div
                           style={{
-                            color: greenActive ? "#fafafa" : "black",
+                            color:
+                              greenActive || greenHovered ? "#fafafa" : "black",
                             transition: "all 300ms",
                           }}
                         >
@@ -240,16 +251,27 @@ const Sidebar = ({ pageWrapId, outerContainerId }) => {
                     style={{
                       width: "100%",
 
-                      filter: yellowTouched
+                      filter: yellowPressed
                         ? "brightness(.5)"
                         : "brightness(1)",
                     }}
                     className={profileClasses.yellowNavlink}
                     onClick={() => changeSelectedTab(1)}
-                    onMouseDown={() => setYellowTouched(true)}
-                    onTouchStart={() => setYellowTouched(true)}
-                    onMouseUp={() => setYellowTouched(false)}
-                    onTouchEnd={() => setYellowTouched(false)}
+                    onMouseEnter={() => setYellowHovered(true)}
+                    onMouseDown={() => setYellowPressed(true)}
+                    onTouchStart={() => setYellowPressed(true)}
+                    onMouseUp={() => {
+                      setYellowHovered(false);
+                      setYellowPressed(false);
+                    }}
+                    onMouseLeave={() => {
+                      setYellowHovered(false);
+                      setYellowPressed(false);
+                    }}
+                    onTouchEnd={() => {
+                      setYellowHovered(false);
+                      setYellowPressed(false);
+                    }}
                   >
                     <Link
                       to="/profile/gallery"
@@ -261,11 +283,16 @@ const Sidebar = ({ pageWrapId, outerContainerId }) => {
                       >
                         <GalleryIcon
                           dimensions={"1.75em"}
-                          color={yellowActive ? "#fafafa" : "black"}
+                          color={
+                            yellowActive || yellowHovered ? "#fafafa" : "black"
+                          }
                         />
                         <div
                           style={{
-                            color: yellowActive ? "#fafafa" : "black",
+                            color:
+                              yellowActive || yellowHovered
+                                ? "#fafafa"
+                                : "black",
                             transition: "all 300ms",
                           }}
                         >
@@ -283,14 +310,25 @@ const Sidebar = ({ pageWrapId, outerContainerId }) => {
                   <div
                     style={{
                       width: "100%",
-                      filter: redTouched ? "brightness(.5)" : "brightness(1)",
+                      filter: redPressed ? "brightness(.5)" : "brightness(1)",
                     }}
                     className={profileClasses.redNavlink}
                     onClick={() => changeSelectedTab(2)}
-                    onMouseDown={() => setRedTouched(true)}
-                    onTouchStart={() => setRedTouched(true)}
-                    onMouseUp={() => setRedTouched(false)}
-                    onTouchEnd={() => setRedTouched(false)}
+                    onMouseEnter={() => setRedHovered(true)}
+                    onMouseDown={() => setRedPressed(true)}
+                    onTouchStart={() => setRedPressed(true)}
+                    onMouseUp={() => {
+                      setRedHovered(false);
+                      setRedPressed(false);
+                    }}
+                    onMouseLeave={() => {
+                      setRedHovered(false);
+                      setRedPressed(false);
+                    }}
+                    onTouchEnd={() => {
+                      setRedHovered(false);
+                      setRedPressed(false);
+                    }}
                   >
                     <Link
                       to="/profile/likes"
@@ -302,11 +340,12 @@ const Sidebar = ({ pageWrapId, outerContainerId }) => {
                       >
                         <LikesIcon
                           dimensions={"1.75em"}
-                          color={redActive ? "#fafafa" : "black"}
+                          color={redActive || redHovered ? "#fafafa" : "black"}
                         />
                         <div
                           style={{
-                            color: redActive ? "#fafafa" : "black",
+                            color:
+                              redActive || redHovered ? "#fafafa" : "black",
                             transition: "all 300ms",
                           }}
                         >
