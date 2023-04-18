@@ -167,18 +167,26 @@ const Sidebar = ({ pageWrapId, outerContainerId }) => {
             <div
               className={`${classes.unregisteredContainer} ${profileClasses.vertContain}`}
             >
-              <div style={{ gap: ".5em" }} className={baseClasses.baseVertFlex}>
+              <div
+                style={{
+                  gap: ".5em",
+                  color: "rgb(250, 250, 250)",
+                  textShadow: "hsl(0deg 0% 0%) 1px 2px 5px",
+                }}
+                className={baseClasses.baseVertFlex}
+              >
                 <LogInButton forceShowSignUp={true} />
-                <div style={{ transform: "scale(.85)" }}>OR</div>
+                <div style={{ fontSize: "0.9rem" }}>OR</div>
                 <LogInButton forceShowSignUp={false} />
 
-                <div style={{ marginTop: "1em" }}>to be able to:</div>
+                <div style={{ marginTop: "1em", fontSize: "1.1rem" }}>
+                  to gain access to:
+                </div>
                 <ul className={classes.unregisteredUL}>
-                  <li>publish your drawings</li>
-                  <li>customize your profile</li>
-                  <li>like drawings from other users</li>
+                  <li>publishing your drawings</li>
+                  <li>customizing your profile</li>
+                  <li>liking other users' drawings</li>
                 </ul>
-                <div>and more!</div>
               </div>
             </div>
           ) : (

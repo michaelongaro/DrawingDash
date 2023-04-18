@@ -187,11 +187,13 @@ function NavbarProfile({ forSidebar }) {
             <div
               style={{
                 textAlign: "center",
-                marginTop: ".25em",
-                background: "rgba(255,255,255,0.5)",
+                marginTop: ".35em",
+                background: "rgba(255,255,255,0.3)",
                 borderRadius: "1em",
-                padding: "0.15em 0.5em",
-                boxShadow: "hsl(130deg 80% 20%) 0px 1px 4px 0px",
+                padding: "0.25em 1em",
+                boxShadow: "hsl(130deg 80% 30%) 0px 2px 4px 0px",
+                color: "rgb(250, 250, 250)",
+                textShadow: "2px 1px 3px hsl(0deg 0% 0% / 85%)",
               }}
             >{`Welcome${firstTimeVisiting ? "," : " back,"}${
               username ? ` ${username}!` : "!"
@@ -214,10 +216,12 @@ function NavbarProfile({ forSidebar }) {
                 style={{
                   overflow: "hidden",
                   whiteSpace: "nowrap",
-                  background: "rgba(255,255,255,0.5)",
+                  background: "rgba(255,255,255,0.4)",
                   borderRadius: "1em",
-                  padding: "0.15em 0.5em",
+                  padding: "0.25em 1em",
                   boxShadow: "hsla(130deg, 80%, 35%, 80%) 0px 1px 4px 0px",
+                  color: "rgb(250, 250, 250)",
+                  textShadow: "2px 1px 3px hsl(0deg 0% 0% / 85%)",
                 }}
               >{`Welcome${firstTimeVisiting ? "," : " back,"}${
                 username ? ` ${username}!` : "!"

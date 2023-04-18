@@ -29,6 +29,8 @@
   display: block !important;
   list-style-type: disc !important;
   list-style-position: inside !important;
+  text-align: left;
+  font-size: 1.1rem;
 }
 
 .sidebarLinks {
