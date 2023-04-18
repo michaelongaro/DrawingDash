@@ -129,7 +129,12 @@ const PinnedModal = React.forwardRef((props, modalRef) => {
           </div>
           <div className={classes.title}>
             {durationIcon}
-            <h3>{`${props.seconds / 60} Minute Drawings`}</h3>
+            <h3
+              style={{
+                color: "rgb(235, 235, 235)",
+                textShadow: "0 1px 5px rgb(0 0 0)",
+              }}
+            >{`${props.seconds / 60} Minute Drawings`}</h3>
           </div>
           <div className={classes.exit}>
             <button
