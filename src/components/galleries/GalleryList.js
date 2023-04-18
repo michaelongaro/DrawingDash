@@ -64,15 +64,6 @@ const GalleryList = ({
   }, [idx]);
 
   useEffect(() => {
-    // inital render
-    if (window.innerWidth > 1250) {
-      setResultsPerPage(15);
-    } else if (window.innerWidth > 750) {
-      setResultsPerPage(10);
-    } else {
-      setResultsPerPage(6);
-    }
-
     function resizeHandler(ev) {
       if (window.innerWidth > 1250) {
         setResultsPerPage(15);
@@ -82,6 +73,8 @@ const GalleryList = ({
         setResultsPerPage(6);
       }
     }
+
+    resizeHandler();
 
     window.addEventListener("resize", resizeHandler);
 

@@ -141,15 +141,6 @@ const GalleryItem = ({
   ]);
 
   useEffect(() => {
-    // inital render
-    if (window.innerWidth > 1250) {
-      setResultsPerPage(15);
-    } else if (window.innerWidth > 750) {
-      setResultsPerPage(10);
-    } else {
-      setResultsPerPage(6);
-    }
-
     function resizeHandler(ev) {
       if (window.innerWidth > 1250) {
         setResultsPerPage(15);
@@ -160,6 +151,8 @@ const GalleryItem = ({
       }
     }
 
+    resizeHandler();
+
     window.addEventListener("resize", resizeHandler);
 
     return () => {
@@ -168,14 +161,6 @@ const GalleryItem = ({
   }, []);
 
   useEffect(() => {
-    if (containerElement && titleElement) {
-      setDisplayWrappedTitle(
-        titleElement.getBoundingClientRect().width /
-          containerElement.getBoundingClientRect().width >
-          0.25
-      );
-    }
-
     function resizeHandler(ev) {
       if (containerElement && titleElement) {
         setDisplayWrappedTitle(
@@ -185,6 +170,9 @@ const GalleryItem = ({
         );
       }
     }
+
+    resizeHandler();
+
     window.addEventListener("resize", debounce(resizeHandler, 200));
 
     return () => {

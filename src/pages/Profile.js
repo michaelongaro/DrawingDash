@@ -15,25 +15,6 @@ const Profile = () => {
   const [profileCardStyles, setProfileCardStyles] = useState(null);
 
   useEffect(() => {
-    if (window.innerWidth <= 1100) {
-      setProfileCardStyles({
-        width: "95vw",
-        marginBottom: "2em",
-        display: "flex",
-        justifyContent: "center",
-      });
-      setShowProfileNavigation(false);
-    } else {
-      setProfileCardStyles({
-        width: "1046px",
-        marginRight: "1em",
-        marginBottom: "2em",
-        display: "flex",
-        justifyContent: "center",
-      });
-      setShowProfileNavigation(true);
-    }
-
     function resizeHandler() {
       if (window.innerWidth <= 1100) {
         setProfileCardStyles({
@@ -54,6 +35,9 @@ const Profile = () => {
         setShowProfileNavigation(true);
       }
     }
+
+    resizeHandler();
+
     window.addEventListener("resize", resizeHandler);
     return () => {
       window.removeEventListener("resize", resizeHandler);

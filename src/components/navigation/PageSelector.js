@@ -17,15 +17,6 @@ const PageSelector = ({ currentlyShownDuration, idx, databasePath }) => {
   const [numPages, setNumPages] = useState(0);
 
   useEffect(() => {
-    // inital render
-    if (window.innerWidth > 1250) {
-      setResultsPerPage(15);
-    } else if (window.innerWidth > 750) {
-      setResultsPerPage(10);
-    } else {
-      setResultsPerPage(6);
-    }
-
     function resizeHandler(ev) {
       if (window.innerWidth > 1250) {
         setResultsPerPage(15);
@@ -35,6 +26,8 @@ const PageSelector = ({ currentlyShownDuration, idx, databasePath }) => {
         setResultsPerPage(6);
       }
     }
+
+    resizeHandler();
 
     window.addEventListener("resize", resizeHandler);
 

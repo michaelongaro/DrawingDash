@@ -105,21 +105,6 @@ const Search = ({ dbPath, margin, idx, forModal }) => {
   }
 
   useEffect(() => {
-    // inital render
-    if (window.innerWidth > 1250) {
-      setResultsPerPage(15);
-    } else if (window.innerWidth > 750) {
-      setResultsPerPage(10);
-    } else {
-      setResultsPerPage(6);
-    }
-
-    if (window.innerWidth <= 650) {
-      setMobileWidthReached(true);
-    } else {
-      setMobileWidthReached(false);
-    }
-
     function resizeHandler(ev) {
       if (window.innerWidth > 1250) {
         setResultsPerPage(15);
@@ -135,6 +120,8 @@ const Search = ({ dbPath, margin, idx, forModal }) => {
         setMobileWidthReached(false);
       }
     }
+
+    resizeHandler();
 
     window.addEventListener("resize", resizeHandler);
 
