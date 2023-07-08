@@ -148,23 +148,22 @@ const LogOutButton = ({ borderRadius = "0 0 1em 1em", gap = ".5em" }) => {
             createExtraPrompt();
 
             // setting default preferences (username, status, profile picture)
-            fetch(
-              "https://random-word-form.herokuapp.com/random/adjective"
-            ).then((res) =>
-              res.json().then((result) => {
-                let formattedAdjective =
-                  result[0].charAt(0).toUpperCase() +
-                  result[0].substring(1).toLowerCase();
-                let randomAnimal =
-                  animals[Math.floor(Math.random() * animals.length)];
+            fetch("https://random-word-form.repl.co/random/adjective").then(
+              (res) =>
+                res.json().then((result) => {
+                  let formattedAdjective =
+                    result[0].charAt(0).toUpperCase() +
+                    result[0].substring(1).toLowerCase();
+                  let randomAnimal =
+                    animals[Math.floor(Math.random() * animals.length)];
 
-                set(ref(db, `users/${user.sub}/preferences`), {
-                  username: `${formattedAdjective} ${randomAnimal}`,
-                  status: "Eagerly awaiting tomorrow's prompts... 🎨",
-                  defaultProfilePicture: user.picture,
-                  profileCropMetadata: false,
-                });
-              })
+                  set(ref(db, `users/${user.sub}/preferences`), {
+                    username: `${formattedAdjective} ${randomAnimal}`,
+                    status: "Eagerly awaiting tomorrow's prompts... 🎨",
+                    defaultProfilePicture: user.picture,
+                    profileCropMetadata: false,
+                  });
+                })
             );
 
             // setting that user is visiting for the first time (used in welcome message)
@@ -196,13 +195,13 @@ const LogOutButton = ({ borderRadius = "0 0 1em 1em", gap = ".5em" }) => {
     s.charAt(0).toUpperCase() + s.slice(1).toLowerCase();
 
   function createExtraPrompt() {
-    fetch("https://random-word-form.herokuapp.com/random/adjective")
+    fetch("https://random-word-form.repl.co/random/adjective")
       .then((response) => response.json())
       .then((data) => {
         return capitalize(data[0]);
       })
       .then((capAdj) => {
-        fetch("https://random-word-form.herokuapp.com/random/noun")
+        fetch("https://random-word-form.repl.co/random/noun")
           .then((response) => response.json())
           .then((data2) => {
             const capNoun = capitalize(data2[0]);

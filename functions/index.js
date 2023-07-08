@@ -8,20 +8,20 @@ const database = admin.database();
 
 async function fetchDailyWords() {
   const res = await Promise.all([
-    axios.get("https://random-word-form.herokuapp.com/random/adjective"),
-    axios.get("https://random-word-form.herokuapp.com/random/noun"),
-    axios.get("https://random-word-form.herokuapp.com/random/adjective"),
-    axios.get("https://random-word-form.herokuapp.com/random/noun"),
-    axios.get("https://random-word-form.herokuapp.com/random/adjective"),
-    axios.get("https://random-word-form.herokuapp.com/random/noun"),
+    axios.get("https://random-word-form.repl.co/random/adjective"),
+    axios.get("https://random-word-form.repl.co/random/noun"),
+    axios.get("https://random-word-form.repl.co/random/adjective"),
+    axios.get("https://random-word-form.repl.co/random/noun"),
+    axios.get("https://random-word-form.repl.co/random/adjective"),
+    axios.get("https://random-word-form.repl.co/random/noun"),
   ]);
   return res;
 }
 
 async function fetchExtraDailyWords() {
   const res = await Promise.all([
-    axios.get("https://random-word-form.herokuapp.com/random/adjective"),
-    axios.get("https://random-word-form.herokuapp.com/random/noun"),
+    axios.get("https://random-word-form.repl.co/random/adjective"),
+    axios.get("https://random-word-form.repl.co/random/noun"),
   ]);
   return res;
 }
